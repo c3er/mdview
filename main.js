@@ -2,19 +2,22 @@ const { app, BrowserWindow, Menu } = require("electron")
 const path = require("path")
 const url = require("url")
 
-let win
+const WINDOW_WIDTH = 1024
+const WINDOW_HEIGHT = 768
+
+let mainWindow
 
 function createWindow() {
-    win = new BrowserWindow({ width: 800, height: 600 })
-    win.loadURL(
+    mainWindow = new BrowserWindow({ width: WINDOW_WIDTH, height: WINDOW_HEIGHT })
+    mainWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, "index.html"),
             protocol: "file:",
             slashes: true
         })
     )
-    win.on("closed", () => {
-        win = null
+    mainWindow.on("closed", () => {
+        mainWindow = null
     })
 }
 
@@ -31,7 +34,7 @@ app.on("window-all-closed", () => {
 app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (win === null) {
+    if (mainWindow === null) {
         createWindow()
     }
 })
