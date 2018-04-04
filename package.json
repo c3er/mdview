@@ -1,0 +1,21 @@
+{
+  "name": "mdview",
+  "version": "0.0.1",
+  "description": "Standalone Markdown viewer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "markdown",
+    "md",
+    "viewer",
+    "standalone"
+  ],
+  "author": "Christian Dreier",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^1.8.4"
+  }
+}
