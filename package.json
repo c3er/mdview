@@ -15,10 +15,9 @@
   ],
   "author": "Christian Dreier",
   "license": "MIT",
-  "devDependencies": {
-    "electron": "^1.8.4"
-  },
   "dependencies": {
+    "electron": "^1.8.4",
+    "github-markdown-css": "^2.10.0",
     "highlight.js": "^9.12.0",
     "markdown-it": "^8.4.1"
   }
