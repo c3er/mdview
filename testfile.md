@@ -76,3 +76,7 @@ class Program
     }
 }
 ```
+
+## Special characters
+
+Ää Öö Üü ß Áá Èè
