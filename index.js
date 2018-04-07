@@ -13,7 +13,8 @@ const markdown = require("markdown-it")({
             }
         }
         return `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(str)}</div></code></pre>`
-    }
+    },
+    xhtmlOut: true
 })
 
 let content = fs.readFileSync(path.join(__dirname, "testfile.md"), "utf8")
