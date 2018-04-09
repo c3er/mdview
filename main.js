@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require("electron")
+const { app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog } = require("electron")
 const path = require("path")
 const url = require("url")
 
@@ -8,7 +8,10 @@ const WINDOW_HEIGHT = 768
 let mainWindow
 
 function createWindow() {
-    mainWindow = new BrowserWindow({ width: WINDOW_WIDTH, height: WINDOW_HEIGHT })
+    mainWindow = new BrowserWindow({
+        width: WINDOW_WIDTH,
+        height: WINDOW_HEIGHT
+    })
     mainWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, "index.html"),
@@ -18,6 +21,20 @@ function createWindow() {
     )
     mainWindow.on("closed", () => {
         mainWindow = null
+    })
+
+    globalShortcut.register("CommandOrControl+O", () => {
+        dialog.showOpenDialog(
+            {
+                properties: ["openFile"],
+                filters: [{ name: "Markdown", extensions: ["md", "markdown"] }]
+            },
+            filePaths => {
+                if (filePaths) {
+                    mainWindow.webContents.send("fileOpen", filePaths[0])
+                }
+            }
+        )
     })
 }
 

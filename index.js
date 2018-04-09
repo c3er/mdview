@@ -1,3 +1,4 @@
+const { ipcRenderer } = require("electron")
 const path = require("path")
 const fs = require("fs")
 const highlight = require("highlight.js")
@@ -5,6 +6,8 @@ const highlight = require("highlight.js")
 const markdown = require("markdown-it")({
     highlight: (str, lang) => {
         // Taken from VS Code
+        // File extensions/markdown-language-features/src/markdownEngine.ts
+        // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
         if (lang && highlight.getLanguage(lang)) {
             try {
                 return `<pre class="hljs"><code><div>${highlight.highlight(lang, str, true).value}</div></code></pre>`
@@ -17,5 +20,7 @@ const markdown = require("markdown-it")({
     xhtmlOut: true
 })
 
-let content = fs.readFileSync(path.join(__dirname, "testfile.md"), "utf8")
-document.getElementById("content").innerHTML = markdown.render(content)
+ipcRenderer.on("fileOpen", (event, path) => {
+    let content = fs.readFileSync(path, "utf8")
+    document.getElementById("content").innerHTML = markdown.render(content)
+})
