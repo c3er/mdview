@@ -23,19 +23,37 @@ function createWindow() {
         mainWindow = null
     })
 
-    globalShortcut.register("CommandOrControl+O", () => {
-        dialog.showOpenDialog(
+    Menu.setApplicationMenu(
+        Menu.buildFromTemplate([
             {
-                properties: ["openFile"],
-                filters: [{ name: "Markdown", extensions: ["md", "markdown"] }]
-            },
-            filePaths => {
-                if (filePaths) {
-                    mainWindow.webContents.send("fileOpen", filePaths[0])
-                }
+                label: "File",
+                submenu: [
+                    {
+                        label: "Open",
+                        accelerator: "CmdOrCtrl+O",
+                        click: () => {
+                            dialog.showOpenDialog(
+                                {
+                                    properties: ["openFile"],
+                                    filters: [{ name: "Markdown", extensions: ["md", "markdown"] }]
+                                },
+                                filePaths => {
+                                    if (filePaths) {
+                                        mainWindow.webContents.send("fileOpen", filePaths[0])
+                                    }
+                                }
+                            )
+                        }
+                    },
+                    {
+                        label: "Quit",
+                        accelerator: process.platform === "darwin" ? "Cmd+Q" : "Alt+F4",
+                        click: () => mainWindow.close()
+                    }
+                ]
             }
-        )
-    })
+        ])
+    )
 }
 
 app.on("ready", createWindow)
