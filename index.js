@@ -1,16 +1,16 @@
 const { ipcRenderer } = require("electron")
 const path = require("path")
 const fs = require("fs")
-const highlight = require("highlight.js")
+const hljs = require("highlight.js")
 
 const markdown = require("markdown-it")({
     highlight: (str, lang) => {
         // Taken from VS Code
         // File extensions/markdown-language-features/src/markdownEngine.ts
         // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
-        if (lang && highlight.getLanguage(lang)) {
+        if (lang && hljs.getLanguage(lang)) {
             try {
-                return `<pre class="hljs"><code><div>${highlight.highlight(lang, str, true).value}</div></code></pre>`
+                return `<pre class="hljs"><code><div>${hljs.highlight(lang, str, true).value}</div></code></pre>`
             } catch (err) {
                 console.log(`Error at highlighting: ${err}`)
             }
