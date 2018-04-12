@@ -20,7 +20,11 @@ const markdown = require("markdown-it")({
     xhtmlOut: true
 })
 
-ipcRenderer.on("fileOpen", (event, path) => {
+function renderFile(path) {
     let content = fs.readFileSync(path, "utf8")
     document.getElementById("content").innerHTML = markdown.render(content)
-})
+}
+
+ipcRenderer.on("fileOpen", (event, path) => renderFile(path))
+
+renderFile("README.md")
