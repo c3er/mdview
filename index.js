@@ -25,6 +25,9 @@ function renderFile(path) {
     document.getElementById("content").innerHTML = markdown.render(content)
 }
 
-ipcRenderer.on("fileOpen", (event, path) => renderFile(path))
+ipcRenderer.on("fileOpen", (event, path) => {
+    renderFile(path)
+    hasFileOpened = true
+})
 
-renderFile("README.md")
+ipcRenderer.send("finishLoad")

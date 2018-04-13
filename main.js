@@ -1,11 +1,24 @@
 const { app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog } = require("electron")
 const path = require("path")
 const url = require("url")
+const fs = require("fs")
 
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
 let mainWindow
+
+function error(msg) {
+    dialog.showErrorBox("Error", `${msg}. Exiting.`)
+    process.exit(1)
+}
+
+function openFile(filePath) {
+    if (!fs.existsSync(filePath)) {
+        error("Unknown file")
+    }
+    mainWindow.webContents.send("fileOpen", filePath)
+}
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -39,7 +52,7 @@ function createWindow() {
                                 },
                                 filePaths => {
                                     if (filePaths) {
-                                        mainWindow.webContents.send("fileOpen", filePaths[0])
+                                        openFile(filePaths[0])
                                     }
                                 }
                             )
@@ -54,6 +67,8 @@ function createWindow() {
             }
         ])
     )
+
+    globalShortcut.register("F10", () => mainWindow.webContents.openDevTools())
 }
 
 app.on("ready", createWindow)
@@ -71,5 +86,16 @@ app.on("activate", () => {
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
         createWindow()
+    }
+})
+
+ipcMain.on("finishLoad", () => {
+    const args = process.argv.slice(2)
+    if (args.length === 1) {
+        openFile(args[0])
+    } else if (args.length > 1) {
+        error("More than one argument given")
+    } else {
+        openFile(path.join(__dirname, "README.md"))
     }
 })
