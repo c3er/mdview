@@ -64,11 +64,19 @@ function createWindow() {
                         click: () => mainWindow.close()
                     }
                 ]
+            },
+            {
+                label: "Tools",
+                submenu: [
+                    {
+                        label: "Developer tools",
+                        accelerator: "F10",
+                        click: () => mainWindow.webContents.openDevTools()
+                    }
+                ]
             }
         ])
     )
-
-    globalShortcut.register("F10", () => mainWindow.webContents.openDevTools())
 }
 
 app.on("ready", createWindow)
