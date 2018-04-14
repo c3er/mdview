@@ -16,6 +16,8 @@ function error(msg) {
 function openFile(filePath) {
     if (!fs.existsSync(filePath)) {
         error("Unknown file")
+    } else if (!fs.lstatSync(filePath).isFile()) {
+        error("Given path leads to directory")
     }
     mainWindow.webContents.send("fileOpen", filePath)
 }
