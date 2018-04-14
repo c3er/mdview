@@ -18,8 +18,9 @@ function openFile(filePath) {
         error("Unknown file")
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path leads to directory")
+    } else {
+        mainWindow.webContents.send("fileOpen", filePath)
     }
-    mainWindow.webContents.send("fileOpen", filePath)
 }
 
 function createWindow() {
