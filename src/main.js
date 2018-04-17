@@ -23,6 +23,15 @@ function openFile(filePath) {
     }
 }
 
+function extractFilePath(args) {
+    for (let i = 0; i < args.length; i++) {
+        let arg = args[i]
+        if (!arg.includes("electron") && !arg.startsWith("-") && arg != "." && arg != process.execPath) {
+            return arg
+        }
+    }
+}
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: WINDOW_WIDTH,
@@ -101,12 +110,10 @@ app.on("activate", () => {
 })
 
 ipcMain.on("finishLoad", () => {
-    const args = process.argv.slice(2)
-    if (args.length === 1) {
-        openFile(args[0])
-    } else if (args.length > 1) {
-        error("More than one argument given")
+    const filePath = extractFilePath(process.argv)
+    if (filePath !== undefined) {
+        openFile(filePath)
     } else {
-        openFile(path.join(__dirname, "README.md"))
+        openFile(path.join(__dirname, "../README.md"))
     }
 })
