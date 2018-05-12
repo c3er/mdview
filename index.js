@@ -17,7 +17,8 @@ const markdown = require("markdown-it")({
         }
         return `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(str)}</div></code></pre>`
     },
-    xhtmlOut: true
+    xhtmlOut: true,
+    html: true
 })
 
 function renderFile(path) {
