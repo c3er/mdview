@@ -2,10 +2,39 @@
   "name": "mdview",
   "version": "0.0.1",
   "description": "Standalone Markdown viewer",
+  "author": "Christian Dreier",
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
+    "postinstall": "install-app-deps",
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pack": "build --dir",
+    "dist": "build"
+  },
+  "build": {
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS"
+    }
   },
   "keywords": [
     "markdown",
@@ -13,10 +42,9 @@
     "viewer",
     "standalone"
   ],
-  "author": "Christian Dreier",
-  "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "electron": "^1.8.4",
+    "electron-builder": "^20.13.3",
     "github-markdown-css": "^2.10.0",
     "highlight.js": "^9.12.0",
     "markdown-it": "^8.4.1"
