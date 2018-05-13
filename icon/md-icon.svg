@@ -65,6 +65,13 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <rect
+       id="rect11"
+       width="89.415474"
+       height="89.415474"
+       x="7.763514"
+       y="5.2760639"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.58452725;stroke-opacity:1" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -101,12 +108,5 @@
        x="72.680534"
        y="28.61875"
        style="stroke-width:0.69374335" />
-    <rect
-       id="rect11"
-       width="90.727692"
-       height="87.238167"
-       x="7.7620444"
-       y="7.454843"
-       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.58158779;stroke-opacity:1" />
   </g>
 </svg>
