@@ -31,7 +31,3 @@ Links that do not lead to locally stored Markdown files shall be opened in stand
 External resources that are loaded from the Internet shall be blocked
 
 A status bar showing the link destination of the link that is currently hovered by the mouse pointer
-
-### Miscellaneous
-
-Deploy binaries 
