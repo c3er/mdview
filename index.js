@@ -3,6 +3,8 @@ const path = require("path")
 const fs = require("fs")
 const hljs = require("highlight.js")
 
+const TITLE = "Markdown Viewer"
+
 const markdown = require("markdown-it")({
     highlight: (str, lang) => {
         // Taken from VS Code
@@ -24,6 +26,7 @@ const markdown = require("markdown-it")({
 function renderFile(path) {
     let content = fs.readFileSync(path, "utf8")
     document.getElementById("content").innerHTML = markdown.render(content)
+    document.title = `${path} - ${TITLE}`
 }
 
 ipcRenderer.on("fileOpen", (event, path) => {
@@ -32,3 +35,5 @@ ipcRenderer.on("fileOpen", (event, path) => {
 })
 
 ipcRenderer.send("finishLoad")
+
+document.title = TITLE
