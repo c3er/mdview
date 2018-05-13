@@ -2,13 +2,6 @@
   "name": "mdview",
   "version": "0.1.0",
   "description": "Standalone Markdown viewer",
-  "main": "src/main.js",
-  "scripts": {
-    "start": "electron-forge start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
-  },
   "keywords": [
     "markdown",
     "md",
@@ -17,50 +10,56 @@
   ],
   "author": "Christian Dreier",
   "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "electron .",
+    "pack": "build --dir",
+    "dist": "build"
+  },
+  "build": {
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "license": "LICENSE",
+      "shortcutName": "Markdown Viewer"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "mac": {
+      "target": [
+        "default"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "icon": "icon/md.ico"
+    },
+    "fileAssociations": {
+      "ext": [
+        ".md",
+        ".markdown"
+      ],
+      "name": "Markdown file",
+      "icon": "icon/md.ico"
+    }
+  },
   "dependencies": {
-    "electron-compile": "^6.4.2",
-    "electron-squirrel-startup": "^1.0.0",
     "github-markdown-css": "^2.10.0",
     "highlight.js": "^9.12.0",
     "markdown-it": "^8.4.1"
   },
   "devDependencies": {
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "electron-forge": "^5.1.2",
-    "electron-prebuilt-compile": "1.8.4"
-  },
-  "config": {
-    "forge": {
-      "make_targets": {
-        "win32": [
-          "squirrel"
-        ],
-        "darwin": [
-          "zip"
-        ],
-        "linux": [
-          "deb",
-          "rpm"
-        ]
-      },
-      "electronPackagerConfig": {
-        "packageManager": "yarn"
-      },
-      "electronWinstallerConfig": {
-        "name": "mdview"
-      },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {},
-      "github_repository": {
-        "owner": "",
-        "name": ""
-      },
-      "windowsStoreConfig": {
-        "packageName": "",
-        "name": "mdview"
-      }
-    }
+    "electron": "^1.8.4",
+    "electron-builder": "^20.13.3"
   }
 }

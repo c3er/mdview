@@ -15,7 +15,7 @@ function error(msg) {
 
 function openFile(filePath) {
     if (!fs.existsSync(filePath)) {
-        error("Unknown file")
+        error(`Unknown file: "${filePath}"`)
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path leads to directory")
     } else {
@@ -114,6 +114,7 @@ ipcMain.on("finishLoad", () => {
     if (filePath !== undefined) {
         openFile(filePath)
     } else {
-        openFile(path.join(__dirname, "../README.md"))
+        console.log(process.argv)
+        openFile(path.join(__dirname, "README.md"))
     }
 })
