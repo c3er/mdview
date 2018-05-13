@@ -1,7 +1,13 @@
 {
   "name": "mdview",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Standalone Markdown viewer",
+  "keywords": [
+    "markdown",
+    "md",
+    "viewer",
+    "standalone"
+  ],
   "author": "Christian Dreier",
   "license": "MIT",
   "main": "main.js",
@@ -12,19 +18,13 @@
     "dist": "build"
   },
   "build": {
-    "dmg": {
-      "contents": [
-        {
-          "x": 110,
-          "y": 150
-        },
-        {
-          "x": 240,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "license": "LICENSE",
+      "shortcutName": "Markdown Viewer"
     },
     "linux": {
       "target": [
@@ -32,21 +32,34 @@
         "deb"
       ]
     },
+    "mac": {
+      "target": [
+        "default"
+      ]
+    },
     "win": {
-      "target": "NSIS"
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "icon": "icon/md.ico"
+    },
+    "fileAssociations": {
+      "ext": [
+        ".md",
+        ".markdown"
+      ],
+      "name": "Markdown file",
+      "icon": "icon/md.ico"
     }
   },
-  "keywords": [
-    "markdown",
-    "md",
-    "viewer",
-    "standalone"
-  ],
-  "devDependencies": {
-    "electron": "^1.8.4",
-    "electron-builder": "^20.13.3",
+  "dependencies": {
     "github-markdown-css": "^2.10.0",
     "highlight.js": "^9.12.0",
     "markdown-it": "^8.4.1"
+  },
+  "devDependencies": {
+    "electron": "^1.8.4",
+    "electron-builder": "^20.13.3"
   }
 }
