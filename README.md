@@ -26,8 +26,19 @@ You can use and copy this tool under the conditions of the MIT license.
 
 ### Features / Bugs
 
-Links that do not lead to locally stored Markdown files shall be opened in standard browser
-
 External resources that are loaded from the Internet shall be blocked
 
 A status bar showing the link destination of the link that is currently hovered by the mouse pointer
+
+A context menu:
+
+- Copy currently selected text
+- Copy link text
+- Copy link target
+
+#### Links
+
+Links do not work properly:
+
+- Links to websites in the Internet are opened inside the tool window. Expectation: they shall be opened inside the standard browser.
+- Links to local resources are misinterpreted, leading to an empty window, if they are clicked. The links point to some application internal temporary directory. Expectation: the link targets shall be interpreted as relative to the document path. The same behavior can be observed at local image files.
