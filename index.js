@@ -34,6 +34,7 @@ ipcRenderer.on("fileOpen", (event, path) => {
     hasFileOpened = true
 })
 
-ipcRenderer.send("finishLoad")
-
-document.title = TITLE
+document.addEventListener("DOMContentLoaded", () => {
+    document.title = TITLE
+    ipcRenderer.send("finishLoad")
+})

@@ -6,7 +6,7 @@ const fs = require("fs")
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
-let mainWindow
+let _mainWindow
 
 function error(msg) {
     dialog.showErrorBox("Error", `${msg}. Exiting.`)
@@ -19,7 +19,7 @@ function openFile(filePath) {
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path leads to directory")
     } else {
-        mainWindow.webContents.send("fileOpen", filePath)
+        _mainWindow.webContents.send("fileOpen", filePath)
     }
 }
 
@@ -33,19 +33,19 @@ function extractFilePath(args) {
 }
 
 function createWindow() {
-    mainWindow = new BrowserWindow({
+    _mainWindow = new BrowserWindow({
         width: WINDOW_WIDTH,
         height: WINDOW_HEIGHT
     })
-    mainWindow.loadURL(
+    _mainWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, "index.html"),
             protocol: "file:",
             slashes: true
         })
     )
-    mainWindow.on("closed", () => {
-        mainWindow = null
+    _mainWindow.on("closed", () => {
+        _mainWindow = null
     })
 
     Menu.setApplicationMenu(
@@ -73,7 +73,7 @@ function createWindow() {
                     {
                         label: "Quit",
                         accelerator: process.platform === "darwin" ? "Cmd+Q" : "Alt+F4",
-                        click: () => mainWindow.close()
+                        click: () => _mainWindow.close()
                     }
                 ]
             },
@@ -83,7 +83,7 @@ function createWindow() {
                     {
                         label: "Developer tools",
                         accelerator: "F10",
-                        click: () => mainWindow.webContents.openDevTools()
+                        click: () => _mainWindow.webContents.openDevTools()
                     }
                 ]
             }
@@ -104,7 +104,7 @@ app.on("window-all-closed", () => {
 app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) {
+    if (_mainWindow === null) {
         createWindow()
     }
 })
