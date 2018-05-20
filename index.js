@@ -61,11 +61,8 @@ ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
-        console.log(imageUrl)
         if (!isInternetUrl(imageUrl)) {
             image.src = path.join(documentDirectory, imageUrl)
-            console.log(documentDirectory)
-            console.log(image.src)
         }
     })
 
