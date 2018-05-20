@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog } = require("electron")
+const { spawn } = require('child_process')
 const path = require("path")
 const url = require("url")
 const fs = require("fs")
@@ -19,7 +20,8 @@ function openFile(filePath) {
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path leads to directory")
     } else {
-        _mainWindow.webContents.send("fileOpen", filePath)
+        const isMarkdownFile = [".md", ".markdown"].some(ending => filePath.endsWith(ending))
+        _mainWindow.webContents.send("fileOpen", filePath, isMarkdownFile)
     }
 }
 
@@ -117,4 +119,9 @@ ipcMain.on("finishLoad", () => {
         console.log(process.argv)
         openFile(path.join(__dirname, "README.md"))
     }
+})
+
+ipcMain.on("openFile", (event, filePath) => {
+    const processName = process.argv[0]
+    spawn(processName, processName.includes("electron") ? [".", filePath] : [filePath])
 })

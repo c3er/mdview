@@ -93,3 +93,9 @@ class Program
         <td>2.2</td>
     </tr>
 </table>
+
+## Links
+
+[External link to Google](http://www.google.com)
+
+[Link to README.md](README.md)
