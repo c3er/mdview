@@ -62,5 +62,3 @@ A context menu:
 - Copy currently selected text
 - Copy link text
 - Copy link target
-
-`img` tags to local images are misinterpreted. The image URLs point to some application internal temporary directory. Expectation: the image URL targets shall be interpreted as relative to the document path.

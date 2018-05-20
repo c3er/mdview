@@ -5,11 +5,16 @@ const hljs = require("highlight.js")
 
 const TITLE = "Markdown Viewer"
 
-let _documentDirectory
-
 const isInternetUrl = url => url.includes("://") || url.startsWith("mailto:")
 
 const renderRawText = text => `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(text)}</div></code></pre>`
+
+function alterTags(tagName, handler) {
+    const tagElements = document.getElementsByTagName(tagName)
+    for (let i = 0; i < tagElements.length; i++) {
+        handler(tagElements[i])
+    }
+}
 
 const markdown = require("markdown-it")({
     highlight: (text, language) => {
@@ -35,26 +40,34 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
+    const documentDirectory = path.dirname(filePath)
+    
     let content = fs.readFileSync(filePath, "utf8")
     if (!isMarkdownFile) {
         content = "```\n" + content + "\n```"
     }
     document.getElementById("content").innerHTML = markdown.render(content)
 
-    const links = document.getElementsByTagName("a")
-    for (let i = 0; i < links.length; i++) {
-        const link = links[i]
+    alterTags("a", link => {
         const target = link.getAttribute("href")
         link.addEventListener("click", event => {
             if (isInternetUrl(target)) {
                 shell.openExternal(target)
             } else {
-                ipcRenderer.send("openFile", path.join(_documentDirectory, target))
+                ipcRenderer.send("openFile", path.join(documentDirectory, target))
             }
             event.preventDefault()
         })
-    }
+    })
+    alterTags("img", image => {
+        const imageUrl = image.getAttribute("src")
+        console.log(imageUrl)
+        if (!isInternetUrl(imageUrl)) {
+            image.src = path.join(documentDirectory, imageUrl)
+            console.log(documentDirectory)
+            console.log(image.src)
+        }
+    })
 
     document.title = `${filePath} - ${TITLE}`
-    _documentDirectory = path.dirname(filePath)
 })
