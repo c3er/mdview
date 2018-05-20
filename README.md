@@ -16,6 +16,33 @@ Binaries can be built by typing `npm run dist`. Under Windows, a ZIP package and
 
 The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMagick](https://www.imagemagick.org). While the application icon does not look too bad, a proper icon for Markdown *documents* is missing yet. Operating systems other than Windows are not regarded yet.
 
+### Debugging
+
+It is possible to debug the main process with [Visual Studio Code](https://code.visualstudio.com/). For debugging inside of VS Code, the file `.vscode/launch.json` in the project directory has to be edited (just copy & paste the code below):
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Main Process",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+            },
+            "args": ["."]
+        }
+    ]
+}
+```
+
+This `launch.json` is taken from the [Electron documentation](https://electronjs.org/docs/tutorial/debugging-main-process-vscode).
+
+The renderer process (`index.html` and `index.json`) must be debugged with help of the Electron development tools. 
+
 ## Copyright and License
 
 This tool is made by Christian Dreier. If you find a copy somewhere, you find the original at [GitHub](https://github.com/c3er/mdview).
