@@ -14,6 +14,12 @@ function alterTags(tagName, handler) {
     }
 }
 
+function setStatusBar(element, text) {
+    const statusTextElement = document.getElementById("status-text")
+    element.addEventListener("mouseover", () => statusTextElement.innerHTML = text)
+    element.addEventListener("mouseout", () => statusTextElement.innerHTML = "")
+}
+
 const markdown = require("markdown-it")({
     highlight: (text, language) => {
         // Originated from VS Code
@@ -56,12 +62,14 @@ ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
             }
             event.preventDefault()
         })
+        setStatusBar(link, target)
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
         if (!isInternetUrl(imageUrl)) {
             image.src = path.join(documentDirectory, imageUrl)
         }
+        setStatusBar(image, `${image.getAttribute("alt")} (${imageUrl})`)
     })
 
     document.title = `${filePath} - ${TITLE}`

@@ -17,9 +17,32 @@
             .markdown-body ol ol ol {
                 list-style-type: decimal;
             }
+
+            #status-bar {
+                background-color: #ddd;
+                color: black;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 25px;
+            }
+
+            #status-text {
+                font-family: Sans-serif;
+                font-size: 10pt;
+                line-height: 0;
+                vertical-align: middle;
+                padding-left: 10px;
+            }
+
+            body {
+                margin-bottom: 25px;
+            }
         </style>
     </head>
     <body>
         <div class="markdown-body" id="content"></div>
+        <div id="status-bar"><p id="status-text"></p></div>
     </body>
 </html>

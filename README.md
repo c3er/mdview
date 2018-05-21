@@ -55,8 +55,6 @@ You can use and copy this tool under the conditions of the MIT license.
 
 External resources that are loaded from the Internet shall be blocked
 
-A status bar showing the link destination of the link that is currently hovered by the mouse pointer
-
 A context menu:
 
 - Copy currently selected text
