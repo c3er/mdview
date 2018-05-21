@@ -7,8 +7,6 @@ const TITLE = "Markdown Viewer"
 
 const isInternetUrl = url => url.includes("://") || url.startsWith("mailto:")
 
-const renderRawText = text => `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(text)}</div></code></pre>`
-
 function alterTags(tagName, handler) {
     const tagElements = document.getElementsByTagName(tagName)
     for (let i = 0; i < tagElements.length; i++) {
@@ -28,7 +26,7 @@ const markdown = require("markdown-it")({
                 console.log(`Error at highlighting: ${err}`)
             }
         }
-        return renderRawText(text)
+        return `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(text)}</div></code></pre>`
     },
     xhtmlOut: true,
     html: true

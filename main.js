@@ -25,14 +25,7 @@ function openFile(filePath) {
     }
 }
 
-function extractFilePath(args) {
-    for (let i = 0; i < args.length; i++) {
-        let arg = args[i]
-        if (!arg.includes("electron") && !arg.startsWith("-") && arg != "." && arg != process.execPath) {
-            return arg
-        }
-    }
-}
+const extractFilePath = args => args.find(arg => !arg.includes("electron") && !arg.startsWith("-") && arg != "." && arg != process.execPath)
 
 function createWindow() {
     _mainWindow = new BrowserWindow({
