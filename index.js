@@ -1,4 +1,4 @@
-const { ipcRenderer, shell } = require("electron")
+const electron = require("electron")
 const path = require("path")
 const fs = require("fs")
 const hljs = require("highlight.js")
@@ -40,10 +40,10 @@ const markdown = require("markdown-it")({
 
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
-    ipcRenderer.send("finishLoad")
+    electron.ipcRenderer.send("finishLoad")
 })
 
-ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
+electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
     const documentDirectory = path.dirname(filePath)
     
     let content = fs.readFileSync(filePath, "utf8")
@@ -56,9 +56,9 @@ ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
         const target = link.getAttribute("href")
         link.addEventListener("click", event => {
             if (isInternetUrl(target)) {
-                shell.openExternal(target)
+                electron.shell.openExternal(target)
             } else {
-                ipcRenderer.send("openFile", path.join(documentDirectory, target))
+                electron.ipcRenderer.send("openFile", path.join(documentDirectory, target))
             }
             event.preventDefault()
         })

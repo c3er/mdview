@@ -1,5 +1,5 @@
-const { app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog } = require("electron")
-const { spawn } = require('child_process')
+const electron = require("electron")
+const childProcess = require('child_process')
 const path = require("path")
 const url = require("url")
 const fs = require("fs")
@@ -30,7 +30,7 @@ function openFile(filePath) {
 const extractFilePath = args => args.find(arg => !arg.includes("electron") && !arg.startsWith("-") && arg != "." && arg != process.execPath)
 
 function createWindow() {
-    _mainWindow = new BrowserWindow({
+    _mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
         height: WINDOW_HEIGHT
     })
@@ -45,8 +45,8 @@ function createWindow() {
         _mainWindow = null
     })
 
-    Menu.setApplicationMenu(
-        Menu.buildFromTemplate([
+    electron.Menu.setApplicationMenu(
+        electron.Menu.buildFromTemplate([
             {
                 label: "File",
                 submenu: [
@@ -54,7 +54,7 @@ function createWindow() {
                         label: "Open",
                         accelerator: "CmdOrCtrl+O",
                         click: () => {
-                            dialog.showOpenDialog(
+                            electron.dialog.showOpenDialog(
                                 {
                                     properties: ["openFile"],
                                     filters: [{ name: "Markdown", extensions: ["md", "markdown"] }]
@@ -98,17 +98,17 @@ function createWindow() {
     )
 }
 
-app.on("ready", createWindow)
+electron.app.on("ready", createWindow)
 
-app.on("window-all-closed", () => {
+electron.app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
-        app.quit()
+        electron.app.quit()
     }
 })
 
-app.on("activate", () => {
+electron.app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (_mainWindow === null) {
@@ -116,7 +116,7 @@ app.on("activate", () => {
     }
 })
 
-ipcMain.on("finishLoad", () => {
+electron.ipcMain.on("finishLoad", () => {
     const filePath = _currentFilePath === undefined ? extractFilePath(process.argv) : _currentFilePath
     if (filePath !== undefined) {
         openFile(filePath)
@@ -126,7 +126,7 @@ ipcMain.on("finishLoad", () => {
     }
 })
 
-ipcMain.on("openFile", (event, filePath) => {
+electron.ipcMain.on("openFile", (event, filePath) => {
     const processName = process.argv[0]
-    spawn(processName, processName.includes("electron") ? [".", filePath] : [filePath])
+    childProcess.spawn(processName, processName.includes("electron") ? [".", filePath] : [filePath])
 })
