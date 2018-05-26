@@ -8,6 +8,7 @@ const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
 let _mainWindow
+let _currentFilePath
 
 function error(msg) {
     dialog.showErrorBox("Error", `${msg}. Exiting.`)
@@ -20,6 +21,7 @@ function openFile(filePath) {
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path leads to directory")
     } else {
+        _currentFilePath = filePath
         const isMarkdownFile = [".md", ".markdown"].some(ending => filePath.endsWith(ending))
         _mainWindow.webContents.send("fileOpen", filePath, isMarkdownFile)
     }
@@ -73,6 +75,16 @@ function createWindow() {
                 ]
             },
             {
+                label: "View",
+                submenu: [
+                    {
+                        label: "Refresh",
+                        accelerator: "F5",
+                        click: () => _mainWindow.reload()
+                    }
+                ]
+            },
+            {
                 label: "Tools",
                 submenu: [
                     {
@@ -105,7 +117,7 @@ app.on("activate", () => {
 })
 
 ipcMain.on("finishLoad", () => {
-    const filePath = extractFilePath(process.argv)
+    const filePath = _currentFilePath === undefined ? extractFilePath(process.argv) : _currentFilePath
     if (filePath !== undefined) {
         openFile(filePath)
     } else {
