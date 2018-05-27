@@ -15,7 +15,7 @@ function error(msg) {
     process.exit(1)
 }
 
-function openFile(filePath) {
+function openFile(filePath, internalTarget) {
     if (!fs.existsSync(filePath)) {
         error(`Unknown file: "${filePath}"`)
     } else if (!fs.lstatSync(filePath).isFile()) {
@@ -23,11 +23,22 @@ function openFile(filePath) {
     } else {
         _currentFilePath = filePath
         const isMarkdownFile = [".md", ".markdown"].some(ending => filePath.endsWith(ending))
-        _mainWindow.webContents.send("fileOpen", filePath, isMarkdownFile)
+        _mainWindow.webContents.send("fileOpen", filePath, isMarkdownFile, internalTarget)
     }
 }
 
 const extractFilePath = args => args.find(arg => !arg.includes("electron") && !arg.startsWith("-") && arg != "." && arg != process.execPath)
+
+const extractInternalTarget = args => args.find(arg => arg.startsWith("#"))
+
+function createChildWindow(filePath, internalTarget) {
+    const processName = process.argv[0]
+    const args = processName.includes("electron") ? [".", filePath] : [filePath]
+    if (internalTarget !== undefined) {
+        args.push(internalTarget)
+    }
+    childProcess.spawn(processName, args)
+}
 
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({
@@ -117,16 +128,22 @@ electron.app.on("activate", () => {
 })
 
 electron.ipcMain.on("finishLoad", () => {
-    const filePath = _currentFilePath === undefined ? extractFilePath(process.argv) : _currentFilePath
+    const args = process.argv
+    console.log(args)
+
+    const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
+    const internalTarget = extractInternalTarget(args)
     if (filePath !== undefined) {
-        openFile(filePath)
+        openFile(filePath, internalTarget)
     } else {
-        console.log(process.argv)
-        openFile(path.join(__dirname, "README.md"))
+        openFile(path.join(__dirname, "README.md"), internalTarget)
     }
 })
 
 electron.ipcMain.on("openFile", (event, filePath) => {
-    const processName = process.argv[0]
-    childProcess.spawn(processName, processName.includes("electron") ? [".", filePath] : [filePath])
+    createChildWindow(filePath)
+})
+
+electron.ipcMain.on("openInternal", (event, target) => {
+    createChildWindow(_currentFilePath, target)
 })

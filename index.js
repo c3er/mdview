@@ -7,6 +7,8 @@ const TITLE = "Markdown Viewer"
 
 const isInternetUrl = url => url.includes("://") || url.startsWith("mailto:")
 
+const isInternalLink = url => url.startsWith("#")
+
 function alterTags(tagName, handler) {
     const tagElements = document.getElementsByTagName(tagName)
     for (let i = 0; i < tagElements.length; i++) {
@@ -37,15 +39,24 @@ const markdown = require("markdown-it")({
     xhtmlOut: true,
     html: true
 })
+markdown.use(require("markdown-it-headinganchor"), {
+    slugify: text => {
+        return text
+            .replace(/(\[.*\]|<.*>|\(.*\))/g, "")
+            .trim()
+            .replace(/\s/g, "-")
+            .toLowerCase()
+    }
+})
 
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     electron.ipcRenderer.send("finishLoad")
 })
 
-electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
+electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTarget) => {
     const documentDirectory = path.dirname(filePath)
-    
+
     let content = fs.readFileSync(filePath, "utf8")
     if (!isMarkdownFile) {
         content = "```\n" + content + "\n```"
@@ -57,6 +68,8 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
         link.addEventListener("click", event => {
             if (isInternetUrl(target)) {
                 electron.shell.openExternal(target)
+            } else if (isInternalLink(target)) {
+                electron.ipcRenderer.send("openInternal", target)
             } else {
                 electron.ipcRenderer.send("openFile", path.join(documentDirectory, target))
             }
@@ -72,5 +85,11 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile) => {
         setStatusBar(image, `${image.getAttribute("alt")} (${imageUrl})`)
     })
 
-    document.title = `${filePath} - ${TITLE}`
+    let titlePrefix = filePath
+    if (internalTarget) {
+        window.scrollTo(0, document.getElementById(internalTarget.substring(1)).getBoundingClientRect().top)
+        titlePrefix += internalTarget
+    }
+
+    document.title = `${titlePrefix} - ${TITLE}`
 })

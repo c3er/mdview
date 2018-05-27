@@ -1,5 +1,21 @@
 # Test file
 
+## Links
+
+[External link to Google](http://www.google.com)
+
+[Link to README.md](README.md)
+
+[Internal link](#sub-heading-1)
+
+## Heading 1
+
+### Sub heading 1
+
+## Heading 2
+
+### Sub heading 1
+
 ## Paragraphs
 
 This is a paragraph.
@@ -93,9 +109,3 @@ class Program
         <td>2.2</td>
     </tr>
 </table>
-
-## Links
-
-[External link to Google](http://www.google.com)
-
-[Link to README.md](README.md)

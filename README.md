@@ -53,8 +53,6 @@ You can use and copy this tool under the conditions of the MIT license.
 
 ### Features / Bugs
 
-Links that target inside of documents (starting with `#`) are misinterpreted. The tool shall open a new window where the document is scrolled to the link target.
-
 External resources that are loaded from the Internet shall be blocked
 
 A context menu:
