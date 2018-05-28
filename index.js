@@ -42,7 +42,7 @@ const markdown = require("markdown-it")({
 markdown.use(require("markdown-it-headinganchor"), {
     slugify: text => {
         return text
-            .replace(/(\[.*\]|<.*>|\(.*\))/g, "")
+            .replace(/(\[.*\]|<.*>|\(.*\)|\.|`)/g, "")
             .trim()
             .replace(/\s/g, "-")
             .toLowerCase()
