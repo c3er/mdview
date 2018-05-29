@@ -8,6 +8,8 @@
 
 [Internal link](#sub-heading-1)
 
+[Broken internal link](#broken-link)
+
 ## Heading 1
 
 ### Sub heading 1

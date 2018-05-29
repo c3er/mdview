@@ -87,8 +87,13 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
 
     let titlePrefix = filePath
     if (internalTarget) {
-        window.scrollTo(0, document.getElementById(internalTarget.substring(1)).getBoundingClientRect().top)
-        titlePrefix += internalTarget
+        const targetElement = document.getElementById(internalTarget.substring(1))
+        if (targetElement) {
+            window.scrollTo(0, targetElement.getBoundingClientRect().top)
+            titlePrefix += internalTarget
+        } else {
+            titlePrefix += ` ("${internalTarget}" not found)`
+        }
     }
 
     document.title = `${titlePrefix} - ${TITLE}`
