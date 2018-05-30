@@ -63,12 +63,35 @@ This is another paragraph.
 | Row 2, column 1 | Row 2, column 2 | Row 2, column 3 |
 | Row 3, column 1 | Row 3, column 2 | Row 3, column 3 |
 
+## External image
+
+![Image from the evil Internet](http://placekitten.com/1000/2000)
+
+## Some JavaScript
+
+Her should be could executed.
+
+<script>
+    console.log("Dangerous JavaScript")
+</script>
+
 ## Code
 
 ### Generic
 
 ```
 This should be code
+
+<html>
+    <body>
+        <h1>HTML without highlighting</h1>
+        <script>
+            console.log("Even with a JavaScript")
+        </script>
+        <h1>External image</h1>
+        <img src="http://placekitten.com/1000/2000" />
+    </body>
+</html>
 ```
 
 ### Python
@@ -93,6 +116,22 @@ class Program
         Console.WriteLine("Hello, world!");
     }
 }
+```
+
+### HTML
+
+```html
+<html>
+    <head>
+        <title>This is a test</title>
+    </head>
+    <body>
+        <h1>A test</h1>
+        <script>
+            console.log("Some test")
+        </script>
+    </body>
+</html>
 ```
 
 ## Special characters
