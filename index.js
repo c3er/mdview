@@ -10,7 +10,7 @@ const isInternetUrl = url => url.includes("://") || url.startsWith("mailto:")
 const isInternalLink = url => url.startsWith("#")
 
 function alterTags(tagName, handler) {
-    const tagElements = document.getElementsByTagName(tagName)
+    const tagElements = [...document.getElementsByTagName(tagName)]
     for (let i = 0; i < tagElements.length; i++) {
         handler(tagElements[i])
     }
