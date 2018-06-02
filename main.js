@@ -1,5 +1,5 @@
 const electron = require("electron")
-const childProcess = require('child_process')
+const childProcess = require("child_process")
 const path = require("path")
 const url = require("url")
 const fs = require("fs")
@@ -27,7 +27,12 @@ function openFile(filePath, internalTarget) {
     }
 }
 
-const extractFilePath = args => args.find(arg => !arg.includes("electron") && !arg.startsWith("-") && arg != "." && arg != process.execPath)
+const extractFilePath = args => args.find(
+    arg =>
+        !arg.includes("electron") &&
+        !arg.startsWith("-") &&
+        arg != "." &&
+        arg != process.execPath)
 
 const extractInternalTarget = args => args.find(arg => arg.startsWith("#"))
 
