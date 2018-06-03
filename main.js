@@ -4,6 +4,8 @@ const path = require("path")
 const url = require("url")
 const fs = require("fs")
 
+const common = require("./lib/common")
+
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
@@ -114,7 +116,15 @@ function createWindow() {
     )
 }
 
-electron.app.on("ready", createWindow)
+electron.app.on("ready", () => {
+    createWindow()
+    electron.session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
+        console.log(details)
+        callback({
+            cancel: common.isWebURL(details.url)
+        })
+    })
+})
 
 electron.app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar

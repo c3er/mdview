@@ -3,9 +3,9 @@ const path = require("path")
 const fs = require("fs")
 const hljs = require("highlight.js")
 
-const TITLE = "Markdown Viewer"
+const common = require("./lib/common")
 
-const isInternetUrl = url => url.includes("://") || url.startsWith("mailto:")
+const TITLE = "Markdown Viewer"
 
 const isInternalLink = url => url.startsWith("#")
 
@@ -66,7 +66,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
     alterTags("a", link => {
         const target = link.getAttribute("href")
         link.addEventListener("click", event => {
-            if (isInternetUrl(target)) {
+            if (common.isWebURL(target) || url.startsWith("mailto:")) {
                 electron.shell.openExternal(target)
             } else if (isInternalLink(target)) {
                 electron.ipcRenderer.send("openInternal", target)
@@ -79,7 +79,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
-        if (!isInternetUrl(imageUrl)) {
+        if (!common.isWebURL(imageUrl)) {
             image.src = path.join(documentDirectory, imageUrl)
         }
         setStatusBar(image, `${image.getAttribute("alt")} (${imageUrl})`)
