@@ -116,13 +116,18 @@ function createWindow() {
     )
 }
 
+const _unblockedURLs = []
+
 electron.app.on("ready", () => {
     createWindow()
     electron.session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
         console.log(details)
-        callback({
-            cancel: common.isWebURL(details.url)
-        })
+        const url = details.url
+        const isBlocked = common.isWebURL(url) && !_unblockedURLs.includes(url)
+        callback({ cancel: isBlocked })
+        if (isBlocked) {
+            _mainWindow.webContents.send("contentBlocked", url)
+        }
     })
 })
 
@@ -155,10 +160,10 @@ electron.ipcMain.on("finishLoad", () => {
     }
 })
 
-electron.ipcMain.on("openFile", (event, filePath) => {
-    createChildWindow(filePath)
-})
+electron.ipcMain.on("openFile", (event, filePath) => createChildWindow(filePath))
 
-electron.ipcMain.on("openInternal", (event, target) => {
-    createChildWindow(_currentFilePath, target)
+electron.ipcMain.on("openInternal", (event, target) => createChildWindow(_currentFilePath, target))
+
+electron.ipcMain.on("unblockURL", (event, url) => {
+    _unblockedURLs.push(url)
 })

@@ -7,6 +7,8 @@ const common = require("./lib/common")
 
 const TITLE = "Markdown Viewer"
 
+const _blockedElements = {}
+
 const isInternalLink = url => url.startsWith("#")
 
 function alterTags(tagName, handler) {
@@ -18,8 +20,43 @@ function alterTags(tagName, handler) {
 
 function setStatusBar(element, text) {
     const statusTextElement = document.getElementById("status-text")
-    element.addEventListener("mouseover", () => statusTextElement.innerHTML = text)
-    element.addEventListener("mouseout", () => statusTextElement.innerHTML = "")
+    const parentElement = element.parentNode
+    parentElement.onmouseover = event => {
+        if (event.target.tagName === element.tagName) {
+            statusTextElement.innerHTML = text
+        }
+    }
+    parentElement.onmouseout = event => {
+        if (event.target.tagName === element.tagName) {
+            statusTextElement.innerHTML = ""
+        }
+    }
+}
+
+function searchElementsWithAttributeValue(value) {
+    // Based on https://stackoverflow.com/a/30840550
+    const elements = document.getElementsByTagName("*")
+    const foundElements = []
+    for (let elementIndex = 0; elementIndex < elements.length; elementIndex++) {
+        const element = elements[elementIndex]
+        const attributes = element.attributes
+        for (let attrIndex = 0; attrIndex < attributes.length; attrIndex++) {
+            if (attributes[attrIndex].nodeValue === value) {
+                foundElements.push(element)
+                break
+            }
+        }
+    }
+    return foundElements
+}
+
+function unblockURL(url) {
+    electron.ipcRenderer.send("unblockURL", url)
+    const elements = _blockedElements[url]
+    if (elements) {
+        elements.forEach(element => element.outerHTML = element.outerHTML)
+        delete _blockedElements[url]
+    }
 }
 
 const markdown = require("markdown-it")({
@@ -65,7 +102,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
 
     alterTags("a", link => {
         const target = link.getAttribute("href")
-        link.addEventListener("click", event => {
+        link.onclick = event => {
             if (common.isWebURL(target) || url.startsWith("mailto:")) {
                 electron.shell.openExternal(target)
             } else if (isInternalLink(target)) {
@@ -74,7 +111,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
                 electron.ipcRenderer.send("openFile", path.join(documentDirectory, target))
             }
             event.preventDefault()
-        })
+        }
         setStatusBar(link, target)
     })
     alterTags("img", image => {
@@ -97,4 +134,11 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
     }
 
     document.title = `${titlePrefix} - ${TITLE}`
+})
+
+electron.ipcRenderer.on("contentBlocked", (event, url) => {
+    const elements = _blockedElements[url] = searchElementsWithAttributeValue(url)
+    elements.forEach(element => {
+        element.onclick = () => unblockURL(url)
+    })
 })
