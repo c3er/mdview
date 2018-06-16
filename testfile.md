@@ -69,7 +69,7 @@ This is another paragraph.
 
 ## Some JavaScript
 
-Her should be could executed.
+Here should be code executed.
 
 <script>
     console.log("Dangerous JavaScript")
