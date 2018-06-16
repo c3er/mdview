@@ -59,6 +59,12 @@ function unblockURL(url) {
     }
 }
 
+function changeBlockedContentInfoVisibility(isVisible) {
+    const infoElement = document.getElementById("blocked-content-info")
+    infoElement.hidden = !isVisible
+    document.body.style.marginTop = isVisible ? window.getComputedStyle(infoElement).height : 0
+}
+
 const markdown = require("markdown-it")({
     highlight: (text, language) => {
         // Originated from VS Code
@@ -138,7 +144,15 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
 
 electron.ipcRenderer.on("contentBlocked", (event, url) => {
     const elements = _blockedElements[url] = searchElementsWithAttributeValue(url)
-    elements.forEach(element => {
-        element.onclick = () => unblockURL(url)
-    })
+    elements.forEach(element => element.onclick = () => unblockURL(url))
+
+    changeBlockedContentInfoVisibility(true)
+    document.getElementById("blocked-content-info-text-container").onclick = () => {
+        for (let url in _blockedElements) {
+            unblockURL(url)
+        }
+        changeBlockedContentInfoVisibility(false)
+    }
+    document.getElementById("blocked-content-info-close-button").onclick = () =>
+        changeBlockedContentInfoVisibility(false)
 })
