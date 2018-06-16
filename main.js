@@ -11,6 +11,7 @@ const WINDOW_HEIGHT = 768
 
 let _mainWindow
 let _currentFilePath
+const _unblockedURLs = []
 
 function error(msg) {
     dialog.showErrorBox("Error", `${msg}. Exiting.`)
@@ -45,6 +46,11 @@ function createChildWindow(filePath, internalTarget) {
         args.push(internalTarget)
     }
     childProcess.spawn(processName, args)
+}
+
+function unblockURL(url) {
+    console.log(`Unblocked: ${url}`)
+    _unblockedURLs.push(url)
 }
 
 function createWindow() {
@@ -116,18 +122,23 @@ function createWindow() {
     )
 }
 
-const _unblockedURLs = []
-
 electron.app.on("ready", () => {
     createWindow()
-    electron.session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
-        console.log(details)
+
+    const webRequest = electron.session.defaultSession.webRequest
+    webRequest.onBeforeRequest((details, callback) => {
         const url = details.url
         const isBlocked = common.isWebURL(url) && !_unblockedURLs.includes(url)
+        console.log(`${isBlocked ? "Blocked" : "Loading"}: ${url}`)
         callback({ cancel: isBlocked })
         if (isBlocked) {
             _mainWindow.webContents.send("contentBlocked", url)
         }
+    })
+    webRequest.onBeforeRedirect(details => {
+        const url = details.redirectURL
+        console.log("Redirecting: " + url)
+        unblockURL(url)
     })
 })
 
@@ -164,6 +175,4 @@ electron.ipcMain.on("openFile", (event, filePath) => createChildWindow(filePath)
 
 electron.ipcMain.on("openInternal", (event, target) => createChildWindow(_currentFilePath, target))
 
-electron.ipcMain.on("unblockURL", (event, url) => {
-    _unblockedURLs.push(url)
-})
+electron.ipcMain.on("unblockURL", (event, url) => unblockURL(url))
