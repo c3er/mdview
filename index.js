@@ -3,6 +3,32 @@ const path = require("path")
 const fs = require("fs")
 const hljs = require("highlight.js")
 
+const markdown = require("markdown-it")({
+    highlight: (text, language) => {
+        // Originated from VS Code
+        // File extensions/markdown-language-features/src/markdownEngine.ts
+        // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
+        if (language && hljs.getLanguage(language)) {
+            try {
+                return `<pre class="hljs"><code><div>${hljs.highlight(language, text, true).value}</div></code></pre>`
+            } catch (err) {
+                console.log(`Error at highlighting: ${err}`)
+            }
+        }
+        return `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(text)}</div></code></pre>`
+    },
+    xhtmlOut: true,
+    html: true
+})
+markdown.use(require("markdown-it-headinganchor"), {
+    slugify: text =>
+        text
+            .replace(/(\[.*\]|<.*>|\(.*\)|\.|`)/g, "")
+            .trim()
+            .replace(/\s/g, "-")
+            .toLowerCase()
+})
+
 const common = require("./lib/common")
 
 const TITLE = "Markdown Viewer"
@@ -64,33 +90,6 @@ function changeBlockedContentInfoVisibility(isVisible) {
     infoElement.hidden = !isVisible
     document.body.style.marginTop = isVisible ? window.getComputedStyle(infoElement).height : 0
 }
-
-const markdown = require("markdown-it")({
-    highlight: (text, language) => {
-        // Originated from VS Code
-        // File extensions/markdown-language-features/src/markdownEngine.ts
-        // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
-        if (language && hljs.getLanguage(language)) {
-            try {
-                return `<pre class="hljs"><code><div>${hljs.highlight(language, text, true).value}</div></code></pre>`
-            } catch (err) {
-                console.log(`Error at highlighting: ${err}`)
-            }
-        }
-        return `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(text)}</div></code></pre>`
-    },
-    xhtmlOut: true,
-    html: true
-})
-markdown.use(require("markdown-it-headinganchor"), {
-    slugify: text => {
-        return text
-            .replace(/(\[.*\]|<.*>|\(.*\)|\.|`)/g, "")
-            .trim()
-            .replace(/\s/g, "-")
-            .toLowerCase()
-    }
-})
 
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
