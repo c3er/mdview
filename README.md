@@ -53,8 +53,6 @@ You can use and copy this tool under the conditions of the MIT license.
 
 ### Features / Bugs
 
-External resources that are loaded from the Internet shall be blocked
-
 A context menu:
 
 - Copy currently selected text
