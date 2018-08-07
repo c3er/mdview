@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTarget) => {
     const documentDirectory = path.dirname(filePath)
 
-    let content = fs.readFileSync(filePath, "utf8")
+    let content = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, '')
     if (!isMarkdownFile) {
         content = "```\n" + content + "\n```"
     }
