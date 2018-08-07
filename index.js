@@ -78,10 +78,15 @@ function searchElementsWithAttributeValue(value) {
 
 function unblockURL(url) {
     electron.ipcRenderer.send("unblockURL", url)
+
     const elements = _blockedElements[url]
     if (elements) {
         elements.forEach(element => element.outerHTML = element.outerHTML)
         delete _blockedElements[url]
+    }
+
+    if (common.isEmptyObject(_blockedElements)) {
+        changeBlockedContentInfoVisibility(false)
     }
 }
 
