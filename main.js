@@ -105,6 +105,12 @@ function createWindow() {
                 ]
             },
             {
+                label: "Edit",
+                submenu: [
+                    { role: "copy" }
+                ]
+            },
+            {
                 label: "View",
                 submenu: [
                     {
