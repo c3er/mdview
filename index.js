@@ -113,14 +113,14 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
     alterTags("a", link => {
         const target = link.getAttribute("href")
         link.onclick = event => {
-            if (common.isWebURL(target) || url.startsWith("mailto:")) {
+            event.preventDefault()
+            if (common.isWebURL(target) || target.startsWith("mailto:")) {
                 electron.shell.openExternal(target)
             } else if (isInternalLink(target)) {
                 electron.ipcRenderer.send("openInternal", target)
             } else {
                 electron.ipcRenderer.send("openFile", path.join(documentDirectory, target))
             }
-            event.preventDefault()
         }
         setStatusBar(link, target)
     })
