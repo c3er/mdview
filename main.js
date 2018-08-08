@@ -81,7 +81,7 @@ function createWindow() {
                     {
                         label: "Open",
                         accelerator: "CmdOrCtrl+O",
-                        click: () => {
+                        click() {
                             electron.dialog.showOpenDialog(
                                 {
                                     properties: ["openFile"],
@@ -98,7 +98,9 @@ function createWindow() {
                     {
                         label: "Quit",
                         accelerator: process.platform === "darwin" ? "Cmd+Q" : "Alt+F4",
-                        click: () => _mainWindow.close()
+                        click() {
+                            _mainWindow.close()
+                        }
                     }
                 ]
             },
@@ -108,7 +110,9 @@ function createWindow() {
                     {
                         label: "Refresh",
                         accelerator: "F5",
-                        click: () => _mainWindow.reload()
+                        click() {
+                            _mainWindow.reload()
+                        }
                     }
                 ]
             },
@@ -118,7 +122,9 @@ function createWindow() {
                     {
                         label: "Developer tools",
                         accelerator: "F10",
-                        click: () => _mainWindow.webContents.openDevTools()
+                        click() {
+                            _mainWindow.webContents.openDevTools()
+                        }
                     }
                 ]
             }
