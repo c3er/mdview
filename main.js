@@ -9,6 +9,8 @@ const common = require("./lib/common")
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
+const FILE_EXTENSIONS = ["md", "markdown"]
+
 let _mainWindow
 let _currentFilePath
 const _unblockedURLs = []
@@ -25,7 +27,9 @@ function openFile(filePath, internalTarget) {
         error("Given path leads to directory")
     } else {
         _currentFilePath = filePath
-        const isMarkdownFile = [".md", ".markdown"].some(ending => filePath.endsWith(ending))
+        const isMarkdownFile = FILE_EXTENSIONS
+            .map(ext => "." + ext)
+            .some(ext => filePath.endsWith(ext))
         _mainWindow.webContents.send("fileOpen", filePath, isMarkdownFile, internalTarget)
     }
 }
@@ -81,7 +85,7 @@ function createWindow() {
                             electron.dialog.showOpenDialog(
                                 {
                                     properties: ["openFile"],
-                                    filters: [{ name: "Markdown", extensions: ["md", "markdown"] }]
+                                    filters: [{ name: "Markdown", extensions: FILE_EXTENSIONS }]
                                 },
                                 filePaths => {
                                     if (filePaths) {

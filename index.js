@@ -155,7 +155,6 @@ electron.ipcRenderer.on("contentBlocked", (event, url) => {
         for (let url in _blockedElements) {
             unblockURL(url)
         }
-        changeBlockedContentInfoVisibility(false)
     }
     document.getElementById("blocked-content-info-close-button").onclick = () =>
         changeBlockedContentInfoVisibility(false)
