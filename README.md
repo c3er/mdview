@@ -48,13 +48,3 @@ The renderer process (`index.html` and `index.json`) must be debugged with help 
 This tool is made by Christian Dreier. If you find a copy somewhere, you find the original at [GitHub](https://github.com/c3er/mdview).
 
 You can use and copy this tool under the conditions of the MIT license.
-
-## Todo
-
-### Features / Bugs
-
-A context menu:
-
-- Copy currently selected text
-- Copy link text
-- Copy link target

@@ -142,8 +142,37 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
             titlePrefix += ` ("${internalTarget}" not found)`
         }
     }
-
     document.title = `${titlePrefix} - ${TITLE}`
+
+    window.addEventListener("contextmenu", event => {
+        const MenuItem = electron.remote.MenuItem
+        const menu = new electron.remote.Menu()
+
+        if (window.getSelection().toString()) {
+            menu.append(new MenuItem({
+                label: "Copy selection",
+                role: "copy"
+            }))
+        }
+        if (event.target.nodeName == "A") {
+            menu.append(new MenuItem({
+                label: "Copy link text",
+                click() {
+                    electron.clipboard.writeText(event.target.innerText)
+                }
+            }))
+            menu.append(new MenuItem({
+                label: "Copy link target",
+                click() {
+                    electron.clipboard.writeText(event.target.getAttribute("href"))
+                }
+            }))
+        }
+
+        if (menu.items.length > 0) {
+            menu.popup({ window: electron.remote.getCurrentWindow() })
+        }
+    })
 })
 
 electron.ipcRenderer.on("contentBlocked", (event, url) => {
