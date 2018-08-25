@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTarget) => {
-    const documentDirectory = path.dirname(filePath)
+    changeBlockedContentInfoVisibility(false)
 
     let content = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, '')
     if (!isMarkdownFile) {
@@ -110,6 +110,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
     }
     document.getElementById("content").innerHTML = markdown.render(content)
 
+    const documentDirectory = path.dirname(filePath)
     alterTags("a", link => {
         const target = link.getAttribute("href")
         link.onclick = event => {
