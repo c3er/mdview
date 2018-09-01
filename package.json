@@ -8,6 +8,10 @@
     "viewer",
     "standalone"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/c3er/mdview.git"
+  },
   "author": "Christian Dreier",
   "license": "MIT",
   "main": "main.js",
