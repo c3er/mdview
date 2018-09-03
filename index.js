@@ -192,7 +192,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
             titlePrefix += ` ("${internalTarget}" not found)`
         }
     }
-    document.title = `${titlePrefix} - ${TITLE}`
+    document.title = `${titlePrefix} - ${TITLE} ${electron.remote.app.getVersion()}`
 
     window.addEventListener("contextmenu", event => {
         const MenuItem = electron.remote.MenuItem
