@@ -67,9 +67,11 @@ This is another paragraph.
 
 ![Image from the evil Internet](http://placekitten.com/1000/2000)
 
+<img src="http://placekitten.com/1000/2000">
+
 ## Some JavaScript
 
-Here should be code executed.
+Here could be code executed.
 
 <script>
     console.log("Dangerous JavaScript")
@@ -150,3 +152,13 @@ class Program
         <td>2.2</td>
     </tr>
 </table>
+
+## Some links to text files
+
+[index.html](index.html)
+
+[index.js](index.js)
+
+[README.md](README.md)
+
+[LICENSE](LICENSE)

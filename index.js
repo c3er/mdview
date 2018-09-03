@@ -37,6 +37,50 @@ const _blockedElements = {}
 
 const isInternalLink = url => url.startsWith("#")
 
+const isMarkdownFile = filePath =>
+    common.FILE_EXTENSIONS
+        .map(ext => "." + ext)
+        .some(ext => filePath.endsWith(ext))
+
+function readBytesSync(filePath, filePosition, numBytesToRead) {
+    // Based on https://stackoverflow.com/a/51033457
+    const buffer = Buffer.alloc(numBytesToRead, 0)
+    let fd
+    let bytesRead = 0
+    try {
+        fd = fs.openSync(filePath, "r")
+        bytesRead = fs.readSync(fd, buffer, 0, numBytesToRead, filePosition)
+    } finally {
+        if (fd) {
+            fs.closeSync(fd)
+        }
+    }
+    return {
+        bytesRead: bytesRead,
+        buffer: buffer
+    }
+}
+
+function isTextFile(filePath) {
+    const BYTECOUNT = 50000
+    let data
+    try {
+        data = readBytesSync(filePath, 0, BYTECOUNT)
+    } catch (err) {
+        console.log(err.message)
+        return false
+    }
+
+    // It is not expected that an ASCII file contains control characters.
+    // Space character is the first printable ASCII character.
+    // Line breaks (LF = 10, CR = 13) and tabs (TAB = 9) are common in text files.
+    return !data.buffer
+        .slice(0, data.bytesRead - 1)
+        .some(byte =>
+            byte < 32 &&
+            ![10, 13, 9].includes(byte))
+}
+
 function alterTags(tagName, handler) {
     const tagElements = [...document.getElementsByTagName(tagName)]
     for (let i = 0; i < tagElements.length; i++) {
@@ -101,11 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
     electron.ipcRenderer.send("finishLoad")
 })
 
-electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTarget) => {
+electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
     changeBlockedContentInfoVisibility(false)
 
     let content = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, '')
-    if (!isMarkdownFile) {
+    if (!isMarkdownFile(filePath)) {
         content = "```\n" + content + "\n```"
     }
     document.getElementById("content").innerHTML = markdown.render(content)
@@ -113,14 +157,17 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, isMarkdownFile, internalTa
     const documentDirectory = path.dirname(filePath)
     alterTags("a", link => {
         const target = link.getAttribute("href")
+        const fullPath = path.join(documentDirectory, target)
         link.onclick = event => {
             event.preventDefault()
             if (common.isWebURL(target) || target.startsWith("mailto:")) {
                 electron.shell.openExternal(target)
             } else if (isInternalLink(target)) {
                 electron.ipcRenderer.send("openInternal", target)
+            } else if (!isMarkdownFile(fullPath) && !isTextFile(fullPath)) {
+                electron.shell.openItem(fullPath)
             } else {
-                electron.ipcRenderer.send("openFile", path.join(documentDirectory, target))
+                electron.ipcRenderer.send("openFile", fullPath)
             }
         }
         setStatusBar(link, target)

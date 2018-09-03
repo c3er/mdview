@@ -27,10 +27,7 @@ function openFile(filePath, internalTarget) {
         error("Given path leads to directory")
     } else {
         _currentFilePath = filePath
-        const isMarkdownFile = FILE_EXTENSIONS
-            .map(ext => "." + ext)
-            .some(ext => filePath.endsWith(ext))
-        _mainWindow.webContents.send("fileOpen", filePath, isMarkdownFile, internalTarget)
+        _mainWindow.webContents.send("fileOpen", filePath, internalTarget)
     }
 }
 
@@ -85,7 +82,7 @@ function createWindow() {
                             electron.dialog.showOpenDialog(
                                 {
                                     properties: ["openFile"],
-                                    filters: [{ name: "Markdown", extensions: FILE_EXTENSIONS }]
+                                    filters: [{ name: "Markdown", extensions: common.FILE_EXTENSIONS }]
                                 },
                                 filePaths => {
                                     if (filePaths) {
