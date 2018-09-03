@@ -150,7 +150,9 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
 
     let content = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, '')
     if (!isMarkdownFile(filePath)) {
-        content = "```\n" + content + "\n```"
+        const pathParts = filePath.split(".")
+        const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
+        content = "```" + language + "\n" + content + "\n```"
     }
     document.getElementById("content").innerHTML = markdown.render(content)
 
