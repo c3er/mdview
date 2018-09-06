@@ -57,7 +57,8 @@ function unblockURL(url) {
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
-        height: WINDOW_HEIGHT
+        height: WINDOW_HEIGHT,
+        backgroundColor: "#fff"
     })
     _mainWindow.loadURL(
         url.format({
