@@ -9,8 +9,6 @@ const common = require("./lib/common")
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
-const FILE_EXTENSIONS = ["md", "markdown"]
-
 let _mainWindow
 let _currentFilePath
 const _unblockedURLs = []

@@ -74,19 +74,15 @@ function isTextFile(filePath) {
     // It is not expected that an ASCII file contains control characters.
     // Space character is the first printable ASCII character.
     // Line breaks (LF = 10, CR = 13) and tabs (TAB = 9) are common in text files.
-    return !data.buffer
+    return data.buffer
         .slice(0, data.bytesRead - 1)
-        .some(byte =>
-            byte < 32 &&
-            ![10, 13, 9].includes(byte))
+        .every(byte =>
+            byte >= 32 ||
+            [10, 13, 9].includes(byte))
 }
 
-function alterTags(tagName, handler) {
-    const tagElements = [...document.getElementsByTagName(tagName)]
-    for (let i = 0; i < tagElements.length; i++) {
-        handler(tagElements[i])
-    }
-}
+const alterTags = (tagName, handler) =>
+    [...document.getElementsByTagName(tagName)].forEach(element => handler(element))
 
 function setStatusBar(element, text) {
     const statusTextElement = document.getElementById("status-text")
