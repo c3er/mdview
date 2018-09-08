@@ -121,7 +121,10 @@ function unblockURL(url) {
 
     const elements = _blockedElements[url]
     if (elements) {
-        elements.forEach(element => element.outerHTML = element.outerHTML)
+        elements.forEach(element => {
+            element.removeAttribute("style")
+            element.outerHTML = element.outerHTML
+        })
         delete _blockedElements[url]
     }
 
@@ -176,6 +179,8 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
             image.src = path.join(documentDirectory, imageUrl)
         }
         setStatusBar(image, `${image.getAttribute("alt")} (${imageUrl})`)
+
+        image.onerror = () => image.style.backgroundColor = "#ffe6cc"
     })
 
     let titlePrefix = filePath
