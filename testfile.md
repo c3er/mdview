@@ -67,8 +67,6 @@ This is another paragraph.
 
 ![Image from the evil Internet](http://placekitten.com/1000/2000)
 
-<img src="http://placekitten.com/1000/2000">
-
 ## Some JavaScript
 
 Here could be code executed.
