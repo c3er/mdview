@@ -86,17 +86,8 @@ const alterTags = (tagName, handler) =>
 
 function setStatusBar(element, text) {
     const statusTextElement = document.getElementById("status-text")
-    const parentElement = element.parentNode
-    parentElement.onmouseover = event => {
-        if (event.target.tagName === element.tagName) {
-            statusTextElement.innerHTML = text
-        }
-    }
-    parentElement.onmouseout = event => {
-        if (event.target.tagName === element.tagName) {
-            statusTextElement.innerHTML = ""
-        }
-    }
+    element.onmouseover = () => statusTextElement.innerHTML = text
+    element.onmouseout = () => statusTextElement.innerHTML = ""
 }
 
 function searchElementsWithAttributeValue(value) {
@@ -123,7 +114,17 @@ function unblockURL(url) {
     if (elements) {
         elements.forEach(element => {
             element.removeAttribute("style")
-            element.outerHTML = element.outerHTML
+
+            // Force element to reload without recreating the DOM element.
+            // The attached event handlers would be lost while recreating the DOM element.
+            const attributes = element.attributes
+            for (let i = 0; i < attributes.length; i++) {
+                const attr = attributes[i]
+                const value = attr.nodeValue
+                if (value === url) {
+                    element.setAttribute(attr.nodeName, value)
+                }
+            }
         })
         delete _blockedElements[url]
     }
