@@ -32,8 +32,7 @@
     },
     "linux": {
       "target": [
-        "AppImage",
-        "deb"
+        "AppImage"
       ]
     },
     "mac": {
@@ -48,14 +47,18 @@
       ],
       "icon": "icon/md.ico"
     },
-    "fileAssociations": {
-      "ext": [
-        ".md",
-        ".markdown"
-      ],
-      "name": "Markdown file",
-      "icon": "icon/md.ico"
-    }
+    "fileAssociations": [
+      {
+        "name": "Markdown file",
+        "ext": ".md",
+        "icon": "icon/md.ico"
+      },
+      {
+        "name": "Markdown file",
+        "ext": ".markdown",
+        "icon": "icon/md.ico"
+      }
+    ]
   },
   "dependencies": {
     "github-markdown-css": "~2.10.0",
