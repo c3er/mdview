@@ -41,7 +41,7 @@ It is possible to debug the main process with [Visual Studio Code](https://code.
 
 This `launch.json` is taken from the [Electron documentation](https://electronjs.org/docs/tutorial/debugging-main-process-vscode).
 
-The renderer process (`index.html` and `index.json`) must be debugged with help of the Electron development tools. 
+The renderer process (`index.html` and `index.json`) must be debugged with help of the Electron development tools.
 
 ## Copyright and License
 

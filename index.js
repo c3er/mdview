@@ -206,7 +206,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
                 role: "copy"
             }))
         }
-        if (event.target.nodeName == "A") {
+        if (event.target.nodeName === "A") {
             menu.append(new MenuItem({
                 label: "Copy link text",
                 click() {
