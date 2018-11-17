@@ -48,3 +48,9 @@ The renderer process (`index.html` and `index.json`) must be debugged with help 
 This tool is made by Christian Dreier. If you find a copy somewhere, you find the original at [GitHub](https://github.com/c3er/mdview).
 
 You can use and copy this tool under the conditions of the MIT license.
+
+## Todo
+
+- View for the raw text
+- Recognize the character encoding to display special characters correctly, even if the document is not encoded with UTF-8
+- Print feature
