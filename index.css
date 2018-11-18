@@ -1,0 +1,73 @@
+.markdown-body ol ol,
+.markdown-body ul ol {
+    list-style-type: decimal;
+}
+
+.markdown-body ul ul ol,
+.markdown-body ul ol ol,
+.markdown-body ol ul ol,
+.markdown-body ol ol ol {
+    list-style-type: decimal;
+}
+
+#raw-text {
+    display: none;
+}
+
+#status-bar {
+    background-color: #ddd;
+    bottom: 0;
+    color: black;
+    height: 25px;
+    left: 0;
+    position: fixed;
+    right: 0;
+}
+
+#status-text {
+    font-family: Sans-serif;
+    font-size: 10pt;
+    line-height: 0;
+    padding-left: 10px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#blocked-content-info {
+    background-color: #ffffe1;
+    border-bottom-style: solid;
+    border-color: #ddd;
+    border-width: 1px;
+    color: black;
+    cursor: pointer;
+    height: 30px;
+    left: 0;
+    line-height: 30px;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    text-align: left center;
+    top: 0;
+}
+
+.blocked-content-info-text {
+    font-family: Sans-serif;
+    font-size: 10pt;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#blocked-content-info-text-container {
+    display: table-cell;
+    width: 100%;
+}
+
+#blocked-content-info-close-button {
+    display: table-cell;
+}
+
+body {
+    margin-bottom: 25px;
+}
