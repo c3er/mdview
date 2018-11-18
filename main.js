@@ -194,11 +194,11 @@ electron.ipcMain.on("finishLoad", () => {
     }
 })
 
-electron.ipcMain.on("openFile", (event, filePath) => createChildWindow(filePath))
+electron.ipcMain.on("openFile", (_, filePath) => createChildWindow(filePath))
 
-electron.ipcMain.on("openInternal", (event, target) => createChildWindow(_currentFilePath, target))
+electron.ipcMain.on("openInternal", (_, target) => createChildWindow(_currentFilePath, target))
 
-electron.ipcMain.on("unblockURL", (event, url) => unblockURL(url))
+electron.ipcMain.on("unblockURL", (_, url) => unblockURL(url))
 
 electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
 

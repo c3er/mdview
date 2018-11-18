@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     electron.ipcRenderer.send("finishLoad")
 })
 
-electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
+electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
     changeBlockedContentInfoVisibility(false)
 
     let content = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, '')
@@ -240,7 +240,7 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
     })
 })
 
-electron.ipcRenderer.on("contentBlocked", (event, url) => {
+electron.ipcRenderer.on("contentBlocked", (_, url) => {
     const elements = _blockedElements[url] = searchElementsWithAttributeValue(url)
     elements.forEach(element => element.onclick = () => unblockURL(url))
 
