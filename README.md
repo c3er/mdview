@@ -51,6 +51,5 @@ You can use and copy this tool under the conditions of the MIT license.
 
 ## Todo
 
-- View for the raw text
 - Recognize the character encoding to display special characters correctly, even if the document is not encoded with UTF-8
 - Print feature

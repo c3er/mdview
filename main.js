@@ -10,6 +10,7 @@ const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
 let _mainWindow
+let _mainMenu
 let _currentFilePath
 const _unblockedURLs = []
 
@@ -52,6 +53,8 @@ function unblockURL(url) {
     _unblockedURLs.push(url)
 }
 
+const allowRawTextView = isAllowed => _mainMenu.getMenuItemById("view-raw-text").enabled = isAllowed
+
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
@@ -69,69 +72,77 @@ function createWindow() {
         _mainWindow = null
     })
 
-    electron.Menu.setApplicationMenu(
-        electron.Menu.buildFromTemplate([
-            {
-                label: "File",
-                submenu: [
-                    {
-                        label: "Open",
-                        accelerator: "CmdOrCtrl+O",
-                        click() {
-                            electron.dialog.showOpenDialog(
-                                {
-                                    properties: ["openFile"],
-                                    filters: [{ name: "Markdown", extensions: common.FILE_EXTENSIONS }]
-                                },
-                                filePaths => {
-                                    if (filePaths) {
-                                        openFile(filePaths[0])
-                                    }
+    _mainMenu = electron.Menu.buildFromTemplate([
+        {
+            label: "File",
+            submenu: [
+                {
+                    label: "Open",
+                    accelerator: "CmdOrCtrl+O",
+                    click() {
+                        electron.dialog.showOpenDialog(
+                            {
+                                properties: ["openFile"],
+                                filters: [{ name: "Markdown", extensions: common.FILE_EXTENSIONS }]
+                            },
+                            filePaths => {
+                                if (filePaths) {
+                                    openFile(filePaths[0])
                                 }
-                            )
-                        }
-                    },
-                    {
-                        label: "Quit",
-                        accelerator: process.platform === "darwin" ? "Cmd+Q" : "Alt+F4",
-                        click() {
-                            _mainWindow.close()
-                        }
+                            }
+                        )
                     }
-                ]
-            },
-            {
-                label: "Edit",
-                submenu: [
-                    { role: "copy" }
-                ]
-            },
-            {
-                label: "View",
-                submenu: [
-                    {
-                        label: "Refresh",
-                        accelerator: "F5",
-                        click() {
-                            _mainWindow.reload()
-                        }
+                },
+                {
+                    label: "Quit",
+                    accelerator: process.platform === "darwin" ? "Cmd+Q" : "Alt+F4",
+                    click() {
+                        _mainWindow.close()
                     }
-                ]
-            },
-            {
-                label: "Tools",
-                submenu: [
-                    {
-                        label: "Developer tools",
-                        accelerator: "F10",
-                        click() {
-                            _mainWindow.webContents.openDevTools()
-                        }
+                }
+            ]
+        },
+        {
+            label: "Edit",
+            submenu: [
+                { role: "copy" }
+            ]
+        },
+        {
+            label: "View",
+            submenu: [
+                {
+                    label: "Refresh",
+                    accelerator: "F5",
+                    click() {
+                        _mainWindow.reload()
                     }
-                ]
-            }
-        ])
-    )
+                },
+                {
+                    label: "View raw text",
+                    accelerator: "Ctrl+U",
+                    id: "view-raw-text",
+                    click() {
+                        _mainWindow.webContents.send("viewRawText")
+                        allowRawTextView(false)
+                    }
+                }
+            ]
+        },
+        {
+            label: "Tools",
+            submenu: [
+                {
+                    label: "Developer tools",
+                    accelerator: "F10",
+                    click() {
+                        _mainWindow.webContents.openDevTools()
+                    }
+                }
+            ]
+        }
+    ])
+    electron.Menu.setApplicationMenu(_mainMenu)
 }
 
 electron.app.on("ready", () => {
@@ -188,3 +199,7 @@ electron.ipcMain.on("openFile", (event, filePath) => createChildWindow(filePath)
 electron.ipcMain.on("openInternal", (event, target) => createChildWindow(_currentFilePath, target))
 
 electron.ipcMain.on("unblockURL", (event, url) => unblockURL(url))
+
+electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
+
+electron.ipcMain.on("enableRawView", () => allowRawTextView(true))

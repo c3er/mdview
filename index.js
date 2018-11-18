@@ -10,12 +10,12 @@ const markdown = require("markdown-it")({
         // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
         if (language && hljs.getLanguage(language)) {
             try {
-                return `<pre class="hljs"><code><div>${hljs.highlight(language, text, true).value}</div></code></pre>`
+                return generateCodeText(hljs.highlight(language, text, true).value, true)
             } catch (err) {
                 console.log(`Error at highlighting: ${err}`)
             }
         }
-        return `<pre class="hljs"><code><div>${markdown.utils.escapeHtml(text)}</div></code></pre>`
+        return generateCodeText(markdown.utils.escapeHtml(text), true)
     },
     xhtmlOut: true,
     html: true
@@ -34,6 +34,10 @@ const common = require("./lib/common")
 const TITLE = "Markdown Viewer"
 
 const _blockedElements = {}
+
+function generateCodeText(text, isHighlighted) {
+    return `<pre${isHighlighted ? ' class="hljs"' : ''}><code><div>${text}</div></code></pre>`
+}
 
 const isInternalLink = url => url.startsWith("#")
 
@@ -84,10 +88,11 @@ function isTextFile(filePath) {
 const alterTags = (tagName, handler) =>
     [...document.getElementsByTagName(tagName)].forEach(element => handler(element))
 
-function setStatusBar(element, text) {
-    const statusTextElement = document.getElementById("status-text")
-    element.onmouseover = () => statusTextElement.innerHTML = text
-    element.onmouseout = () => statusTextElement.innerHTML = ""
+const updateStatusBar = text => document.getElementById("status-text").innerHTML = text
+
+function statusOnMouseOver(element, text) {
+    element.onmouseover = () => updateStatusBar(text)
+    element.onmouseout = () => updateStatusBar("")
 }
 
 function searchElementsWithAttributeValue(value) {
@@ -140,6 +145,12 @@ function changeBlockedContentInfoVisibility(isVisible) {
     document.body.style.marginTop = isVisible ? window.getComputedStyle(infoElement).height : 0
 }
 
+function switchRawView(isRawView) {
+    document.getElementById("content").style.display = isRawView ? "none" : "block"
+    document.getElementById("raw-text").style.display = isRawView ? "block" : "none"
+    updateStatusBar(isRawView ? "Raw text (leave with Escape key)" : "")
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     electron.ipcRenderer.send("finishLoad")
@@ -153,8 +164,10 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
         const pathParts = filePath.split(".")
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
         content = "```" + language + "\n" + content + "\n```"
+        electron.ipcRenderer.send("disableRawView")
     }
     document.getElementById("content").innerHTML = markdown.render(content)
+    document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), false)
 
     const documentDirectory = path.dirname(filePath)
     alterTags("a", link => {
@@ -172,14 +185,14 @@ electron.ipcRenderer.on("fileOpen", (event, filePath, internalTarget) => {
                 electron.ipcRenderer.send("openFile", fullPath)
             }
         }
-        setStatusBar(link, target)
+        statusOnMouseOver(link, target)
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
         if (!common.isWebURL(imageUrl)) {
             image.src = path.join(documentDirectory, imageUrl)
         }
-        setStatusBar(image, `${image.getAttribute("alt")} (${imageUrl})`)
+        statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
 
         image.onerror = () => image.style.backgroundColor = "#ffe6cc"
     })
@@ -239,4 +252,18 @@ electron.ipcRenderer.on("contentBlocked", (event, url) => {
     }
     document.getElementById("blocked-content-info-close-button").onclick = () =>
         changeBlockedContentInfoVisibility(false)
+})
+
+electron.ipcRenderer.on("viewRawText", () => {
+    switchRawView(true)
+    changeBlockedContentInfoVisibility(false)
+})
+
+window.addEventListener('keyup', event => {
+    if (event.key === "Escape") {
+        event.preventDefault()
+        switchRawView(false)
+        changeBlockedContentInfoVisibility(!common.isEmptyObject(_blockedElements))
+        electron.ipcRenderer.send("enableRawView")
+    }
 })
