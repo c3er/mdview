@@ -29,6 +29,7 @@ markdown.use(require("markdown-it-headinganchor"), {
             .toLowerCase()
 })
 
+const file = require("./lib/file")
 const common = require("./lib/common")
 
 const TITLE = "Markdown Viewer"
@@ -40,50 +41,6 @@ function generateCodeText(text, isHighlighted) {
 }
 
 const isInternalLink = url => url.startsWith("#")
-
-const isMarkdownFile = filePath =>
-    common.FILE_EXTENSIONS
-        .map(ext => "." + ext)
-        .some(ext => filePath.endsWith(ext))
-
-function readBytesSync(filePath, filePosition, numBytesToRead) {
-    // Based on https://stackoverflow.com/a/51033457
-    const buffer = Buffer.alloc(numBytesToRead, 0)
-    let fd
-    let bytesRead = 0
-    try {
-        fd = fs.openSync(filePath, "r")
-        bytesRead = fs.readSync(fd, buffer, 0, numBytesToRead, filePosition)
-    } finally {
-        if (fd) {
-            fs.closeSync(fd)
-        }
-    }
-    return {
-        bytesRead: bytesRead,
-        buffer: buffer
-    }
-}
-
-function isTextFile(filePath) {
-    const BYTECOUNT = 50000
-    let data
-    try {
-        data = readBytesSync(filePath, 0, BYTECOUNT)
-    } catch (err) {
-        console.log(err.message)
-        return false
-    }
-
-    // It is not expected that an ASCII file contains control characters.
-    // Space character is the first printable ASCII character.
-    // Line breaks (LF = 10, CR = 13) and tabs (TAB = 9) are common in text files.
-    return data.buffer
-        .slice(0, data.bytesRead - 1)
-        .every(byte =>
-            byte >= 32 ||
-            [10, 13, 9].includes(byte))
-}
 
 const alterTags = (tagName, handler) =>
     [...document.getElementsByTagName(tagName)].forEach(element => handler(element))
@@ -160,7 +117,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
     changeBlockedContentInfoVisibility(false)
 
     let content = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, '')
-    if (!isMarkdownFile(filePath)) {
+    if (!file.isMarkdown(filePath)) {
         const pathParts = filePath.split(".")
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
         content = "```" + language + "\n" + content + "\n```"
@@ -179,7 +136,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
                 electron.shell.openExternal(target)
             } else if (isInternalLink(target)) {
                 electron.ipcRenderer.send("openInternal", target)
-            } else if (!isMarkdownFile(fullPath) && !isTextFile(fullPath)) {
+            } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
                 electron.shell.openItem(fullPath)
             } else {
                 electron.ipcRenderer.send("openFile", fullPath)
