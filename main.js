@@ -119,7 +119,7 @@ function createWindow() {
                     }
                 },
                 {
-                    label: "View raw text",
+                    label: "View Raw Text",
                     accelerator: "Ctrl+U",
                     id: "view-raw-text",
                     click() {
@@ -133,7 +133,7 @@ function createWindow() {
             label: "Tools",
             submenu: [
                 {
-                    label: "Developer tools",
+                    label: "Developer Tools",
                     accelerator: "F10",
                     click() {
                         _mainWindow.webContents.openDevTools()
