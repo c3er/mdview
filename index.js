@@ -93,6 +93,13 @@ function unblockURL(url) {
 
     if (common.isEmptyObject(_blockedElements)) {
         changeBlockedContentInfoVisibility(false)
+        electron.ipcRenderer.send("allContentUnblocked")
+    }
+}
+
+function unblockAll() {
+    for (let url in _blockedElements) {
+        unblockURL(url)
     }
 }
 
@@ -202,14 +209,12 @@ electron.ipcRenderer.on("contentBlocked", (_, url) => {
     elements.forEach(element => element.onclick = () => unblockURL(url))
 
     changeBlockedContentInfoVisibility(true)
-    document.getElementById("blocked-content-info-text-container").onclick = () => {
-        for (let url in _blockedElements) {
-            unblockURL(url)
-        }
-    }
+    document.getElementById("blocked-content-info-text-container").onclick = unblockAll
     document.getElementById("blocked-content-info-close-button").onclick = () =>
         changeBlockedContentInfoVisibility(false)
 })
+
+electron.ipcRenderer.on("unblockAll", unblockAll)
 
 electron.ipcRenderer.on("viewRawText", () => {
     switchRawView(true)

@@ -55,6 +55,8 @@ function unblockURL(url) {
 
 const allowRawTextView = isAllowed => _mainMenu.getMenuItemById("view-raw-text").enabled = isAllowed
 
+const disableUnblockContent = () => _mainMenu.getMenuItemById("unblock-content").enabled = false
+
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
@@ -119,6 +121,14 @@ function createWindow() {
                     }
                 },
                 {
+                    label: "Unblock All External Content",
+                    accelerator: "Alt+U",
+                    id: "unblock-content",
+                    click() {
+                        _mainWindow.webContents.send("unblockAll")
+                    }
+                },
+                {
                     label: "View Raw Text",
                     accelerator: "Ctrl+U",
                     id: "view-raw-text",
@@ -156,6 +166,8 @@ electron.app.on("ready", () => {
         callback({ cancel: isBlocked })
         if (isBlocked) {
             _mainWindow.webContents.send("contentBlocked", url)
+        } else {
+            disableUnblockContent()
         }
     })
     webRequest.onBeforeRedirect(details => {
@@ -199,6 +211,8 @@ electron.ipcMain.on("openFile", (_, filePath) => createChildWindow(filePath))
 electron.ipcMain.on("openInternal", (_, target) => createChildWindow(_currentFilePath, target))
 
 electron.ipcMain.on("unblockURL", (_, url) => unblockURL(url))
+
+electron.ipcMain.on("allContentUnblocked", disableUnblockContent)
 
 electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
 
