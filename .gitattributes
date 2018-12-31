@@ -1,2 +1,2 @@
-* text=auto
-package*.json text=lf
+*             text=auto
+package.json  text eol=lf
