@@ -146,6 +146,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
     document.getElementById("content").innerHTML = markdown.render(content)
     document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), { isMdRawText: true })
 
+    // Alter local references to be relativ to the document
     const documentDirectory = path.dirname(filePath)
     alterTags("a", link => {
         const target = link.getAttribute("href")

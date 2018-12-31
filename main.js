@@ -61,7 +61,10 @@ function createWindow() {
     _mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
         height: WINDOW_HEIGHT,
-        backgroundColor: "#fff"
+        backgroundColor: "#fff",
+        webPreferences: {
+            nodeIntegration: true
+        }
     })
     _mainWindow.loadURL(
         url.format({
@@ -70,9 +73,7 @@ function createWindow() {
             slashes: true
         })
     )
-    _mainWindow.on("closed", () => {
-        _mainWindow = null
-    })
+    _mainWindow.on("closed", () => _mainWindow = null)
 
     _mainMenu = electron.Menu.buildFromTemplate([
         {
