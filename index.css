@@ -10,6 +10,10 @@
     list-style-type: decimal;
 }
 
+.md-raw {
+    white-space: pre-wrap;
+}
+
 #raw-text {
     display: none;
 }

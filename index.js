@@ -10,12 +10,12 @@ const markdown = require("markdown-it")({
         // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
         if (language && hljs.getLanguage(language)) {
             try {
-                return generateCodeText(hljs.highlight(language, text, true).value, true)
+                return generateCodeText(hljs.highlight(language, text, true).value, { isHighlighted: true })
             } catch (err) {
                 console.log(`Error at highlighting: ${err}`)
             }
         }
-        return generateCodeText(markdown.utils.escapeHtml(text), true)
+        return generateCodeText(markdown.utils.escapeHtml(text), { isHighlighted: true })
     },
     xhtmlOut: true,
     html: true
@@ -36,8 +36,20 @@ const TITLE = "Markdown Viewer"
 
 const _blockedElements = {}
 
-function generateCodeText(text, isHighlighted) {
-    return `<pre${isHighlighted ? ' class="hljs"' : ''}><code><div>${text}</div></code></pre>`
+function generateCodeText(text, options = {}) {
+    const defaults = {
+        isHighlighted: false,
+        isMdRawText: false
+    }
+    const actual = Object.assign({}, defaults, options)
+
+    const hljsClass = actual.isHighlighted ? "hljs" : ""
+    const mdRawClass = actual.isMdRawText ? "md-raw" : ""
+
+    const preClass = actual.isHighlighted || actual.isMdRawText
+        ? ` class="${[hljsClass, mdRawClass].join(" ")}"`
+        : ""
+    return `<pre${preClass}"><code><div>${text}</div></code></pre>`
 }
 
 const isInternalLink = url => url.startsWith("#")
@@ -113,6 +125,7 @@ function switchRawView(isRawView) {
     document.getElementById("content").style.display = isRawView ? "none" : "block"
     document.getElementById("raw-text").style.display = isRawView ? "block" : "none"
     updateStatusBar(isRawView ? "Raw text (leave with Escape key)" : "")
+    changeBlockedContentInfoVisibility(!isRawView)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -131,7 +144,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
         electron.ipcRenderer.send("disableRawView")
     }
     document.getElementById("content").innerHTML = markdown.render(content)
-    document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), false)
+    document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), { isMdRawText: true })
 
     const documentDirectory = path.dirname(filePath)
     alterTags("a", link => {
@@ -218,7 +231,6 @@ electron.ipcRenderer.on("unblockAll", unblockAll)
 
 electron.ipcRenderer.on("viewRawText", () => {
     switchRawView(true)
-    changeBlockedContentInfoVisibility(false)
 })
 
 window.addEventListener('keyup', event => {
