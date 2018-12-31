@@ -75,3 +75,21 @@
 body {
     margin-bottom: 25px;
 }
+
+@media print {
+    #blocked-content-info,
+    #status-bar {
+        display: none;
+    }
+
+    .markdown-body pre,
+    .markdown-body pre>code {
+        overflow: visible;
+        white-space: pre-wrap;
+    }
+
+    p,
+    pre {
+        page-break-inside: avoid;
+    }
+}

@@ -97,6 +97,14 @@ function createWindow() {
                     }
                 },
                 {
+                    label: "Print",
+                    accelerator: "Ctrl+P",
+                    click() {
+                        _mainWindow.webContents.print()
+                    }
+                },
+                { type: "separator" },
+                {
                     label: "Quit",
                     accelerator: process.platform === "darwin" ? "Cmd+Q" : "Alt+F4",
                     click() {
