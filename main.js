@@ -12,6 +12,8 @@ const WINDOW_HEIGHT = 768
 let _mainWindow
 let _mainMenu
 let _currentFilePath
+
+let _contentIsBlocked = false
 const _unblockedURLs = []
 
 function error(msg) {
@@ -55,7 +57,7 @@ function unblockURL(url) {
 
 const allowRawTextView = isAllowed => _mainMenu.getMenuItemById("view-raw-text").enabled = isAllowed
 
-const disableUnblockContent = () => _mainMenu.getMenuItemById("unblock-content").enabled = false
+const allowUnblockContent = isAllowed => _mainMenu.getMenuItemById("unblock-content").enabled = isAllowed
 
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({
@@ -174,10 +176,10 @@ electron.app.on("ready", () => {
         console.log(`${isBlocked ? "Blocked" : "Loading"}: ${url}`)
         callback({ cancel: isBlocked })
         if (isBlocked) {
+            _contentIsBlocked = true
             _mainWindow.webContents.send("contentBlocked", url)
-        } else {
-            disableUnblockContent()
         }
+        allowUnblockContent(_contentIsBlocked)
     })
     webRequest.onBeforeRedirect(details => {
         const url = details.redirectURL
@@ -221,7 +223,10 @@ electron.ipcMain.on("openInternal", (_, target) => createChildWindow(_currentFil
 
 electron.ipcMain.on("unblockURL", (_, url) => unblockURL(url))
 
-electron.ipcMain.on("allContentUnblocked", disableUnblockContent)
+electron.ipcMain.on("allContentUnblocked", () => {
+    _contentIsBlocked = false
+    allowUnblockContent(false)
+})
 
 electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
 
