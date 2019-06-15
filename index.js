@@ -150,20 +150,22 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
     const documentDirectory = path.dirname(filePath)
     alterTags("a", link => {
         const target = link.getAttribute("href")
-        const fullPath = path.join(documentDirectory, target)
-        link.onclick = event => {
-            event.preventDefault()
-            if (common.isWebURL(target) || target.startsWith("mailto:")) {
-                electron.shell.openExternal(target)
-            } else if (isInternalLink(target)) {
-                electron.ipcRenderer.send("openInternal", target)
-            } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
-                electron.shell.openItem(fullPath)
-            } else {
-                electron.ipcRenderer.send("openFile", fullPath)
+        if (target) {
+            const fullPath = path.join(documentDirectory, target)
+            link.onclick = event => {
+                event.preventDefault()
+                if (common.isWebURL(target) || target.startsWith("mailto:")) {
+                    electron.shell.openExternal(target)
+                } else if (isInternalLink(target)) {
+                    electron.ipcRenderer.send("openInternal", target)
+                } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
+                    electron.shell.openItem(fullPath)
+                } else {
+                    electron.ipcRenderer.send("openFile", fullPath)
+                }
             }
+            statusOnMouseOver(link, target)
         }
-        statusOnMouseOver(link, target)
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")

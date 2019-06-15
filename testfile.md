@@ -10,6 +10,8 @@
 
 [Broken internal link](#broken-link)
 
+<a name="found-this-weird-construct-in-a-Markdown-file"></a>
+
 ## Heading 1
 
 ### Sub heading 1

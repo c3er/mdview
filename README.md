@@ -51,7 +51,6 @@ You can use and copy this tool under the conditions of the MIT license.
 
 ## Todo
 
-- Bugfix: an anchor element could have no `href` attribute (as in [this file](https://github.com/istanbuljs/nyc/blob/fe3311bd4770726c67e6eee1e39b15a3b616457b/CHANGELOG.md))
 - Remember scroll position after refreshing (pressing the F5 key)
 - Remember position of last opened window
     - Additional windows shall not open at the same place as the last window
