@@ -36,6 +36,8 @@ const TITLE = "Markdown Viewer"
 
 const _blockedElements = {}
 
+let _scrollPosition = 0
+
 function generateCodeText(text, options = {}) {
     const defaults = {
         isHighlighted: false,
@@ -175,6 +177,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
         statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
 
         image.onerror = () => image.style.backgroundColor = "#ffe6cc"
+        image.onload = () => window.scrollTo(0, _scrollPosition)
     })
 
     let titlePrefix = filePath
@@ -234,6 +237,13 @@ electron.ipcRenderer.on("unblockAll", unblockAll)
 
 electron.ipcRenderer.on("viewRawText", () => {
     switchRawView(true)
+})
+
+electron.ipcRenderer.on("prepareReload", () => electron.ipcRenderer.send("reloadPrepared", document.documentElement.scrollTop))
+
+electron.ipcRenderer.on("restorePosition", (_, position) => {
+    window.scrollTo(0, position)
+    _scrollPosition = position
 })
 
 window.addEventListener('keyup', event => {

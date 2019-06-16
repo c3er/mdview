@@ -16,6 +16,9 @@ let _currentFilePath
 let _contentIsBlocked = false
 const _unblockedURLs = []
 
+let _isReloading = false
+let _scrollPosition = 0
+
 function error(msg) {
     dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
@@ -76,6 +79,12 @@ function createWindow() {
         })
     )
     _mainWindow.on("closed", () => _mainWindow = null)
+    _mainWindow.webContents.on("did-finish-load", () => {
+        if (_isReloading) {
+            _mainWindow.webContents.send("restorePosition", _scrollPosition)
+            _isReloading = false
+        }
+    })
 
     _mainMenu = electron.Menu.buildFromTemplate([
         {
@@ -128,7 +137,7 @@ function createWindow() {
                     label: "Refresh",
                     accelerator: "F5",
                     click() {
-                        _mainWindow.reload()
+                        _mainWindow.webContents.send("prepareReload")
                     }
                 },
                 {
@@ -231,3 +240,9 @@ electron.ipcMain.on("allContentUnblocked", () => {
 electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
 
 electron.ipcMain.on("enableRawView", () => allowRawTextView(true))
+
+electron.ipcMain.on("reloadPrepared", (_, position) => {
+    _scrollPosition = position
+    _isReloading = true
+    _mainWindow.reload()
+})
