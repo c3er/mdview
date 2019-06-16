@@ -1,8 +1,9 @@
-const electron = require("electron")
-const childProcess = require("child_process")
+const fs = require("fs")
 const path = require("path")
 const url = require("url")
-const fs = require("fs")
+
+const childProcess = require("child_process")
+const electron = require("electron")
 
 const common = require("./lib/common")
 
@@ -35,14 +36,17 @@ function openFile(filePath, internalTarget) {
     }
 }
 
-const extractFilePath = args => args.find(
-    arg =>
+function extractFilePath(args) {
+    return args.find(arg =>
         !arg.includes("electron") &&
         !arg.startsWith("-") &&
         arg != "." &&
         arg != process.execPath)
+}
 
-const extractInternalTarget = args => args.find(arg => arg.startsWith("#"))
+function extractInternalTarget(args) {
+    return args.find(arg => arg.startsWith("#"))
+}
 
 function createChildWindow(filePath, internalTarget) {
     const processName = process.argv[0]
@@ -58,9 +62,13 @@ function unblockURL(url) {
     _unblockedURLs.push(url)
 }
 
-const allowRawTextView = isAllowed => _mainMenu.getMenuItemById("view-raw-text").enabled = isAllowed
+function allowRawTextView(isAllowed) {
+    _mainMenu.getMenuItemById("view-raw-text").enabled = isAllowed
+}
 
-const allowUnblockContent = isAllowed => _mainMenu.getMenuItemById("unblock-content").enabled = isAllowed
+function allowUnblockContent(isAllowed) {
+    _mainMenu.getMenuItemById("unblock-content").enabled = isAllowed
+}
 
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({

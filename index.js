@@ -1,6 +1,7 @@
-const electron = require("electron")
-const path = require("path")
 const fs = require("fs")
+const path = require("path")
+
+const electron = require("electron")
 const hljs = require("highlight.js")
 
 const markdown = require("markdown-it")({
@@ -29,8 +30,8 @@ markdown.use(require("markdown-it-headinganchor"), {
             .toLowerCase()
 })
 
-const file = require("./lib/file")
 const common = require("./lib/common")
+const file = require("./lib/file")
 
 const TITLE = "Markdown Viewer"
 
@@ -54,12 +55,17 @@ function generateCodeText(text, options = {}) {
     return `<pre${preClass}"><code><div>${text}</div></code></pre>`
 }
 
-const isInternalLink = url => url.startsWith("#")
+function isInternalLink(url) {
+    return url.startsWith("#")
+}
 
-const alterTags = (tagName, handler) =>
+function alterTags(tagName, handler) {
     [...document.getElementsByTagName(tagName)].forEach(element => handler(element))
+}
 
-const updateStatusBar = text => document.getElementById("status-text").innerHTML = text
+function updateStatusBar(text) {
+    document.getElementById("status-text").innerHTML = text
+}
 
 function statusOnMouseOver(element, text) {
     element.onmouseover = () => updateStatusBar(text)
@@ -135,6 +141,15 @@ document.addEventListener("DOMContentLoaded", () => {
     electron.ipcRenderer.send("finishLoad")
 })
 
+window.addEventListener('keyup', event => {
+    if (event.key === "Escape") {
+        event.preventDefault()
+        switchRawView(false)
+        changeBlockedContentInfoVisibility(!common.isEmptyObject(_blockedElements))
+        electron.ipcRenderer.send("enableRawView")
+    }
+})
+
 electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
     changeBlockedContentInfoVisibility(false)
 
@@ -146,7 +161,9 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
         electron.ipcRenderer.send("disableRawView")
     }
     document.getElementById("content").innerHTML = markdown.render(content)
-    document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), { isMdRawText: true })
+    document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), {
+        isMdRawText: true,
+    })
 
     // Alter local references to be relativ to the document
     const documentDirectory = path.dirname(filePath)
@@ -218,7 +235,9 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
         }
 
         if (menu.items.length > 0) {
-            menu.popup({ window: electron.remote.getCurrentWindow() })
+            menu.popup({
+                window: electron.remote.getCurrentWindow(),
+            })
         }
     })
 })
@@ -229,28 +248,16 @@ electron.ipcRenderer.on("contentBlocked", (_, url) => {
 
     changeBlockedContentInfoVisibility(true)
     document.getElementById("blocked-content-info-text-container").onclick = unblockAll
-    document.getElementById("blocked-content-info-close-button").onclick = () =>
-        changeBlockedContentInfoVisibility(false)
+    document.getElementById("blocked-content-info-close-button").onclick = () => changeBlockedContentInfoVisibility(false)
 })
 
 electron.ipcRenderer.on("unblockAll", unblockAll)
 
-electron.ipcRenderer.on("viewRawText", () => {
-    switchRawView(true)
-})
+electron.ipcRenderer.on("viewRawText", () => switchRawView(true))
 
 electron.ipcRenderer.on("prepareReload", () => electron.ipcRenderer.send("reloadPrepared", document.documentElement.scrollTop))
 
 electron.ipcRenderer.on("restorePosition", (_, position) => {
     window.scrollTo(0, position)
     _scrollPosition = position
-})
-
-window.addEventListener('keyup', event => {
-    if (event.key === "Escape") {
-        event.preventDefault()
-        switchRawView(false)
-        changeBlockedContentInfoVisibility(!common.isEmptyObject(_blockedElements))
-        electron.ipcRenderer.send("enableRawView")
-    }
 })
