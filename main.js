@@ -38,10 +38,9 @@ function openFile(filePath, internalTarget) {
 
 function extractFilePath(args) {
     return args.find(arg =>
-        !arg.includes("electron") &&
-        !arg.startsWith("-") &&
+        arg != process.execPath &&
         arg != "." &&
-        arg != process.execPath)
+        !arg.startsWith("-"))
 }
 
 function extractInternalTarget(args) {
