@@ -10,9 +10,14 @@ const common = require("./lib/common")
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
+const UPDATE_INTERVAL = 1000 // ms
+
 let _mainWindow
 let _mainMenu
+
 let _currentFilePath
+let _internalTarget
+let _lastModificationTime
 
 let _contentIsBlocked = false
 const _unblockedURLs = []
@@ -32,6 +37,8 @@ function openFile(filePath, internalTarget) {
         error("Given path leads to directory")
     } else {
         _currentFilePath = filePath
+        _internalTarget = internalTarget
+        _lastModificationTime = fs.statSync(filePath).mtimeMs
         _mainWindow.webContents.send("fileOpen", filePath, internalTarget)
     }
 }
@@ -69,6 +76,14 @@ function allowUnblockContent(isAllowed) {
     _mainMenu.getMenuItemById("unblock-content").enabled = isAllowed
 }
 
+function reload() {
+    _mainWindow.webContents.send("prepareReload")
+}
+
+function restorePosition() {
+    _mainWindow.webContents.send("restorePosition", _scrollPosition)
+}
+
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
@@ -88,7 +103,7 @@ function createWindow() {
     _mainWindow.on("closed", () => _mainWindow = null)
     _mainWindow.webContents.on("did-finish-load", () => {
         if (_isReloading) {
-            _mainWindow.webContents.send("restorePosition", _scrollPosition)
+            restorePosition()
             _isReloading = false
         }
     })
@@ -144,7 +159,7 @@ function createWindow() {
                     label: "Refresh",
                     accelerator: "F5",
                     click() {
-                        _mainWindow.webContents.send("prepareReload")
+                        reload()
                     }
                 },
                 {
@@ -251,5 +266,23 @@ electron.ipcMain.on("enableRawView", () => allowRawTextView(true))
 electron.ipcMain.on("reloadPrepared", (_, position) => {
     _scrollPosition = position
     _isReloading = true
-    _mainWindow.reload()
+    openFile(_currentFilePath, _internalTarget)
+    restorePosition()
 })
+
+setInterval(
+    () => {
+        fs.stat(_currentFilePath, (err, stats) => {
+            if (err) {
+                console.error(`Updating file "${_currentFilePath}" was aborted with error ${err}`)
+                return
+            }
+            let mtime = stats.mtimeMs
+            if (mtime !== _lastModificationTime) {
+                console.log("Reloading...")
+                _lastModificationTime = mtime
+                reload()
+            }
+        })
+    },
+    UPDATE_INTERVAL)
