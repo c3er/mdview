@@ -10,6 +10,7 @@ const common = require("./lib/common")
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
+const DEFAULT_FILE = path.join(__dirname, "README.md")
 const UPDATE_INTERVAL = 1000 // ms
 
 let _mainWindow
@@ -244,7 +245,7 @@ electron.ipcMain.on("finishLoad", () => {
     if (filePath !== undefined) {
         openFile(filePath, internalTarget)
     } else {
-        openFile(path.join(__dirname, "README.md"), internalTarget)
+        openFile(DEFAULT_FILE, internalTarget)
     }
 })
 

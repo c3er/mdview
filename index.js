@@ -73,7 +73,7 @@ function statusOnMouseOver(element, text) {
 }
 
 function searchElementsWithAttributeValue(value) {
-    // Based on https://stackoverflow.com/a/30840550
+    // Based on https://stackoverflow.com/a/30840550 (JQuery selector using value, but unknown attribute)
     const elements = document.getElementsByTagName("*")
     const foundElements = []
     for (let elementIndex = 0; elementIndex < elements.length; elementIndex++) {
