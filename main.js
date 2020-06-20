@@ -91,7 +91,8 @@ function createWindow() {
         height: WINDOW_HEIGHT,
         backgroundColor: "#fff",
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true,
         }
     })
     _mainWindow.loadURL(
