@@ -6,12 +6,12 @@ const childProcess = require("child_process")
 const electron = require("electron")
 
 const common = require("./lib/common")
+const encodingStorage = require("./lib/encodingStorage")
 
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
 const DEFAULT_FILE = path.join(__dirname, "README.md")
-const DEFAULT_ENCODING = "utf8"
 const UPDATE_INTERVAL = 1000 // ms
 
 // Based on https://encoding.spec.whatwg.org/
@@ -60,7 +60,6 @@ let _mainWindow
 let _mainMenu
 
 let _currentFilePath
-let _currentFileEncoding = DEFAULT_ENCODING
 let _internalTarget
 let _lastModificationTime
 
@@ -82,7 +81,7 @@ function openFile(filePath, internalTarget, encoding) {
         error("Given path leads to directory")
     } else {
         _currentFilePath = filePath
-        _currentFileEncoding = encoding
+        changeEncoding(filePath, encoding)
         _internalTarget = internalTarget
         _lastModificationTime = fs.statSync(filePath).mtimeMs
         _mainWindow.webContents.send("fileOpen", filePath, internalTarget, encoding)
@@ -124,6 +123,15 @@ function allowUnblockContent(isAllowed) {
 
 function reload(isFileModification, encoding) {
     _mainWindow.webContents.send("prepareReload", isFileModification, encoding)
+}
+
+function getEncodingId(encoding) {
+    return `encoding-${encoding}`
+}
+
+function changeEncoding(filePath, encoding) {
+    encodingStorage.save(filePath, encoding)
+    _mainMenu.getMenuItemById(getEncodingId(encoding)).checked = true
 }
 
 function restorePosition() {
@@ -170,7 +178,8 @@ function createWindow() {
                             },
                             filePaths => {
                                 if (filePaths) {
-                                    openFile(filePaths[0], DEFAULT_ENCODING)
+                                    const filePath = filePaths[0]
+                                    openFile(filePath, encodingStorage.load(filePath))
                                 }
                             }
                         )
@@ -233,7 +242,9 @@ function createWindow() {
             submenu: ENCODINGS.map(encoding => ({
                 label: encoding,
                 type: "radio",
+                id: getEncodingId(encoding),
                 click() {
+                    changeEncoding(_currentFilePath, encoding)
                     reload(true, encoding)
                 }
             }))
@@ -299,9 +310,9 @@ electron.ipcMain.on("finishLoad", () => {
     const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
     const internalTarget = extractInternalTarget(args)
     if (filePath !== undefined) {
-        openFile(filePath, internalTarget, _currentFileEncoding)
+        openFile(filePath, internalTarget, encodingStorage.load(filePath))
     } else {
-        openFile(DEFAULT_FILE, internalTarget, DEFAULT_ENCODING)
+        openFile(DEFAULT_FILE, internalTarget, encodingStorage.load(DEFAULT_FILE))
     }
 })
 
@@ -326,7 +337,7 @@ electron.ipcMain.on("reloadPrepared", (_, isFileModification, encoding, position
     if (isFileModification) {
         openFile(_currentFilePath, _internalTarget, encoding)
     } else {
-        _currentFileEncoding = encoding
+        changeEncoding(_currentFilePath, encoding)
         _mainWindow.reload()
     }
     restorePosition()
