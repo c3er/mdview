@@ -77,8 +77,8 @@ function allowUnblockContent(isAllowed) {
     _mainMenu.getMenuItemById("unblock-content").enabled = isAllowed
 }
 
-function reload() {
-    _mainWindow.webContents.send("prepareReload")
+function reload(isFileModification) {
+    _mainWindow.webContents.send("prepareReload", isFileModification)
 }
 
 function restorePosition() {
@@ -161,7 +161,7 @@ function createWindow() {
                     label: "Refresh",
                     accelerator: "F5",
                     click() {
-                        reload()
+                        reload(false)
                     }
                 },
                 {
@@ -265,10 +265,14 @@ electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
 
 electron.ipcMain.on("enableRawView", () => allowRawTextView(true))
 
-electron.ipcMain.on("reloadPrepared", (_, position) => {
+electron.ipcMain.on("reloadPrepared", (_, isFileModification, position) => {
     _scrollPosition = position
     _isReloading = true
-    openFile(_currentFilePath, _internalTarget)
+    if (isFileModification) {
+        openFile(_currentFilePath, _internalTarget)
+    } else {
+        _mainWindow.reload()
+    }
     restorePosition()
 })
 
@@ -284,7 +288,7 @@ setInterval(
                 if (mtime !== _lastModificationTime) {
                     console.log("Reloading...")
                     _lastModificationTime = mtime
-                    reload()
+                    reload(true)
                 }
             })
         }

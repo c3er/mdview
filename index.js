@@ -255,7 +255,8 @@ electron.ipcRenderer.on("unblockAll", unblockAll)
 
 electron.ipcRenderer.on("viewRawText", () => switchRawView(true))
 
-electron.ipcRenderer.on("prepareReload", () => electron.ipcRenderer.send("reloadPrepared", document.documentElement.scrollTop))
+electron.ipcRenderer.on("prepareReload", (_, isFileModification) =>
+    electron.ipcRenderer.send("reloadPrepared", isFileModification, document.documentElement.scrollTop))
 
 electron.ipcRenderer.on("restorePosition", (_, position) => {
     window.scrollTo(0, position)
