@@ -27,7 +27,7 @@ let _isReloading = false
 let _scrollPosition = 0
 
 function error(msg) {
-    dialog.showErrorBox("Error", `${msg}. Exiting.`)
+    electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
 }
 
