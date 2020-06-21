@@ -78,7 +78,7 @@ function openFile(filePath, internalTarget, encoding) {
     if (!fs.existsSync(filePath)) {
         error(`Unknown file: "${filePath}"`)
     } else if (!fs.lstatSync(filePath).isFile()) {
-        error("Given path leads to directory")
+        error("Given path does not lead to a file")
     } else {
         _currentFilePath = filePath
         changeEncoding(filePath, encoding)
