@@ -11,12 +11,56 @@ const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
 const DEFAULT_FILE = path.join(__dirname, "README.md")
+const DEFAULT_ENCODING = "utf8"
 const UPDATE_INTERVAL = 1000 // ms
+
+// Based on https://encoding.spec.whatwg.org/
+const ENCODINGS = [
+    "UTF-8",
+    "IBM866",
+    "ISO-8859-2",
+    "ISO-8859-3",
+    "ISO-8859-4",
+    "ISO-8859-5",
+    "ISO-8859-6",
+    "ISO-8859-7",
+    "ISO-8859-8",
+    "ISO-8859-8-I",
+    "ISO-8859-10",
+    "ISO-8859-13",
+    "ISO-8859-14",
+    "ISO-8859-15",
+    "ISO-8859-16",
+    "KOI8-R",
+    "KOI8-U",
+    "macintosh",
+    "windows-874",
+    "windows-1250",
+    "windows-1251",
+    "windows-1252",
+    "windows-1253",
+    "windows-1254",
+    "windows-1255",
+    "windows-1256",
+    "windows-1257",
+    "windows-1258",
+    "x-mac-cyrillic",
+    "GBK",
+    "gb18030",
+    "Big5",
+    "EUC-JP",
+    "ISO-2022-JP",
+    "Shift_JIS",
+    "EUC-KR",
+    "UTF-16BE",
+    "UTF-16LE",
+]
 
 let _mainWindow
 let _mainMenu
 
 let _currentFilePath
+let _currentFileEncoding = DEFAULT_ENCODING
 let _internalTarget
 let _lastModificationTime
 
@@ -31,16 +75,17 @@ function error(msg) {
     process.exit(1)
 }
 
-function openFile(filePath, internalTarget) {
+function openFile(filePath, internalTarget, encoding) {
     if (!fs.existsSync(filePath)) {
         error(`Unknown file: "${filePath}"`)
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path leads to directory")
     } else {
         _currentFilePath = filePath
+        _currentFileEncoding = encoding
         _internalTarget = internalTarget
         _lastModificationTime = fs.statSync(filePath).mtimeMs
-        _mainWindow.webContents.send("fileOpen", filePath, internalTarget)
+        _mainWindow.webContents.send("fileOpen", filePath, internalTarget, encoding)
     }
 }
 
@@ -77,8 +122,8 @@ function allowUnblockContent(isAllowed) {
     _mainMenu.getMenuItemById("unblock-content").enabled = isAllowed
 }
 
-function reload(isFileModification) {
-    _mainWindow.webContents.send("prepareReload", isFileModification)
+function reload(isFileModification, encoding) {
+    _mainWindow.webContents.send("prepareReload", isFileModification, encoding)
 }
 
 function restorePosition() {
@@ -125,7 +170,7 @@ function createWindow() {
                             },
                             filePaths => {
                                 if (filePaths) {
-                                    openFile(filePaths[0])
+                                    openFile(filePaths[0], DEFAULT_ENCODING)
                                 }
                             }
                         )
@@ -182,6 +227,16 @@ function createWindow() {
                     }
                 }
             ]
+        },
+        {
+            label: "Encoding",
+            submenu: ENCODINGS.map(encoding => ({
+                label: encoding,
+                type: "radio",
+                click() {
+                    reload(true, encoding)
+                }
+            }))
         },
         {
             label: "Tools",
@@ -244,9 +299,9 @@ electron.ipcMain.on("finishLoad", () => {
     const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
     const internalTarget = extractInternalTarget(args)
     if (filePath !== undefined) {
-        openFile(filePath, internalTarget)
+        openFile(filePath, internalTarget, _currentFileEncoding)
     } else {
-        openFile(DEFAULT_FILE, internalTarget)
+        openFile(DEFAULT_FILE, internalTarget, DEFAULT_ENCODING)
     }
 })
 
@@ -265,12 +320,13 @@ electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
 
 electron.ipcMain.on("enableRawView", () => allowRawTextView(true))
 
-electron.ipcMain.on("reloadPrepared", (_, isFileModification, position) => {
+electron.ipcMain.on("reloadPrepared", (_, isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
     if (isFileModification) {
-        openFile(_currentFilePath, _internalTarget)
+        openFile(_currentFilePath, _internalTarget, encoding)
     } else {
+        _currentFileEncoding = encoding
         _mainWindow.reload()
     }
     restorePosition()

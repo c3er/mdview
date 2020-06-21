@@ -1,4 +1,3 @@
-const fs = require("fs")
 const path = require("path")
 
 const electron = require("electron")
@@ -150,10 +149,10 @@ window.addEventListener('keyup', event => {
     }
 })
 
-electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget) => {
+electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
     changeBlockedContentInfoVisibility(false)
 
-    let content = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, '')
+    let content = file.open(filePath, encoding)
     if (!file.isMarkdown(filePath)) {
         const pathParts = filePath.split(".")
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
@@ -255,8 +254,12 @@ electron.ipcRenderer.on("unblockAll", unblockAll)
 
 electron.ipcRenderer.on("viewRawText", () => switchRawView(true))
 
-electron.ipcRenderer.on("prepareReload", (_, isFileModification) =>
-    electron.ipcRenderer.send("reloadPrepared", isFileModification, document.documentElement.scrollTop))
+electron.ipcRenderer.on("prepareReload", (_, isFileModification, encoding) =>
+    electron.ipcRenderer.send(
+        "reloadPrepared",
+        isFileModification,
+        encoding,
+        document.documentElement.scrollTop))
 
 electron.ipcRenderer.on("restorePosition", (_, position) => {
     window.scrollTo(0, position)
