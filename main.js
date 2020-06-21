@@ -274,17 +274,19 @@ electron.ipcMain.on("reloadPrepared", (_, position) => {
 
 setInterval(
     () => {
-        fs.stat(_currentFilePath, (err, stats) => {
-            if (err) {
-                console.error(`Updating file "${_currentFilePath}" was aborted with error ${err}`)
-                return
-            }
-            let mtime = stats.mtimeMs
-            if (mtime !== _lastModificationTime) {
-                console.log("Reloading...")
-                _lastModificationTime = mtime
-                reload()
-            }
-        })
+        if (_currentFilePath) {
+            fs.stat(_currentFilePath, (err, stats) => {
+                if (err) {
+                    console.error(`Updating file "${_currentFilePath}" was aborted with error ${err}`)
+                    return
+                }
+                let mtime = stats.mtimeMs
+                if (mtime !== _lastModificationTime) {
+                    console.log("Reloading...")
+                    _lastModificationTime = mtime
+                    reload()
+                }
+            })
+        }
     },
     UPDATE_INTERVAL)
