@@ -203,7 +203,7 @@ function createWindow() {
                 { type: "separator" },
                 {
                     label: "Quit",
-                    accelerator: process.platform === "darwin" ? "Cmd+Q" : "Alt+F4",
+                    accelerator: "Esc",
                     click() {
                         _mainWindow.close()
                     }
