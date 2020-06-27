@@ -69,6 +69,8 @@ const _unblockedURLs = []
 let _isReloading = false
 let _scrollPosition = 0
 
+let _isInRawView = false
+
 function error(msg) {
     electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
@@ -113,8 +115,14 @@ function unblockURL(url) {
     _unblockedURLs.push(url)
 }
 
-function allowRawTextView(isAllowed) {
-    _mainMenu.getMenuItemById("view-raw-text").enabled = isAllowed
+function enterRawTextView() {
+    if (_isInRawView) {
+        _isInRawView = false
+        _mainWindow.webContents.send("leaveRawText")
+    } else {
+        _isInRawView = true
+        _mainWindow.webContents.send("viewRawText")
+    }
 }
 
 function allowUnblockContent(isAllowed) {
@@ -231,8 +239,7 @@ function createWindow() {
                     accelerator: "Ctrl+U",
                     id: "view-raw-text",
                     click() {
-                        _mainWindow.webContents.send("viewRawText")
-                        allowRawTextView(false)
+                        enterRawTextView()
                     }
                 }
             ]
@@ -327,9 +334,7 @@ electron.ipcMain.on("allContentUnblocked", () => {
     allowUnblockContent(false)
 })
 
-electron.ipcMain.on("disableRawView", () => allowRawTextView(false))
-
-electron.ipcMain.on("enableRawView", () => allowRawTextView(true))
+electron.ipcMain.on("disableRawView", () => enterRawTextView(false))
 
 electron.ipcMain.on("reloadPrepared", (_, isFileModification, encoding, position) => {
     _scrollPosition = position

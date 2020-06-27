@@ -88,6 +88,10 @@ function searchElementsWithAttributeValue(value) {
     return foundElements
 }
 
+function hasBlockedElements() {
+    return !common.isEmptyObject(_blockedElements)
+}
+
 function unblockURL(url) {
     electron.ipcRenderer.send("unblockURL", url)
 
@@ -110,7 +114,7 @@ function unblockURL(url) {
         delete _blockedElements[url]
     }
 
-    if (common.isEmptyObject(_blockedElements)) {
+    if (!hasBlockedElements()) {
         changeBlockedContentInfoVisibility(false)
         electron.ipcRenderer.send("allContentUnblocked")
     }
@@ -131,22 +135,13 @@ function changeBlockedContentInfoVisibility(isVisible) {
 function switchRawView(isRawView) {
     document.getElementById("content").style.display = isRawView ? "none" : "block"
     document.getElementById("raw-text").style.display = isRawView ? "block" : "none"
-    updateStatusBar(isRawView ? "Raw text (leave with Escape key)" : "")
-    changeBlockedContentInfoVisibility(!isRawView)
+    updateStatusBar(isRawView ? "Raw text (leve with Ctrl+U)" : "")
+    changeBlockedContentInfoVisibility(!isRawView && hasBlockedElements())
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     electron.ipcRenderer.send("finishLoad")
-})
-
-window.addEventListener('keyup', event => {
-    if (event.key === "Escape") {
-        event.preventDefault()
-        switchRawView(false)
-        changeBlockedContentInfoVisibility(!common.isEmptyObject(_blockedElements))
-        electron.ipcRenderer.send("enableRawView")
-    }
 })
 
 electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
@@ -253,6 +248,8 @@ electron.ipcRenderer.on("contentBlocked", (_, url) => {
 electron.ipcRenderer.on("unblockAll", unblockAll)
 
 electron.ipcRenderer.on("viewRawText", () => switchRawView(true))
+
+electron.ipcRenderer.on("leaveRawText", () => switchRawView(false))
 
 electron.ipcRenderer.on("prepareReload", (_, isFileModification, encoding) =>
     electron.ipcRenderer.send(
