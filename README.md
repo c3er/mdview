@@ -1,5 +1,7 @@
 # Markdown Viewer
 
+![Screenshot](doc/screenshot.png)
+
 A standalone application that renders and displays Markdown files. It does nothing else! No direct editing nor any fancy note taking features. It is not distributed as a browser extension nor does it fire up a web server - so no web browser is needed to see the rendered Markdown file.
 
 ## Developing
