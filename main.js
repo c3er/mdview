@@ -130,7 +130,10 @@ function allowUnblockContent(isAllowed) {
 }
 
 function reload(isFileModification, encoding) {
-    _mainWindow.webContents.send("prepareReload", isFileModification, encoding)
+    _mainWindow.webContents.send(
+        "prepareReload",
+        isFileModification,
+        encoding || encodingStorage.load(_currentFilePath))
 }
 
 function getEncodingId(encoding) {
