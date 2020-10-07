@@ -188,7 +188,6 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
         statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
 
         image.onerror = () => image.style.backgroundColor = "#ffe6cc"
-        image.onload = () => window.scrollTo(0, _scrollPosition)
     })
 
     let titlePrefix = filePath
