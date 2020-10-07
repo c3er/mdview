@@ -4,6 +4,12 @@
 
 A standalone application that renders and displays Markdown files. It does nothing else! No direct editing nor any fancy note taking features. It is not distributed as a browser extension nor does it fire up a web server - so no web browser is needed to see the rendered Markdown file.
 
+## Note on Windows installation and download security
+
+Issues occurred with browser download security features and Windows SmartScreen. I checked both, the Windows Setup-EXE and the ZIP file in [VirusTotal](https://www.virustotal.com) and no engine detected anything at upload time.
+
+I don't know yet, how to prevent these blockings without paying an annual fee.
+
 ## Developing
 
 The tool is developed and tested only under Windows (7 and newer) 64 Bit yet.
