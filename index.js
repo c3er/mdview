@@ -18,7 +18,8 @@ const markdown = require("markdown-it")({
         return generateCodeText(markdown.utils.escapeHtml(text), { isHighlighted: true })
     },
     xhtmlOut: true,
-    html: true
+    html: true,
+    linkify: true,
 })
 markdown.use(require("markdown-it-headinganchor"), {
     slugify: text =>
