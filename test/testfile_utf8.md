@@ -4,6 +4,17 @@
 
 Ää Öö Üü ß Áá Èè
 
+## Special font
+
+<style>
+#special {
+    font-family: MyFont;
+    src: url("font1/rm_almanack.ttf") format('truetype');
+}
+</style>
+
+<p id="special">This is some text using some special font.</p>
+
 ## Links
 
 [External link to Google](http://www.google.com)
