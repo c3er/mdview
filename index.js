@@ -140,6 +140,41 @@ function switchRawView(isRawView) {
     changeBlockedContentInfoVisibility(!isRawView && hasBlockedElements())
 }
 
+function alterStyleURLs(documentDirectory, fileContent) {
+    const pattern = /url\(["'](?<url>.*?)["']\)/
+    let isInStyle = false
+    let isInCode = false
+    const lines = fileContent.split(/\r?\n/)
+    const lineCount = lines.length
+    for (let i = 0; i < lineCount; i++) {
+        const line = lines[i].trim()
+        switch (line) {
+            case "<style>":
+                isInStyle = true
+                break
+            case "</style>":
+                isInStyle = false
+                break
+            case "```":
+                isInCode = !isInCode
+                break
+        }
+        if (isInStyle && !isInCode) {
+            const url = line
+                .match(pattern)
+                ?.groups
+                .url
+            if (!url || common.isWebURL(url)) {
+                continue
+            }
+            lines[i] = line.replace(
+                pattern,
+                `url("${path.join(documentDirectory, url).replace(/\\/g, "/")}")`)
+        }
+    }
+    return lines.join("\n")
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     electron.ipcRenderer.send("finishLoad")
@@ -155,13 +190,17 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
         content = "```" + language + "\n" + content + "\n```"
         electron.ipcRenderer.send("disableRawView")
     }
+
+    // URLs in cotaining style definitions have to be altered before rendering
+    const documentDirectory = path.dirname(filePath)
+    content = alterStyleURLs(documentDirectory, content)
+
     document.getElementById("content").innerHTML = markdown.render(content)
     document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), {
         isMdRawText: true,
     })
 
     // Alter local references to be relativ to the document
-    const documentDirectory = path.dirname(filePath)
     alterTags("a", link => {
         const target = link.getAttribute("href")
         if (target) {
