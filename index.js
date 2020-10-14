@@ -10,12 +10,16 @@ const markdown = require("markdown-it")({
         // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
         if (language && hljs.getLanguage(language)) {
             try {
-                return generateCodeText(hljs.highlight(language, text, true).value, { isHighlighted: true })
+                return generateCodeText(
+                    hljs.highlight(language, text, true).value,
+                    { isHighlighted: true })
             } catch (err) {
                 console.log(`Error at highlighting: ${err}`)
             }
         }
-        return generateCodeText(markdown.utils.escapeHtml(text), { isHighlighted: true })
+        return generateCodeText(
+            markdown.utils.escapeHtml(text),
+            { isHighlighted: true })
     },
     xhtmlOut: true,
     html: true,
@@ -36,8 +40,6 @@ const file = require("./lib/file")
 const TITLE = "Markdown Viewer"
 
 const _blockedElements = {}
-
-let _scrollPosition = 0
 
 function generateCodeText(text, options = {}) {
     const defaults = {
@@ -196,9 +198,9 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
     content = alterStyleURLs(documentDirectory, content)
 
     document.getElementById("content").innerHTML = markdown.render(content)
-    document.getElementById("raw-text").innerHTML = generateCodeText(markdown.utils.escapeHtml(content), {
-        isMdRawText: true,
-    })
+    document.getElementById("raw-text").innerHTML = generateCodeText(
+        markdown.utils.escapeHtml(content),
+        { isMdRawText: true })
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {
