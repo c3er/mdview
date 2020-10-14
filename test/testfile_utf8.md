@@ -7,19 +7,19 @@
 ## Special font
 
 <style>
-#special {
-    font-family: MyFont;
-    src: url("font1/rm_almanack.ttf") format('truetype');
-}
+    @font-face {
+        font-family: MyFont;
+        src: url("font1/Daedric.ttf") format('truetype');
+    }
 </style>
 
-<p id="special">This is some text using some special font.</p>
+<p style="font-family:MyFont">This is some text using some special font.</p>
 
 ## Links
 
 [External link to Google](http://www.google.com)
 
-[Link to README.md](README.md)
+[Link to README.md](../README.md)
 
 [Internal link](#sub-heading-1)
 
