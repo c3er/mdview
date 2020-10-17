@@ -150,16 +150,12 @@ function alterStyleURLs(documentDirectory, fileContent) {
     const lineCount = lines.length
     for (let i = 0; i < lineCount; i++) {
         const line = lines[i].trim()
-        switch (line) {
-            case "<style>":
-                isInStyle = true
-                break
-            case "</style>":
-                isInStyle = false
-                break
-            case "```":
-                isInCode = !isInCode
-                break
+        if (line === "<style>") {
+            isInStyle = true
+        } else if (line === "</style>") {
+            isInStyle = false
+        } else if (line.startsWith("```")) {
+            isInCode = !isInCode
         }
         if (isInStyle && !isInCode) {
             const url = line
