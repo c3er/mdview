@@ -181,19 +181,19 @@ function createWindow() {
                 {
                     label: "Open",
                     accelerator: "CmdOrCtrl+O",
-                    click() {
-                        electron.dialog.showOpenDialog(
-                            {
+                    async click() {
+                        try {
+                            const result = await electron.dialog.showOpenDialog({
                                 properties: ["openFile"],
                                 filters: [{ name: "Markdown", extensions: common.FILE_EXTENSIONS }]
-                            },
-                            filePaths => {
-                                if (filePaths) {
-                                    const filePath = filePaths[0]
-                                    openFile(filePath, encodingStorage.load(filePath))
-                                }
+                            })
+                            if (!result.canceled) {
+                                const filePath = result.filePaths[0]
+                                openFile(filePath, _internalTarget, encodingStorage.load(filePath))
                             }
-                        )
+                        } catch (e) {
+                            error(`Problem at opening file:\n ${e}`)
+                        }
                     }
                 },
                 {
