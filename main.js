@@ -115,14 +115,9 @@ function unblockURL(url) {
     _unblockedURLs.push(url)
 }
 
-function enterRawTextView() {
-    if (_isInRawView) {
-        _isInRawView = false
-        _mainWindow.webContents.send("leaveRawText")
-    } else {
-        _isInRawView = true
-        _mainWindow.webContents.send("viewRawText")
-    }
+function enterRawTextView(shallEnterRawTextView) {
+    _isInRawView = shallEnterRawTextView
+    _mainWindow.webContents.send(shallEnterRawTextView ? "viewRawText" : "leaveRawText")
 }
 
 function allowUnblockContent(isAllowed) {
@@ -242,7 +237,7 @@ function createWindow() {
                     accelerator: "Ctrl+U",
                     id: "view-raw-text",
                     click() {
-                        enterRawTextView()
+                        enterRawTextView(!_isInRawView)
                     }
                 }
             ]
@@ -337,7 +332,10 @@ electron.ipcMain.on("allContentUnblocked", () => {
     allowUnblockContent(false)
 })
 
-electron.ipcMain.on("disableRawView", () => enterRawTextView(false))
+electron.ipcMain.on("disableRawView", () => {
+    enterRawTextView(false)
+    _mainMenu.getMenuItemById("view-raw-text").enabled = false
+})
 
 electron.ipcMain.on("reloadPrepared", (_, isFileModification, encoding, position) => {
     _scrollPosition = position
