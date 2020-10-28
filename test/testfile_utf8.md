@@ -178,10 +178,10 @@ Lorem ipsum dolor sit amet, consecteteur adipiscing elit. Barcu ve a a a id a a 
 
 ## Some links to text files
 
-[index.html](index.html)
+[index.html](../index.html)
 
-[`index.js`](index.js)
+[`index.js`](../index.js)
 
-[README.md](README.md)
+[README.md](../README.md)
 
-[LICENSE](LICENSE)
+[LICENSE](../LICENSE)
