@@ -173,6 +173,16 @@ function alterStyleURLs(documentDirectory, fileContent) {
     return lines.join("\n")
 }
 
+function fittingTarget(target, nodeName) {
+    if (!target) {
+        return null
+    }
+    if (target.nodeName === nodeName) {
+        return target
+    }
+    return fittingTarget(target.parentNode, nodeName)
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     electron.ipcRenderer.send("finishLoad")
@@ -250,17 +260,19 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
                 role: "copy"
             }))
         }
-        if (event.target.nodeName === "A") {
+
+        const target = fittingTarget(event.target, "A")
+        if (target) {
             menu.append(new MenuItem({
                 label: "Copy link text",
                 click() {
-                    electron.clipboard.writeText(event.target.innerText)
+                    electron.clipboard.writeText(target.innerText)
                 }
             }))
             menu.append(new MenuItem({
                 label: "Copy link target",
                 click() {
-                    electron.clipboard.writeText(event.target.getAttribute("href"))
+                    electron.clipboard.writeText(target.getAttribute("href"))
                 }
             }))
         }
