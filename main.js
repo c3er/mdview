@@ -72,6 +72,7 @@ let _scrollPosition = 0
 let _isInRawView = false
 
 function error(msg) {
+    console.log("Error:", msg)
     electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
 }
