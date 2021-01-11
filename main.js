@@ -94,6 +94,8 @@ function extractFilePath(args) {
     return args.find(arg =>
         arg != process.execPath &&
         arg != "." &&
+        arg !== electron.app.getAppPath() &&
+        arg !== "data:," &&
         !arg.startsWith("-"))
 }
 
