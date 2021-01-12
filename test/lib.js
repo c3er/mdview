@@ -5,10 +5,7 @@ const chaiAsPromised = require("chai-as-promised")
 const electron = require("electron")
 const Application = require("spectron").Application
 
-global.before(() => {
-    chai.should()
-    chai.use(chaiAsPromised)
-})
+global.before(() => chai.use(chaiAsPromised))
 
 exports.startApp = async documentPath => {
     const app = new Application({

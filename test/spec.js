@@ -1,5 +1,7 @@
 const path = require("path")
 
+const assert = require("chai").assert
+
 const lib = require("./lib")
 
 describe("Integration tests", () => {
@@ -18,10 +20,10 @@ describe("Integration tests", () => {
 
     it("opens a window", async () => {
         client.waitUntilWindowLoaded()
-        client.getWindowCount().should.eventually.equal(1)
+        assert.eventually.equal(client.getWindowCount(), 1)
     })
 
     it("has file name in title bar", async () => {
-        client.getTitle().should.eventually.include(defaultDocumentFile)
+        assert.eventually.include(client.getTitle(), defaultDocumentFile)
     })
 })
