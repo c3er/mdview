@@ -10,10 +10,13 @@ global.before(() => {
     chai.use(chaiAsPromised)
 })
 
-exports.startApp = async () => {
+exports.startApp = async documentPath => {
     const app = new Application({
         path: electron,
-        args: [path.join(__dirname, "..")],
+        args: [
+            path.join(__dirname, ".."),
+            documentPath,
+        ],
     })
     chaiAsPromised.transferPromiseness = app.transferPromiseness
     return app.start()
