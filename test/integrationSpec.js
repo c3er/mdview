@@ -26,4 +26,9 @@ describe("Integration tests with single app instance", () => {
     it("has file name in title bar", async () => {
         assert.eventually.include(client.getTitle(), defaultDocumentFile)
     })
+
+    it("displays blocked content banner", async () => {
+        const elem = await client.$("//div[@id='blocked-content-info']")
+        assert.eventually.equal(elem.getAttribute("hidden"), null)
+    })
 })
