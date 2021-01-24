@@ -274,6 +274,7 @@ function createWindow() {
 }
 
 electron.app.on("ready", () => {
+    encodingStorage.init()
     createWindow()
 
     const webRequest = electron.session.defaultSession.webRequest

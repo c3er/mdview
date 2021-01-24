@@ -40,6 +40,26 @@ describe("Integration tests with single app instance", () => {
         const elem = await client.$(elements.blockedContentArea.path)
         assert.eventually.equal(elem.getAttribute("hidden"), null)
     })
+
+    describe('Library "encodingStorage"', () => {
+        const TESTPATH = "test1"
+        let encodingStorage
+
+        before(() => {
+            encodingStorage = require("../lib/encodingStorage")
+            encodingStorage.init(path.join(__dirname, "encodings.json"))
+        })
+
+        it("loads known encoding", () => {
+            const ENCODING = "ISO-8859-15"
+            encodingStorage.save(TESTPATH, ENCODING)
+            assert.equal(encodingStorage.load(TESTPATH), ENCODING)
+        })
+
+        it("loads default encoding if path is not known", () => {
+            assert.equal(encodingStorage.load("unknown-file"), encodingStorage.DEFAULT_ENCODING)
+        })
+    })
 })
 
 describe("Integration tests with their own app instance each", () => {
