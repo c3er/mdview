@@ -78,6 +78,16 @@ const defaultDocumentPath = path.join(__dirname, "documents", defaultDocumentFil
 let app
 let client
 
+async function checkUnblockedMessage() {
+    let hasFoundUnblockedMessage = false;
+    (await client.getMainProcessLogs()).forEach(log => {
+        if (log.toLowerCase().includes("unblocked")) {
+            hasFoundUnblockedMessage = true
+        }
+    })
+    return hasFoundUnblockedMessage
+}
+
 describe("Integration tests with single app instance", () => {
     before(async () => {
         app = await lib.startApp(defaultDocumentPath)
@@ -146,28 +156,35 @@ describe("Integration tests with their own app instance each", () => {
 
     afterEach(async () => await lib.stopApp(app))
 
-    describe("Blocked content element", () => {
-        it("disappears at click on X", async () => {
-            const blockedContentElement = await client.$(elements.blockedContentArea.path)
-            const closeButton = await client.$(elements.blockedContentArea.closeButton.path)
+    describe("Blocked content", () => {
+        describe("UI element", () => {
+            it("disappears at click on X", async () => {
+                const blockedContentElement = await client.$(elements.blockedContentArea.path)
+                const closeButton = await client.$(elements.blockedContentArea.closeButton.path)
 
-            closeButton.click()
-            assert.eventually.equal(blockedContentElement.getAttribute("hidden"), true)
+                closeButton.click()
+                assert.eventually.equal(blockedContentElement.getAttribute("hidden"), true)
+            })
+
+            it("unblocks content", async () => {
+                const blockedContentElement = await client.$(elements.blockedContentArea.path)
+                blockedContentElement.click()
+                assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
+            })
         })
 
-        it("unblocks content", async () => {
-            const blockedContentElement = await client.$(elements.blockedContentArea.path)
-            blockedContentElement.click()
+        describe("Menu item", () => {
+            it("unblocks content", async () => {
+                const viewMenu = elements.mainMenu.view
+                const viewMenuLabel = viewMenu.label
+                const unblockMenuLabel = viewMenu.sub.unblock.label
 
-            assert.isTrue(await lib.wait(async () => {
-                let hasFoundUnblockedMessage = false;
-                (await client.getMainProcessLogs()).forEach(log => {
-                    if (log.toLowerCase().includes("unblocked")) {
-                        hasFoundUnblockedMessage = true
-                    }
-                })
-                return hasFoundUnblockedMessage
-            }))
+                await menuAddon.clickMenu(viewMenuLabel, unblockMenuLabel)
+                const blockedConetentMenuItem = await menuAddon.getMenuItem(viewMenuLabel, unblockMenuLabel)
+
+                assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
+                assert.isFalse(blockedConetentMenuItem.enabled)
+            })
         })
     })
 })
