@@ -1,10 +1,69 @@
 const path = require("path")
 
 const assert = require("chai").assert
+const menuAddon = require("spectron-menu-addon-v2").default
 
 const lib = require("./lib")
 
 const elements = {
+    mainMenu: {
+        file: {
+            label: "File",
+            sub: {
+                open: {
+                    label: "Open",
+                    isEnabled: true,
+                },
+                print: {
+                    label: "Print",
+                    isEnabled: true,
+                },
+                quit: {
+                    label: "Quit",
+                    isEnabled: true,
+                },
+            },
+        },
+        edit: {
+            label: "Edit",
+            sub: {
+                copy: {
+                    label: "Copy",
+                    isEnabled: true,
+                },
+            },
+        },
+        view: {
+            label: "View",
+            sub: {
+                refresh: {
+                    label: "Refresh",
+                    isEnabled: true,
+                },
+                unblock: {
+                    label: "Unblock All External Content",
+                    isEnabled: true,
+                },
+                rawText: {
+                    label: "View Raw Text",
+                    isEnabled: true,
+                },
+            },
+        },
+        encoding: {
+            label: "Encoding",
+            sub: {},
+        },
+        tools: {
+            label: "Tools",
+            sub: {
+                developer: {
+                    label: "Developer Tools",
+                    isEnabled: true,
+                },
+            },
+        },
+    },
     blockedContentArea: {
         path: "//div[@id='blocked-content-info']",
         closeButton: {
@@ -59,6 +118,23 @@ describe("Integration tests with single app instance", () => {
         it("loads default encoding if path is not known", () => {
             assert.equal(encodingStorage.load("unknown-file"), encodingStorage.DEFAULT_ENCODING)
         })
+    })
+
+    describe("Main menu", () => {
+        for (const [_, mainItem] of Object.entries(elements.mainMenu)) {
+            describe(`Menu "${mainItem.label}"`, () => {
+                for (const [_, item] of Object.entries(mainItem.sub)) {
+                    it(`has item "${item.label}"`, async () => {
+                        assert.eventually.ok(menuAddon.getMenuItem(mainItem.label, item.label))
+                    })
+
+                    it(`item "${item.label}" is ${item.isEnabled ? "enabled" : "disabled"}`, async () => {
+                        const actualItem = await menuAddon.getMenuItem(mainItem.label, item.label)
+                        assert.equal(actualItem.enabled, item.isEnabled)
+                    })
+                }
+            })
+        }
     })
 })
 

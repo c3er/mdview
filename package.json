@@ -78,6 +78,8 @@
     "electron-builder": "22.9.1",
     "mocha": "8.2.1",
     "prettier": "2.2.1",
-    "spectron": "13.0.0"
+    "spectron": "13.0.0",
+    "spectron-menu-addon-v2": "1.0.1",
+    "tslib": "2.1.0"
   }
 }

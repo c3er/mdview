@@ -97,7 +97,8 @@ function extractFilePath(args) {
         arg != "." &&
         arg !== electron.app.getAppPath() &&
         arg !== "data:," &&
-        !arg.startsWith("-"))
+        !arg.startsWith("-") &&
+        !arg.includes("node_modules"))
 }
 
 function extractInternalTarget(args) {

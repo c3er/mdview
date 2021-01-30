@@ -3,7 +3,7 @@ const path = require("path")
 const chai = require("chai")
 const chaiAsPromised = require("chai-as-promised")
 const electron = require("electron")
-const Application = require("spectron").Application
+const menuAddon = require("spectron-menu-addon-v2").default
 
 // Based on https://stackoverflow.com/a/39914235/13949398 (What is the JavaScript version of sleep()?)
 function sleep(ms) {
@@ -14,7 +14,7 @@ function sleep(ms) {
 global.before(() => chai.use(chaiAsPromised))
 
 exports.startApp = async documentPath => {
-    const app = new Application({
+    const app = menuAddon.createApplication({
         path: electron,
         args: [
             path.join(__dirname, ".."),
