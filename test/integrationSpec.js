@@ -97,7 +97,7 @@ describe("Integration tests with single app instance", () => {
 
     it("displays blocked content banner", async () => {
         const elem = await client.$(elements.blockedContentArea.path)
-        assert.eventually.equal(elem.getAttribute("hidden"), null)
+        assert.equal(await elem.getAttribute("hidden"), null)
     })
 
     describe('Library "encodingStorage"', () => {
