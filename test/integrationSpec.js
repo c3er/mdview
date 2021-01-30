@@ -70,6 +70,9 @@ const elements = {
             path: "//span[@id='blocked-content-info-close-button']",
         },
     },
+    rawText: {
+        path: "//div[@id='raw-text']",
+    },
 }
 
 const defaultDocumentFile = "testfile_utf8.md"
@@ -86,6 +89,10 @@ async function checkUnblockedMessage() {
         }
     })
     return hasFoundUnblockedMessage
+}
+
+async function elementIsVisible(rawTextElement) {
+    return (await rawTextElement.getCSSProperty("display")).value !== "none"
 }
 
 describe("Integration tests with single app instance", () => {
@@ -146,6 +153,12 @@ describe("Integration tests with single app instance", () => {
             })
         }
     })
+
+    describe("Raw text", () => {
+        it("is invisible", async () => {
+            assert.eventually.isFalse(elementIsVisible(await client.$(elements.rawText.path)))
+        })
+    })
 })
 
 describe("Integration tests with their own app instance each", () => {
@@ -185,6 +198,23 @@ describe("Integration tests with their own app instance each", () => {
                 assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
                 assert.isFalse(blockedConetentMenuItem.enabled)
             })
+        })
+    })
+
+    describe("Raw text", () => {
+        it("can be activated", async () => {
+            const viewMenu = elements.mainMenu.view
+            const viewMenuLabel = viewMenu.label
+            const rawTextMenuLabel = viewMenu.sub.rawText.label
+
+            await menuAddon.clickMenu(viewMenuLabel, rawTextMenuLabel)
+
+            assert.eventually.isTrue(elementIsVisible(await client.$(elements.rawText.path)))
+
+            // The naive approach to get the element via XPath appears to be very slow (~500ms)
+            assert.eventually.isFalse(elementIsVisible(await client.$(function () {
+                return this.document.getElementById("markdown-body")
+            })))
         })
     })
 })
