@@ -200,7 +200,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
     }
 
     // URLs in cotaining style definitions have to be altered before rendering
-    const documentDirectory = path.dirname(filePath)
+    const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
     document.getElementById("content").innerHTML = markdown.render(content)
