@@ -104,7 +104,7 @@ function unblockURL(url) {
             element.removeAttribute("style")
 
             // Force element to reload without recreating the DOM element.
-            // The attached event handlers would be lost while recreating the DOM element.
+            // Recreating the DOM element would cause the attached event handlers to be lost.
             const attributes = element.attributes
             for (let i = 0; i < attributes.length; i++) {
                 const attr = attributes[i]
@@ -124,7 +124,7 @@ function unblockURL(url) {
 }
 
 function unblockAll() {
-    for (let url in _blockedElements) {
+    for (const url in _blockedElements) {
         unblockURL(url)
     }
 }

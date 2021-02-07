@@ -118,7 +118,6 @@ describe("Integration tests with single app instance", () => {
     })
 
     describe('Library "encodingStorage"', () => {
-        const TESTPATH = "test1"
         let encodingStorage
 
         before(() => {
@@ -127,6 +126,7 @@ describe("Integration tests with single app instance", () => {
         })
 
         it("loads known encoding", () => {
+            const TESTPATH = "test1"
             const ENCODING = "ISO-8859-15"
             encodingStorage.save(TESTPATH, ENCODING)
             assert.equal(encodingStorage.load(TESTPATH), ENCODING)
