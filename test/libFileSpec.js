@@ -2,7 +2,7 @@ const path = require("path")
 
 const assert = require("chai").assert
 
-const file = require("../lib/file")
+const file = require("../app/lib/file")
 
 describe('Library "file"', () => {
     const mdFilePath = path.join(__dirname, "documents", "testfile_utf8.md")

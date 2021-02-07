@@ -14,7 +14,7 @@
   },
   "author": "Christian Dreier",
   "license": "MIT",
-  "main": "main.js",
+  "main": "app/main.js",
   "bugs": {
     "url": "https://github.com/c3er/mdview/issues"
   },

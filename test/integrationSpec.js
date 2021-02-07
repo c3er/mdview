@@ -121,7 +121,7 @@ describe("Integration tests with single app instance", () => {
         let encodingStorage
 
         before(() => {
-            encodingStorage = require("../lib/encodingStorage")
+            encodingStorage = require("../app/lib/encodingStorage")
             encodingStorage.init(path.join(__dirname, "encodings.json"))
         })
 

@@ -1,6 +1,6 @@
 const assert = require("chai").assert
 
-const common = require("../lib/common")
+const common = require("../app/lib/common")
 
 describe('Library "common"', () => {
     describe("common.isWebURL", () => {
