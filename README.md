@@ -26,28 +26,7 @@ The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMag
 
 ### Debugging
 
-It is possible to debug the main process with [Visual Studio Code](https://code.visualstudio.com/). For debugging inside of VS Code, the file `.vscode/launch.json` in the project directory has to be edited (just copy & paste the code below):
-
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug Main Process",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
-            },
-            "args": ["."]
-        }
-    ]
-}
-```
-
-This `launch.json` is taken from the [Electron documentation](https://electronjs.org/docs/tutorial/debugging-main-process-vscode).
+The main process can be debugged with [Visual Studio Code](https://code.visualstudio.com/). A `launch.json` is in the repository.
 
 The renderer process (`index.html` and `index.js`) must be debugged with help of the Electron development tools by calling in the main menu "Tools" -> "Developer tools" or by pressing the F10 key.
 

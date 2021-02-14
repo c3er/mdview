@@ -1,0 +1,33 @@
+// Based on https://www.electronjs.org/docs/tutorial/debugging-vscode
+{
+    "version": "0.2.0",
+    "configurations": [
+    {
+      "args": [
+        "--timeout",
+        "999999",
+        "${workspaceFolder}/test"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Mocha Tests",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+        {
+            "name": "Debug Main Process",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+            },
+            "args": ["."],
+            "outputCapture": "std"
+        }
+    ]
+}
