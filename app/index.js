@@ -36,6 +36,7 @@ markdown.use(require("markdown-it-headinganchor"), {
 
 const common = require("./lib/common")
 const file = require("./lib/file")
+const ipc = require("./lib/ipc")
 
 const TITLE = "Markdown Viewer"
 
@@ -96,7 +97,7 @@ function hasBlockedElements() {
 }
 
 function unblockURL(url) {
-    electron.ipcRenderer.send("unblockURL", url)
+    electron.ipcRenderer.send(ipc.messages.unblockURL, url)
 
     const elements = _blockedElements[url]
     if (elements) {
@@ -119,7 +120,7 @@ function unblockURL(url) {
 
     if (!hasBlockedElements()) {
         changeBlockedContentInfoVisibility(false)
-        electron.ipcRenderer.send("allContentUnblocked")
+        electron.ipcRenderer.send(ipc.messages.allContentUnblocked)
     }
 }
 
@@ -185,7 +186,7 @@ function fittingTarget(target, nodeName) {
 
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
-    electron.ipcRenderer.send("finishLoad")
+    electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
 electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
@@ -196,7 +197,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
         const pathParts = filePath.split(".")
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
         content = "```" + language + "\n" + content + "\n```"
-        electron.ipcRenderer.send("disableRawView")
+        electron.ipcRenderer.send(ipc.messages.disableRawView)
     }
 
     // URLs in cotaining style definitions have to be altered before rendering
@@ -218,11 +219,11 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
                 if (common.isWebURL(target) || target.startsWith("mailto:")) {
                     electron.shell.openExternal(target)
                 } else if (isInternalLink(target)) {
-                    electron.ipcRenderer.send("openInternal", target)
+                    electron.ipcRenderer.send(ipc.messages.openInternal, target)
                 } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
                     electron.shell.openItem(fullPath)
                 } else {
-                    electron.ipcRenderer.send("openFile", fullPath)
+                    electron.ipcRenderer.send(ipc.messages.openFile, fullPath)
                 }
             }
             statusOnMouseOver(link, target)
@@ -294,20 +295,20 @@ electron.ipcRenderer.on("contentBlocked", (_, url) => {
     document.getElementById("blocked-content-info-close-button").onclick = () => changeBlockedContentInfoVisibility(false)
 })
 
-electron.ipcRenderer.on("unblockAll", unblockAll)
+electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
 
-electron.ipcRenderer.on("viewRawText", () => switchRawView(true))
+electron.ipcRenderer.on(ipc.messages.viewRawText, () => switchRawView(true))
 
-electron.ipcRenderer.on("leaveRawText", () => switchRawView(false))
+electron.ipcRenderer.on(ipc.messages.leaveRawText, () => switchRawView(false))
 
-electron.ipcRenderer.on("prepareReload", (_, isFileModification, encoding) =>
+electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, encoding) =>
     electron.ipcRenderer.send(
-        "reloadPrepared",
+        "reload-prepared",
         isFileModification,
         encoding,
         document.documentElement.scrollTop))
 
-electron.ipcRenderer.on("restorePosition", (_, position) => {
+electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => {
     window.scrollTo(0, position)
     _scrollPosition = position
 })

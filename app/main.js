@@ -7,6 +7,7 @@ const electron = require("electron")
 
 const common = require("./lib/common")
 const encodingStorage = require("./lib/encodingStorage")
+const ipc = require("./lib/ipc")
 
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
@@ -121,7 +122,9 @@ function unblockURL(url) {
 
 function enterRawTextView(shallEnterRawTextView) {
     _isInRawView = shallEnterRawTextView
-    _mainWindow.webContents.send(shallEnterRawTextView ? "viewRawText" : "leaveRawText")
+    _mainWindow.webContents.send(shallEnterRawTextView
+        ? ipc.messages.viewRawText
+        : ipc.messages.leaveRawText)
 }
 
 function allowUnblockContent(isAllowed) {
@@ -130,7 +133,7 @@ function allowUnblockContent(isAllowed) {
 
 function reload(isFileModification, encoding) {
     _mainWindow.webContents.send(
-        "prepareReload",
+        ipc.messages.prepareReload,
         isFileModification,
         encoding || encodingStorage.load(_currentFilePath))
 }
@@ -145,7 +148,7 @@ function changeEncoding(filePath, encoding) {
 }
 
 function restorePosition() {
-    _mainWindow.webContents.send("restorePosition", _scrollPosition)
+    _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
 function createWindow() {
@@ -234,7 +237,7 @@ function createWindow() {
                     accelerator: "Alt+U",
                     id: "unblock-content",
                     click() {
-                        _mainWindow.webContents.send("unblockAll")
+                        _mainWindow.webContents.send(ipc.messages.unblockAll)
                     }
                 },
                 {
@@ -314,7 +317,7 @@ electron.app.on("activate", () => {
     }
 })
 
-electron.ipcMain.on("finishLoad", () => {
+electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const args = process.argv
     console.log(args)
 
@@ -327,23 +330,23 @@ electron.ipcMain.on("finishLoad", () => {
     }
 })
 
-electron.ipcMain.on("openFile", (_, filePath) => createChildWindow(filePath))
+electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
 
-electron.ipcMain.on("openInternal", (_, target) => createChildWindow(_currentFilePath, target))
+electron.ipcMain.on(ipc.messages.openInternal, (_, target) => createChildWindow(_currentFilePath, target))
 
-electron.ipcMain.on("unblockURL", (_, url) => unblockURL(url))
+electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
 
-electron.ipcMain.on("allContentUnblocked", () => {
+electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
     _contentIsBlocked = false
     allowUnblockContent(false)
 })
 
-electron.ipcMain.on("disableRawView", () => {
+electron.ipcMain.on(ipc.messages.disableRawView, () => {
     enterRawTextView(false)
     _mainMenu.getMenuItemById("view-raw-text").enabled = false
 })
 
-electron.ipcMain.on("reloadPrepared", (_, isFileModification, encoding, position) => {
+electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
     if (isFileModification) {
