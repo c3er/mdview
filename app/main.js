@@ -5,7 +5,7 @@ const path = require("path")
 const url = require("url")
 
 const childProcess = require("child_process")
-const electron = require("electron")
+const { app, ipcMain, nativeTheme, dialog, Menu, BrowserWindow, session } = require("electron")
 
 const common = require("./lib/common")
 const encodingStorage = require("./lib/encodingStorage")
@@ -76,7 +76,7 @@ let _isInRawView = false
 
 function error(msg) {
     console.log("Error:", msg)
-    electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
+    dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
 }
 
@@ -98,7 +98,7 @@ function extractFilePath(args) {
     return args.find(arg =>
         arg !== process.execPath &&
         arg !== "." &&
-        arg !== electron.app.getAppPath() &&
+        arg !== app.getAppPath() &&
         arg !== "data:," &&
         !arg.startsWith("-") &&
         !arg.includes("node_modules"))
@@ -153,8 +153,27 @@ function restorePosition() {
     _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
+
+// console.log("By Default, Dark Theme Enabled - ", 
+//             nativeTheme.shouldUseDarkColors); 
+// console.log("High Contrast Colors - ",  
+//             nativeTheme.shouldUseHighContrastColors); 
+// console.log("Inverted Colors - ",  
+//             nativeTheme.shouldUseInvertedColorScheme); 
+  
+// nativeTheme.on("updated", () => { 
+//     console.log("Updated Event has been Emitted"); 
+  
+//     if (nativeTheme.shouldUseDarkColors) { 
+//         console.log("Dark Theme Chosen by User"); 
+//     } else { 
+//         console.log("Light Theme Chosen by User"); 
+//     } 
+// }); 
+
+
 function createWindow() {
-    _mainWindow = new electron.BrowserWindow({
+    _mainWindow = new BrowserWindow({
         width: WINDOW_WIDTH,
         height: WINDOW_HEIGHT,
         backgroundColor: "#fff",
@@ -179,7 +198,7 @@ function createWindow() {
         }
     })
 
-    _mainMenu = electron.Menu.buildFromTemplate([
+    _mainMenu = Menu.buildFromTemplate([
         {
             label: "File",
             submenu: [
@@ -188,7 +207,7 @@ function createWindow() {
                     accelerator: "CmdOrCtrl+O",
                     async click() {
                         try {
-                            const result = await electron.dialog.showOpenDialog({
+                            const result = await dialog.showOpenDialog({
                                 properties: ["openFile"],
                                 filters: [{ name: "Markdown", extensions: common.FILE_EXTENSIONS }]
                             })
@@ -209,10 +228,14 @@ function createWindow() {
                     }
                 },
                 {
-                    label: "Settings",
-                    accelerator: "Ctrl+Shift+s",
+                    label: "Switch Theme",
+                    accelerator: "Ctrl+T",
                     click() {
-                        
+                        if (nativeTheme.shouldUseDarkColors) {
+                            nativeTheme.themeSource = 'light'
+                        } else {
+                            nativeTheme.themeSource = 'dark'
+                        }
                     }
                 },
                 { type: "separator" },
@@ -284,14 +307,15 @@ function createWindow() {
             ]
         },
     ])
-    electron.Menu.setApplicationMenu(_mainMenu)
+    Menu.setApplicationMenu(_mainMenu)
 }
 
-electron.app.on("ready", () => {
+
+app.on("ready", () => {
     encodingStorage.init()
     createWindow()
 
-    const webRequest = electron.session.defaultSession.webRequest
+    const webRequest = session.defaultSession.webRequest
     webRequest.onBeforeRequest((details, callback) => {
         const url = details.url
         const isBlocked = common.isWebURL(url) && !_unblockedURLs.includes(url)
@@ -310,15 +334,15 @@ electron.app.on("ready", () => {
     })
 })
 
-electron.app.on("window-all-closed", () => {
+app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
-        electron.app.quit()
+        app.quit()
     }
 })
 
-electron.app.on("activate", () => {
+app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (_mainWindow === null) {
@@ -326,7 +350,7 @@ electron.app.on("activate", () => {
     }
 })
 
-electron.ipcMain.on(ipc.messages.finishLoad, () => {
+ipcMain.on(ipc.messages.finishLoad, () => {
     const args = process.argv
     console.log(args)
 
@@ -339,23 +363,23 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     }
 })
 
-electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
+ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
 
-electron.ipcMain.on(ipc.messages.openInternal, (_, target) => createChildWindow(_currentFilePath, target))
+ipcMain.on(ipc.messages.openInternal, (_, target) => createChildWindow(_currentFilePath, target))
 
-electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
+ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
 
-electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
+ipcMain.on(ipc.messages.allContentUnblocked, () => {
     _contentIsBlocked = false
     allowUnblockContent(false)
 })
 
-electron.ipcMain.on(ipc.messages.disableRawView, () => {
+ipcMain.on(ipc.messages.disableRawView, () => {
     enterRawTextView(false)
     _mainMenu.getMenuItemById("view-raw-text").enabled = false
 })
 
-electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
+ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
     if (isFileModification) {
