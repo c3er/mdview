@@ -65,6 +65,7 @@
     ]
   },
   "dependencies": {
+    "electron-json-storage": "^4.4.0",
     "github-markdown-css": "4.0.0",
     "highlight.js": "10.5.0",
     "iconv-lite": "0.6.2",

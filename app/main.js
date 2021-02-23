@@ -11,6 +11,8 @@ const common = require("./lib/common")
 const encodingStorage = require("./lib/encodingStorage")
 const ipc = require("./lib/ipc")
 
+const storage = require('electron-json-storage');
+
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
 
@@ -154,24 +156,6 @@ function restorePosition() {
 }
 
 
-// console.log("By Default, Dark Theme Enabled - ", 
-//             nativeTheme.shouldUseDarkColors); 
-// console.log("High Contrast Colors - ",  
-//             nativeTheme.shouldUseHighContrastColors); 
-// console.log("Inverted Colors - ",  
-//             nativeTheme.shouldUseInvertedColorScheme); 
-  
-// nativeTheme.on("updated", () => { 
-//     console.log("Updated Event has been Emitted"); 
-  
-//     if (nativeTheme.shouldUseDarkColors) { 
-//         console.log("Dark Theme Chosen by User"); 
-//     } else { 
-//         console.log("Light Theme Chosen by User"); 
-//     } 
-// }); 
-
-
 function createWindow() {
     _mainWindow = new BrowserWindow({
         width: WINDOW_WIDTH,
@@ -198,6 +182,24 @@ function createWindow() {
         }
     })
 
+    storage.has('settings', function(error, hasKey) {
+        if (error) {
+            console.log('d1')
+            nativeTheme.themeSource = 'dark'
+        };
+      
+        if (hasKey) {
+            storage.get('settings', function(error, object) {
+                if (error) {
+                    console.log('d2')
+                    nativeTheme.themeSource = 'dark'
+                } else {
+                    nativeTheme.themeSource = object.theme;
+                }
+            });
+        }
+    });
+    
     _mainMenu = Menu.buildFromTemplate([
         {
             label: "File",
@@ -233,8 +235,10 @@ function createWindow() {
                     click() {
                         if (nativeTheme.shouldUseDarkColors) {
                             nativeTheme.themeSource = 'light'
+                            storage.set('settings', { theme: 'light' })
                         } else {
                             nativeTheme.themeSource = 'dark'
+                            storage.set('settings', { theme: 'dark' })
                         }
                     }
                 },
