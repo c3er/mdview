@@ -208,6 +208,13 @@ function createWindow() {
                         _mainWindow.webContents.print()
                     }
                 },
+                {
+                    label: "Settings",
+                    accelerator: "Ctrl+Shift+s",
+                    click() {
+                        
+                    }
+                },
                 { type: "separator" },
                 {
                     label: "Quit",
@@ -275,7 +282,7 @@ function createWindow() {
                     }
                 }
             ]
-        }
+        },
     ])
     electron.Menu.setApplicationMenu(_mainMenu)
 }
