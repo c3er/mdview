@@ -680,6 +680,7 @@
     background-color: #282C34; /* 图片背景 */
     box-sizing: content-box;
     max-width: 100%;
+    color: #282a36;
   }
   
   .markdown-body img[align=right] {
@@ -973,5 +974,8 @@
   }
 
   .highlight pre, .markdown-body pre {
-    color: #e8e8e8;
+    background-color: #282a36;
+    border-style: solid !important;
+    border-width: 1px !important;
+    border: #888888;
   }
