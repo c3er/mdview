@@ -5,13 +5,12 @@ const path = require("path")
 const url = require("url")
 
 const childProcess = require("child_process")
-const { app, ipcMain, nativeTheme, dialog, Menu, BrowserWindow, session } = require("electron")
+const electron = require("electron")
+const storage = require('electron-json-storage');
 
 const common = require("./lib/common")
 const encodingStorage = require("./lib/encodingStorage")
 const ipc = require("./lib/ipc")
-
-const storage = require('electron-json-storage');
 
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
@@ -78,7 +77,7 @@ let _isInRawView = false
 
 function error(msg) {
     console.log("Error:", msg)
-    dialog.showErrorBox("Error", `${msg}. Exiting.`)
+    electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
 }
 
@@ -100,7 +99,7 @@ function extractFilePath(args) {
     return args.find(arg =>
         arg !== process.execPath &&
         arg !== "." &&
-        arg !== app.getAppPath() &&
+        arg !== electron.app.getAppPath() &&
         arg !== "data:," &&
         !arg.startsWith("-") &&
         !arg.includes("node_modules"))
@@ -157,7 +156,7 @@ function restorePosition() {
 
 
 function createWindow() {
-    _mainWindow = new BrowserWindow({
+    _mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
         height: WINDOW_HEIGHT,
         backgroundColor: "#fff",
@@ -185,22 +184,22 @@ function createWindow() {
     storage.has('settings', function(error, hasKey) {
         if (error) {
             console.log('d1')
-            nativeTheme.themeSource = 'dark'
+            electron.nativeTheme.themeSource = 'dark'
         };
       
         if (hasKey) {
             storage.get('settings', function(error, object) {
                 if (error) {
                     console.log('d2')
-                    nativeTheme.themeSource = 'dark'
+                    electron.nativeTheme.themeSource = 'dark'
                 } else {
-                    nativeTheme.themeSource = object.theme;
+                    electron.nativeTheme.themeSource = object.theme;
                 }
             });
         }
     });
     
-    _mainMenu = Menu.buildFromTemplate([
+    _mainMenu = electron.Menu.buildFromTemplate([
         {
             label: "File",
             submenu: [
@@ -209,7 +208,7 @@ function createWindow() {
                     accelerator: "CmdOrCtrl+O",
                     async click() {
                         try {
-                            const result = await dialog.showOpenDialog({
+                            const result = await electron.dialog.showOpenDialog({
                                 properties: ["openFile"],
                                 filters: [{ name: "Markdown", extensions: common.FILE_EXTENSIONS }]
                             })
@@ -233,11 +232,11 @@ function createWindow() {
                     label: "Switch Theme",
                     accelerator: "Ctrl+T",
                     click() {
-                        if (nativeTheme.shouldUseDarkColors) {
-                            nativeTheme.themeSource = 'light'
+                        if (electron.nativeTheme.shouldUseDarkColors) {
+                            electron.nativeTheme.themeSource = 'light'
                             storage.set('settings', { theme: 'light' })
                         } else {
-                            nativeTheme.themeSource = 'dark'
+                            electron.nativeTheme.themeSource = 'dark'
                             storage.set('settings', { theme: 'dark' })
                         }
                     }
@@ -311,15 +310,15 @@ function createWindow() {
             ]
         },
     ])
-    Menu.setApplicationMenu(_mainMenu)
+    electron.Menu.setApplicationMenu(_mainMenu)
 }
 
 
-app.on("ready", () => {
+electron.app.on("ready", () => {
     encodingStorage.init()
     createWindow()
 
-    const webRequest = session.defaultSession.webRequest
+    const webRequest = electron.session.defaultSession.webRequest
     webRequest.onBeforeRequest((details, callback) => {
         const url = details.url
         const isBlocked = common.isWebURL(url) && !_unblockedURLs.includes(url)
@@ -338,15 +337,15 @@ app.on("ready", () => {
     })
 })
 
-app.on("window-all-closed", () => {
+electron.app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
-        app.quit()
+        electron.app.quit()
     }
 })
 
-app.on("activate", () => {
+electron.app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (_mainWindow === null) {
@@ -354,7 +353,7 @@ app.on("activate", () => {
     }
 })
 
-ipcMain.on(ipc.messages.finishLoad, () => {
+electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const args = process.argv
     console.log(args)
 
@@ -367,23 +366,23 @@ ipcMain.on(ipc.messages.finishLoad, () => {
     }
 })
 
-ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
+electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
 
-ipcMain.on(ipc.messages.openInternal, (_, target) => createChildWindow(_currentFilePath, target))
+electron.ipcMain.on(ipc.messages.openInternal, (_, target) => createChildWindow(_currentFilePath, target))
 
-ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
+electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
 
-ipcMain.on(ipc.messages.allContentUnblocked, () => {
+electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
     _contentIsBlocked = false
     allowUnblockContent(false)
 })
 
-ipcMain.on(ipc.messages.disableRawView, () => {
+electron.ipcMain.on(ipc.messages.disableRawView, () => {
     enterRawTextView(false)
     _mainMenu.getMenuItemById("view-raw-text").enabled = false
 })
 
-ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
+electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
     if (isFileModification) {
