@@ -191,7 +191,7 @@ function createWindow() {
                     console.log(error)
                     electron.nativeTheme.themeSource = 'light'
                 } else {
-                    electron.nativeTheme.themeSource = object.theme;
+                    electron.nativeTheme.themeSource = object.theme
                 }
             });
         }
