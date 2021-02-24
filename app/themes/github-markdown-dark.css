@@ -971,3 +971,7 @@
     background: #282828;
     color: #e8e8e8;
   }
+
+  .highlight pre, .markdown-body pre {
+    color: #e8e8e8;
+  }
