@@ -1,5 +1,5 @@
 /* Credit to https://github.com/mrdrivingduck/github-markdown-css */
-/* Just replaced .markdown-body-dark to .markdown-body */
+/* Just replaced .markdown-body-dark to .markdown-body, I edited the colours to match dracula theme */
 
 @font-face {
     font-family: octicons-link;
@@ -29,7 +29,7 @@
   .markdown-body h4 .octicon-link,
   .markdown-body h5 .octicon-link,
   .markdown-body h6 .octicon-link {
-    color: #1b1f23;
+    color: #282a36;
     vertical-align: middle;
     visibility: hidden;
   }
@@ -55,7 +55,7 @@
   .markdown-body {
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
-    color: #e8e8e8; /* 基本文字 */
+    color: #f8f8f2; /* 基本文字 */
     line-height: 1.5;
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     font-size: 16px;
@@ -64,17 +64,17 @@
   }
   
   .markdown-body .pl-c {
-    color: #6a737d;
+    color: #44475a;
   }
   
   .markdown-body .pl-c1,
   .markdown-body .pl-s .pl-v {
-    color: #005cc5; /* 代码段函数名？ */
+    color: #8be9fd; /* 代码段函数名？ */
   }
   
   .markdown-body .pl-e,
   .markdown-body .pl-en {
-    color: #6f42c1;
+    color: #bd93f9;
   }
   
   .markdown-body .pl-s .pl-s1,
@@ -83,11 +83,11 @@
   }
   
   .markdown-body .pl-ent {
-    color: #22863a;
+    color: #50fa7b;
   }
   
   .markdown-body .pl-k {
-    color: #d73a49; /* 代码段关键字？ */
+    color: #ff5555; /* 代码段关键字？ */
   }
   
   .markdown-body .pl-pds,
@@ -97,25 +97,25 @@
   .markdown-body .pl-sr .pl-cce,
   .markdown-body .pl-sr .pl-sra,
   .markdown-body .pl-sr .pl-sre {
-    color: #032f62; /* 字符串常量 */
+    color: #6272a4; /* 字符串常量 */
   }
   
   .markdown-body .pl-smw,
   .markdown-body .pl-v {
-    color: #e36209;
+    color: #ffb86c;
   }
   
   .markdown-body .pl-bu {
-    color: #b31d28;
+    color: #ff79c6;
   }
   
   .markdown-body .pl-ii {
-    background-color: #b31d28;
+    background-color: #ff79c6;
     color: #fafbfc;
   }
   
   .markdown-body .pl-c2 {
-    background-color: #d73a49;
+    background-color: #ff5555;
     color: #fafbfc;
   }
   
@@ -124,7 +124,7 @@
   }
   
   .markdown-body .pl-sr .pl-cce {
-    color: #22863a;
+    color: #50fa7b;
     font-weight: 700;
   }
   
@@ -135,7 +135,7 @@
   .markdown-body .pl-mh,
   .markdown-body .pl-mh .pl-en,
   .markdown-body .pl-ms {
-    color: #005cc5;
+    color: #8be9fd;
     font-weight: 700;
   }
   
@@ -151,26 +151,26 @@
   
   .markdown-body .pl-md {
     background-color: #ffeef0;
-    color: #b31d28;
+    color: #ff79c6;
   }
   
   .markdown-body .pl-mi1 {
     background-color: #f0fff4;
-    color: #22863a;
+    color: #50fa7b;
   }
   
   .markdown-body .pl-mc {
     background-color: #ffebda;
-    color: #e36209;
+    color: #ffb86c;
   }
   
   .markdown-body .pl-mi2 {
-    background-color: #005cc5;
+    background-color: #8be9fd;
     color: #f6f8fa;
   }
   
   .markdown-body .pl-mdr {
-    color: #6f42c1;
+    color: #bd93f9;
     font-weight: 700;
   }
   
@@ -183,7 +183,7 @@
   }
   
   .markdown-body .pl-corl {
-    color: #032f62;
+    color: #6272a4;
     text-decoration: underline;
   }
   
@@ -256,7 +256,7 @@
   }
   
   .markdown-body a {
-    color: #00bbff; /* 超链接 */
+    color: #bd93f9; /* 超链接 */
     text-decoration: none;
   }
   
@@ -426,7 +426,7 @@
   }
   
   .markdown-body .text-gray-light {
-    color: #6a737d!important;
+    color: #44475a!important;
   }
   
   .markdown-body .mb-0 {
@@ -552,13 +552,13 @@
   
   .markdown-body kbd {
     /* background-color: #fafbfc; */
-    background-color: #ff0000;
+    background-color: #ff5555;
     border: 1px solid #c6cbd1;
     border-bottom-color: #959da5;
     border-radius: 3px;
     box-shadow: inset 0 -1px 0 #959da5;
     /* color: #444d56; */
-    color: #ff0000;
+    color: #ff5555;
     display: inline-block;
     font-size: 11px;
     line-height: 10px;
@@ -745,7 +745,7 @@
   }
   
   .markdown-body .commit-tease-sha {
-    color: #ff0000;
+    color: #ff5555;
     display: inline-block;
     font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
     font-size: 90%;
@@ -809,7 +809,7 @@
   
   .markdown-body .pl-token.active,
   .markdown-body .pl-token:hover {
-    background: #ffea7f;
+    background: #f1fa8c;
     cursor: pointer;
   }
   
@@ -828,7 +828,7 @@
   }
   
   .markdown-body :checked+.radio-label {
-    border-color: #0366d6;
+    border-color: #8be9fd;
     position: relative;
     z-index: 1;
   }
@@ -965,17 +965,17 @@
   /* Patch */
 
   html {
-    background: #282C34;
+    background: #282a36;
   }
 
   #status-bar {
-    background: #282828;
-    color: #e8e8e8;
+    background: #292A2D;
+    color: #f8f8f2;
   }
 
   .highlight pre, .markdown-body pre {
-    background-color: #282a36;
+    background-color: #22212C;
     border-style: solid !important;
     border-width: 1px !important;
-    border: #888888;
+    border: #44475a;
   }
