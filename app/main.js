@@ -182,11 +182,17 @@ function createWindow() {
     })
 
     storage.has('settings', (error, hasKey) => {
-        if (error) electron.nativeTheme.themeSource = 'light';
-        if (hasKey) {
+        if (error) {
+            console.log(error)
+            electron.nativeTheme.themeSource = 'light'
+        } else if (hasKey) {
             storage.get('settings', (error, object) => {
-                if (error) electron.nativeTheme.themeSource = 'light';
-                else electron.nativeTheme.themeSource = object.theme;
+                if (error) {
+                    console.log(error)
+                    electron.nativeTheme.themeSource = 'light'
+                } else {
+                    electron.nativeTheme.themeSource = object.theme;
+                }
             });
         }
     });
@@ -225,11 +231,11 @@ function createWindow() {
                     accelerator: "Ctrl+T",
                     click() {
                         if (electron.nativeTheme.shouldUseDarkColors) {
-                            electron.nativeTheme.themeSource = 'light';
-                            storage.set('settings', { theme: 'light' });
+                            electron.nativeTheme.themeSource = 'light'
+                            storage.set('settings', { theme: 'light' })
                         } else {
-                            electron.nativeTheme.themeSource = 'dark';
-                            storage.set('settings', { theme: 'dark' });
+                            electron.nativeTheme.themeSource = 'dark'
+                            storage.set('settings', { theme: 'dark' })
                         }
                     }
                 },
