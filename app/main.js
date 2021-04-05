@@ -185,12 +185,10 @@ function createWindow() {
         const nativeTheme = electron.nativeTheme
         if (error) {
             console.log(error)
-            nativeTheme.themeSource = 'light'
         } else if (hasKey) {
             storage.get('settings', (error, object) => {
                 if (error) {
                     console.log(error)
-                    nativeTheme.themeSource = 'light'
                 } else {
                     nativeTheme.themeSource = object.theme
                 }
