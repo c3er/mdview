@@ -225,20 +225,6 @@ function createWindow() {
                         _mainWindow.webContents.print()
                     }
                 },
-                {
-                    label: "Switch Theme",
-                    accelerator: "Ctrl+T",
-                    click() {
-                        const nativeTheme = electron.nativeTheme
-                        if (nativeTheme.shouldUseDarkColors) {
-                            nativeTheme.themeSource = 'light'
-                            storage.set('settings', { theme: 'light' })
-                        } else {
-                            nativeTheme.themeSource = 'dark'
-                            storage.set('settings', { theme: 'dark' })
-                        }
-                    }
-                },
                 { type: "separator" },
                 {
                     label: "Quit",
@@ -280,7 +266,21 @@ function createWindow() {
                     click() {
                         enterRawTextView(!_isInRawView)
                     }
-                }
+                },
+                { type: "separator" },
+                {
+                    label: "Switch Theme",
+                    click() {
+                        const nativeTheme = electron.nativeTheme
+                        if (nativeTheme.shouldUseDarkColors) {
+                            nativeTheme.themeSource = 'light'
+                            storage.set('settings', { theme: 'light' })
+                        } else {
+                            nativeTheme.themeSource = 'dark'
+                            storage.set('settings', { theme: 'dark' })
+                        }
+                    }
+                },
             ]
         },
         {
