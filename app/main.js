@@ -6,7 +6,7 @@ const url = require("url")
 
 const childProcess = require("child_process")
 const electron = require("electron")
-const storage = require('electron-json-storage');
+const storage = require('electron-json-storage')
 
 const common = require("./lib/common")
 const encodingStorage = require("./lib/encodingStorage")
@@ -182,21 +182,22 @@ function createWindow() {
     })
 
     storage.has('settings', (error, hasKey) => {
+        const nativeTheme = electron.nativeTheme
         if (error) {
             console.log(error)
-            electron.nativeTheme.themeSource = 'light'
+            nativeTheme.themeSource = 'light'
         } else if (hasKey) {
             storage.get('settings', (error, object) => {
                 if (error) {
                     console.log(error)
-                    electron.nativeTheme.themeSource = 'light'
+                    nativeTheme.themeSource = 'light'
                 } else {
-                    electron.nativeTheme.themeSource = object.theme
+                    nativeTheme.themeSource = object.theme
                 }
-            });
+            })
         }
-    });
-    
+    })
+
     _mainMenu = electron.Menu.buildFromTemplate([
         {
             label: "File",
@@ -230,11 +231,12 @@ function createWindow() {
                     label: "Switch Theme",
                     accelerator: "Ctrl+T",
                     click() {
-                        if (electron.nativeTheme.shouldUseDarkColors) {
-                            electron.nativeTheme.themeSource = 'light'
+                        const nativeTheme = electron.nativeTheme
+                        if (nativeTheme.shouldUseDarkColors) {
+                            nativeTheme.themeSource = 'light'
                             storage.set('settings', { theme: 'light' })
                         } else {
-                            electron.nativeTheme.themeSource = 'dark'
+                            nativeTheme.themeSource = 'dark'
                             storage.set('settings', { theme: 'dark' })
                         }
                     }
