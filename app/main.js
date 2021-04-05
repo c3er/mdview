@@ -2,7 +2,6 @@
 
 const fs = require("fs")
 const path = require("path")
-const url = require("url")
 
 const childProcess = require("child_process")
 const electron = require("electron")
@@ -166,13 +165,7 @@ function createWindow() {
             contextIsolation: false,
         }
     })
-    _mainWindow.loadURL(
-        url.format({
-            pathname: path.join(__dirname, "index.html"),
-            protocol: "file:",
-            slashes: true
-        })
-    )
+    _mainWindow.loadFile(path.join(__dirname, "index.html"))
     _mainWindow.on("closed", () => _mainWindow = null)
     _mainWindow.webContents.on("did-finish-load", () => {
         if (_isReloading) {
@@ -313,6 +306,7 @@ function createWindow() {
 
 
 electron.app.on("ready", () => {
+    require('@electron/remote/main').initialize()
     encodingStorage.init()
     createWindow()
 

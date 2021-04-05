@@ -4,6 +4,7 @@ const path = require("path")
 
 const electron = require("electron")
 const hljs = require("highlight.js")
+const remote = require('@electron/remote')
 
 const markdown = require("markdown-it")({
     highlight: (text, language) => {
@@ -13,7 +14,10 @@ const markdown = require("markdown-it")({
         if (language && hljs.getLanguage(language)) {
             try {
                 return generateCodeText(
-                    hljs.highlight(language, text, true).value,
+                    hljs.highlight(text, {
+                        language: language,
+                        ignoreIllegals: true,
+                    }).value,
                     { isHighlighted: true })
             } catch (err) {
                 console.log(`Error at highlighting: ${err}`)
@@ -251,11 +255,11 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
             titlePrefix += ` ("${internalTarget}" not found)`
         }
     }
-    document.title = `${titlePrefix} - ${TITLE} ${electron.remote.app.getVersion()}`
+    document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
     window.addEventListener("contextmenu", event => {
-        const MenuItem = electron.remote.MenuItem
-        const menu = new electron.remote.Menu()
+        const MenuItem = remote.MenuItem
+        const menu = new remote.Menu()
 
         if (window.getSelection().toString()) {
             menu.append(new MenuItem({
@@ -282,7 +286,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
 
         if (menu.items.length > 0) {
             menu.popup({
-                window: electron.remote.getCurrentWindow(),
+                window: remote.getCurrentWindow(),
             })
         }
     })
