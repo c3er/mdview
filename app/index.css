@@ -76,6 +76,12 @@ body {
     margin-bottom: 25px;
 }
 
+@media (prefers-color-scheme: dark) {
+    #raw-text {
+        color: #f8f8f2
+    }
+}
+
 @media print {
     #blocked-content-info,
     #status-bar {
