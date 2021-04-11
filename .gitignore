@@ -4,6 +4,5 @@ dist/
 
 package-lock.json
 *.log
-encodings.json
 
 !.vscode/launch.json

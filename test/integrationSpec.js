@@ -1,3 +1,4 @@
+const fs = require("fs")
 const path = require("path")
 
 const assert = require("chai").assert
@@ -117,23 +118,23 @@ describe("Integration tests with single app instance", () => {
         assert.equal(await elem.getAttribute("hidden"), null)
     })
 
-    describe('Library "encodingStorage"', () => {
-        let encodingStorage
+    describe('Library "storage"', () => {
+        const dataDir = path.join(__dirname, "data")
+        const storage = require("../app/lib/storage")
 
-        before(() => {
-            encodingStorage = require("../app/lib/encodingStorage")
-            encodingStorage.init(path.join(__dirname, "encodings.json"))
-        })
+        describe("Encodings", () => {
+            const encodings = storage.initEncodings(dataDir, storage.ENCODINGS_FILE)
 
-        it("loads known encoding", () => {
-            const TESTPATH = "test1"
-            const ENCODING = "ISO-8859-15"
-            encodingStorage.save(TESTPATH, ENCODING)
-            assert.equal(encodingStorage.load(TESTPATH), ENCODING)
-        })
+            it("loads known encoding", () => {
+                const TESTPATH = "test1"
+                const ENCODING = "ISO-8859-15"
+                encodings.save(TESTPATH, ENCODING)
+                assert.equal(encodings.load(TESTPATH), ENCODING)
+            })
 
-        it("loads default encoding if path is not known", () => {
-            assert.equal(encodingStorage.load("unknown-file"), encodingStorage.DEFAULT_ENCODING)
+            it("loads default encoding if path is not known", () => {
+                assert.equal(encodings.load("unknown-file"), encodings.DEFAULT)
+            })
         })
     })
 

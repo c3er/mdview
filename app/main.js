@@ -5,11 +5,10 @@ const path = require("path")
 
 const childProcess = require("child_process")
 const electron = require("electron")
-const storage = require('electron-json-storage')
 
 const common = require("./lib/common")
-const encodingStorage = require("./lib/encodingStorage")
 const ipc = require("./lib/ipc")
+const storage = require("./lib/storage")
 
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768
@@ -74,6 +73,9 @@ let _scrollPosition = 0
 
 let _isInRawView = false
 
+let _settings
+let _encodings
+
 function error(msg) {
     console.log("Error:", msg)
     electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
@@ -137,7 +139,7 @@ function reload(isFileModification, encoding) {
     _mainWindow.webContents.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding || encodingStorage.load(_currentFilePath))
+        encoding || _encodings.load(_currentFilePath))
 }
 
 function getEncodingId(encoding) {
@@ -145,14 +147,13 @@ function getEncodingId(encoding) {
 }
 
 function changeEncoding(filePath, encoding) {
-    encodingStorage.save(filePath, encoding)
+    _encodings.save(filePath, encoding)
     _mainMenu.getMenuItemById(getEncodingId(encoding)).checked = true
 }
 
 function restorePosition() {
     _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
 }
-
 
 function createWindow() {
     _mainWindow = new electron.BrowserWindow({
@@ -174,20 +175,7 @@ function createWindow() {
         }
     })
 
-    storage.has('settings', (error, hasKey) => {
-        const nativeTheme = electron.nativeTheme
-        if (error) {
-            console.log(error)
-        } else if (hasKey) {
-            storage.get('settings', (error, object) => {
-                if (error) {
-                    console.log(error)
-                } else {
-                    nativeTheme.themeSource = object.theme
-                }
-            })
-        }
-    })
+    electron.nativeTheme.themeSource = _settings.theme
 
     _mainMenu = electron.Menu.buildFromTemplate([
         {
@@ -204,7 +192,7 @@ function createWindow() {
                             })
                             if (!result.canceled) {
                                 const filePath = result.filePaths[0]
-                                openFile(filePath, _internalTarget, encodingStorage.load(filePath))
+                                openFile(filePath, _internalTarget, _encodings.load(filePath))
                             }
                         } catch (e) {
                             error(`Problem at opening file:\n ${e}`)
@@ -264,14 +252,9 @@ function createWindow() {
                 {
                     label: "Switch Theme",
                     click() {
-                        const nativeTheme = electron.nativeTheme
-                        if (nativeTheme.shouldUseDarkColors) {
-                            nativeTheme.themeSource = 'light'
-                            storage.set('settings', { theme: 'light' })
-                        } else {
-                            nativeTheme.themeSource = 'dark'
-                            storage.set('settings', { theme: 'dark' })
-                        }
+                        _settings.theme = electron.nativeTheme.shouldUseDarkColors
+                            ? _settings.LIGHT_THEME
+                            : _settings.DARK_THEME
                     }
                 },
             ]
@@ -304,10 +287,10 @@ function createWindow() {
     electron.Menu.setApplicationMenu(_mainMenu)
 }
 
-
 electron.app.on("ready", () => {
     require('@electron/remote/main').initialize()
-    encodingStorage.init()
+    _settings = storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
+    _encodings = storage.initEncodings(storage.getDefaultDir(), storage.ENCODINGS_FILE)
     createWindow()
 
     const webRequest = electron.session.defaultSession.webRequest
@@ -352,9 +335,9 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
     const internalTarget = extractInternalTarget(args)
     if (filePath !== undefined) {
-        openFile(filePath, internalTarget, encodingStorage.load(filePath))
+        openFile(filePath, internalTarget, _encodings.load(filePath))
     } else {
-        openFile(DEFAULT_FILE, internalTarget, encodingStorage.load(DEFAULT_FILE))
+        openFile(DEFAULT_FILE, internalTarget, _encodings.load(DEFAULT_FILE))
     }
 })
 
