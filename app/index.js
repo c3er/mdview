@@ -3,66 +3,16 @@
 const path = require("path")
 
 const electron = require("electron")
-const hljs = require("highlight.js")
 const remote = require('@electron/remote')
 
-const markdown = require("markdown-it")({
-    highlight: (text, language) => {
-        // Originated from VS Code
-        // File extensions/markdown-language-features/src/markdownEngine.ts
-        // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
-        if (language && hljs.getLanguage(language)) {
-            try {
-                return generateCodeText(
-                    hljs.highlight(text, {
-                        language: language,
-                        ignoreIllegals: true,
-                    }).value,
-                    { isHighlighted: true })
-            } catch (err) {
-                console.log(`Error at highlighting: ${err}`)
-            }
-        }
-        return generateCodeText(
-            markdown.utils.escapeHtml(text),
-            { isHighlighted: true })
-    },
-    xhtmlOut: true,
-    html: true,
-    linkify: true,
-})
-markdown.use(require("markdown-it-headinganchor"), {
-    slugify: text =>
-        text
-            .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
-            .trim()
-            .replace(/\s/g, "-")
-            .toLowerCase()
-})
-
 const common = require("./lib/common")
+const documentRendering = require("./lib/documentRendering")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
 
 const TITLE = "Markdown Viewer"
 
 const _blockedElements = {}
-
-function generateCodeText(text, options = {}) {
-    const defaults = {
-        isHighlighted: false,
-        isMdRawText: false
-    }
-    const actual = Object.assign({}, defaults, options)
-
-    const hljsClass = actual.isHighlighted ? "hljs" : ""
-    const mdRawClass = actual.isMdRawText ? "md-raw" : ""
-
-    const preClass = actual.isHighlighted || actual.isMdRawText
-        ? ` class="${[hljsClass, mdRawClass].join(" ")}"`
-        : ""
-    return `<pre${preClass}"><code><div>${text}</div></code></pre>`
-}
 
 function isInternalLink(url) {
     return url.startsWith("#")
@@ -210,10 +160,8 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
     const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
-    document.getElementById("content").innerHTML = markdown.render(content)
-    document.getElementById("raw-text").innerHTML = generateCodeText(
-        markdown.utils.escapeHtml(content),
-        { isMdRawText: true })
+    document.getElementById("content").innerHTML = documentRendering.renderContent(content)
+    document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {
