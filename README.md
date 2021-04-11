@@ -14,7 +14,7 @@ I don't know yet, how to prevent these blockings without paying an annual fee.
 
 The tool is developed and tested only under Windows (7 and newer) 64 Bit yet.
 
-Node.js including the NPM package manager is needed.
+[Node.js](https://nodejs.org/en/) including the NPM package manager is needed. If your Node.js version is too old, the unit tests may fail because of syntax errors.
 
 After cloning the Git repository, type `npm install`. NPM may put some warnings while installing the packages.
 
