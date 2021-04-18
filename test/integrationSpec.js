@@ -1,4 +1,3 @@
-const fs = require("fs")
 const path = require("path")
 
 const assert = require("chai").assert
@@ -121,6 +120,45 @@ describe("Integration tests with single app instance", () => {
     describe('Library "storage"', () => {
         const dataDir = path.join(__dirname, "data")
         const storage = require("../app/lib/storage")
+
+        describe("Settings", () => {
+            const DEFAULT_THEME = storage.LIGHT_THEME
+
+            let settings
+            let electronMock
+
+            beforeEach(() => {
+                electronMock = {
+                    nativeTheme: {
+                        themeSource: DEFAULT_THEME,
+                    },
+                }
+                settings = storage.initSettings(dataDir, storage.SETTINGS_FILE, electronMock)
+                settings.theme = DEFAULT_THEME
+            })
+
+            describe("Theme", () => {
+                it("has a default theme", () => {
+                    assert.equal(settings.theme, DEFAULT_THEME)
+                })
+
+                it("remembers light theme", () => {
+                    const theme = storage.LIGHT_THEME
+                    settings.theme = theme
+                    assert.equal(settings.theme, theme)
+                })
+
+                it("remembers dark theme", () => {
+                    const theme = storage.DARK_THEME
+                    settings.theme = theme
+                    assert.equal(settings.theme, theme)
+                })
+
+                it("does not accept an unknown theme", () => {
+                    assert.throws(() => settings.theme = "invalid-theme")
+                })
+            })
+        })
 
         describe("Encodings", () => {
             const encodings = storage.initEncodings(dataDir, storage.ENCODINGS_FILE)

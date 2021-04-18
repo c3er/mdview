@@ -1,10 +1,15 @@
 const fs = require("fs")
 const path = require("path")
 
-const electron = require("electron")
+let electron = require("electron")
 
 const SETTINGS_FILE = "settings.json"
 const ENCODINGS_FILE = "encodings.json"
+
+const LIGHT_THEME = "light"
+const DARK_THEME = "dark"
+
+let _isTest = false
 
 let _settings
 let _encodings
@@ -18,8 +23,10 @@ class StorageBase {
         this._storagePath = path.join(storageDir, storageFile)
         this._data = StorageBase._initData(this._storagePath)
 
-        console.log(`Initialized storage file ${this._storagePath}`)
-        console.log(`Storage content: ${JSON.stringify(this._data)}`)
+        if (!_isTest) {
+            console.log(`Initialized storage file ${this._storagePath}`)
+            console.log(`Storage content: ${JSON.stringify(this._data)}`)
+        }
     }
 
     _save() {
@@ -44,15 +51,12 @@ class StorageBase {
 class Settings extends StorageBase {
     #THEME_KEY = "theme"
 
-    LIGHT_THEME = "light"
-    DARK_THEME = "dark"
-
     get theme() {
         return this._data[this.#THEME_KEY] ?? electron.nativeTheme.themeSource
     }
 
     set theme(value) {
-        const allowedThemes = [this.LIGHT_THEME, this.DARK_THEME]
+        const allowedThemes = [LIGHT_THEME, DARK_THEME]
         if (!allowedThemes.includes(value)) {
             throw {
                 message: `"${value}" is not in allowed values ${allowedThemes.join(", ")}`,
@@ -86,10 +90,19 @@ exports.SETTINGS_FILE = SETTINGS_FILE
 
 exports.ENCODINGS_FILE = ENCODINGS_FILE
 
+exports.LIGHT_THEME = LIGHT_THEME
+
+exports.DARK_THEME = DARK_THEME
+
 exports.getDefaultDir = getDefaultDir
 
-exports.initSettings = (settingsStorageDir, settingsStorageFile) =>
-    _settings ?? (_settingss = new Settings(settingsStorageDir, settingsStorageFile))
+exports.initSettings = (settingsStorageDir, settingsStorageFile, electronMock) => {
+    if (electronMock) {
+        electron = electronMock
+        _isTest = true
+    }
+    return _settings ?? (_settingss = new Settings(settingsStorageDir, settingsStorageFile))
+}
 
 exports.initEncodings = (encodingStorageDir, encodingStorageFile) =>
     _encodings ?? (_encodings = new Encodings(encodingStorageDir, encodingStorageFile))
