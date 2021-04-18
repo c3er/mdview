@@ -14,7 +14,7 @@ const markdown = require("markdown-it")({
                     }).value,
                     { isHighlighted: true })
             } catch (err) {
-                console.log(`Error at highlighting: ${err}`)
+                console.error(`Error at highlighting: ${err}`)
             }
         }
         return generateCodeText(

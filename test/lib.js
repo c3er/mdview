@@ -7,7 +7,7 @@ const menuAddon = require("spectron-menu-addon-v2").default
 
 // Based on https://stackoverflow.com/a/39914235/13949398 (What is the JavaScript version of sleep()?)
 function sleep(ms) {
-    // console.log(`sleep ${ms} ${process.hrtime()}`) // For debugging
+    // console.debug(`sleep ${ms} ${process.hrtime()}`) // For debugging
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 

@@ -77,7 +77,7 @@ let _settings
 let _encodings
 
 function error(msg) {
-    console.log("Error:", msg)
+    console.error("Error:", msg)
     electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
 }
@@ -330,7 +330,7 @@ electron.app.on("activate", () => {
 
 electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const args = process.argv
-    console.log(args)
+    console.debug(args)
 
     const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
     const internalTarget = extractInternalTarget(args)
@@ -379,7 +379,7 @@ setInterval(
                 }
                 let mtime = stats.mtimeMs
                 if (mtime !== _lastModificationTime) {
-                    console.log("Reloading...")
+                    console.debug("Reloading...")
                     _lastModificationTime = mtime
                     reload(true)
                 }

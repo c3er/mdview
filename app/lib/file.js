@@ -33,7 +33,7 @@ exports.isText = filePath => {
     try {
         data = readBytesSync(filePath, 0, BYTECOUNT)
     } catch (err) {
-        console.log(err.message)
+        console.error(err.message)
         return false
     }
 

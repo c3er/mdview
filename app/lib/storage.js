@@ -24,8 +24,8 @@ class StorageBase {
         this._data = StorageBase._initData(this._storagePath)
 
         if (!_isTest) {
-            console.log(`Initialized storage file ${this._storagePath}`)
-            console.log(`Storage content: ${JSON.stringify(this._data)}`)
+            console.debug(`Initialized storage file ${this._storagePath}`)
+            console.debug(`Storage content: ${JSON.stringify(this._data)}`)
         }
     }
 
@@ -33,7 +33,7 @@ class StorageBase {
         try {
             fs.writeFileSync(this._storagePath, JSON.stringify(this._data))
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 
