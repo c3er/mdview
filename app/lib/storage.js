@@ -23,11 +23,11 @@ class StorageBase {
     }
 
     _save() {
-        fs.writeFile(this._storagePath, JSON.stringify(this._data), error => {
-            if (error) {
-                console.log(error)
-            }
-        })
+        try {
+            fs.writeFileSync(this._storagePath, JSON.stringify(this._data))
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     static _initStorageDir(storageDir) {
