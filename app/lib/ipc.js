@@ -1,6 +1,8 @@
 exports.messages = {
     allContentUnblocked: "all-content-unblocked",
+    contentBlocked: "content-blocked",
     disableRawView: "disable-raw-view",
+    fileOpen: "file-open",
     finishLoad: "finish-load",
     leaveRawText: "leave-raw-text",
     openFile: "open-file",

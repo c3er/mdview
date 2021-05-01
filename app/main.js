@@ -92,7 +92,7 @@ function openFile(filePath, internalTarget, encoding) {
         changeEncoding(filePath, encoding)
         _internalTarget = internalTarget
         _lastModificationTime = fs.statSync(filePath).mtimeMs
-        _mainWindow.webContents.send("fileOpen", filePath, internalTarget, encoding)
+        _mainWindow.webContents.send(ipc.messages.fileOpen, filePath, internalTarget, encoding)
     }
 }
 
@@ -301,7 +301,7 @@ electron.app.on("ready", () => {
         callback({ cancel: isBlocked })
         if (isBlocked) {
             _contentIsBlocked = true
-            _mainWindow.webContents.send("contentBlocked", url)
+            _mainWindow.webContents.send(ipc.messages.contentBlocked, url)
         }
         allowUnblockContent(_contentIsBlocked)
     })

@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
     electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
-electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
+electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, encoding) => {
     changeBlockedContentInfoVisibility(false)
 
     let content = file.open(filePath, encoding)
@@ -240,7 +240,7 @@ electron.ipcRenderer.on("fileOpen", (_, filePath, internalTarget, encoding) => {
     })
 })
 
-electron.ipcRenderer.on("contentBlocked", (_, url) => {
+electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
     const elements = _blockedElements[url] = searchElementsWithAttributeValue(url)
     elements.forEach(element => element.onclick = () => unblockURL(url))
 
@@ -257,7 +257,7 @@ electron.ipcRenderer.on(ipc.messages.leaveRawText, () => switchRawView(false))
 
 electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, encoding) =>
     electron.ipcRenderer.send(
-        "reload-prepared",
+        ipc.messages.reloadPrepared,
         isFileModification,
         encoding,
         document.documentElement.scrollTop))
