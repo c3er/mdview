@@ -7,9 +7,7 @@ describe("Document rendering", () => {
     const mdHeader = `# ${headerText}`
 
     it("renders a header", () => {
-        assert.isTrue(
-            new RegExp(`<h1.*>${headerText}</h1>`)
-                .test(documentRendering.renderContent(mdHeader)))
+        assert.isTrue(new RegExp(`<h1.*>${headerText}</h1>`).test(documentRendering.renderContent(mdHeader)))
     })
 
     describe("Raw text", () => {

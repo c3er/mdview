@@ -1,9 +1,9 @@
-"use strict";
+"use strict"
 
 const path = require("path")
 
 const electron = require("electron")
-const remote = require('@electron/remote')
+const remote = require("@electron/remote")
 
 const common = require("./lib/common")
 const documentRendering = require("./lib/documentRendering")
@@ -19,7 +19,7 @@ function isInternalLink(url) {
 }
 
 function alterTags(tagName, handler) {
-    [...document.getElementsByTagName(tagName)].forEach(element => handler(element))
+    ;[...document.getElementsByTagName(tagName)].forEach(handler)
 }
 
 function updateStatusBar(text) {
@@ -115,16 +115,11 @@ function alterStyleURLs(documentDirectory, fileContent) {
             isInCode = !isInCode
         }
         if (isInStyle && !isInCode) {
-            const url = line
-                .match(pattern)
-                ?.groups
-                .url
+            const url = line.match(pattern)?.groups.url
             if (!url || common.isWebURL(url)) {
                 continue
             }
-            lines[i] = line.replace(
-                pattern,
-                `url("${path.join(documentDirectory, url).replace(/\\/g, "/")}")`)
+            lines[i] = line.replace(pattern, `url("${path.join(documentDirectory, url).replace(/\\/g, "/")}")`)
         }
     }
     return lines.join("\n")
@@ -190,7 +185,7 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
         }
         statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
 
-        image.onerror = () => image.style.backgroundColor = "#ffe6cc"
+        image.onerror = () => (image.style.backgroundColor = "#ffe6cc")
     })
 
     let titlePrefix = filePath
@@ -210,26 +205,32 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
         const menu = new remote.Menu()
 
         if (window.getSelection().toString()) {
-            menu.append(new MenuItem({
-                label: "Copy selection",
-                role: "copy"
-            }))
+            menu.append(
+                new MenuItem({
+                    label: "Copy selection",
+                    role: "copy",
+                })
+            )
         }
 
         const target = fittingTarget(event.target, "A")
         if (target) {
-            menu.append(new MenuItem({
-                label: "Copy link text",
-                click() {
-                    electron.clipboard.writeText(target.innerText)
-                }
-            }))
-            menu.append(new MenuItem({
-                label: "Copy link target",
-                click() {
-                    electron.clipboard.writeText(target.getAttribute("href"))
-                }
-            }))
+            menu.append(
+                new MenuItem({
+                    label: "Copy link text",
+                    click() {
+                        electron.clipboard.writeText(target.innerText)
+                    },
+                })
+            )
+            menu.append(
+                new MenuItem({
+                    label: "Copy link target",
+                    click() {
+                        electron.clipboard.writeText(target.getAttribute("href"))
+                    },
+                })
+            )
         }
 
         if (menu.items.length > 0) {
@@ -241,12 +242,13 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
 })
 
 electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
-    const elements = _blockedElements[url] = searchElementsWithAttributeValue(url)
-    elements.forEach(element => element.onclick = () => unblockURL(url))
+    const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
+    elements.forEach(element => (element.onclick = () => unblockURL(url)))
 
     changeBlockedContentInfoVisibility(true)
     document.getElementById("blocked-content-info-text-container").onclick = unblockAll
-    document.getElementById("blocked-content-info-close-button").onclick = () => changeBlockedContentInfoVisibility(false)
+    document.getElementById("blocked-content-info-close-button").onclick = () =>
+        changeBlockedContentInfoVisibility(false)
 })
 
 electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
@@ -260,7 +262,9 @@ electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, enco
         ipc.messages.reloadPrepared,
         isFileModification,
         encoding,
-        document.documentElement.scrollTop))
+        document.documentElement.scrollTop
+    )
+)
 
 electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => {
     window.scrollTo(0, position)

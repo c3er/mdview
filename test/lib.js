@@ -16,10 +16,7 @@ global.before(() => chai.use(chaiAsPromised))
 exports.startApp = async documentPath => {
     const app = menuAddon.createApplication({
         path: electron,
-        args: [
-            path.join(__dirname, ".."),
-            documentPath,
-        ],
+        args: [path.join(__dirname, ".."), documentPath],
     })
     chaiAsPromised.transferPromiseness = app.transferPromiseness
     return app.start()

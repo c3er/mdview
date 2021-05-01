@@ -12,14 +12,13 @@ const markdown = require("markdown-it")({
                         language: language,
                         ignoreIllegals: true,
                     }).value,
-                    { isHighlighted: true })
+                    { isHighlighted: true }
+                )
             } catch (err) {
                 console.error(`Error at highlighting: ${err}`)
             }
         }
-        return generateCodeText(
-            markdown.utils.escapeHtml(text),
-            { isHighlighted: true })
+        return generateCodeText(markdown.utils.escapeHtml(text), { isHighlighted: true })
     },
     xhtmlOut: true,
     html: true,
@@ -31,27 +30,23 @@ markdown.use(require("markdown-it-headinganchor"), {
             .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
             .trim()
             .replace(/\s/g, "-")
-            .toLowerCase()
+            .toLowerCase(),
 })
 
 function generateCodeText(text, options = {}) {
     const defaults = {
         isHighlighted: false,
-        isMdRawText: false
+        isMdRawText: false,
     }
     const actual = Object.assign({}, defaults, options)
 
     const hljsClass = actual.isHighlighted ? "hljs" : ""
     const mdRawClass = actual.isMdRawText ? "md-raw" : ""
 
-    const preClass = actual.isHighlighted || actual.isMdRawText
-        ? ` class="${[hljsClass, mdRawClass].join(" ")}"`
-        : ""
+    const preClass = actual.isHighlighted || actual.isMdRawText ? ` class="${[hljsClass, mdRawClass].join(" ")}"` : ""
     return `<pre${preClass}"><code><div>${text}</div></code></pre>`
 }
 
-exports.renderContent = content =>  markdown.render(content)
+exports.renderContent = content => markdown.render(content)
 
-exports.renderRawText = content => generateCodeText(
-    markdown.utils.escapeHtml(content),
-    { isMdRawText: true })
+exports.renderRawText = content => generateCodeText(markdown.utils.escapeHtml(content), { isMdRawText: true })

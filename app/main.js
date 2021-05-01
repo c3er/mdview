@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 
 const fs = require("fs")
 const path = require("path")
@@ -97,13 +97,15 @@ function openFile(filePath, internalTarget, encoding) {
 }
 
 function extractFilePath(args) {
-    return args.find(arg =>
-        arg !== process.execPath &&
-        arg !== "." &&
-        arg !== electron.app.getAppPath() &&
-        arg !== "data:," &&
-        !arg.startsWith("-") &&
-        !arg.includes("node_modules"))
+    return args.find(
+        arg =>
+            arg !== process.execPath &&
+            arg !== "." &&
+            arg !== electron.app.getAppPath() &&
+            arg !== "data:," &&
+            !arg.startsWith("-") &&
+            !arg.includes("node_modules")
+    )
 }
 
 function extractInternalTarget(args) {
@@ -126,9 +128,7 @@ function unblockURL(url) {
 
 function enterRawTextView(shallEnterRawTextView) {
     _isInRawView = shallEnterRawTextView
-    _mainWindow.webContents.send(shallEnterRawTextView
-        ? ipc.messages.viewRawText
-        : ipc.messages.leaveRawText)
+    _mainWindow.webContents.send(shallEnterRawTextView ? ipc.messages.viewRawText : ipc.messages.leaveRawText)
 }
 
 function allowUnblockContent(isAllowed) {
@@ -139,7 +139,8 @@ function reload(isFileModification, encoding) {
     _mainWindow.webContents.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding || _encodings.load(_currentFilePath))
+        encoding || _encodings.load(_currentFilePath)
+    )
 }
 
 function getEncodingId(encoding) {
@@ -164,10 +165,10 @@ function createWindow() {
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
-        }
+        },
     })
     _mainWindow.loadFile(path.join(__dirname, "index.html"))
-    _mainWindow.on("closed", () => _mainWindow = null)
+    _mainWindow.on("closed", () => (_mainWindow = null))
     _mainWindow.webContents.on("did-finish-load", () => {
         if (_isReloading) {
             restorePosition()
@@ -188,7 +189,12 @@ function createWindow() {
                         try {
                             const result = await electron.dialog.showOpenDialog({
                                 properties: ["openFile"],
-                                filters: [{ name: "Markdown", extensions: common.FILE_EXTENSIONS }]
+                                filters: [
+                                    {
+                                        name: "Markdown",
+                                        extensions: common.FILE_EXTENSIONS,
+                                    },
+                                ],
                             })
                             if (!result.canceled) {
                                 const filePath = result.filePaths[0]
@@ -197,14 +203,14 @@ function createWindow() {
                         } catch (e) {
                             error(`Problem at opening file:\n ${e}`)
                         }
-                    }
+                    },
                 },
                 {
                     label: "Print",
                     accelerator: "Ctrl+P",
                     click() {
                         _mainWindow.webContents.print()
-                    }
+                    },
                 },
                 { type: "separator" },
                 {
@@ -212,15 +218,13 @@ function createWindow() {
                     accelerator: "Esc",
                     click() {
                         _mainWindow.close()
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         },
         {
             label: "Edit",
-            submenu: [
-                { role: "copy" }
-            ]
+            submenu: [{ role: "copy" }],
         },
         {
             label: "View",
@@ -230,7 +234,7 @@ function createWindow() {
                     accelerator: "F5",
                     click() {
                         reload(false)
-                    }
+                    },
                 },
                 {
                     label: "Unblock All External Content",
@@ -238,7 +242,7 @@ function createWindow() {
                     id: "unblock-content",
                     click() {
                         _mainWindow.webContents.send(ipc.messages.unblockAll)
-                    }
+                    },
                 },
                 {
                     label: "View Raw Text",
@@ -246,7 +250,7 @@ function createWindow() {
                     id: "view-raw-text",
                     click() {
                         enterRawTextView(!_isInRawView)
-                    }
+                    },
                 },
                 { type: "separator" },
                 {
@@ -255,9 +259,9 @@ function createWindow() {
                         _settings.theme = electron.nativeTheme.shouldUseDarkColors
                             ? _settings.LIGHT_THEME
                             : _settings.DARK_THEME
-                    }
+                    },
                 },
-            ]
+            ],
         },
         {
             label: "Encoding",
@@ -268,8 +272,8 @@ function createWindow() {
                 click() {
                     changeEncoding(_currentFilePath, encoding)
                     reload(true, encoding)
-                }
-            }))
+                },
+            })),
         },
         {
             label: "Tools",
@@ -279,16 +283,16 @@ function createWindow() {
                     accelerator: "F10",
                     click() {
                         _mainWindow.webContents.openDevTools()
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         },
     ])
     electron.Menu.setApplicationMenu(_mainMenu)
 }
 
 electron.app.on("ready", () => {
-    require('@electron/remote/main').initialize()
+    require("@electron/remote/main").initialize()
     _settings = storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
     _encodings = storage.initEncodings(storage.getDefaultDir(), storage.ENCODINGS_FILE)
     createWindow()
@@ -369,21 +373,19 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
     restorePosition()
 })
 
-setInterval(
-    () => {
-        if (_currentFilePath) {
-            fs.stat(_currentFilePath, (err, stats) => {
-                if (err) {
-                    console.error(`Updating file "${_currentFilePath}" was aborted with error ${err}`)
-                    return
-                }
-                let mtime = stats.mtimeMs
-                if (mtime !== _lastModificationTime) {
-                    console.debug("Reloading...")
-                    _lastModificationTime = mtime
-                    reload(true)
-                }
-            })
-        }
-    },
-    UPDATE_INTERVAL)
+setInterval(() => {
+    if (_currentFilePath) {
+        fs.stat(_currentFilePath, (err, stats) => {
+            if (err) {
+                console.error(`Updating file "${_currentFilePath}" was aborted with error ${err}`)
+                return
+            }
+            let mtime = stats.mtimeMs
+            if (mtime !== _lastModificationTime) {
+                console.debug("Reloading...")
+                _lastModificationTime = mtime
+                reload(true)
+            }
+        })
+    }
+}, UPDATE_INTERVAL)

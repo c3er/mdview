@@ -30,9 +30,11 @@ describe('Library "common"', () => {
         })
 
         it("does not recognize objects with content", () => {
-            assert.isFalse(common.isEmptyObject({
-                foo: "bar",
-            }))
+            assert.isFalse(
+                common.isEmptyObject({
+                    foo: "bar",
+                })
+            )
         })
     })
 })

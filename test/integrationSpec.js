@@ -82,8 +82,8 @@ let app
 let client
 
 async function checkUnblockedMessage() {
-    let hasFoundUnblockedMessage = false;
-    (await client.getMainProcessLogs()).forEach(log => {
+    let hasFoundUnblockedMessage = false
+    ;(await client.getMainProcessLogs()).forEach(log => {
         if (log.toLowerCase().includes("unblocked")) {
             hasFoundUnblockedMessage = true
         }
@@ -155,7 +155,7 @@ describe("Integration tests with single app instance", () => {
                 })
 
                 it("does not accept an unknown theme", () => {
-                    assert.throws(() => settings.theme = "invalid-theme")
+                    assert.throws(() => (settings.theme = "invalid-theme"))
                 })
             })
         })
@@ -251,9 +251,13 @@ describe("Integration tests with their own app instance each", () => {
             assert.eventually.isTrue(elementIsVisible(await client.$(elements.rawText.path)))
 
             // The naive approach to get the element via XPath appears to be very slow (~500ms)
-            assert.eventually.isFalse(elementIsVisible(await client.$(function () {
-                return this.document.getElementById("markdown-body")
-            })))
+            assert.eventually.isFalse(
+                elementIsVisible(
+                    await client.$(function () {
+                        return this.document.getElementById("markdown-body")
+                    })
+                )
+            )
         })
     })
 })

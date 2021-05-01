@@ -79,7 +79,7 @@ body {
 
 @media (prefers-color-scheme: dark) {
     #raw-text {
-        color: #f8f8f2
+        color: #f8f8f2;
     }
 }
 
@@ -90,7 +90,7 @@ body {
     }
 
     .markdown-body pre,
-    .markdown-body pre>code {
+    .markdown-body pre > code {
         overflow: visible;
         white-space: pre-wrap;
     }
