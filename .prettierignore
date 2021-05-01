@@ -1,0 +1,5 @@
+.vscode
+dist
+test/data
+
+*.md
