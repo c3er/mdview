@@ -14,7 +14,7 @@ I don't know yet, how to prevent these blockings without paying an annual fee.
 
 The tool is developed and tested only under Windows (7 and newer) 64 Bit yet.
 
-[Node.js](https://nodejs.org/en/) including the NPM package manager is needed. If your Node.js version is too old, the unit tests may fail because of syntax errors.
+[Node.js](https://nodejs.org/en/) including the NPM package manager is needed. If your Node.js version is too old, the unit tests and some other scripts may fail because of syntax errors. On a Linux machine you can [use NVM](https://www.freecodecamp.org/news/how-to-install-node-js-on-ubuntu-and-update-npm-to-the-latest-version/) to install the latest LTS version.
 
 After cloning the Git repository, type `npm install`. NPM may put some warnings while installing the packages.
 
