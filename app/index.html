@@ -8,16 +8,19 @@
             @import "../node_modules/github-markdown-css/github-markdown.css";
             @import "../node_modules/highlight.js/styles/vs.css" (prefers-color-scheme: light);
 
-            @import "../node_modules/github-markdown-dracula-css/github-markdown-dracula.css" screen and
+            @import "../node_modules/github-markdown-dracula-css/github-markdown-dracula.css" screen
+                and (prefers-color-scheme: dark);
+            @import "../node_modules/highlight.js/styles/dracula.css" screen and
                 (prefers-color-scheme: dark);
-            @import "../node_modules/highlight.js/styles/dracula.css" screen and (prefers-color-scheme: dark);
         </style>
         <script src="index.js"></script>
     </head>
     <body>
         <div id="blocked-content-info" hidden="true">
             <span id="blocked-content-info-text-container">
-                <p class="blocked-content-info-text">Content is blocked. Click here to unblock all blocked elements.</p>
+                <p class="blocked-content-info-text">
+                    Content is blocked. Click here to unblock all blocked elements.
+                </p>
             </span>
             <span id="blocked-content-info-close-button" title="Hide this message">
                 <p class="blocked-content-info-text">

@@ -119,7 +119,10 @@ function alterStyleURLs(documentDirectory, fileContent) {
             if (!url || common.isWebURL(url)) {
                 continue
             }
-            lines[i] = line.replace(pattern, `url("${path.join(documentDirectory, url).replace(/\\/g, "/")}")`)
+            lines[i] = line.replace(
+                pattern,
+                `url("${path.join(documentDirectory, url).replace(/\\/g, "/")}")`
+            )
         }
     }
     return lines.join("\n")

@@ -43,10 +43,14 @@ function generateCodeText(text, options = {}) {
     const hljsClass = actual.isHighlighted ? "hljs" : ""
     const mdRawClass = actual.isMdRawText ? "md-raw" : ""
 
-    const preClass = actual.isHighlighted || actual.isMdRawText ? ` class="${[hljsClass, mdRawClass].join(" ")}"` : ""
+    const preClass =
+        actual.isHighlighted || actual.isMdRawText
+            ? ` class="${[hljsClass, mdRawClass].join(" ")}"`
+            : ""
     return `<pre${preClass}"><code><div>${text}</div></code></pre>`
 }
 
 exports.renderContent = content => markdown.render(content)
 
-exports.renderRawText = content => generateCodeText(markdown.utils.escapeHtml(content), { isMdRawText: true })
+exports.renderRawText = content =>
+    generateCodeText(markdown.utils.escapeHtml(content), { isMdRawText: true })

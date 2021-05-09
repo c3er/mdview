@@ -22,7 +22,8 @@ function readBytesSync(filePath, filePosition, numBytesToRead) {
     }
 }
 
-exports.isMarkdown = filePath => common.FILE_EXTENSIONS.map(ext => "." + ext).some(ext => filePath.endsWith(ext))
+exports.isMarkdown = filePath =>
+    common.FILE_EXTENSIONS.map(ext => "." + ext).some(ext => filePath.endsWith(ext))
 
 exports.isText = filePath => {
     const BYTECOUNT = 50000
@@ -37,7 +38,9 @@ exports.isText = filePath => {
     // It is not expected that an ASCII file contains control characters.
     // Space character is the first printable ASCII character.
     // Line breaks (LF = 10, CR = 13) and tabs (TAB = 9) are common in text files.
-    return data.buffer.slice(0, data.bytesRead - 1).every(byte => byte >= 32 || [10, 13, 9].includes(byte))
+    return data.buffer
+        .slice(0, data.bytesRead - 1)
+        .every(byte => byte >= 32 || [10, 13, 9].includes(byte))
 }
 
 exports.open = (filePath, encoding) => iconv.decode(fs.readFileSync(filePath), encoding)

@@ -128,7 +128,9 @@ function unblockURL(url) {
 
 function enterRawTextView(shallEnterRawTextView) {
     _isInRawView = shallEnterRawTextView
-    _mainWindow.webContents.send(shallEnterRawTextView ? ipc.messages.viewRawText : ipc.messages.leaveRawText)
+    _mainWindow.webContents.send(
+        shallEnterRawTextView ? ipc.messages.viewRawText : ipc.messages.leaveRawText
+    )
 }
 
 function allowUnblockContent(isAllowed) {
@@ -347,7 +349,9 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
 
 electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
 
-electron.ipcMain.on(ipc.messages.openInternal, (_, target) => createChildWindow(_currentFilePath, target))
+electron.ipcMain.on(ipc.messages.openInternal, (_, target) =>
+    createChildWindow(_currentFilePath, target)
+)
 
 electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
 

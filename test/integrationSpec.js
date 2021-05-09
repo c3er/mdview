@@ -184,7 +184,9 @@ describe("Integration tests with single app instance", () => {
                         assert.eventually.ok(menuAddon.getMenuItem(mainItem.label, item.label))
                     })
 
-                    it(`item "${item.label}" is ${item.isEnabled ? "enabled" : "disabled"}`, async () => {
+                    it(`item "${item.label}" is ${
+                        item.isEnabled ? "enabled" : "disabled"
+                    }`, async () => {
                         const actualItem = await menuAddon.getMenuItem(mainItem.label, item.label)
                         assert.equal(actualItem.enabled, item.isEnabled)
                     })
@@ -232,7 +234,10 @@ describe("Integration tests with their own app instance each", () => {
                 const unblockMenuLabel = viewMenu.sub.unblock.label
 
                 await menuAddon.clickMenu(viewMenuLabel, unblockMenuLabel)
-                const blockedConetentMenuItem = await menuAddon.getMenuItem(viewMenuLabel, unblockMenuLabel)
+                const blockedConetentMenuItem = await menuAddon.getMenuItem(
+                    viewMenuLabel,
+                    unblockMenuLabel
+                )
 
                 assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
                 assert.isFalse(blockedConetentMenuItem.enabled)
