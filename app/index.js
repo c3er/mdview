@@ -6,13 +6,12 @@ const electron = require("electron")
 const remote = require("@electron/remote")
 
 const common = require("./lib/common")
+const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/documentRendering")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
 
 const TITLE = "Markdown Viewer"
-
-const _blockedElements = {}
 
 function isInternalLink(url) {
     return url.startsWith("#")
@@ -31,72 +30,11 @@ function statusOnMouseOver(element, text) {
     element.onmouseout = () => updateStatusBar("")
 }
 
-function searchElementsWithAttributeValue(value) {
-    // Based on https://stackoverflow.com/a/30840550 (JQuery selector using value, but unknown attribute)
-    const elements = document.getElementsByTagName("*")
-    const foundElements = []
-    for (let elementIndex = 0; elementIndex < elements.length; elementIndex++) {
-        const element = elements[elementIndex]
-        const attributes = element.attributes
-        for (let attrIndex = 0; attrIndex < attributes.length; attrIndex++) {
-            if (attributes[attrIndex].nodeValue === value) {
-                foundElements.push(element)
-                break
-            }
-        }
-    }
-    return foundElements
-}
-
-function hasBlockedElements() {
-    return !common.isEmptyObject(_blockedElements)
-}
-
-function unblockURL(url) {
-    electron.ipcRenderer.send(ipc.messages.unblockURL, url)
-
-    const elements = _blockedElements[url]
-    if (elements) {
-        elements.forEach(element => {
-            element.removeAttribute("style")
-
-            // Force element to reload without recreating the DOM element.
-            // Recreating the DOM element would cause the attached event handlers to be lost.
-            const attributes = element.attributes
-            for (let i = 0; i < attributes.length; i++) {
-                const attr = attributes[i]
-                const value = attr.nodeValue
-                if (value === url) {
-                    element.setAttribute(attr.nodeName, value)
-                }
-            }
-        })
-        delete _blockedElements[url]
-    }
-
-    if (!hasBlockedElements()) {
-        changeBlockedContentInfoVisibility(false)
-        electron.ipcRenderer.send(ipc.messages.allContentUnblocked)
-    }
-}
-
-function unblockAll() {
-    for (const url in _blockedElements) {
-        unblockURL(url)
-    }
-}
-
-function changeBlockedContentInfoVisibility(isVisible) {
-    const infoElement = document.getElementById("blocked-content-info")
-    infoElement.hidden = !isVisible
-    document.body.style.marginTop = isVisible ? window.getComputedStyle(infoElement).height : 0
-}
-
 function switchRawView(isRawView) {
     document.getElementById("content").style.display = isRawView ? "none" : "block"
     document.getElementById("raw-text").style.display = isRawView ? "block" : "none"
     updateStatusBar(isRawView ? "Raw text (leve with Ctrl+U)" : "")
-    changeBlockedContentInfoVisibility(!isRawView && hasBlockedElements())
+    contentBlocking.changeInfoElementVisiblity(!isRawView && contentBlocking.hasBlockedElements())
 }
 
 function alterStyleURLs(documentDirectory, fileContent) {
@@ -140,11 +78,12 @@ function fittingTarget(target, nodeName) {
 
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
+    contentBlocking.init(window, document)
     electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
 electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, encoding) => {
-    changeBlockedContentInfoVisibility(false)
+    contentBlocking.changeInfoElementVisiblity(false)
 
     let content = file.open(filePath, encoding)
     if (!file.isMarkdown(filePath)) {
@@ -243,18 +182,6 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
         }
     })
 })
-
-electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
-    const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
-    elements.forEach(element => (element.onclick = () => unblockURL(url)))
-
-    changeBlockedContentInfoVisibility(true)
-    document.getElementById("blocked-content-info-text-container").onclick = unblockAll
-    document.getElementById("blocked-content-info-close-button").onclick = () =>
-        changeBlockedContentInfoVisibility(false)
-})
-
-electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
 
 electron.ipcRenderer.on(ipc.messages.viewRawText, () => switchRawView(true))
 

@@ -7,6 +7,7 @@ const childProcess = require("child_process")
 const electron = require("electron")
 
 const common = require("./lib/common")
+const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const ipc = require("./lib/ipc")
 const storage = require("./lib/storage")
 
@@ -65,9 +66,6 @@ let _currentFilePath
 let _internalTarget
 let _lastModificationTime
 
-let _contentIsBlocked = false
-const _unblockedURLs = []
-
 let _isReloading = false
 let _scrollPosition = 0
 
@@ -121,20 +119,11 @@ function createChildWindow(filePath, internalTarget) {
     childProcess.spawn(processName, args)
 }
 
-function unblockURL(url) {
-    console.log(`Unblocked: ${url}`)
-    _unblockedURLs.push(url)
-}
-
 function enterRawTextView(shallEnterRawTextView) {
     _isInRawView = shallEnterRawTextView
     _mainWindow.webContents.send(
         shallEnterRawTextView ? ipc.messages.viewRawText : ipc.messages.leaveRawText
     )
-}
-
-function allowUnblockContent(isAllowed) {
-    _mainMenu.getMenuItemById("unblock-content").enabled = isAllowed
 }
 
 function reload(isFileModification, encoding) {
@@ -241,9 +230,9 @@ function createWindow() {
                 {
                     label: "Unblock All External Content",
                     accelerator: "Alt+U",
-                    id: "unblock-content",
+                    id: contentBlocking.UNBLOCK_CONTENT_MENU_ID,
                     click() {
-                        _mainWindow.webContents.send(ipc.messages.unblockAll)
+                        contentBlocking.toRenderer.unblockAll()
                     },
                 },
                 {
@@ -298,24 +287,7 @@ electron.app.on("ready", () => {
     _settings = storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
     _encodings = storage.initEncodings(storage.getDefaultDir(), storage.ENCODINGS_FILE)
     createWindow()
-
-    const webRequest = electron.session.defaultSession.webRequest
-    webRequest.onBeforeRequest((details, callback) => {
-        const url = details.url
-        const isBlocked = common.isWebURL(url) && !_unblockedURLs.includes(url)
-        console.log(`${isBlocked ? "Blocked" : "Loading"}: ${url}`)
-        callback({ cancel: isBlocked })
-        if (isBlocked) {
-            _contentIsBlocked = true
-            _mainWindow.webContents.send(ipc.messages.contentBlocked, url)
-        }
-        allowUnblockContent(_contentIsBlocked)
-    })
-    webRequest.onBeforeRedirect(details => {
-        const url = details.redirectURL
-        console.log("Redirecting: " + url)
-        unblockURL(url)
-    })
+    contentBlocking.init(_mainWindow, _mainMenu)
 })
 
 electron.app.on("window-all-closed", () => {
@@ -352,13 +324,6 @@ electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(fi
 electron.ipcMain.on(ipc.messages.openInternal, (_, target) =>
     createChildWindow(_currentFilePath, target)
 )
-
-electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
-
-electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
-    _contentIsBlocked = false
-    allowUnblockContent(false)
-})
 
 electron.ipcMain.on(ipc.messages.disableRawView, () => {
     enterRawTextView(false)
