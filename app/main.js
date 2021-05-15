@@ -148,7 +148,7 @@ function restorePosition() {
 }
 
 function createWindow() {
-    _mainWindow = new electron.BrowserWindow({
+    const mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
         height: WINDOW_HEIGHT,
         backgroundColor: "#fff",
@@ -158,9 +158,9 @@ function createWindow() {
             contextIsolation: false,
         },
     })
-    _mainWindow.loadFile(path.join(__dirname, "index.html"))
-    _mainWindow.on("closed", () => (_mainWindow = null))
-    _mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow.loadFile(path.join(__dirname, "index.html"))
+    mainWindow.on("closed", () => (_mainWindow = null))
+    mainWindow.webContents.on("did-finish-load", () => {
         if (_isReloading) {
             restorePosition()
             _isReloading = false
@@ -169,7 +169,7 @@ function createWindow() {
 
     electron.nativeTheme.themeSource = _settings.theme
 
-    _mainMenu = electron.Menu.buildFromTemplate([
+    const mainMenu = electron.Menu.buildFromTemplate([
         {
             label: "File",
             submenu: [
@@ -200,7 +200,7 @@ function createWindow() {
                     label: "Print",
                     accelerator: "Ctrl+P",
                     click() {
-                        _mainWindow.webContents.print()
+                        mainWindow.webContents.print()
                     },
                 },
                 { type: "separator" },
@@ -208,7 +208,7 @@ function createWindow() {
                     label: "Quit",
                     accelerator: "Esc",
                     click() {
-                        _mainWindow.close()
+                        mainWindow.close()
                     },
                 },
             ],
@@ -273,21 +273,28 @@ function createWindow() {
                     label: "Developer Tools",
                     accelerator: "F10",
                     click() {
-                        _mainWindow.webContents.openDevTools()
+                        mainWindow.webContents.openDevTools()
                     },
                 },
             ],
         },
     ])
-    electron.Menu.setApplicationMenu(_mainMenu)
+    electron.Menu.setApplicationMenu(mainMenu)
+
+    return [mainWindow, mainMenu]
 }
 
 electron.app.on("ready", () => {
     require("@electron/remote/main").initialize()
+
     _settings = storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
     _encodings = storage.initEncodings(storage.getDefaultDir(), storage.ENCODINGS_FILE)
-    createWindow()
-    contentBlocking.init(_mainWindow, _mainMenu)
+
+    const [mainWindow, mainMenu] = createWindow()
+    _mainWindow = mainWindow
+    _mainMenu = mainMenu
+
+    contentBlocking.init(mainWindow, mainMenu)
 })
 
 electron.app.on("window-all-closed", () => {
