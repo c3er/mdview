@@ -48,6 +48,10 @@ const elements = {
                     label: "View Raw Text",
                     isEnabled: true,
                 },
+                switchTheme: {
+                    label: "Switch Theme",
+                    isEnabled: true,
+                },
             },
         },
         encoding: {
@@ -81,14 +85,18 @@ const defaultDocumentPath = path.join(__dirname, "documents", defaultDocumentFil
 let app
 let client
 
-async function checkUnblockedMessage() {
-    let hasFoundUnblockedMessage = false
+async function containsConsoleMessage(message) {
+    let hasFoundMessage = false
     ;(await client.getMainProcessLogs()).forEach(log => {
-        if (log.toLowerCase().includes("unblocked")) {
-            hasFoundUnblockedMessage = true
+        if (log.toLowerCase().includes(message)) {
+            hasFoundMessage = true
         }
     })
-    return hasFoundUnblockedMessage
+    return hasFoundMessage
+}
+
+async function checkUnblockedMessage() {
+    return await containsConsoleMessage("unblocked")
 }
 
 async function elementIsVisible(element) {
@@ -118,12 +126,12 @@ describe("Integration tests with single app instance", () => {
     })
 
     describe('Library "storage"', () => {
+        const DEFAULT_THEME = "light"
+
         const dataDir = path.join(__dirname, "data")
         const storage = require("../app/lib/storage")
 
         describe("Settings", () => {
-            const DEFAULT_THEME = storage.LIGHT_THEME
-
             let settings
             let electronMock
 
@@ -143,13 +151,13 @@ describe("Integration tests with single app instance", () => {
                 })
 
                 it("remembers light theme", () => {
-                    const theme = storage.LIGHT_THEME
+                    const theme = settings.LIGHT_THEME
                     settings.theme = theme
                     assert.equal(settings.theme, theme)
                 })
 
                 it("remembers dark theme", () => {
-                    const theme = storage.DARK_THEME
+                    const theme = settings.DARK_THEME
                     settings.theme = theme
                     assert.equal(settings.theme, theme)
                 })
@@ -256,6 +264,14 @@ describe("Integration tests with their own app instance each", () => {
             await assert.eventually.isFalse(
                 elementIsVisible(await client.$("//div[@class='markdown-body']"))
             )
+        })
+    })
+
+    describe("Theme switching", () => {
+        it("can be done", async () => {
+            const viewMenu = elements.mainMenu.view
+            await menuAddon.clickMenu(viewMenu.label, viewMenu.sub.switchTheme.label)
+            await assert.eventually.isFalse(containsConsoleMessage("error"))
         })
     })
 })
