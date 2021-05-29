@@ -9,6 +9,7 @@ const electron = require("electron")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const ipc = require("./lib/ipc")
+const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/storage")
 
 const WINDOW_WIDTH = 1024
@@ -71,8 +72,6 @@ let _lastModificationTime
 let _isReloading = false
 let _scrollPosition = 0
 
-let _isInRawView = false
-
 let _settings
 let _encodings
 
@@ -119,13 +118,6 @@ function createChildWindow(filePath, internalTarget) {
         args.push(internalTarget)
     }
     childProcess.spawn(processName, args)
-}
-
-function enterRawTextView(shallEnterRawTextView) {
-    _isInRawView = shallEnterRawTextView
-    _mainWindow.webContents.send(
-        shallEnterRawTextView ? ipc.messages.viewRawText : ipc.messages.leaveRawText
-    )
 }
 
 function reload(isFileModification, encoding) {
@@ -242,7 +234,7 @@ function createWindow() {
                     accelerator: "Ctrl+U",
                     id: "view-raw-text",
                     click() {
-                        enterRawTextView(!_isInRawView)
+                        rawText.switchRawView()
                     },
                 },
                 { type: "separator" },
@@ -299,6 +291,7 @@ electron.app.on("ready", () => {
     _mainMenu = mainMenu
 
     contentBlocking.init(mainWindow, mainMenu)
+    rawText.init(mainWindow, mainMenu)
 })
 
 electron.app.on("window-all-closed", () => {
@@ -335,11 +328,6 @@ electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(fi
 electron.ipcMain.on(ipc.messages.openInternal, (_, target) =>
     createChildWindow(_currentFilePath, target)
 )
-
-electron.ipcMain.on(ipc.messages.disableRawView, () => {
-    enterRawTextView(false)
-    _mainMenu.getMenuItemById("view-raw-text").enabled = false
-})
 
 electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position

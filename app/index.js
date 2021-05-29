@@ -10,6 +10,7 @@ const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/documentRendering")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
+const rawText = require("./lib/rawText/rawTextRenderer")
 
 const TITLE = "Markdown Viewer"
 
@@ -28,13 +29,6 @@ function updateStatusBar(text) {
 function statusOnMouseOver(element, text) {
     element.onmouseover = () => updateStatusBar(text)
     element.onmouseout = () => updateStatusBar("")
-}
-
-function switchRawView(isRawView) {
-    document.getElementById("content").style.display = isRawView ? "none" : "block"
-    document.getElementById("raw-text").style.display = isRawView ? "block" : "none"
-    updateStatusBar(isRawView ? "Raw text (leve with Ctrl+U)" : "")
-    contentBlocking.changeInfoElementVisiblity(!isRawView && contentBlocking.hasBlockedElements())
 }
 
 function alterStyleURLs(documentDirectory, fileContent) {
@@ -79,6 +73,7 @@ function fittingTarget(target, nodeName) {
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     contentBlocking.init(window, document)
+    rawText.init(window, document, updateStatusBar)
     electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
@@ -182,10 +177,6 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
         }
     })
 })
-
-electron.ipcRenderer.on(ipc.messages.viewRawText, () => switchRawView(true))
-
-electron.ipcRenderer.on(ipc.messages.leaveRawText, () => switchRawView(false))
 
 electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, encoding) =>
     electron.ipcRenderer.send(
