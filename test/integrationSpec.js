@@ -91,8 +91,8 @@ async function checkUnblockedMessage() {
     return hasFoundUnblockedMessage
 }
 
-async function elementIsVisible(rawTextElement) {
-    return (await rawTextElement.getCSSProperty("display")).value !== "none"
+async function elementIsVisible(element) {
+    return (await element.getCSSProperty("display")).value !== "none"
 }
 
 describe("Integration tests with single app instance", () => {
@@ -105,11 +105,11 @@ describe("Integration tests with single app instance", () => {
 
     it("opens a window", async () => {
         client.waitUntilWindowLoaded()
-        assert.eventually.equal(client.getWindowCount(), 1)
+        await assert.eventually.equal(client.getWindowCount(), 1)
     })
 
     it("has file name in title bar", async () => {
-        assert.eventually.include(client.getTitle(), defaultDocumentFile)
+        await assert.eventually.include(client.getTitle(), defaultDocumentFile)
     })
 
     it("displays blocked content banner", async () => {
@@ -181,7 +181,9 @@ describe("Integration tests with single app instance", () => {
             describe(`Menu "${mainItem.label}"`, () => {
                 for (const [_, item] of Object.entries(mainItem.sub)) {
                     it(`has item "${item.label}"`, async () => {
-                        assert.eventually.ok(menuAddon.getMenuItem(mainItem.label, item.label))
+                        await assert.eventually.ok(
+                            menuAddon.getMenuItem(mainItem.label, item.label)
+                        )
                     })
 
                     it(`item "${item.label}" is ${
@@ -197,7 +199,7 @@ describe("Integration tests with single app instance", () => {
 
     describe("Raw text", () => {
         it("is invisible", async () => {
-            assert.eventually.isFalse(elementIsVisible(await client.$(elements.rawText.path)))
+            await assert.eventually.isFalse(elementIsVisible(await client.$(elements.rawText.path)))
         })
     })
 })
@@ -213,17 +215,16 @@ describe("Integration tests with their own app instance each", () => {
     describe("Blocked content", () => {
         describe("UI element", () => {
             it("disappears at click on X", async () => {
-                const blockedContentElement = await client.$(elements.blockedContentArea.path)
-                const closeButton = await client.$(elements.blockedContentArea.closeButton.path)
-
-                closeButton.click()
-                assert.eventually.equal(blockedContentElement.getAttribute("hidden"), true)
+                ;(await client.$(elements.blockedContentArea.closeButton.path)).click()
+                await assert.eventually.isFalse(
+                    elementIsVisible(await client.$(elements.blockedContentArea.path))
+                )
             })
 
             it("unblocks content", async () => {
                 const blockedContentElement = await client.$(elements.blockedContentArea.path)
                 blockedContentElement.click()
-                assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
+                await assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
             })
         })
 
@@ -239,7 +240,7 @@ describe("Integration tests with their own app instance each", () => {
                     unblockMenuLabel
                 )
 
-                assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
+                await assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
                 assert.isFalse(blockedConetentMenuItem.enabled)
             })
         })
@@ -248,20 +249,12 @@ describe("Integration tests with their own app instance each", () => {
     describe("Raw text", () => {
         it("can be activated", async () => {
             const viewMenu = elements.mainMenu.view
-            const viewMenuLabel = viewMenu.label
-            const rawTextMenuLabel = viewMenu.sub.rawText.label
 
-            await menuAddon.clickMenu(viewMenuLabel, rawTextMenuLabel)
+            await menuAddon.clickMenu(viewMenu.label, viewMenu.sub.rawText.label)
 
-            assert.eventually.isTrue(elementIsVisible(await client.$(elements.rawText.path)))
-
-            // The naive approach to get the element via XPath appears to be very slow (~500ms)
-            assert.eventually.isFalse(
-                elementIsVisible(
-                    await client.$(function () {
-                        return this.document.getElementById("markdown-body")
-                    })
-                )
+            await assert.eventually.isTrue(elementIsVisible(await client.$(elements.rawText.path)))
+            await assert.eventually.isFalse(
+                elementIsVisible(await client.$("//div[@class='markdown-body']"))
             )
         })
     })
