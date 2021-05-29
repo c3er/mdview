@@ -59,6 +59,8 @@ const ENCODINGS = [
     "UTF-16LE",
 ]
 
+let _isTest = false
+
 let _mainWindow
 let _mainMenu
 
@@ -287,6 +289,8 @@ function createWindow() {
 electron.app.on("ready", () => {
     require("@electron/remote/main").initialize()
 
+    _isTest = process.argv.includes("--test")
+
     _settings = storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
     _encodings = storage.initEncodings(storage.getDefaultDir(), storage.ENCODINGS_FILE)
 
@@ -347,6 +351,20 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
         _mainWindow.reload()
     }
     restorePosition()
+})
+
+// Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
+process.on("uncaughtException", error => {
+    const ERROR_TITLE = "Unhandled error"
+    console.error(`${ERROR_TITLE}: ${JSON.stringify(error)}`)
+    if (!_isTest) {
+        electron.dialog.showMessageBoxSync({
+            type: "error",
+            title: ERROR_TITLE,
+            message: error.message,
+        })
+    }
+    electron.app.exit(1)
 })
 
 setInterval(() => {
