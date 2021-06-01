@@ -38,6 +38,6 @@ Please ensure following points:
 
 - All automated tests pass by running `npm test`
     - If a test fails after a fresh clone/checkout on your machine (i.e. without any changes by you), it is very clearly a bug and should be reported with all needed information about your environment.
-- The code is formatted properly by running `npm run prettier`
+- The code is formatted properly by running `npm run format`
 - Your changes do not have any merge conflicts with the current state of the master branch
 - For your convenience it is recommended that you make your changes not on the master branch but on an extra feature branch

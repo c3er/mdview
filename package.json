@@ -24,7 +24,7 @@
     "pack": "build --dir",
     "dist": "electron-builder",
     "test": "prettier --check . && mocha --timeout 20000",
-    "prettier": "prettier --write ."
+    "format": "prettier --write ."
   },
   "build": {
     "nsis": {
