@@ -107,7 +107,7 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
                 } else if (isInternalLink(target)) {
                     electron.ipcRenderer.send(ipc.messages.openInternal, target)
                 } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
-                    electron.shell.openItem(fullPath)
+                    electron.shell.openPath(fullPath)
                 } else {
                     electron.ipcRenderer.send(ipc.messages.openFile, fullPath)
                 }
