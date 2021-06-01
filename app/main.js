@@ -343,13 +343,12 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {
-    const ERROR_TITLE = "Unhandled error"
-    console.error(`${ERROR_TITLE}: ${JSON.stringify(error)}`)
+    console.error(`Unhandled error: ${error.stack}`)
     if (!_isTest) {
         electron.dialog.showMessageBoxSync({
             type: "error",
-            title: ERROR_TITLE,
-            message: error.message,
+            title: "Unhandled error (fault of Markdown Viewer)",
+            message: error.stack,
         })
     }
     electron.app.exit(1)
