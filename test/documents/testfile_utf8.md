@@ -25,6 +25,8 @@
 
 [Broken internal link](#broken-link)
 
+[Link to font file](font1/Daedric.ttf)
+
 <a name="found-this-weird-construct-in-a-Markdown-file"></a>
 
 ### Some links to text files
