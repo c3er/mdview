@@ -19,13 +19,23 @@
 
 [External link to Google](http://www.google.com)
 
-[Link to README.md](../README.md)
+[Link to README.md](../../README.md)
 
 [Internal link](#sub-heading-1)
 
 [Broken internal link](#broken-link)
 
 <a name="found-this-weird-construct-in-a-Markdown-file"></a>
+
+### Some links to text files
+
+[index.html](../../app/index.html)
+
+[`index.js`](../../app/index.js)
+
+[README.md](../../README.md)
+
+[LICENSE](../../LICENSE)
 
 https://www.google.com/
 
@@ -175,13 +185,3 @@ Lorem ipsum dolor sit amet, consecteteur adipiscing elit. Barcu ve a a a id a a 
         <td>2.2</td>
     </tr>
 </table>
-
-## Some links to text files
-
-[index.html](../../index.html)
-
-[`index.js`](../../index.js)
-
-[README.md](../../README.md)
-
-[LICENSE](../../LICENSE)
