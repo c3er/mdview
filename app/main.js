@@ -226,7 +226,7 @@ function createWindow() {
                     accelerator: "Alt+U",
                     id: contentBlocking.UNBLOCK_CONTENT_MENU_ID,
                     click() {
-                        contentBlocking.toRenderer.unblockAll()
+                        contentBlocking.unblockAll()
                     },
                 },
                 {

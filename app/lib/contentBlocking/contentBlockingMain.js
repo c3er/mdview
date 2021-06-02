@@ -3,10 +3,10 @@ const electron = require("electron")
 const common = require("../common")
 const ipc = require("../ipc")
 
+const UNBLOCK_CONTENT_MENU_ID = "unblock-content"
+
 let _mainWindow
 let _mainMenu
-
-const UNBLOCK_CONTENT_MENU_ID = "unblock-content"
 
 let _contentIsBlocked = false
 const _unblockedURLs = []
@@ -52,8 +52,4 @@ exports.init = (mainWindow, mainMenu) => {
     })
 }
 
-exports.toRenderer = {
-    unblockAll() {
-        _mainWindow.webContents.send(ipc.messages.unblockAll)
-    },
-}
+exports.unblockAll = () => _mainWindow.webContents.send(ipc.messages.unblockAll)
