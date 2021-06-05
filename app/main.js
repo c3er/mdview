@@ -8,6 +8,7 @@ const electron = require("electron")
 
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
+const encodingLib = require("./lib/main/encoding")
 const ipc = require("./lib/ipc")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
@@ -18,52 +19,9 @@ const WINDOW_HEIGHT = 768
 const DEFAULT_FILE = path.join(__dirname, "..", "README.md")
 const UPDATE_INTERVAL = 1000 // ms
 
-// Based on https://encoding.spec.whatwg.org/
-const ENCODINGS = [
-    "UTF-8",
-    "IBM866",
-    "ISO-8859-2",
-    "ISO-8859-3",
-    "ISO-8859-4",
-    "ISO-8859-5",
-    "ISO-8859-6",
-    "ISO-8859-7",
-    "ISO-8859-8",
-    "ISO-8859-8-I",
-    "ISO-8859-10",
-    "ISO-8859-13",
-    "ISO-8859-14",
-    "ISO-8859-15",
-    "ISO-8859-16",
-    "KOI8-R",
-    "KOI8-U",
-    "macintosh",
-    "windows-874",
-    "windows-1250",
-    "windows-1251",
-    "windows-1252",
-    "windows-1253",
-    "windows-1254",
-    "windows-1255",
-    "windows-1256",
-    "windows-1257",
-    "windows-1258",
-    "x-mac-cyrillic",
-    "GBK",
-    "gb18030",
-    "Big5",
-    "EUC-JP",
-    "ISO-2022-JP",
-    "Shift_JIS",
-    "EUC-KR",
-    "UTF-16BE",
-    "UTF-16LE",
-]
-
 let _isTest = false
 
 let _mainWindow
-let _mainMenu
 
 let _currentFilePath
 let _internalTarget
@@ -73,7 +31,6 @@ let _isReloading = false
 let _scrollPosition = 0
 
 let _settings
-let _encodings
 
 function error(msg) {
     console.error("Error:", msg)
@@ -88,7 +45,7 @@ function openFile(filePath, internalTarget, encoding) {
         error("Given path does not lead to a file")
     } else {
         _currentFilePath = filePath
-        changeEncoding(filePath, encoding)
+        encodingLib.change(filePath, encoding)
         _internalTarget = internalTarget
         _lastModificationTime = fs.statSync(filePath).mtimeMs
         _mainWindow.webContents.send(ipc.messages.fileOpen, filePath, internalTarget, encoding)
@@ -124,17 +81,8 @@ function reload(isFileModification, encoding) {
     _mainWindow.webContents.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding || _encodings.load(_currentFilePath)
+        encoding || encodingLib.load(_currentFilePath)
     )
-}
-
-function getEncodingId(encoding) {
-    return `encoding-${encoding}`
-}
-
-function changeEncoding(filePath, encoding) {
-    _encodings.save(filePath, encoding)
-    _mainMenu.getMenuItemById(getEncodingId(encoding)).checked = true
 }
 
 function restorePosition() {
@@ -183,7 +131,7 @@ function createWindow() {
                             })
                             if (!result.canceled) {
                                 const filePath = result.filePaths[0]
-                                openFile(filePath, _internalTarget, _encodings.load(filePath))
+                                openFile(filePath, _internalTarget, encodingLib.load(filePath))
                             }
                         } catch (e) {
                             error(`Problem at opening file:\n ${e}`)
@@ -250,12 +198,12 @@ function createWindow() {
         },
         {
             label: "Encoding",
-            submenu: ENCODINGS.map(encoding => ({
+            submenu: encodingLib.ENCODINGS.map(encoding => ({
                 label: encoding,
                 type: "radio",
-                id: getEncodingId(encoding),
+                id: encodingLib.toId(encoding),
                 click() {
-                    changeEncoding(_currentFilePath, encoding)
+                    encodingLib.change(_currentFilePath, encoding)
                     reload(true, encoding)
                 },
             })),
@@ -282,14 +230,12 @@ electron.app.on("ready", () => {
     require("@electron/remote/main").initialize()
 
     _isTest = process.argv.includes("--test")
-
     _settings = storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
-    _encodings = storage.initEncodings(storage.getDefaultDir(), storage.ENCODINGS_FILE)
 
     const [mainWindow, mainMenu] = createWindow()
     _mainWindow = mainWindow
-    _mainMenu = mainMenu
 
+    encodingLib.init(mainMenu)
     contentBlocking.init(mainWindow, mainMenu)
     rawText.init(mainWindow, mainMenu)
 })
@@ -317,9 +263,9 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
     const internalTarget = extractInternalTarget(args)
     if (filePath !== undefined) {
-        openFile(filePath, internalTarget, _encodings.load(filePath))
+        openFile(filePath, internalTarget, encodingLib.load(filePath))
     } else {
-        openFile(DEFAULT_FILE, internalTarget, _encodings.load(DEFAULT_FILE))
+        openFile(DEFAULT_FILE, internalTarget, encodingLib.load(DEFAULT_FILE))
     }
 })
 
@@ -335,7 +281,7 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
     if (isFileModification) {
         openFile(_currentFilePath, _internalTarget, encoding)
     } else {
-        changeEncoding(_currentFilePath, encoding)
+        encodingLib.change(_currentFilePath, encoding)
         _mainWindow.reload()
     }
     restorePosition()
