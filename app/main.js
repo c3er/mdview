@@ -180,7 +180,7 @@ function createWindow() {
                 {
                     label: "View Raw Text",
                     accelerator: "Ctrl+U",
-                    id: "view-raw-text",
+                    id: rawText.VIEW_RAW_TEXT_MENU_ID,
                     click() {
                         rawText.switchRawView()
                     },
