@@ -1,6 +1,6 @@
 const assert = require("chai").assert
 
-const documentRendering = require("../app/lib/documentRendering")
+const documentRendering = require("../app/lib/renderer/documentRendering")
 
 describe("Document rendering", () => {
     const headerText = "This is a test"

@@ -129,7 +129,7 @@ describe("Integration tests with single app instance", () => {
         const DEFAULT_THEME = "light"
 
         const dataDir = path.join(__dirname, "data")
-        const storage = require("../app/lib/storage")
+        const storage = require("../app/lib/main/storage")
 
         describe("Settings", () => {
             let settings

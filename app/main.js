@@ -10,7 +10,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const ipc = require("./lib/ipc")
 const rawText = require("./lib/rawText/rawTextMain")
-const storage = require("./lib/storage")
+const storage = require("./lib/main/storage")
 
 const WINDOW_WIDTH = 1024
 const WINDOW_HEIGHT = 768

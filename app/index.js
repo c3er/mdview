@@ -7,7 +7,7 @@ const remote = require("@electron/remote")
 
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
-const documentRendering = require("./lib/documentRendering")
+const documentRendering = require("./lib/renderer/documentRendering")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
 const rawText = require("./lib/rawText/rawTextRenderer")
