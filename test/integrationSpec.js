@@ -112,8 +112,9 @@ describe("Integration tests with single app instance", () => {
             describe(`Menu "${mainItem.label}"`, () => {
                 for (const [_, item] of Object.entries(mainItem.sub)) {
                     it(`has item "${item.label}"`, async () => {
-                        await assert.eventually.ok(
-                            menuAddon.getMenuItem(mainItem.label, item.label)
+                        assert.notEqual(
+                            await menuAddon.getMenuItem(mainItem.label, item.label).label,
+                            ""
                         )
                     })
 
