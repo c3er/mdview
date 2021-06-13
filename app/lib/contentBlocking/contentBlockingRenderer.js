@@ -9,7 +9,6 @@ const _elementIDs = {
     closeButton: "blocked-content-info-close-button",
 }
 
-let _window
 let _document
 
 const _blockedElements = {}
@@ -87,10 +86,7 @@ electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
 
 electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
 
-exports.init = (window, document) => {
-    _window = window
-    _document = document
-}
+exports.init = document => (_document = document)
 
 exports.hasBlockedElements = hasBlockedElements
 

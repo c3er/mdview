@@ -3,7 +3,6 @@ const electron = require("electron")
 const contentBlocking = require("../contentBlocking/contentBlockingRenderer")
 const ipc = require("../ipc")
 
-let _window
 let _document
 
 let _updateStatusBar
@@ -19,8 +18,7 @@ electron.ipcRenderer.on(ipc.messages.viewRawText, () => switchRawView(true))
 
 electron.ipcRenderer.on(ipc.messages.leaveRawText, () => switchRawView(false))
 
-exports.init = (window, document, updateStatusBar) => {
-    _window = window
+exports.init = (document, updateStatusBar) => {
     _document = document
     _updateStatusBar = updateStatusBar
 }

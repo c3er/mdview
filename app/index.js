@@ -72,8 +72,8 @@ function fittingTarget(target, nodeName) {
 
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
-    contentBlocking.init(window, document)
-    rawText.init(window, document, updateStatusBar)
+    contentBlocking.init(document)
+    rawText.init(document, updateStatusBar)
     electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
