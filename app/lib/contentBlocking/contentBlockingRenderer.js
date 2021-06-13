@@ -1,7 +1,7 @@
-const electron = require("electron")
-
 const common = require("../common")
 const ipc = require("../ipc")
+
+let electron
 
 const _elementIDs = {
     element: "blocked-content-info",
@@ -74,19 +74,22 @@ function unblockAll() {
     }
 }
 
-electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
-    const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
-    elements.forEach(element => (element.onclick = () => unblockURL(url)))
+exports.init = (document, electronMock) => {
+    _document = document
+    electron = electronMock ?? require("electron")
 
-    changeInfoElementVisiblity(true)
-    _document.getElementById(_elementIDs.textContainer).onclick = unblockAll
-    _document.getElementById(_elementIDs.closeButton).onclick = () =>
-        changeInfoElementVisiblity(false)
-})
+    electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
+        const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
+        elements.forEach(element => (element.onclick = () => unblockURL(url)))
 
-electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
+        changeInfoElementVisiblity(true)
+        _document.getElementById(_elementIDs.textContainer).onclick = unblockAll
+        _document.getElementById(_elementIDs.closeButton).onclick = () =>
+            changeInfoElementVisiblity(false)
+    })
 
-exports.init = document => (_document = document)
+    electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
+}
 
 exports.hasBlockedElements = hasBlockedElements
 
