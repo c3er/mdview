@@ -187,7 +187,4 @@ electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, enco
     )
 )
 
-electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => {
-    window.scrollTo(0, position)
-    _scrollPosition = position
-})
+electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => window.scrollTo(0, position))
