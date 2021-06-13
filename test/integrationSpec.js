@@ -4,80 +4,7 @@ const assert = require("chai").assert
 const menuAddon = require("spectron-menu-addon-v2").default
 
 const lib = require("./lib")
-
-const elements = {
-    mainMenu: {
-        file: {
-            label: "File",
-            sub: {
-                open: {
-                    label: "Open",
-                    isEnabled: true,
-                },
-                print: {
-                    label: "Print",
-                    isEnabled: true,
-                },
-                quit: {
-                    label: "Quit",
-                    isEnabled: true,
-                },
-            },
-        },
-        edit: {
-            label: "Edit",
-            sub: {
-                copy: {
-                    label: "Copy",
-                    isEnabled: true,
-                },
-            },
-        },
-        view: {
-            label: "View",
-            sub: {
-                refresh: {
-                    label: "Refresh",
-                    isEnabled: true,
-                },
-                unblock: {
-                    label: "Unblock All External Content",
-                    isEnabled: true,
-                },
-                rawText: {
-                    label: "View Raw Text",
-                    isEnabled: true,
-                },
-                switchTheme: {
-                    label: "Switch Theme",
-                    isEnabled: true,
-                },
-            },
-        },
-        encoding: {
-            label: "Encoding",
-            sub: {},
-        },
-        tools: {
-            label: "Tools",
-            sub: {
-                developer: {
-                    label: "Developer Tools",
-                    isEnabled: true,
-                },
-            },
-        },
-    },
-    blockedContentArea: {
-        path: "//div[@id='blocked-content-info']",
-        closeButton: {
-            path: "//span[@id='blocked-content-info-close-button']",
-        },
-    },
-    rawText: {
-        path: "//div[@id='raw-text']",
-    },
-}
+const mocking = require("./mocking")
 
 const defaultDocumentFile = "testfile_utf8.md"
 const defaultDocumentPath = path.join(__dirname, "documents", defaultDocumentFile)
@@ -121,33 +48,29 @@ describe("Integration tests with single app instance", () => {
     })
 
     it("displays blocked content banner", async () => {
-        const elem = await client.$(elements.blockedContentArea.path)
+        const elem = await client.$(mocking.elements.blockedContentArea.path)
         assert.equal(await elem.getAttribute("hidden"), null)
     })
 
     describe('Library "storage"', () => {
-        const DEFAULT_THEME = "light"
-
-        const dataDir = path.join(__dirname, "data")
         const storage = require("../app/lib/main/storage")
 
         describe("Settings", () => {
             let settings
-            let electronMock
 
             beforeEach(() => {
-                electronMock = {
-                    nativeTheme: {
-                        themeSource: DEFAULT_THEME,
-                    },
-                }
-                settings = storage.initSettings(dataDir, storage.SETTINGS_FILE, electronMock)
-                settings.theme = DEFAULT_THEME
+                mocking.resetElectron()
+                settings = storage.initSettings(
+                    mocking.dataDir,
+                    storage.SETTINGS_FILE,
+                    mocking.electron
+                )
+                settings.theme = mocking.DEFAULT_THEME
             })
 
             describe("Theme", () => {
                 it("has a default theme", () => {
-                    assert.equal(settings.theme, DEFAULT_THEME)
+                    assert.equal(settings.theme, mocking.DEFAULT_THEME)
                 })
 
                 it("remembers light theme", () => {
@@ -169,7 +92,7 @@ describe("Integration tests with single app instance", () => {
         })
 
         describe("Encodings", () => {
-            const encodings = storage.initEncodings(dataDir, storage.ENCODINGS_FILE)
+            const encodings = storage.initEncodings(mocking.dataDir, storage.ENCODINGS_FILE)
 
             it("loads known encoding", () => {
                 const TESTPATH = "test1"
@@ -185,7 +108,7 @@ describe("Integration tests with single app instance", () => {
     })
 
     describe("Main menu", () => {
-        for (const [_, mainItem] of Object.entries(elements.mainMenu)) {
+        for (const [_, mainItem] of Object.entries(mocking.elements.mainMenu)) {
             describe(`Menu "${mainItem.label}"`, () => {
                 for (const [_, item] of Object.entries(mainItem.sub)) {
                     it(`has item "${item.label}"`, async () => {
@@ -207,7 +130,9 @@ describe("Integration tests with single app instance", () => {
 
     describe("Raw text", () => {
         it("is invisible", async () => {
-            await assert.eventually.isFalse(elementIsVisible(await client.$(elements.rawText.path)))
+            await assert.eventually.isFalse(
+                elementIsVisible(await client.$(mocking.elements.rawText.path))
+            )
         })
     })
 })
@@ -223,14 +148,16 @@ describe("Integration tests with their own app instance each", () => {
     describe("Blocked content", () => {
         describe("UI element", () => {
             it("disappears at click on X", async () => {
-                ;(await client.$(elements.blockedContentArea.closeButton.path)).click()
+                ;(await client.$(mocking.elements.blockedContentArea.closeButton.path)).click()
                 await assert.eventually.isFalse(
-                    elementIsVisible(await client.$(elements.blockedContentArea.path))
+                    elementIsVisible(await client.$(mocking.elements.blockedContentArea.path))
                 )
             })
 
             it("unblocks content", async () => {
-                const blockedContentElement = await client.$(elements.blockedContentArea.path)
+                const blockedContentElement = await client.$(
+                    mocking.elements.blockedContentArea.path
+                )
                 blockedContentElement.click()
                 await assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
             })
@@ -238,7 +165,7 @@ describe("Integration tests with their own app instance each", () => {
 
         describe("Menu item", () => {
             it("unblocks content", async () => {
-                const viewMenu = elements.mainMenu.view
+                const viewMenu = mocking.elements.mainMenu.view
                 const viewMenuLabel = viewMenu.label
                 const unblockMenuLabel = viewMenu.sub.unblock.label
 
@@ -256,11 +183,13 @@ describe("Integration tests with their own app instance each", () => {
 
     describe("Raw text", () => {
         it("can be activated", async () => {
-            const viewMenu = elements.mainMenu.view
+            const viewMenu = mocking.elements.mainMenu.view
 
             await menuAddon.clickMenu(viewMenu.label, viewMenu.sub.rawText.label)
 
-            await assert.eventually.isTrue(elementIsVisible(await client.$(elements.rawText.path)))
+            await assert.eventually.isTrue(
+                elementIsVisible(await client.$(mocking.elements.rawText.path))
+            )
             await assert.eventually.isFalse(
                 elementIsVisible(await client.$("//div[@class='markdown-body']"))
             )
@@ -269,7 +198,7 @@ describe("Integration tests with their own app instance each", () => {
 
     describe("Theme switching", () => {
         it("can be done", async () => {
-            const viewMenu = elements.mainMenu.view
+            const viewMenu = mocking.elements.mainMenu.view
             await menuAddon.clickMenu(viewMenu.label, viewMenu.sub.switchTheme.label)
             await assert.eventually.isFalse(containsConsoleMessage("error"))
         })
