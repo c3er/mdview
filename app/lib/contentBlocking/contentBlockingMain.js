@@ -12,6 +12,9 @@ let _contentIsBlocked = false
 const _unblockedURLs = []
 
 function unblockURL(url) {
+    if (!url) {
+        throw new Error("No url given")
+    }
     console.log(`Unblocked: ${url}`)
     _unblockedURLs.push(url)
 }
