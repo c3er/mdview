@@ -7,6 +7,30 @@ const DEFAULT_THEME = "light"
 
 const _electronIpcEvent = {}
 
+class WebRequestChannel {
+    constructor() {
+        this.clear()
+    }
+
+    clear() {
+        this._callback = () => {}
+        this._assertionCallback = () => {}
+    }
+
+    send(details, callback) {
+        this._callback(details, callback)
+        this._assertionCallback(details, callback)
+    }
+
+    register(callback) {
+        this._callback = callback
+    }
+
+    registerAssertion(callback) {
+        this._assertionCallback = callback
+    }
+}
+
 class IpcChannel {
     _targetCallbacks = []
     _sourceAssertionCallbacks = []
@@ -74,6 +98,9 @@ class IpcChannelCollection {
     }
 }
 
+const _webRequestChannel = new WebRequestChannel()
+const _webRequestRedirectChannel = new WebRequestChannel()
+
 const _ipcToMainChannels = new IpcChannelCollection("to-main-channel")
 const _ipcTorendererChannels = new IpcChannelCollection("to-renderer-channel")
 
@@ -93,6 +120,18 @@ const _electronDefault = {
     },
     nativeTheme: {
         themeSource: DEFAULT_THEME,
+    },
+    session: {
+        defaultSession: {
+            webRequest: {
+                onBeforeRequest(callback) {
+                    _webRequestChannel.register(callback)
+                },
+                onBeforeRedirect(callback) {
+                    _webRequestRedirectChannel.register(callback)
+                },
+            },
+        },
     },
 }
 
@@ -234,6 +273,13 @@ exports.register = {
             _ipcTorendererChannels.addSourceAssertion(message, callback ?? (() => {}))
         },
     },
+    webRequest: {
+        onBeforeRequest(callback) {
+            _webRequestChannel.registerAssertion(callback)
+        },
+        onBeforeRedirect(callback) {
+            _webRequestRedirectChannel.registerAssertion(callback)
+        },
     },
 }
 
@@ -246,10 +292,19 @@ exports.send = {
             _ipcTorendererChannels.send(message, event, ...args)
         },
     },
+    webRequest: {
+        beforeRequest(details, callback) {
+            _webRequestChannel.send(details, callback)
+        },
+        beforeRedirect(details) {
+            _webRequestRedirectChannel.send(details)
+        },
     },
 }
 
 exports.clear = () => {
+    _webRequestChannel.clear()
+    _webRequestRedirectChannel.clear()
     _ipcToMainChannels.clear()
     _ipcTorendererChannels.clear()
 }

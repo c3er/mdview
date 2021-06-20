@@ -1,5 +1,3 @@
-const electron = require("electron")
-
 const common = require("../common")
 const ipc = require("../ipc")
 
@@ -23,16 +21,12 @@ function allowUnblockContent(isAllowed) {
     _mainMenu.getMenuItemById(UNBLOCK_CONTENT_MENU_ID).enabled = isAllowed
 }
 
-electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
-
-electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
-    _contentIsBlocked = false
-    allowUnblockContent(false)
-})
-
 exports.UNBLOCK_CONTENT_MENU_ID = UNBLOCK_CONTENT_MENU_ID
 
-exports.init = (mainWindow, mainMenu) => {
+exports.unblockedURLs = _unblockedURLs
+
+exports.init = (mainWindow, mainMenu, electronMock) => {
+    const electron = electronMock ?? require("electron")
     _mainWindow = mainWindow
     _mainMenu = mainMenu
 
@@ -53,6 +47,15 @@ exports.init = (mainWindow, mainMenu) => {
         console.log("Redirecting: " + url)
         unblockURL(url)
     })
+
+    electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
+
+    electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
+        _contentIsBlocked = false
+        allowUnblockContent(false)
+    })
 }
 
 exports.unblockAll = () => _mainWindow.webContents.send(ipc.messages.unblockAll)
+
+exports.clearUnblockedURLs = () => (_unblockedURLs.length = 0)
