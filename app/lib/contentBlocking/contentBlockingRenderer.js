@@ -9,9 +9,12 @@ const _elementIDs = {
     closeButton: "blocked-content-info-close-button",
 }
 
-let _document
+let _isInitialized = false
 
-const _blockedElements = {}
+let _document
+let _window
+
+let _blockedElements = {}
 
 function searchElementsWithAttributeValue(value) {
     // Based on https://stackoverflow.com/a/30840550 (JQuery selector using value, but unknown attribute)
@@ -33,7 +36,7 @@ function searchElementsWithAttributeValue(value) {
 function changeInfoElementVisiblity(isVisible) {
     const infoElement = _document.getElementById("blocked-content-info")
     infoElement.hidden = !isVisible
-    _document.body.style.marginTop = isVisible ? window.getComputedStyle(infoElement).height : 0
+    _document.body.style.marginTop = isVisible ? _window.getComputedStyle(infoElement).height : 0
 }
 
 function hasBlockedElements() {
@@ -74,8 +77,13 @@ function unblockAll() {
     }
 }
 
-exports.init = (document, electronMock) => {
+exports.init = (document, window, electronMock, shallForceInitialization) => {
+    if (_isInitialized && !shallForceInitialization) {
+        return
+    }
+
     _document = document
+    _window = window
     electron = electronMock ?? require("electron")
 
     electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
@@ -89,8 +97,12 @@ exports.init = (document, electronMock) => {
     })
 
     electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
+
+    _isInitialized = true
 }
 
 exports.hasBlockedElements = hasBlockedElements
 
 exports.changeInfoElementVisiblity = changeInfoElementVisiblity
+
+exports.reset = () => (_blockedElements = {})

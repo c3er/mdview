@@ -50,7 +50,9 @@ describe("Raw text", () => {
             statusBarUpdateCallback(text)
         }
 
-        beforeEach(() => rawText.init(mocking.document, updateStatusBar, mocking.electron))
+        beforeEach(() =>
+            rawText.init(mocking.document, mocking.window, updateStatusBar, mocking.electron)
+        )
 
         afterEach(() => mocking.clear())
 

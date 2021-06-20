@@ -141,6 +141,7 @@ const _htmlElement = {
     style: {
         display: "invalid-value",
     },
+    onclick() {},
 }
 
 function resetElectron() {
@@ -253,6 +254,14 @@ exports.document = {
     },
     getElementsByTagName() {
         return [lodashClonedeep(_htmlElement)]
+    },
+}
+
+exports.window = {
+    getComputedStyle() {
+        return {
+            height: 0,
+        }
     },
 }
 

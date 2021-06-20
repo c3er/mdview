@@ -5,10 +5,10 @@ const mocking = require("./mocking")
 const ipc = require("../app/lib/ipc")
 
 describe("Content blocking", () => {
+    const expectedUrl = "http://example.com"
+
     describe("Main part", () => {
         const contentBlocking = require("../app/lib/contentBlocking/contentBlockingMain")
-
-        const expectedUrl = "http://example.com"
 
         beforeEach(() =>
             contentBlocking.init(mocking.mainWindow, mocking.mainMenu, mocking.electron)
@@ -70,6 +70,39 @@ describe("Content blocking", () => {
                     buildRequestCallback(false)
                 )
             })
+        })
+    })
+
+    describe("Renderer part", () => {
+        const contentBlocking = require("../app/lib/contentBlocking/contentBlockingRenderer")
+
+        beforeEach(() =>
+            contentBlocking.init(mocking.document, mocking.window, mocking.electron, true)
+        )
+
+        afterEach(() => {
+            mocking.clear()
+            contentBlocking.reset()
+        })
+
+        it("has no blocked elements in default", () => {
+            assert.isFalse(contentBlocking.hasBlockedElements())
+        })
+
+        it("blocks a URL", () => {
+            mocking.send.ipc.toRenderer(ipc.messages.contentBlocked, {}, expectedUrl)
+            assert.isTrue(contentBlocking.hasBlockedElements())
+        })
+
+        it("has no blocked URL after unblocking all", () => {
+            mocking.register.ipc.rendererSend(ipc.messages.unblockURL)
+            mocking.register.ipc.rendererSend(ipc.messages.allContentUnblocked)
+
+            // First, block a URL
+            mocking.send.ipc.toRenderer(ipc.messages.contentBlocked, {}, expectedUrl)
+
+            mocking.send.ipc.toRenderer(ipc.messages.unblockAll)
+            assert.isFalse(contentBlocking.hasBlockedElements())
         })
     })
 })
