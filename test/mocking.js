@@ -5,15 +5,17 @@ const lodashClonedeep = require("lodash.clonedeep")
 
 const DEFAULT_THEME = "light"
 
+const _electronIpcEvent = {}
+
 class IpcChannel {
     _targetCallbacks = []
     _sourceAssertionCallbacks = []
     _targetAssertionCallbacks = []
 
-    send(message) {
-        this._targetCallbacks.forEach(callback => callback(message))
-        this._sourceAssertionCallbacks.forEach(callback => callback(message))
-        this._targetAssertionCallbacks.forEach(callback => callback(message))
+    send(event, ...args) {
+        this._targetCallbacks.forEach(callback => callback(event, ...args))
+        this._sourceAssertionCallbacks.forEach(callback => callback(event, ...args))
+        this._targetAssertionCallbacks.forEach(callback => callback(event, ...args))
     }
 
     addTarget(callback) {
@@ -50,11 +52,11 @@ class IpcChannelCollection {
         this._addCallback(message, callback, channel => channel.addTargetAssertion(callback))
     }
 
-    send(message) {
+    send(message, event, ...args) {
         if (!this._data.hasOwnProperty(message)) {
             assert.fail(`Message "${message}" is not registered in channel "${this.name}"`)
         }
-        this._data[message].send(message)
+        this._data[message].send(event, ...args)
     }
 
     clear() {
@@ -75,7 +77,7 @@ class IpcChannelCollection {
 const _ipcToMainChannels = new IpcChannelCollection("to-main-channel")
 const _ipcTorendererChannels = new IpcChannelCollection("to-renderer-channel")
 
-const electronDefault = {
+const _electronDefault = {
     ipcMain: {
         on(message, callback) {
             _ipcToMainChannels.addTarget(message, callback)
@@ -86,7 +88,7 @@ const electronDefault = {
             _ipcTorendererChannels.addTarget(message, callback)
         },
         send(message) {
-            _ipcToMainChannels.send(message)
+            _ipcToMainChannels.send(message, _electronIpcEvent)
         },
     },
     nativeTheme: {
@@ -103,7 +105,7 @@ const _htmlElement = {
 }
 
 function resetElectron() {
-    exports.electron = lodashClonedeep(electronDefault)
+    exports.electron = lodashClonedeep(_electronDefault)
 }
 
 exports.DEFAULT_THEME = DEFAULT_THEME
@@ -186,8 +188,8 @@ exports.elements = {
 
 exports.mainWindow = {
     webContents: {
-        send(message) {
-            _ipcTorendererChannels.send(message)
+        send(message, ...args) {
+            _ipcTorendererChannels.send(message, _electronIpcEvent, ...args)
         },
     },
 }
@@ -218,26 +220,32 @@ exports.document = {
 exports.resetElectron = resetElectron
 
 exports.register = {
-    ipcMainOn(message, callback) {
-        _ipcToMainChannels.addTargetAssertion(message, callback ?? (() => {}))
+    ipc: {
+        mainOn(message, callback) {
+            _ipcToMainChannels.addTargetAssertion(message, callback ?? (() => {}))
+        },
+        rendererOn(message, callback) {
+            _ipcTorendererChannels.addTargetAssertion(message, callback ?? (() => {}))
+        },
+        rendererSend(message, callback) {
+            _ipcToMainChannels.addSourceAssertion(message, callback ?? (() => {}))
+        },
+        webContentsSend(message, callback) {
+            _ipcTorendererChannels.addSourceAssertion(message, callback ?? (() => {}))
+        },
     },
-    ipcRendererOn(message, callback) {
-        _ipcTorendererChannels.addTargetAssertion(message, callback ?? (() => {}))
-    },
-    ipcRendererSend(message, callback) {
-        _ipcToMainChannels.addSourceAssertion(message, callback ?? (() => {}))
-    },
-    webContentsSend(message, callback) {
-        _ipcTorendererChannels.addSourceAssertion(message, callback ?? (() => {}))
     },
 }
 
 exports.send = {
-    toMain(message) {
-        _ipcToMainChannels.send(message)
+    ipc: {
+        toMain(message, event, ...args) {
+            _ipcToMainChannels.send(message, event, ...args)
+        },
+        toRenderer(message, event, ...args) {
+            _ipcTorendererChannels.send(message, event, ...args)
+        },
     },
-    toRenderer(message) {
-        _ipcTorendererChannels.send(message)
     },
 }
 

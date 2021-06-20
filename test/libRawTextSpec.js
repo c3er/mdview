@@ -13,17 +13,17 @@ describe("Raw text", () => {
         afterEach(() => mocking.clear())
 
         it("can be activated", () => {
-            mocking.register.webContentsSend(ipc.messages.viewRawText)
+            mocking.register.ipc.webContentsSend(ipc.messages.viewRawText)
             rawText.switchRawView()
         })
 
         it("can be deactivated", () => {
             let switchCount = 0
-            mocking.register.webContentsSend(ipc.messages.viewRawText, () => {
+            mocking.register.ipc.webContentsSend(ipc.messages.viewRawText, () => {
                 switchCount++
                 assert.equal(switchCount, 1, `Raw view was switched ${switchCount} times.`)
             })
-            mocking.register.webContentsSend(ipc.messages.leaveRawText, () => {
+            mocking.register.ipc.webContentsSend(ipc.messages.leaveRawText, () => {
                 switchCount++
                 assert.equal(switchCount, 2, `Raw view was switched ${switchCount} times.`)
             })
@@ -32,8 +32,8 @@ describe("Raw text", () => {
         })
 
         it("can be disabled", () => {
-            mocking.register.webContentsSend(ipc.messages.leaveRawText)
-            mocking.register.ipcMainOn(ipc.messages.disableRawView)
+            mocking.register.ipc.webContentsSend(ipc.messages.leaveRawText)
+            mocking.register.ipc.mainOn(ipc.messages.disableRawView)
         })
     })
 
@@ -56,12 +56,12 @@ describe("Raw text", () => {
 
         it("can be activated", () => {
             registerStatusBarUpdate(text => assert.isTrue(text.toLowerCase().includes("raw text")))
-            mocking.send.toRenderer(ipc.messages.viewRawText)
+            mocking.send.ipc.toRenderer(ipc.messages.viewRawText)
         })
 
         it("can be deactivated", () => {
             registerStatusBarUpdate(text => assert.equal(text, ""))
-            mocking.send.toRenderer(ipc.messages.leaveRawText)
+            mocking.send.ipc.toRenderer(ipc.messages.leaveRawText)
         })
     })
 })
