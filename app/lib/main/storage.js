@@ -6,8 +6,6 @@ let electron = require("electron")
 const SETTINGS_FILE = "settings.json"
 const ENCODINGS_FILE = "encodings.json"
 
-let _isTest = false
-
 let _settings
 let _encodings
 
@@ -19,11 +17,6 @@ class StorageBase {
         StorageBase._initStorageDir(storageDir)
         this._storagePath = path.join(storageDir, storageFile)
         this._data = StorageBase._initData(this._storagePath)
-
-        if (!_isTest) {
-            console.debug(`Initialized storage file ${this._storagePath}`)
-            console.debug(`Storage content: ${JSON.stringify(this._data)}`)
-        }
     }
 
     _save() {
@@ -93,7 +86,6 @@ exports.getDefaultDir = getDefaultDir
 exports.initSettings = (settingsStorageDir, settingsStorageFile, electronMock) => {
     if (electronMock) {
         electron = electronMock
-        _isTest = true
     }
     return _settings ?? (_settingss = new Settings(settingsStorageDir, settingsStorageFile))
 }
