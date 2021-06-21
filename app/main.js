@@ -60,7 +60,7 @@ function extractFilePath(args) {
             arg !== electron.app.getAppPath() &&
             arg !== "data:," &&
             !arg.startsWith("-") &&
-            !arg.includes("node_modules")
+            !arg.includes("spectron-menu-addon-v2")
     )
 }
 
