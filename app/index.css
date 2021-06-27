@@ -81,6 +81,11 @@ body {
     #raw-text {
         color: #f8f8f2;
     }
+
+    #status-bar {
+        background: #292a2d;
+        color: #f8f8f2;
+    }
 }
 
 @media print {
