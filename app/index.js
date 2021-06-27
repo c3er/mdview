@@ -10,13 +10,10 @@ const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/renderer/documentRendering")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
+const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
 
 const TITLE = "Markdown Viewer"
-
-function isInternalLink(url) {
-    return url.startsWith("#")
-}
 
 function alterTags(tagName, handler) {
     ;[...document.getElementsByTagName(tagName)].forEach(handler)
@@ -74,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
+    navigation.init()
     electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
@@ -99,19 +97,7 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
     alterTags("a", link => {
         const target = link.getAttribute("href")
         if (target) {
-            const fullPath = path.join(documentDirectory, target)
-            link.onclick = event => {
-                event.preventDefault()
-                if (common.isWebURL(target) || target.startsWith("mailto:")) {
-                    electron.shell.openExternal(target)
-                } else if (isInternalLink(target)) {
-                    electron.ipcRenderer.send(ipc.messages.openInternal, target)
-                } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
-                    electron.shell.openPath(fullPath)
-                } else {
-                    electron.ipcRenderer.send(ipc.messages.openFile, fullPath)
-                }
-            }
+            navigation.openLink(link, target, documentDirectory)
             statusOnMouseOver(link, target)
         }
     })

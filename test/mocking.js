@@ -183,6 +183,14 @@ exports.elements = {
         view: {
             label: "View",
             sub: {
+                back: {
+                    label: "Back",
+                    isEnabled: false,
+                },
+                forward: {
+                    label: "Forward",
+                    isEnabled: false,
+                },
                 refresh: {
                     label: "Refresh",
                     isEnabled: true,

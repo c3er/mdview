@@ -10,6 +10,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const encodingLib = require("./lib/main/encoding")
 const ipc = require("./lib/ipc")
+const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
 
@@ -44,11 +45,8 @@ function openFile(filePath, internalTarget, encoding) {
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path does not lead to a file")
     } else {
-        _currentFilePath = filePath
-        encodingLib.change(filePath, encoding)
-        _internalTarget = internalTarget
+        navigation.go(filePath, internalTarget, encoding)
         _lastModificationTime = fs.statSync(filePath).mtimeMs
-        _mainWindow.webContents.send(ipc.messages.fileOpen, filePath, internalTarget, encoding)
     }
 }
 
@@ -110,6 +108,12 @@ function createWindow() {
             _isReloading = false
         }
     })
+    mainWindow.webContents.on("before-input-event", (event, input) => {
+        if (input.type === "keyDown" && input.key === "Backspace") {
+            event.preventDefault()
+            navigation.back()
+        }
+    })
 
     electron.nativeTheme.themeSource = _settings.theme
 
@@ -164,6 +168,23 @@ function createWindow() {
         {
             label: "View",
             submenu: [
+                {
+                    label: "Back",
+                    accelerator: "Alt+Left",
+                    id: navigation.BACK_MENU_ID,
+                    click() {
+                        navigation.back()
+                    },
+                },
+                {
+                    label: "Forward",
+                    accelerator: "Alt+Right",
+                    id: navigation.FORWARD_MENU_ID,
+                    click() {
+                        navigation.forward()
+                    },
+                },
+                { type: "separator" },
                 {
                     label: "Refresh",
                     accelerator: "F5",
@@ -237,6 +258,7 @@ electron.app.on("ready", () => {
     const [mainWindow, mainMenu] = createWindow()
     _mainWindow = mainWindow
 
+    navigation.init(mainWindow, mainMenu)
     encodingLib.init(mainMenu)
     contentBlocking.init(mainWindow, mainMenu)
     rawText.init(mainWindow, mainMenu)
@@ -270,12 +292,6 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
         openFile(DEFAULT_FILE, internalTarget, encodingLib.load(DEFAULT_FILE))
     }
 })
-
-electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
-
-electron.ipcMain.on(ipc.messages.openInternal, (_, target) =>
-    createChildWindow(_currentFilePath, target)
-)
 
 electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
