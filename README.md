@@ -10,6 +10,15 @@ Issues occurred with browser download security features and Windows SmartScreen.
 
 I don't know yet, how to prevent these blockings without paying an annual fee.
 
+### Startup speed
+
+The application may have a delay at startup. This delay may be caused by Windows Defender. See [my comment in Electron issue #29868](https://github.com/electron/electron/issues/29868#issuecomment-869049066) and [this StackOverflow question](https://stackoverflow.com/questions/67982430/windows-defender-slowing-down-electron-startup). Other virus scanner may also cause a delay.
+
+As a workaround to remove this delay, you can add the path to the `mdview.exe` to the exclusion list of your virus scanner. The default installation path of the setup file are:
+
+- `C:\Program Files\mdview` for system wide installation
+- `%appdata%\..\Local\Programs\mdview` for installation in the user account (non elevated)
+
 ## Developing
 
 The tool is developed and tested only under Windows (7 and newer) 64 Bit yet.
@@ -29,6 +38,10 @@ The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMag
 The main process can be debugged with [Visual Studio Code](https://code.visualstudio.com/). A `launch.json` is in the repository.
 
 The renderer process (`index.html` and `index.js`) must be debugged with help of the Electron development tools by calling in the main menu "Tools" -> "Developer tools" or by pressing the F10 key.
+
+### Note for Windows
+
+See [section Startup speed](#startup-speed) above. If you observe a big delay at application startup, you should add the  development path of the application to your virus scanner exclusion list. This workaround may also help with other Electron applications.
 
 ## Copyright and License
 
