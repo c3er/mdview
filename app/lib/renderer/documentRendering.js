@@ -42,6 +42,7 @@ markdown.use(require("markdown-it-abbr"))
 markdown.use(require("markdown-it-container"), "info")
 markdown.use(require("markdown-it-container"), "warning")
 markdown.use(require("markdown-it-container"), "error")
+markdown.use(require("markdown-it-mark"))
 
 function generateCodeText(text, options = {}) {
     const defaults = {

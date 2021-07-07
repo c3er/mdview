@@ -303,3 +303,7 @@ This is a warning.
 ::: error
 This is an error.
 :::
+
+### Marked text
+
+Parts ==of this text== should be marked.
