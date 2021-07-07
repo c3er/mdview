@@ -32,6 +32,7 @@ markdown.use(require("markdown-it-headinganchor"), {
             .replace(/\s/g, "-")
             .toLowerCase(),
 })
+markdown.use(require("markdown-it-new-katex"))
 
 function generateCodeText(text, options = {}) {
     const defaults = {
