@@ -282,3 +282,10 @@ An inline footnote.^[This is the inline footnote]
 H~2~0
 
 29^th^
+
+### Abbreviations
+
+*[HTML]: Hyper Text Markup Language
+*[W3C]:  World Wide Web Consortium
+
+The HTML specification is maintained by the W3C.

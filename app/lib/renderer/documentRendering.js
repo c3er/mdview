@@ -38,6 +38,7 @@ markdown.use(require("markdown-it-emoji"))
 markdown.use(require("markdown-it-footnote"))
 markdown.use(require("markdown-it-sub"))
 markdown.use(require("markdown-it-sup"))
+markdown.use(require("markdown-it-abbr"))
 
 function generateCodeText(text, options = {}) {
     const defaults = {
