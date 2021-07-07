@@ -260,3 +260,15 @@ $$\begin{array}{c}
 :joy: :') :'-) :,) :,-) :'D :'-D ':,D :,-D
 
 This is a paragraph with an emoji in the middle. :) And at the end. :D
+
+### Footnotes
+
+Footnote reference with number.[^1]
+
+[^1]: The numbered footnote
+
+Footnote reference with name.[^my-footnote]
+
+[^my-footnote]: The named footnote
+
+An inline footnote.^[This is the inline footnote]
