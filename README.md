@@ -4,6 +4,20 @@
 
 A standalone application that renders and displays Markdown files. It does nothing else! No direct editing nor any fancy note taking features. It is not distributed as a browser extension nor does it fire up a web server - so no web browser is needed to see the rendered Markdown file.
 
+It renders many additional features from [the `markdown-it` demo](https://markdown-it.github.io/). 
+
+Following plugins are supported:
+
+- [`markdown-it-abbr`](https://github.com/markdown-it/markdown-it-abbr)
+- [`markdown-it-container`](https://github.com/markdown-it/markdown-it-container)
+- [`markdown-it-emoji`](https://github.com/markdown-it/markdown-it-emoji)
+- [`markdown-it-footnote`](https://github.com/markdown-it/markdown-it-footnote)
+- [`markdown-it-headinganchor`](https://github.com/adam-p/markdown-it-headinganchor)
+- [`markdown-it-mark`](https://github.com/markdown-it/markdown-it-mark)
+- [`markdown-it-katex`](https://github.com/waylonflinn/markdown-it-katex)
+- [`markdown-it-sub`](https://github.com/markdown-it/markdown-it-sub)
+- [`markdown-it-sup`](https://github.com/markdown-it/markdown-it-sup)
+
 ## Note on Windows installation and download security
 
 Issues occurred with browser download security features and Windows SmartScreen. I checked both, the Windows Setup-EXE and the ZIP file in [VirusTotal](https://www.virustotal.com) and no engine detected anything at upload time.
