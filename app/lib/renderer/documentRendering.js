@@ -33,6 +33,7 @@ markdown.use(require("markdown-it-headinganchor"), {
             .toLowerCase(),
 })
 markdown.use(require("markdown-it-new-katex"))
+markdown.use(require("markdown-it-emoji"))
 
 function generateCodeText(text, options = {}) {
     const defaults = {
