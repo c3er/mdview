@@ -33,16 +33,16 @@ markdown.use(require("markdown-it-headinganchor"), {
             .replace(/\s/g, "-")
             .toLowerCase(),
 })
-markdown.use(require("markdown-it-new-katex"))
-markdown.use(require("markdown-it-emoji"))
-markdown.use(require("markdown-it-footnote"))
-markdown.use(require("markdown-it-sub"))
-markdown.use(require("markdown-it-sup"))
 markdown.use(require("markdown-it-abbr"))
+markdown.use(require("markdown-it-container"), "error")
 markdown.use(require("markdown-it-container"), "info")
 markdown.use(require("markdown-it-container"), "warning")
-markdown.use(require("markdown-it-container"), "error")
+markdown.use(require("markdown-it-emoji"))
+markdown.use(require("markdown-it-footnote"))
 markdown.use(require("markdown-it-mark"))
+markdown.use(require("markdown-it-new-katex"))
+markdown.use(require("markdown-it-sub"))
+markdown.use(require("markdown-it-sup"))
 
 function generateCodeText(text, options = {}) {
     const defaults = {
