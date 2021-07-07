@@ -272,3 +272,7 @@ Footnote reference with name.[^my-footnote]
 [^my-footnote]: The named footnote
 
 An inline footnote.^[This is the inline footnote]
+
+### Typographic symbols
+
+(c) (C) (r) (R) (tm) (TM) (p) (P) +-

@@ -23,6 +23,7 @@ const markdown = require("markdown-it")({
     xhtmlOut: true,
     html: true,
     linkify: true,
+    typographer: true,
 })
 markdown.use(require("markdown-it-headinganchor"), {
     slugify: text =>
