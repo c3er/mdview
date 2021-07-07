@@ -276,3 +276,9 @@ An inline footnote.^[This is the inline footnote]
 ### Typographic symbols
 
 (c) (C) (r) (R) (tm) (TM) (p) (P) +-
+
+### Sub and sup
+
+H~2~0
+
+29^th^

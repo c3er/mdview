@@ -36,6 +36,8 @@ markdown.use(require("markdown-it-headinganchor"), {
 markdown.use(require("markdown-it-new-katex"))
 markdown.use(require("markdown-it-emoji"))
 markdown.use(require("markdown-it-footnote"))
+markdown.use(require("markdown-it-sub"))
+markdown.use(require("markdown-it-sup"))
 
 function generateCodeText(text, options = {}) {
     const defaults = {
