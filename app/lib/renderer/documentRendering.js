@@ -39,6 +39,9 @@ markdown.use(require("markdown-it-footnote"))
 markdown.use(require("markdown-it-sub"))
 markdown.use(require("markdown-it-sup"))
 markdown.use(require("markdown-it-abbr"))
+markdown.use(require("markdown-it-container"), "info")
+markdown.use(require("markdown-it-container"), "warning")
+markdown.use(require("markdown-it-container"), "error")
 
 function generateCodeText(text, options = {}) {
     const defaults = {

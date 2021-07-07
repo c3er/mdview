@@ -289,3 +289,17 @@ H~2~0
 *[W3C]:  World Wide Web Consortium
 
 The HTML specification is maintained by the W3C.
+
+### Containers
+
+::: info
+This is an info.
+:::
+
+::: warning
+This is a warning.
+:::
+
+::: error
+This is an error.
+:::

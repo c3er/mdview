@@ -18,6 +18,18 @@
     display: none;
 }
 
+div.info {
+    background-color: #a6dcef;
+}
+
+div.warning {
+    background-color: #f5fac8;
+}
+
+div.error {
+    background-color: #f7b3a7;
+}
+
 #status-bar {
     background-color: #ddd;
     bottom: 0;
@@ -78,6 +90,18 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+    div.info {
+        background-color: #726a95;
+    }
+
+    div.warning {
+        background-color: #ba6b57;
+    }
+
+    div.error {
+        background-color: #8f4068;
+    }
+
     #raw-text {
         color: #f8f8f2;
     }
