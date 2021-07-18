@@ -118,13 +118,19 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
 
     let titlePrefix = filePath
     if (internalTarget) {
-        const targetElement = document.getElementById(internalTarget.substring(1))
+        const targetElement = document.getElementById(internalTarget.replace("#", "").split(".")[0])
         if (targetElement) {
-            window.scrollTo(0, targetElement.getBoundingClientRect().top)
+            window.scrollTo(
+                0,
+                targetElement.getBoundingClientRect().top -
+                    document.body.getBoundingClientRect().top
+            )
             titlePrefix += internalTarget
         } else {
             titlePrefix += ` ("${internalTarget}" not found)`
         }
+    } else {
+        window.scrollTo(0, 0)
     }
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
