@@ -25,28 +25,30 @@ const markdown = require("markdown-it")({
     linkify: true,
     typographer: true,
 })
-markdown.use(require("markdown-it-headinganchor"), {
-    slugify: text =>
-        text
-            .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
-            .trim()
-            .replace(/\s/g, "-")
-            .toLowerCase(),
-})
-markdown.use(require("markdown-it-multimd-table"), {
-    headerless: true,
-    multiline: true,
-})
-markdown.use(require("markdown-it-abbr"))
-markdown.use(require("markdown-it-container"), "error")
-markdown.use(require("markdown-it-container"), "info")
-markdown.use(require("markdown-it-container"), "warning")
-markdown.use(require("markdown-it-emoji"))
-markdown.use(require("markdown-it-footnote"))
-markdown.use(require("markdown-it-mark"))
-markdown.use(require("markdown-it-new-katex"))
-markdown.use(require("markdown-it-sub"))
-markdown.use(require("markdown-it-sup"))
+
+markdown
+    .use(require("markdown-it-headinganchor"), {
+        slugify: text =>
+            text
+                .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
+                .trim()
+                .replace(/\s/g, "-")
+                .toLowerCase(),
+    })
+    .use(require("markdown-it-multimd-table"), {
+        headerless: true,
+        multiline: true,
+    })
+    .use(require("markdown-it-abbr"))
+    .use(require("markdown-it-container"), "error")
+    .use(require("markdown-it-container"), "info")
+    .use(require("markdown-it-container"), "warning")
+    .use(require("markdown-it-emoji"))
+    .use(require("markdown-it-footnote"))
+    .use(require("markdown-it-mark"))
+    .use(require("markdown-it-new-katex"))
+    .use(require("markdown-it-sub"))
+    .use(require("markdown-it-sup"))
 
 function generateCodeText(text, options = {}) {
     const defaults = {
