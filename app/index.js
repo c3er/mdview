@@ -23,9 +23,13 @@ function updateStatusBar(text) {
     document.getElementById("status-text").innerHTML = text
 }
 
+function clearStatusBar() {
+    updateStatusBar("")
+}
+
 function statusOnMouseOver(element, text) {
     element.onmouseover = () => updateStatusBar(text)
-    element.onmouseout = () => updateStatusBar("")
+    element.onmouseout = () => clearStatusBar()
 }
 
 function alterStyleURLs(documentDirectory, fileContent) {
@@ -77,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, encoding) => {
     contentBlocking.changeInfoElementVisiblity(false)
+    clearStatusBar()
 
     let content = file.open(filePath, encoding)
     if (!file.isMarkdown(filePath)) {
