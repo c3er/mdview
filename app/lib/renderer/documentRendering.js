@@ -60,9 +60,9 @@ function generateCodeText(text, options = {}) {
 
     const preClass =
         actual.isHighlighted || actual.isMdRawText
-            ? ` class="${[hljsClass, mdRawClass].join(" ")}"`
+            ? `class="${[hljsClass, mdRawClass].join(" ").trim()}"`
             : ""
-    return `<pre${preClass}"><code><div>${text}</div></code></pre>`
+    return `<pre ${preClass}><code>${text}</code></pre>`
 }
 
 exports.renderContent = content => markdown.render(content)
