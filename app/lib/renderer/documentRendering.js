@@ -33,6 +33,10 @@ markdown.use(require("markdown-it-headinganchor"), {
             .replace(/\s/g, "-")
             .toLowerCase(),
 })
+markdown.use(require("markdown-it-multimd-table"), {
+    headerless: true,
+    multiline: true,
+})
 markdown.use(require("markdown-it-abbr"))
 markdown.use(require("markdown-it-container"), "error")
 markdown.use(require("markdown-it-container"), "info")
