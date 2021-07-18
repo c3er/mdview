@@ -23,6 +23,12 @@ class Location {
         this.filePath = filePath
         this.internalTarget = internalTarget
     }
+
+    // For debugging
+    toString() {
+        let target = this.filePath
+        return this.internalTarget ? `${target}${this.internalTarget}` : target
+    }
 }
 
 function allowBack(isAllowed) {
@@ -47,6 +53,7 @@ function canGoForward() {
 }
 
 function openFile(filePath, internalTarget, encoding) {
+    console.debug(`Navigate to "${_locations.current}"`)
     _mainWindow.webContents.send(ipc.messages.fileOpen, filePath, internalTarget, encoding)
 }
 
