@@ -42,6 +42,18 @@
         "."
       ],
       "outputCapture": "std"
+    },
+    {
+      "name": "Debug Main Process With Testfile",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+      "args": [
+        ".",
+        "./test/documents/testfile_utf8.md"
+      ],
+      "outputCapture": "std"
     }
   ]
 }
