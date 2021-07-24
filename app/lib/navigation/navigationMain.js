@@ -10,24 +10,30 @@ let _mainWindow
 let _mainMenu
 
 const _locations = {
-    forward: [],
     back: [],
+    forward: [],
     current: null,
 }
 
 class Location {
     filePath
     internalTarget
+    scrollPosition
 
-    constructor(filePath, internalTarget) {
+    constructor(filePath, internalTarget, scrollPosition) {
         this.filePath = filePath
         this.internalTarget = internalTarget
+        this.scrollPosition = scrollPosition
     }
 
     // For debugging
     toString() {
         let target = this.filePath
-        return this.internalTarget ? `${target}${this.internalTarget}` : target
+        let targetString = this.internalTarget ? `${target}${this.internalTarget}` : target
+        if (this.scrollPosition) {
+            targetString += ` (${this.scrollPosition})`
+        }
+        return targetString
     }
 }
 
@@ -52,9 +58,15 @@ function canGoForward() {
     return _locations.forward.length > 0
 }
 
-function openFile(filePath, internalTarget, encoding) {
+function openFile(filePath, internalTarget, encoding, scrollPosition) {
     console.debug(`Navigate to "${_locations.current}"`)
-    _mainWindow.webContents.send(ipc.messages.fileOpen, filePath, internalTarget, encoding)
+    _mainWindow.webContents.send(
+        ipc.messages.fileOpen,
+        filePath,
+        internalTarget,
+        encoding,
+        scrollPosition
+    )
 }
 
 function goStep(canGoCallback, pushDirection, popDirection) {
@@ -71,12 +83,18 @@ function goStep(canGoCallback, pushDirection, popDirection) {
     allowForward(canGoForward())
 
     const filePath = destination.filePath
-    openFile(filePath, destination.internalTarget, encodingLib.load(filePath))
+    openFile(
+        filePath,
+        destination.internalTarget,
+        encodingLib.load(filePath),
+        destination.scrollPosition
+    )
 }
 
-function go(filePath, internalTarget, encoding) {
+function go(filePath, internalTarget, encoding, lastScrollPosition) {
     const currentLocation = _locations.current
     if (currentLocation) {
+        currentLocation.scrollPosition = lastScrollPosition
         _locations.back.push(currentLocation)
     }
     clearForward()
@@ -89,7 +107,7 @@ function go(filePath, internalTarget, encoding) {
         encoding = encodingLib.load(filePath)
     }
 
-    openFile(filePath, internalTarget, encoding)
+    openFile(filePath, internalTarget, encoding, 0)
 }
 
 exports.BACK_MENU_ID = BACK_MENU_ID
@@ -104,10 +122,12 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
     allowBack(false)
     allowForward(false)
 
-    electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => go(filePath))
+    electron.ipcMain.on(ipc.messages.openFile, (_, filePath, lastScrollPosition) =>
+        go(filePath, null, null, lastScrollPosition)
+    )
 
-    electron.ipcMain.on(ipc.messages.openInternal, (_, target) =>
-        go(_locations.current.filePath, target)
+    electron.ipcMain.on(ipc.messages.openInternal, (_, target, lastScrollPosition) =>
+        go(_locations.current.filePath, target, null, lastScrollPosition)
     )
 }
 
