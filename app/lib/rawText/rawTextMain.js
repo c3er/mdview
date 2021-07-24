@@ -27,6 +27,11 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
         enterRawTextView(false)
         _mainMenu.getMenuItemById(VIEW_RAW_TEXT_MENU_ID).enabled = false
     })
+
+    electron.ipcMain.on(ipc.messages.enableRawView, () => {
+        enterRawTextView(false)
+        _mainMenu.getMenuItemById(VIEW_RAW_TEXT_MENU_ID).enabled = true
+    })
 }
 
 exports.switchRawView = () => enterRawTextView(!_isInRawView)

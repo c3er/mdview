@@ -89,6 +89,8 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, filePath, internalTarget, enc
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
         content = "```" + language + "\n" + content + "\n```"
         electron.ipcRenderer.send(ipc.messages.disableRawView)
+    } else {
+        electron.ipcRenderer.send(ipc.messages.enableRawView)
     }
 
     // URLs in cotaining style definitions have to be altered before rendering
