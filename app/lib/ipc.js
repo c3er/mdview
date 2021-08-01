@@ -10,6 +10,7 @@ exports.messages = {
     openInternal: "open-internal",
     prepareReload: "prepare-reload",
     reloadPrepared: "reload-prepared",
+    resetContentBlocking: "reset-content-blocking",
     restorePosition: "restore-position",
     unblockAll: "unblock-all",
     unblockURL: "unblock-url",

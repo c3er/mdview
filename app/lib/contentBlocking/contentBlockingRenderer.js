@@ -77,6 +77,10 @@ function unblockAll() {
     }
 }
 
+function reset() {
+    _blockedElements = {}
+}
+
 exports.init = (document, window, electronMock, shallForceInitialization) => {
     if (_isInitialized && !shallForceInitialization) {
         return
@@ -96,6 +100,8 @@ exports.init = (document, window, electronMock, shallForceInitialization) => {
             changeInfoElementVisiblity(false)
     })
 
+    electron.ipcRenderer.on(ipc.messages.resetContentBlocking, reset)
+
     electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
 
     _isInitialized = true
@@ -105,4 +111,4 @@ exports.hasBlockedElements = hasBlockedElements
 
 exports.changeInfoElementVisiblity = changeInfoElementVisiblity
 
-exports.reset = () => (_blockedElements = {})
+exports.reset = reset

@@ -1,13 +1,15 @@
 const common = require("../common")
 const ipc = require("../ipc")
+const navigation = require("../navigation/navigationMain")
 
 const UNBLOCK_CONTENT_MENU_ID = "unblock-content"
+const CONTENT_BLOCKING_NAV_ID = "content-blocking"
 
 let _mainWindow
 let _mainMenu
 
 let _contentIsBlocked = false
-const _unblockedURLs = []
+let _unblockedURLs = []
 
 function unblockURL(url) {
     if (!url) {
@@ -63,6 +65,21 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
     electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
         _contentIsBlocked = false
         allowUnblockContent(false)
+    })
+
+    navigation.register(CONTENT_BLOCKING_NAV_ID, info => {
+        const contentIsBlocked = _contentIsBlocked
+        const unblockedURLs = _unblockedURLs
+
+        _contentIsBlocked = info?.contentIsBlocked ?? false
+        _unblockedURLs = info?.unblockedURLs ?? []
+
+        _mainWindow.webContents.send(ipc.messages.resetContentBlocking)
+
+        return {
+            contentIsBlocked: contentIsBlocked,
+            unblockedURLs: unblockedURLs,
+        }
     })
 }
 

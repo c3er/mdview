@@ -15,14 +15,25 @@ const _locations = {
     current: null,
 }
 
+const _callbacks = {}
+
 class Location {
     filePath
     internalTarget
     scrollPosition
+    callbackInfo = {}
 
     constructor(filePath, internalTarget) {
         this.filePath = filePath
         this.internalTarget = internalTarget
+    }
+
+    setCallbackInfo(id, info) {
+        this.callbackInfo[id] = info
+    }
+
+    getCallbackInfo(id) {
+        return this.callbackInfo[id]
     }
 
     // For debugging
@@ -68,12 +79,19 @@ function openFile(filePath, internalTarget, encoding, scrollPosition) {
     )
 }
 
+function handleCallbacks(oldLocation, destination) {
+    for (const [id, callback] of Object.entries(_callbacks)) {
+        oldLocation?.setCallbackInfo(id, callback(destination.getCallbackInfo(id)))
+    }
+}
+
 function goStep(canGoCallback, pushDirection, popDirection) {
     if (!canGoCallback()) {
         return
     }
 
-    pushDirection.push(_locations.current)
+    const oldLocation = _locations.current
+    pushDirection.push(oldLocation)
 
     const destination = popDirection.pop()
     _locations.current = destination
@@ -88,16 +106,17 @@ function goStep(canGoCallback, pushDirection, popDirection) {
         encodingLib.load(filePath),
         destination.scrollPosition
     )
+    handleCallbacks(oldLocation, destination)
 }
 
 function go(filePath, internalTarget, encoding, lastScrollPosition) {
-    const currentLocation = _locations.current
-    if (currentLocation) {
-        currentLocation.scrollPosition = lastScrollPosition
-        _locations.back.push(currentLocation)
+    const oldLocation = _locations.current
+    if (oldLocation) {
+        oldLocation.scrollPosition = lastScrollPosition
+        _locations.back.push(oldLocation)
     }
     clearForward()
-    _locations.current = new Location(filePath, internalTarget)
+    const destination = (_locations.current = new Location(filePath, internalTarget))
     allowBack(canGoBack())
 
     if (encoding) {
@@ -107,6 +126,7 @@ function go(filePath, internalTarget, encoding, lastScrollPosition) {
     }
 
     openFile(filePath, internalTarget, encoding, 0)
+    handleCallbacks(oldLocation, destination)
 }
 
 exports.BACK_MENU_ID = BACK_MENU_ID
@@ -135,3 +155,5 @@ exports.back = () => goStep(canGoBack, _locations.forward, _locations.back)
 exports.forward = () => goStep(canGoForward, _locations.back, _locations.forward)
 
 exports.go = go
+
+exports.register = (id, callback) => (_callbacks[id] = callback)
