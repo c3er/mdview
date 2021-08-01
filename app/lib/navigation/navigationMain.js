@@ -20,10 +20,9 @@ class Location {
     internalTarget
     scrollPosition
 
-    constructor(filePath, internalTarget, scrollPosition) {
+    constructor(filePath, internalTarget) {
         this.filePath = filePath
         this.internalTarget = internalTarget
-        this.scrollPosition = scrollPosition
     }
 
     // For debugging
