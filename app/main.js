@@ -305,6 +305,12 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
     restorePosition()
 })
 
+electron.ipcMain.on(ipc.messages.openFileInNewWindow, (_, filePath) => createChildWindow(filePath))
+
+electron.ipcMain.on(ipc.messages.openInternalInNewWindow, (_, target) =>
+    createChildWindow(_currentFilePath, target)
+)
+
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {
     console.error(`Unhandled error: ${error.stack}`)
