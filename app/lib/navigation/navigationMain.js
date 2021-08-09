@@ -55,9 +55,20 @@ function allowForward(isAllowed) {
     _mainMenu.getMenuItemById(FORWARD_MENU_ID).enabled = isAllowed
 }
 
+function clearBack() {
+    _locations.back.length = 0
+    allowBack(false)
+}
+
 function clearForward() {
     _locations.forward.length = 0
     allowForward(false)
+}
+
+function reset() {
+    clearBack()
+    clearForward()
+    _locations.current = null
 }
 
 function canGoBack() {
@@ -140,8 +151,7 @@ exports.init = (mainWindow, mainMenu, electronMock, storageDir) => {
 
     encodingLib.init(mainMenu, storageDir)
 
-    allowBack(false)
-    allowForward(false)
+    reset()
 
     electron.ipcMain.on(ipc.messages.openFile, (_, filePath, lastScrollPosition) =>
         go(filePath, null, null, lastScrollPosition)
