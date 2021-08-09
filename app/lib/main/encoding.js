@@ -49,9 +49,12 @@ exports.ENCODINGS = [
     "UTF-16LE",
 ]
 
-exports.init = mainMenu => {
+exports.init = (mainMenu, storageDir) => {
     _mainMenu = mainMenu
-    _encodings = storage.initEncodings(storage.getDefaultDir(), storage.ENCODINGS_FILE)
+    _encodings = storage.initEncodings(
+        storageDir ?? storage.getDefaultDir(),
+        storage.ENCODINGS_FILE
+    )
 }
 
 exports.toId = toId

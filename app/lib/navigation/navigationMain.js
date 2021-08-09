@@ -133,10 +133,12 @@ exports.BACK_MENU_ID = BACK_MENU_ID
 
 exports.FORWARD_MENU_ID = FORWARD_MENU_ID
 
-exports.init = (mainWindow, mainMenu, electronMock) => {
+exports.init = (mainWindow, mainMenu, electronMock, storageDir) => {
     electron = electronMock ?? require("electron")
     _mainWindow = mainWindow
     _mainMenu = mainMenu
+
+    encodingLib.init(mainMenu, storageDir)
 
     allowBack(false)
     allowForward(false)
