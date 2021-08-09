@@ -80,7 +80,7 @@ function canGoForward() {
 }
 
 function openFile(filePath, internalTarget, encoding, scrollPosition) {
-    console.debug(`Navigate to "${_locations.current}"`)
+    // console.debug(`Navigate to "${_locations.current}"`)
     _mainWindow.webContents.send(
         ipc.messages.fileOpen,
         filePath,
