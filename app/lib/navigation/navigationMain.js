@@ -169,3 +169,7 @@ exports.forward = () => goStep(canGoForward, _locations.back, _locations.forward
 exports.go = go
 
 exports.register = (id, callback) => (_callbacks[id] = callback)
+
+exports.canGoBack = canGoBack
+
+exports.canGoForward = canGoForward
