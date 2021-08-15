@@ -66,12 +66,12 @@
     ]
   },
   "dependencies": {
-    "@electron/remote": "1.2.0",
+    "@electron/remote": "1.2.1",
     "github-markdown-css": "4.0.0",
     "github-markdown-dracula-css": "4.0.3",
-    "highlight.js": "11.1.0",
+    "highlight.js": "11.2.0",
     "iconv-lite": "0.6.3",
-    "markdown-it": "12.1.0",
+    "markdown-it": "12.2.0",
     "markdown-it-abbr": "1.0.4",
     "markdown-it-container": "3.0.0",
     "markdown-it-emoji": "2.0.0",
@@ -86,13 +86,13 @@
   "devDependencies": {
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
-    "electron": "13.1.7",
+    "electron": "13.1.9",
     "electron-builder": "22.11.7",
     "lodash": "4.17.21",
-    "mocha": "9.0.2",
+    "mocha": "9.0.3",
     "prettier": "2.3.2",
     "spectron": "15.0.0",
     "spectron-menu-addon-v2": "1.0.1",
-    "tslib": "2.3.0"
+    "tslib": "2.3.1"
   }
 }
