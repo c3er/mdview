@@ -6,14 +6,15 @@ const mocking = require("./mocking")
 
 const ipc = require("../app/lib/ipc")
 
+const documentDirectory = path.join(__dirname, "documents", "navigation")
+const mdFilePath1 = path.join(documentDirectory, "file1.md")
+const mdFilePath2 = path.join(documentDirectory, "file2.md")
+const mdFilePath3 = path.join(documentDirectory, "file3.md")
+const htmlFilePath = path.join(documentDirectory, "file.html")
+
 describe("Navigation", () => {
     describe("Main part", () => {
         const navigation = require("../app/lib/navigation/navigationMain")
-
-        const mdFilePath1 = path.join(__dirname, "documents", "navigation", "file1.md")
-        const mdFilePath2 = path.join(__dirname, "documents", "navigation", "file2.md")
-        const mdFilePath3 = path.join(__dirname, "documents", "navigation", "file3.md")
-        const htmlFilePath = path.join(__dirname, "documents", "navigation", "file.html")
 
         function prepareAssertion(expectedFilePath) {
             mocking.clear()
@@ -86,6 +87,27 @@ describe("Navigation", () => {
 
             go(htmlFilePath)
             assertHistoryJumping(true, false)
+        })
+    })
+
+    describe("Renderer part", () => {
+        const navigation = require("../app/lib/navigation/navigationRenderer")
+
+        let htmlElement
+        let event
+
+        beforeEach(() => {
+            htmlElement = mocking.createHtmlElement()
+            event = new mocking.event()
+            navigation.init(mocking.document, mocking.electron)
+        })
+
+        it("gets events", () => {
+            htmlElement.onclick = htmlElement.onauxclick = null
+            navigation.openLink(htmlElement, mdFilePath1, documentDirectory)
+
+            assert.isNotNull(event.onclick)
+            assert.isNotNull(event.onauxclick)
         })
     })
 })
