@@ -168,7 +168,17 @@ exports.forward = () => goStep(canGoForward, _locations.back, _locations.forward
 
 exports.go = go
 
+exports.reloadCurrent = scrollPosition => {
+    const currentLoaction = _locations.current
+    const filePath = currentLoaction.filePath
+    openFile(filePath, currentLoaction.internalTarget, encodingLib.load(filePath), scrollPosition)
+}
+
 exports.register = (id, callback) => (_callbacks[id] = callback)
+
+exports.getCurrentLocation = () => _locations.current
+
+exports.hasCurrentLocation = () => !!_locations.current
 
 exports.canGoBack = canGoBack
 

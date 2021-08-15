@@ -24,8 +24,6 @@ let _isTest = false
 
 let _mainWindow
 
-let _currentFilePath
-let _internalTarget
 let _lastModificationTime
 
 let _isReloading = false
@@ -81,7 +79,7 @@ function reload(isFileModification, encoding) {
     _mainWindow.webContents.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding || encodingLib.load(_currentFilePath)
+        encoding || encodingLib.load(navigation.getCurrentLocation().filePath)
     )
 }
 
@@ -137,7 +135,7 @@ function createWindow() {
                             })
                             if (!result.canceled) {
                                 const filePath = result.filePaths[0]
-                                openFile(filePath, _internalTarget, encodingLib.load(filePath))
+                                openFile(filePath, null, encodingLib.load(filePath))
                             }
                         } catch (e) {
                             error(`Problem at opening file:\n ${e}`)
@@ -226,7 +224,7 @@ function createWindow() {
                 type: "radio",
                 id: encodingLib.toId(encoding),
                 click() {
-                    encodingLib.change(_currentFilePath, encoding)
+                    encodingLib.change(navigation.getCurrentLocation().filePath, encoding)
                     reload(true, encoding)
                 },
             })),
@@ -284,7 +282,9 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const args = process.argv
     console.debug(args)
 
-    const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
+    const filePath = navigation.hasCurrentLocation()
+        ? navigation.getCurrentLocation().filePath
+        : extractFilePath(args)
     const internalTarget = extractInternalTarget(args)
     if (filePath !== undefined) {
         openFile(filePath, internalTarget, encodingLib.load(filePath))
@@ -296,19 +296,23 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
 electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
+
+    const currentLocation = navigation.getCurrentLocation()
+    const filePath = currentLocation.filePath
     if (isFileModification) {
-        openFile(_currentFilePath, _internalTarget, encoding)
+        navigation.reloadCurrent(position)
     } else {
-        encodingLib.change(_currentFilePath, encoding)
+        encodingLib.change(filePath, encoding)
         _mainWindow.reload()
     }
+
     restorePosition()
 })
 
 electron.ipcMain.on(ipc.messages.openFileInNewWindow, (_, filePath) => createChildWindow(filePath))
 
 electron.ipcMain.on(ipc.messages.openInternalInNewWindow, (_, target) =>
-    createChildWindow(_currentFilePath, target)
+    createChildWindow(navigation.getCurrentLocation().filePath, target)
 )
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
@@ -325,10 +329,11 @@ process.on("uncaughtException", error => {
 })
 
 setInterval(() => {
-    if (_currentFilePath) {
-        fs.stat(_currentFilePath, (err, stats) => {
+    if (navigation.hasCurrentLocation()) {
+        const filePath = navigation.getCurrentLocation().filePath
+        fs.stat(filePath, (err, stats) => {
             if (err) {
-                console.error(`Updating file "${_currentFilePath}" was aborted with error ${err}`)
+                console.error(`Updating file "${filePath}" was aborted with error ${err}`)
                 return
             }
             let mtime = stats.mtimeMs
