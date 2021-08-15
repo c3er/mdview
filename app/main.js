@@ -19,6 +19,7 @@ const WINDOW_HEIGHT = 768
 
 const DEFAULT_FILE = path.join(__dirname, "..", "README.md")
 const UPDATE_INTERVAL = 1000 // ms
+const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 
 let _isTest = false
 
@@ -337,7 +338,7 @@ setInterval(() => {
                 return
             }
             let mtime = stats.mtimeMs
-            if (mtime !== _lastModificationTime) {
+            if (_lastModificationTime && mtime !== _lastModificationTime) {
                 console.debug("Reloading...")
                 _lastModificationTime = mtime
                 reload(true)
@@ -345,3 +346,9 @@ setInterval(() => {
         })
     }
 }, UPDATE_INTERVAL)
+
+navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {
+    const time = _lastModificationTime
+    _lastModificationTime = lastModificationTime
+    return time
+})
