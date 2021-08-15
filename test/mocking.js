@@ -135,13 +135,16 @@ const _electronDefault = {
     },
 }
 
-const _htmlElement = {
-    attributes: [],
-    hidden: false,
-    style: {
-        display: "invalid-value",
-    },
-    onclick() {},
+function createHtmlElement() {
+    return {
+        attributes: [],
+        hidden: false,
+        style: {
+            display: "invalid-value",
+        },
+        onclick() {},
+        onauxclick() {},
+    }
 }
 
 function resetElectron() {
@@ -183,6 +186,14 @@ exports.elements = {
         view: {
             label: "View",
             sub: {
+                back: {
+                    label: "Back",
+                    isEnabled: false,
+                },
+                forward: {
+                    label: "Forward",
+                    isEnabled: false,
+                },
                 refresh: {
                     label: "Refresh",
                     isEnabled: true,
@@ -249,11 +260,14 @@ exports.document = {
             marginTop: 0,
         },
     },
+    documentElement: {
+        scrollTop: 0,
+    },
     getElementById() {
-        return lodashClonedeep(_htmlElement)
+        return createHtmlElement()
     },
     getElementsByTagName() {
-        return [lodashClonedeep(_htmlElement)]
+        return [createHtmlElement()]
     },
 }
 
@@ -264,6 +278,16 @@ exports.window = {
         }
     },
 }
+
+exports.event = class {
+    preventDefaultIsCalled = false
+
+    preventDefault() {
+        this.preventDefaultIsCalled = true
+    }
+}
+
+exports.createHtmlElement = createHtmlElement
 
 exports.resetElectron = resetElectron
 

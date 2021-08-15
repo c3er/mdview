@@ -1,16 +1,52 @@
 const path = require("path")
 
-const assert = require("chai").assert
+const chai = require("chai")
+const chaiAsPromised = require("chai-as-promised")
+const electron = require("electron")
 const menuAddon = require("spectron-menu-addon-v2").default
 
-const lib = require("./lib")
 const mocking = require("./mocking")
+
+const assert = chai.assert
 
 const defaultDocumentFile = "testfile_utf8.md"
 const defaultDocumentPath = path.join(__dirname, "documents", defaultDocumentFile)
 
 let app
 let client
+
+// Based on https://stackoverflow.com/a/39914235/13949398 (What is the JavaScript version of sleep()?)
+function sleep(ms) {
+    // console.debug(`sleep ${ms} ${process.hrtime()}`) // For debugging
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function startApp(documentPath) {
+    const app = menuAddon.createApplication({
+        path: electron,
+        args: [path.join(__dirname, ".."), documentPath, "--test"],
+    })
+    chaiAsPromised.transferPromiseness = app.transferPromiseness
+    return app.start()
+}
+
+async function stopApp(app) {
+    if (app && app.isRunning()) {
+        await app.stop()
+    }
+}
+
+async function wait(predicate, tries, timeout) {
+    tries = tries || 10
+    timeout = timeout || 100
+    for (let i = 0; i < tries; i++) {
+        if (await predicate()) {
+            return true
+        }
+        await sleep(timeout)
+    }
+    return false
+}
 
 async function containsConsoleMessage(message) {
     let hasFoundMessage = false
@@ -30,13 +66,15 @@ async function elementIsVisible(element) {
     return (await element.getCSSProperty("display")).value !== "none"
 }
 
+global.before(() => chai.use(chaiAsPromised))
+
 describe("Integration tests with single app instance", () => {
     before(async () => {
-        app = await lib.startApp(defaultDocumentPath)
+        app = await startApp(defaultDocumentPath)
         client = app.client
     })
 
-    after(async () => await lib.stopApp(app))
+    after(async () => await stopApp(app))
 
     it("opens a window", async () => {
         client.waitUntilWindowLoaded()
@@ -140,11 +178,11 @@ describe("Integration tests with single app instance", () => {
 
 describe("Integration tests with their own app instance each", () => {
     beforeEach(async () => {
-        app = await lib.startApp(defaultDocumentPath)
+        app = await startApp(defaultDocumentPath)
         client = app.client
     })
 
-    afterEach(async () => await lib.stopApp(app))
+    afterEach(async () => await stopApp(app))
 
     describe("Blocked content", () => {
         describe("UI element", () => {
@@ -160,7 +198,7 @@ describe("Integration tests with their own app instance each", () => {
                     mocking.elements.blockedContentArea.path
                 )
                 blockedContentElement.click()
-                await assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
+                await assert.eventually.isTrue(wait(checkUnblockedMessage))
             })
         })
 
@@ -176,7 +214,7 @@ describe("Integration tests with their own app instance each", () => {
                     unblockMenuLabel
                 )
 
-                await assert.eventually.isTrue(lib.wait(checkUnblockedMessage))
+                await assert.eventually.isTrue(wait(checkUnblockedMessage))
                 assert.isFalse(blockedConetentMenuItem.enabled)
             })
         })

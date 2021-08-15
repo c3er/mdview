@@ -10,6 +10,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const encodingLib = require("./lib/main/encoding")
 const ipc = require("./lib/ipc")
+const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
 
@@ -18,13 +19,12 @@ const WINDOW_HEIGHT = 768
 
 const DEFAULT_FILE = path.join(__dirname, "..", "README.md")
 const UPDATE_INTERVAL = 1000 // ms
+const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 
 let _isTest = false
 
 let _mainWindow
 
-let _currentFilePath
-let _internalTarget
 let _lastModificationTime
 
 let _isReloading = false
@@ -44,11 +44,8 @@ function openFile(filePath, internalTarget, encoding) {
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path does not lead to a file")
     } else {
-        _currentFilePath = filePath
-        encodingLib.change(filePath, encoding)
-        _internalTarget = internalTarget
+        navigation.go(filePath, internalTarget, encoding)
         _lastModificationTime = fs.statSync(filePath).mtimeMs
-        _mainWindow.webContents.send(ipc.messages.fileOpen, filePath, internalTarget, encoding)
     }
 }
 
@@ -83,7 +80,7 @@ function reload(isFileModification, encoding) {
     _mainWindow.webContents.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding || encodingLib.load(_currentFilePath)
+        encoding || encodingLib.load(navigation.getCurrentLocation().filePath)
     )
 }
 
@@ -110,6 +107,12 @@ function createWindow() {
             _isReloading = false
         }
     })
+    mainWindow.webContents.on("before-input-event", (event, input) => {
+        if (input.type === "keyDown" && input.key === "Backspace") {
+            event.preventDefault()
+            navigation.back()
+        }
+    })
 
     electron.nativeTheme.themeSource = _settings.theme
 
@@ -133,7 +136,7 @@ function createWindow() {
                             })
                             if (!result.canceled) {
                                 const filePath = result.filePaths[0]
-                                openFile(filePath, _internalTarget, encodingLib.load(filePath))
+                                openFile(filePath, null, encodingLib.load(filePath))
                             }
                         } catch (e) {
                             error(`Problem at opening file:\n ${e}`)
@@ -164,6 +167,23 @@ function createWindow() {
         {
             label: "View",
             submenu: [
+                {
+                    label: "Back",
+                    accelerator: "Alt+Left",
+                    id: navigation.BACK_MENU_ID,
+                    click() {
+                        navigation.back()
+                    },
+                },
+                {
+                    label: "Forward",
+                    accelerator: "Alt+Right",
+                    id: navigation.FORWARD_MENU_ID,
+                    click() {
+                        navigation.forward()
+                    },
+                },
+                { type: "separator" },
                 {
                     label: "Refresh",
                     accelerator: "F5",
@@ -205,7 +225,7 @@ function createWindow() {
                 type: "radio",
                 id: encodingLib.toId(encoding),
                 click() {
-                    encodingLib.change(_currentFilePath, encoding)
+                    encodingLib.change(navigation.getCurrentLocation().filePath, encoding)
                     reload(true, encoding)
                 },
             })),
@@ -237,6 +257,7 @@ electron.app.on("ready", () => {
     const [mainWindow, mainMenu] = createWindow()
     _mainWindow = mainWindow
 
+    navigation.init(mainWindow, mainMenu)
     encodingLib.init(mainMenu)
     contentBlocking.init(mainWindow, mainMenu)
     rawText.init(mainWindow, mainMenu)
@@ -262,7 +283,9 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const args = process.argv
     console.debug(args)
 
-    const filePath = _currentFilePath === undefined ? extractFilePath(args) : _currentFilePath
+    const filePath = navigation.hasCurrentLocation()
+        ? navigation.getCurrentLocation().filePath
+        : extractFilePath(args)
     const internalTarget = extractInternalTarget(args)
     if (filePath !== undefined) {
         openFile(filePath, internalTarget, encodingLib.load(filePath))
@@ -271,23 +294,27 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     }
 })
 
-electron.ipcMain.on(ipc.messages.openFile, (_, filePath) => createChildWindow(filePath))
-
-electron.ipcMain.on(ipc.messages.openInternal, (_, target) =>
-    createChildWindow(_currentFilePath, target)
-)
-
 electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
+
+    const currentLocation = navigation.getCurrentLocation()
+    const filePath = currentLocation.filePath
     if (isFileModification) {
-        openFile(_currentFilePath, _internalTarget, encoding)
+        navigation.reloadCurrent(position)
     } else {
-        encodingLib.change(_currentFilePath, encoding)
+        encodingLib.change(filePath, encoding)
         _mainWindow.reload()
     }
+
     restorePosition()
 })
+
+electron.ipcMain.on(ipc.messages.openFileInNewWindow, (_, filePath) => createChildWindow(filePath))
+
+electron.ipcMain.on(ipc.messages.openInternalInNewWindow, (_, target) =>
+    createChildWindow(navigation.getCurrentLocation().filePath, target)
+)
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {
@@ -303,14 +330,15 @@ process.on("uncaughtException", error => {
 })
 
 setInterval(() => {
-    if (_currentFilePath) {
-        fs.stat(_currentFilePath, (err, stats) => {
+    if (navigation.hasCurrentLocation()) {
+        const filePath = navigation.getCurrentLocation().filePath
+        fs.stat(filePath, (err, stats) => {
             if (err) {
-                console.error(`Updating file "${_currentFilePath}" was aborted with error ${err}`)
+                console.error(`Updating file "${filePath}" was aborted with error ${err}`)
                 return
             }
             let mtime = stats.mtimeMs
-            if (mtime !== _lastModificationTime) {
+            if (_lastModificationTime && mtime !== _lastModificationTime) {
                 console.debug("Reloading...")
                 _lastModificationTime = mtime
                 reload(true)
@@ -318,3 +346,9 @@ setInterval(() => {
         })
     }
 }, UPDATE_INTERVAL)
+
+navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {
+    const time = _lastModificationTime
+    _lastModificationTime = lastModificationTime
+    return time
+})
