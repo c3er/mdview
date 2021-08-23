@@ -50,17 +50,15 @@ function openFile(filePath, internalTarget, encoding) {
 }
 
 function extractFilePath(args) {
-    return args
-        .find(
-            arg =>
-                arg !== process.execPath &&
-                arg !== "." &&
-                arg !== electron.app.getAppPath() &&
-                arg !== "data:," &&
-                !arg.startsWith("-") &&
-                !arg.includes("spectron-menu-addon-v2")
-        )
-        ?.replace(/\\\\/g, "\\")
+    return args.find(
+        arg =>
+            arg !== process.execPath &&
+            arg !== "." &&
+            arg !== electron.app.getAppPath() &&
+            arg !== "data:," &&
+            !arg.startsWith("-") &&
+            !arg.includes("spectron-menu-addon-v2")
+    )
 }
 
 function extractInternalTarget(args) {
