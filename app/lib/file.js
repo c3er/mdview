@@ -23,7 +23,7 @@ function readBytesSync(filePath, filePosition, numBytesToRead) {
 }
 
 exports.isMarkdown = filePath =>
-    common.FILE_EXTENSIONS.map(ext => "." + ext).some(ext => filePath.endsWith(ext))
+    common.FILE_EXTENSIONS.map(ext => "." + ext).some(ext => filePath.toLowerCase().endsWith(ext))
 
 exports.isText = filePath => {
     const BYTECOUNT = 50000
