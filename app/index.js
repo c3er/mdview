@@ -108,8 +108,10 @@ electron.ipcRenderer.on(
         content = alterStyleURLs(documentDirectory, content)
 
         document.getElementById("content").innerHTML = documentRendering.renderContent(content)
-        document.getElementById("raw-text").innerHTML = generateRawText? documentRendering.renderRawText(content) : ""
-        
+        document.getElementById("raw-text").innerHTML = generateRawText
+            ? documentRendering.renderRawText(content)
+            : ""
+
         // Alter local references to be relativ to the document
         alterTags("a", link => {
             const target = link.getAttribute("href")
@@ -187,21 +189,22 @@ electron.ipcRenderer.on(
             if (rawTextElement.innerHTML != "") {
                 // add a separator if other menu items are present in the context menu
                 if (menu.items.length > 0) {
-                  menu.append(new MenuItem({ type: "separator" }))
+                    menu.append(new MenuItem({ type: "separator" }))
                 }
                 // add menu item to toggle the raw text view
                 menu.append(
-                  new MenuItem({
-                      label: "Toggle Raw Text View (CTRL+U)",
-                      click(item, focusedWindow) {
-                        let hiddenRawText = document.getElementById("raw-text").style.display == "none"
-                        if (hiddenRawText) {
-                          focusedWindow.webContents.send(ipc.messages.viewRawText)
-                        } else {
-                          focusedWindow.webContents.send(ipc.messages.leaveRawText) 
-                        }
-                      },
-                  })
+                    new MenuItem({
+                        label: "Toggle Raw Text View (CTRL+U)",
+                        click(item, focusedWindow) {
+                            let hiddenRawText =
+                                document.getElementById("raw-text").style.display == "none"
+                            if (hiddenRawText) {
+                                focusedWindow.webContents.send(ipc.messages.viewRawText)
+                            } else {
+                                focusedWindow.webContents.send(ipc.messages.leaveRawText)
+                            }
+                        },
+                    })
                 )
             }
 
