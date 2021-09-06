@@ -86,22 +86,29 @@ function restorePosition() {
     _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
-
-function generateStylesSubmenu(){
-  let cssFolder = path.join(__dirname, "css")
-  let cssFilesFromDir = fs.readdirSync(cssFolder);
-  let codeStyleSubmenu = []
-  cssFilesFromDir.forEach(file => {
-    if (path.extname(file) == '.css') {
-      let filename = path.basename(file, '.css')
-      codeStyleSubmenu.push(
-        { label: filename, click() { _mainWindow.webContents.send(ipc.messages.changeHighlightjsStyle, filename) } },
-      )        
-    }
-  })
-  codeStyleSubmenu.push( { type: "separator" } )        
-  codeStyleSubmenu.push( { label: "Reset", click() { _mainWindow.webContents.send(ipc.messages.changeHighlightjsStyle, "") } }  )
-  return codeStyleSubmenu
+function generateStylesSubmenu() {
+    let cssFolder = path.join(__dirname, "css")
+    let cssFilesFromDir = fs.readdirSync(cssFolder)
+    let codeStyleSubmenu = []
+    cssFilesFromDir.forEach(file => {
+        if (path.extname(file) == ".css") {
+            let filename = path.basename(file, ".css")
+            codeStyleSubmenu.push({
+                label: filename,
+                click() {
+                    _mainWindow.webContents.send(ipc.messages.changeHighlightjsStyle, filename)
+                },
+            })
+        }
+    })
+    codeStyleSubmenu.push({ type: "separator" })
+    codeStyleSubmenu.push({
+        label: "Reset",
+        click() {
+            _mainWindow.webContents.send(ipc.messages.changeHighlightjsStyle, "")
+        },
+    })
+    return codeStyleSubmenu
 }
 
 function createWindow() {
@@ -235,8 +242,8 @@ function createWindow() {
                     },
                 },
                 {
-                  label: "Change Code Style",
-                  submenu : codeStyleSubmenu
+                    label: "Change Code Style",
+                    submenu: codeStyleSubmenu,
                 },
             ],
         },

@@ -3,3 +3,4 @@ dist
 test/data
 
 *.md
+app/css/
