@@ -203,7 +203,7 @@ exports.elements = {
                     isEnabled: true,
                 },
                 rawText: {
-                    label: "View Raw Text",
+                    label: "Toggle Raw Text View",
                     isEnabled: true,
                 },
                 switchTheme: {
