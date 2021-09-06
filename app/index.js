@@ -11,7 +11,8 @@ const documentRendering = require("./lib/renderer/documentRendering")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
 const navigation = require("./lib/navigation/navigationRenderer")
-const rawText = require("./lib/rawText/rawTextRenderer")
+const rawTextRenderer = require("./lib/rawText/rawTextRenderer")
+const hjsStyler = require("./lib/styler/highlightjs")
 
 const TITLE = "Markdown Viewer"
 
@@ -78,8 +79,9 @@ function scrollTo(position) {
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     contentBlocking.init(document, window)
-    rawText.init(document, window, updateStatusBar)
+    rawTextRenderer.init(document, window, updateStatusBar)
     navigation.init(document)
+    hjsStyler.init(document, window)
     electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
@@ -90,12 +92,14 @@ electron.ipcRenderer.on(
         clearStatusBar()
 
         let content = file.open(filePath, encoding)
+        let generateRawText = false
         if (!file.isMarkdown(filePath)) {
             const pathParts = filePath.split(".")
             const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
             content = "```" + language + "\n" + content + "\n```"
             electron.ipcRenderer.send(ipc.messages.disableRawView)
         } else {
+            generateRawText = true
             electron.ipcRenderer.send(ipc.messages.enableRawView)
         }
 
@@ -104,8 +108,8 @@ electron.ipcRenderer.on(
         content = alterStyleURLs(documentDirectory, content)
 
         document.getElementById("content").innerHTML = documentRendering.renderContent(content)
-        document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
-
+        document.getElementById("raw-text").innerHTML = generateRawText? documentRendering.renderRawText(content) : ""
+        
         // Alter local references to be relativ to the document
         alterTags("a", link => {
             const target = link.getAttribute("href")
@@ -175,6 +179,29 @@ electron.ipcRenderer.on(
                             electron.clipboard.writeText(target.getAttribute("href"))
                         },
                     })
+                )
+            }
+
+            // if there's any raw text i.e. if the loaded file is a markdown file
+            let rawTextElement = document.getElementById("raw-text")
+            if (rawTextElement.innerHTML != "") {
+                // add a separator if other menu items are present in the context menu
+                if (menu.items.length > 0) {
+                  menu.append(new MenuItem({ type: "separator" }))
+                }
+                // add menu item to toggle the raw text view
+                menu.append(
+                  new MenuItem({
+                      label: "Toggle Raw Text View (CTRL+U)",
+                      click(item, focusedWindow) {
+                        let hiddenRawText = document.getElementById("raw-text").style.display == "none"
+                        if (hiddenRawText) {
+                          focusedWindow.webContents.send(ipc.messages.viewRawText)
+                        } else {
+                          focusedWindow.webContents.send(ipc.messages.leaveRawText) 
+                        }
+                      },
+                  })
                 )
             }
 

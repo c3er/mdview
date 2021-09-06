@@ -17,4 +17,5 @@ exports.messages = {
     unblockAll: "unblock-all",
     unblockURL: "unblock-url",
     viewRawText: "view-raw-text",
+    changeHighlightjsStyle: "change-highlightjs-style"
 }
