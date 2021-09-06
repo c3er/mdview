@@ -86,6 +86,24 @@ function restorePosition() {
     _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
+
+function generateStylesSubmenu(){
+  let cssFolder = path.join(__dirname, "css")
+  let cssFilesFromDir = fs.readdirSync(cssFolder);
+  let codeStyleSubmenu = []
+  cssFilesFromDir.forEach(file => {
+    if (path.extname(file) == '.css') {
+      let filename = path.basename(file, '.css')
+      codeStyleSubmenu.push(
+        { label: filename, click() { _mainWindow.webContents.send(ipc.messages.changeHighlightjsStyle, filename) } },
+      )        
+    }
+  })
+  codeStyleSubmenu.push( { type: "separator" } )        
+  codeStyleSubmenu.push( { label: "Reset", click() { _mainWindow.webContents.send(ipc.messages.changeHighlightjsStyle, "") } }  )
+  return codeStyleSubmenu
+}
+
 function createWindow() {
     const mainWindow = new electron.BrowserWindow({
         width: WINDOW_WIDTH,
@@ -113,6 +131,8 @@ function createWindow() {
     })
 
     electron.nativeTheme.themeSource = _settings.theme
+
+    let codeStyleSubmenu = generateStylesSubmenu()
 
     const mainMenu = electron.Menu.buildFromTemplate([
         {
@@ -198,7 +218,7 @@ function createWindow() {
                     },
                 },
                 {
-                    label: "View Raw Text",
+                    label: "Toggle Raw Text View",
                     accelerator: "Ctrl+U",
                     id: rawText.VIEW_RAW_TEXT_MENU_ID,
                     click() {
@@ -213,6 +233,10 @@ function createWindow() {
                             ? _settings.LIGHT_THEME
                             : _settings.DARK_THEME
                     },
+                },
+                {
+                  label: "Change Code Style",
+                  submenu : codeStyleSubmenu
                 },
             ],
         },
