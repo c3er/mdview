@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     contentBlocking.init(document, window)
     rawTextRenderer.init(document, window, updateStatusBar)
     navigation.init(document)
-    hjsStyler.init(document, window)
+    hjsStyler.init(document)
     electron.ipcRenderer.send(ipc.messages.finishLoad)
 })
 
