@@ -4,7 +4,7 @@
 
 A standalone application that renders and displays Markdown files. It does nothing else! No direct editing nor any fancy note taking features. It is not distributed as a browser extension nor does it fire up a web server - so no web browser is needed to see the rendered Markdown file.
 
-It renders many additional features from [the `markdown-it` demo](https://markdown-it.github.io/). 
+It renders many additional features from [the `markdown-it` demo](https://markdown-it.github.io/).
 
 Following plugins are supported:
 
@@ -47,6 +47,9 @@ Binaries can be built by typing `npm run dist`. Under Windows, a ZIP package and
 
 The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMagick](https://www.imagemagick.org). While the application icon does not look too bad, a proper icon for Markdown *documents* is missing yet.
 
+Note: you may encounter some issue when trying to build the electron distribution i.e. the build may (partially) fail.
+A possible fix is described here [not able to build installer/uninstaller (ERR_ELECTRON_BUILDER_CANNOT_EXECUTE)](doc/development-build-installer-issue.md)
+
 ### Debugging
 
 The main process can be debugged with [Visual Studio Code](https://code.visualstudio.com/). A `launch.json` is in the repository.
@@ -66,5 +69,5 @@ You can use and copy this tool under the conditions of the MIT license.
 ## Todo
 
 - Remember position of last opened window
-    - Additional windows shall not open at the same place as the last window
+  - Additional windows shall not open at the same place as the last window
 - Recognize the character encoding to display special characters automatically
