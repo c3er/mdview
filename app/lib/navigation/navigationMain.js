@@ -131,44 +131,31 @@ function go(filePath, internalTarget, lastScrollPosition) {
     handleCallbacks(oldLocation, destination)
 }
 
+function init (mainWindow, mainMenu, electronMock, documentSettings) {
+  electron = electronMock ?? require("electron")
+  _mainWindow = mainWindow
+  _mainMenu = mainMenu
+  _documentSettings = documentSettings
+  reset()
+  electron.ipcMain.on(ipc.messages.openFile, (_, filePath, lastScrollPosition) => go(filePath, null, lastScrollPosition))
+  electron.ipcMain.on(ipc.messages.openInternal, (_, target, lastScrollPosition) => go(_locations.current.filePath, target, lastScrollPosition))
+}
+
+function reloadCurrent (scrollPosition) {
+  const currentLoaction = _locations.current
+  const filePath = currentLoaction.filePath
+  openFile(filePath, currentLoaction.internalTarget, scrollPosition)
+}
+
 exports.BACK_MENU_ID = BACK_MENU_ID
-
 exports.FORWARD_MENU_ID = FORWARD_MENU_ID
-
-exports.init = (mainWindow, mainMenu, electronMock, documentSettings) => {
-    electron = electronMock ?? require("electron")
-    _mainWindow = mainWindow
-    _mainMenu = mainMenu
-    _documentSettings = documentSettings
-    reset()
-
-    electron.ipcMain.on(ipc.messages.openFile, (_, filePath, lastScrollPosition) =>
-        go(filePath, null, lastScrollPosition)
-    )
-
-    electron.ipcMain.on(ipc.messages.openInternal, (_, target, lastScrollPosition) =>
-        go(_locations.current.filePath, target, lastScrollPosition)
-    )
-}
-
+exports.init = init
+exports.reloadCurrent = reloadCurrent
 exports.back = () => goStep(canGoBack, _locations.forward, _locations.back)
-
 exports.forward = () => goStep(canGoForward, _locations.back, _locations.forward)
-
 exports.go = go
-
-exports.reloadCurrent = scrollPosition => {
-    const currentLoaction = _locations.current
-    const filePath = currentLoaction.filePath
-    openFile(filePath, currentLoaction.internalTarget, scrollPosition)
-}
-
 exports.register = (id, callback) => (_callbacks[id] = callback)
-
 exports.getCurrentLocation = () => _locations.current
-
 exports.hasCurrentLocation = () => !!_locations.current
-
 exports.canGoBack = canGoBack
-
 exports.canGoForward = canGoForward
