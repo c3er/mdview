@@ -217,11 +217,10 @@ electron.ipcRenderer.on(
     }
 )
 
-electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, encoding) =>
+electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification) =>
     electron.ipcRenderer.send(
         ipc.messages.reloadPrepared,
         isFileModification,
-        encoding,
         document.documentElement.scrollTop
     )
 )
