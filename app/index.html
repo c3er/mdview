@@ -1,41 +1,37 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="Content-Security-Policy" content="script-src 'self'" />
-        <style>
-            @import "../node_modules/github-markdown-css/github-markdown.css";
-            @import "../node_modules/github-markdown-dracula-css/github-markdown-dracula.css" screen
-                and (prefers-color-scheme: dark);
 
-            @import "../node_modules/highlight.js/styles/stackoverflow-light.css"
-                (prefers-color-scheme: light);
-            @import "../node_modules/highlight.js/styles/stackoverflow-dark.css" screen and
-                (prefers-color-scheme: dark);
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self'" />
+  <style>
+    @import "../node_modules/github-markdown-css/github-markdown.css";
+    @import "../node_modules/github-markdown-dracula-css/github-markdown-dracula.css"screen and (prefers-color-scheme: dark);
+    @import "../node_modules/highlight.js/styles/stackoverflow-light.css"(prefers-color-scheme: light);
+    @import "../node_modules/highlight.js/styles/stackoverflow-dark.css"screen and (prefers-color-scheme: dark);
+    @import "../node_modules/katex/dist/katex.min.css";
+  </style>
+  <link rel="stylesheet" href="index.css" />
+  <script src="index.js"></script>
+</head>
 
-            @import "../node_modules/katex/dist/katex.min.css";
-        </style>
-        <link rel="stylesheet" href="index.css" />
-        <script src="index.js"></script>
-    </head>
-    <body>
-        <div id="menu-border"></div>
-        <div id="blocked-content-info" hidden="true">
-            <span id="blocked-content-info-text-container">
-                <p class="blocked-content-info-text">
-                    Content is blocked. Click here to unblock all blocked elements.
-                </p>
-            </span>
-            <span id="blocked-content-info-close-button" title="Hide this message">
-                <p class="blocked-content-info-text">
-                    <b>X</b>
-                </p>
-            </span>
-        </div>
-        <div class="markdown-body" id="content"></div>
-        <div id="raw-text"></div>
-        <div id="status-bar">
-            <p id="status-text"></p>
-        </div>
-    </body>
+<body>
+  <div id="menu-border"></div>
+  <div id="blocked-content-info" hidden="true">
+    <span id="blocked-content-info-text-container">
+      <p class="blocked-content-info-text">Content is blocked. Click here to unblock all blocked elements.</p>
+    </span>
+    <span id="blocked-content-info-close-button" title="Hide this message">
+      <p class="blocked-content-info-text">
+        <b>X</b>
+      </p>
+    </span>
+  </div>
+  <div class="markdown-body" id="content"></div>
+  <div id="raw-text"></div>
+  <div id="status-bar">
+    <p id="status-text"></p>
+  </div>
+</body>
+
 </html>

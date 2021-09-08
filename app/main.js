@@ -96,24 +96,16 @@ function generateStylesSubmenu() {
       let filename = path.basename( file, ".css" )
       codeStyleSubmenu.push( {
         label: filename,
+        type: "radio",
+        id: filename,
         click() {
+          _applicationSettings.highlightjsStyle = filename
           _mainWindow.webContents.send( ipc.messages.changeHighlightjsStyle, filename )
         },
       } )
     }
   } )
-  codeStyleSubmenu.push( { type: "separator" } )
-  codeStyleSubmenu.push( {
-    label: "Reset",
-    click() {
-      _mainWindow.webContents.send( ipc.messages.changeHighlightjsStyle, "" )
-    },
-  } )
   return codeStyleSubmenu
-}
-
-function updateEncodingMenuItem( encoding ) {
-  _mainMenu.getMenuItemById( encodingLib.toMenuItemID( encoding ) ).checked = true
 }
 
 function createWindow() {
@@ -145,8 +137,6 @@ function createWindow() {
     }
   } )
 
-  electron.nativeTheme.themeSource = _applicationSettings.theme
-
   let codeStyleSubmenu = generateStylesSubmenu()
 
   const mainMenu = electron.Menu.buildFromTemplate( [
@@ -170,7 +160,7 @@ function createWindow() {
               if ( !result.canceled ) {
                 const filePath = result.filePaths[0]
                 openFile( filePath, null )
-                updateEncodingMenuItem( _documentSettings.getDocumentEncoding(filePath))
+                _mainMenu.getMenuItemById( encodingLib.toMenuItemID( _documentSettings.getDocumentEncoding(filePath) ) ).checked = true
               }
             } catch ( e ) {
               error( `Problem at opening file:\n ${e}` )
@@ -265,7 +255,6 @@ function createWindow() {
         click() {
           _documentSettings.setDocumentEncoding( navigation.getCurrentLocation().filePath, encoding )
           reload( true )
-          updateEncodingMenuItem( encoding )
         },
       } ) ),
     },
@@ -291,7 +280,7 @@ electron.app.on( "ready", () => {
   require( "@electron/remote/main" ).initialize()
 
   _isTest = process.argv.includes( "--test" )
-  _applicationSettings = new ApplicationSettings() // storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
+  _applicationSettings = new ApplicationSettings()
   _documentSettings = new DocumentSettings()
 
   const [mainWindow, mainMenu] = createWindow()
@@ -301,6 +290,7 @@ electron.app.on( "ready", () => {
   navigation.init( mainWindow, _mainMenu, null, _documentSettings )
   contentBlocking.init( mainWindow, _mainMenu )
   rawText.init( mainWindow, _mainMenu )
+  electron.nativeTheme.themeSource = _applicationSettings.theme
 } )
 
 electron.app.on( "window-all-closed", () => {
@@ -332,6 +322,11 @@ electron.ipcMain.on( ipc.messages.finishLoad, () => {
   } else {
     openFile( DEFAULT_FILE, internalTarget )
   }
+  // initialize the ENCODING menu item
+  _mainMenu.getMenuItemById( encodingLib.toMenuItemID( _documentSettings.getDocumentEncoding(filePath??DEFAULT_FILE) ) ).checked = true
+  // initialize the HIGHLIGHTJS STYLE and the corresponding menu item after (!) the application is loaded
+  _mainMenu.getMenuItemById( _applicationSettings.highlightjsStyle ).checked = true
+  _mainWindow.webContents.send( ipc.messages.changeHighlightjsStyle, _applicationSettings.highlightjsStyle )
 } )
 
 electron.ipcMain.on( ipc.messages.reloadPrepared, ( _, isFileModification, position ) => {
