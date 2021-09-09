@@ -1,6 +1,6 @@
 {
   "name": "mdview",
-  "version": "2.2.0",
+  "version": "2.1.0",
   "description": "Standalone Markdown Viewer",
   "keywords": [
     "markdown",
@@ -24,6 +24,7 @@
     "pack": "build --dir",
     "dist": "electron-builder",
     "test": "prettier --check . && mocha --timeout 20000",
+    "release": "npx standard-version --skip.commit --skip.tag && npx standard-version --skip.commit --skip.bump -i CHANGELOG-FULL.md",
     "format": "prettier --write ."
   },
   "build": {
@@ -88,7 +89,6 @@
   "devDependencies": {
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
-    "conventional-changelog-cli": "^2.1.1",
     "electron": "13.1.9",
     "electron-builder": "22.11.7",
     "mocha": "9.0.3",
