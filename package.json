@@ -1,6 +1,6 @@
 {
   "name": "mdview",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Standalone Markdown Viewer",
   "keywords": [
     "markdown",
@@ -10,13 +10,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/c3er/mdview.git"
+    "url": "https://github.com/khatastroffik/mdview.git"
   },
-  "author": "Christian Dreier",
+  "author": "Loïs Bégué",
   "license": "MIT",
   "main": "app/main.js",
   "bugs": {
-    "url": "https://github.com/c3er/mdview/issues"
+    "url": "https://github.com/khatastroffik/mdview/issues"
   },
   "scripts": {
     "postinstall": "install-app-deps",
@@ -38,19 +38,20 @@
     "linux": {
       "target": [
         "AppImage"
-      ]
+      ],
+      "category": "Viewer"
     },
     "mac": {
       "target": [
         "default"
-      ]
+      ],
+      "category": "Utilities"
     },
     "win": {
       "target": [
         "nsis",
-        "zip"
-      ],
-      "icon": "icon/md.ico"
+        "7z"
+      ]
     },
     "fileAssociations": [
       {
@@ -71,6 +72,7 @@
     "github-markdown-dracula-css": "4.0.3",
     "highlight.js": "11.2.0",
     "iconv-lite": "0.6.3",
+    "lodash": "^4.17.21",
     "markdown-it": "12.2.0",
     "markdown-it-abbr": "1.0.4",
     "markdown-it-container": "3.0.0",
@@ -81,18 +83,19 @@
     "markdown-it-multimd-table": "4.1.0",
     "markdown-it-new-katex": "2.0.3",
     "markdown-it-sub": "1.0.0",
-    "markdown-it-sup": "1.0.0",
-    "lodash": "^4.17.21"
+    "markdown-it-sup": "1.0.0"
   },
   "devDependencies": {
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
+    "conventional-changelog-cli": "^2.1.1",
     "electron": "13.1.9",
     "electron-builder": "22.11.7",
     "mocha": "9.0.3",
     "prettier": "2.3.2",
     "spectron": "15.0.0",
     "spectron-menu-addon-v2": "1.0.1",
+    "standard-version": "^9.3.1",
     "tslib": "2.3.1"
   }
 }
