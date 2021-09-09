@@ -1,5 +1,7 @@
 # Markdown Viewer - CHANGELOG
 
+### [2.2.2](https://github.com/khatastroffik/mdview/compare/v2.2.1...v2.2.2) (2021-09-09)
+
 ### [2.2.1](https://github.com/khatastroffik/mdview/compare/v2.2.0...v2.2.1) (2021-09-09)
 
 ## [2.2.0](https://github.com/khatastroffik/mdview/compare/v2.1.0...v2.2.0) (2021-09-09)
