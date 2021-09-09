@@ -24,7 +24,7 @@
     "pack": "build --dir",
     "dist": "electron-builder",
     "test": "prettier --check . && mocha --timeout 20000",
-    "release": "npx standard-version --skip.commit --skip.tag && npx standard-version --skip.commit --skip.bump -i CHANGELOG-FULL.md",
+    "release": "npx standard-version --skip.commit --skip.tag && git add . && npx standard-version --skip.bump -i CHANGELOG-FULL.md",
     "format": "prettier --write ."
   },
   "build": {
