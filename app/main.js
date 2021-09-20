@@ -30,7 +30,7 @@ let _lastModificationTime
 let _isReloading = false
 let _scrollPosition = 0
 
-let _settings
+let _applicationSettings
 
 function error(msg) {
     console.error("Error:", msg)
@@ -112,7 +112,7 @@ function createWindow() {
         }
     })
 
-    electron.nativeTheme.themeSource = _settings.theme
+    electron.nativeTheme.themeSource = _applicationSettings.theme
 
     const mainMenu = electron.Menu.buildFromTemplate([
         {
@@ -209,9 +209,9 @@ function createWindow() {
                 {
                     label: "Switch Theme",
                     click() {
-                        _settings.theme = electron.nativeTheme.shouldUseDarkColors
-                            ? _settings.LIGHT_THEME
-                            : _settings.DARK_THEME
+                        _applicationSettings.theme = electron.nativeTheme.shouldUseDarkColors
+                            ? _applicationSettings.LIGHT_THEME
+                            : _applicationSettings.DARK_THEME
                     },
                 },
             ],
@@ -250,7 +250,12 @@ electron.app.on("ready", () => {
     require("@electron/remote/main").initialize()
 
     _isTest = process.argv.includes("--test")
-    _settings = storage.initSettings(storage.getDefaultDir(), storage.SETTINGS_FILE)
+
+    storage.init()
+    _applicationSettings = storage.initApplicationSettings(
+        storage.getDefaultDir(),
+        storage.APPLICATION_SETTINGS_FILE
+    )
 
     const [mainWindow, mainMenu] = createWindow()
     _mainWindow = mainWindow

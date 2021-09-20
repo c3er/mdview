@@ -1,13 +1,13 @@
 const fs = require("fs")
 const path = require("path")
 
-let electron = require("electron")
+let electron
 
-const SETTINGS_FILE = "settings.json"
-const ENCODINGS_FILE = "encodings.json"
+const APPLICATION_SETTINGS_FILE = "app-settings.json"
+const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 
-let _settings
-let _encodings
+let _applicationSettings
+let _documentSettings = {}
 
 class StorageBase {
     _storagePath
@@ -36,7 +36,7 @@ class StorageBase {
     }
 }
 
-class Settings extends StorageBase {
+class ApplicationSettings extends StorageBase {
     #THEME_KEY = "theme"
 
     LIGHT_THEME = "light"
@@ -49,9 +49,7 @@ class Settings extends StorageBase {
     set theme(value) {
         const allowedThemes = [this.LIGHT_THEME, this.DARK_THEME]
         if (!allowedThemes.includes(value)) {
-            throw {
-                message: `"${value}" is not in allowed values ${allowedThemes.join(", ")}`,
-            }
+            throw new Error(`"${value}" is not in allowed values ${allowedThemes.join(", ")}`)
         }
 
         this._data[this.#THEME_KEY] = electron.nativeTheme.themeSource = value
@@ -59,15 +57,27 @@ class Settings extends StorageBase {
     }
 }
 
-class Encodings extends StorageBase {
-    DEFAULT = "UTF-8"
+class DocumentSettings extends StorageBase {
+    #ENCODING_KEY = "encoding"
 
-    load(documentPath) {
-        return this._data[documentPath] ?? this.DEFAULT
+    DEFAULT_ENCODING = "UTF-8"
+
+    _documentData
+
+    constructor(storageDir, storageFile, documentPath) {
+        super(storageDir, storageFile)
+        if (!this._data[documentPath]) {
+            this._data[documentPath] = {}
+        }
+        this._documentData = this._data[documentPath]
     }
 
-    save(documentPath, encoding) {
-        this._data[documentPath] = encoding
+    get encoding() {
+        return this._documentData[this.#ENCODING_KEY] ?? this.DEFAULT_ENCODING
+    }
+
+    set encoding(value) {
+        this._documentData[this.#ENCODING_KEY] = value
         this._save()
     }
 }
@@ -77,18 +87,18 @@ function getDefaultDir() {
     return path.join(electron.app.getPath("userData"), "storage")
 }
 
-exports.SETTINGS_FILE = SETTINGS_FILE
+exports.APPLICATION_SETTINGS_FILE = APPLICATION_SETTINGS_FILE
 
-exports.ENCODINGS_FILE = ENCODINGS_FILE
+exports.DOCUMENT_SETTINGS_FILE = DOCUMENT_SETTINGS_FILE
+
+exports.init = electronMock => (electron = electronMock ?? require("electron"))
+
+exports.initApplicationSettings = (storageDir, storageFile) =>
+    _applicationSettings ??
+    (_applicationSettings = new ApplicationSettings(storageDir, storageFile))
+
+exports.initDocumentSettings = (storageDir, storageFile, documentPath) =>
+    _documentSettings[documentPath] ??
+    (_documentSettings[documentPath] = new DocumentSettings(storageDir, storageFile, documentPath))
 
 exports.getDefaultDir = getDefaultDir
-
-exports.initSettings = (settingsStorageDir, settingsStorageFile, electronMock) => {
-    if (electronMock) {
-        electron = electronMock
-    }
-    return _settings ?? (_settingss = new Settings(settingsStorageDir, settingsStorageFile))
-}
-
-exports.initEncodings = (encodingStorageDir, encodingStorageFile) =>
-    _encodings ?? (_encodings = new Encodings(encodingStorageDir, encodingStorageFile))

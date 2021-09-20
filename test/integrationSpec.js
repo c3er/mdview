@@ -93,54 +93,61 @@ describe("Integration tests with single app instance", () => {
     describe('Library "storage"', () => {
         const storage = require("../app/lib/main/storage")
 
-        describe("Settings", () => {
-            let settings
+        describe("Application settings", () => {
+            let applicationSettings
 
             beforeEach(() => {
                 mocking.resetElectron()
-                settings = storage.initSettings(
+                storage.init(mocking.electron)
+                applicationSettings = storage.initApplicationSettings(
                     mocking.dataDir,
-                    storage.SETTINGS_FILE,
-                    mocking.electron
+                    storage.APPLICATION_SETTINGS_FILE
                 )
-                settings.theme = mocking.DEFAULT_THEME
+                applicationSettings.theme = mocking.DEFAULT_THEME
             })
 
             describe("Theme", () => {
                 it("has a default theme", () => {
-                    assert.equal(settings.theme, mocking.DEFAULT_THEME)
+                    assert.equal(applicationSettings.theme, mocking.DEFAULT_THEME)
                 })
 
                 it("remembers light theme", () => {
-                    const theme = settings.LIGHT_THEME
-                    settings.theme = theme
-                    assert.equal(settings.theme, theme)
+                    const theme = applicationSettings.LIGHT_THEME
+                    applicationSettings.theme = theme
+                    assert.equal(applicationSettings.theme, theme)
                 })
 
                 it("remembers dark theme", () => {
-                    const theme = settings.DARK_THEME
-                    settings.theme = theme
-                    assert.equal(settings.theme, theme)
+                    const theme = applicationSettings.DARK_THEME
+                    applicationSettings.theme = theme
+                    assert.equal(applicationSettings.theme, theme)
                 })
 
                 it("does not accept an unknown theme", () => {
-                    assert.throws(() => (settings.theme = "invalid-theme"))
+                    assert.throws(() => (applicationSettings.theme = "invalid-theme"))
                 })
             })
         })
 
         describe("Encodings", () => {
-            const encodings = storage.initEncodings(mocking.dataDir, storage.ENCODINGS_FILE)
+            function initDocumentSettings(filePath) {
+                return storage.initDocumentSettings(
+                    mocking.dataDir,
+                    storage.DOCUMENT_SETTINGS_FILE,
+                    filePath
+                )
+            }
 
             it("loads known encoding", () => {
-                const TESTPATH = "test1"
                 const ENCODING = "ISO-8859-15"
-                encodings.save(TESTPATH, ENCODING)
-                assert.equal(encodings.load(TESTPATH), ENCODING)
+                const documentSettings = initDocumentSettings("test1")
+                documentSettings.encoding = ENCODING
+                assert.equal(documentSettings.encoding, ENCODING)
             })
 
             it("loads default encoding if path is not known", () => {
-                assert.equal(encodings.load("unknown-file"), encodings.DEFAULT)
+                const documentSettings = initDocumentSettings("unknown-file")
+                assert.equal(documentSettings.encoding, documentSettings.DEFAULT_ENCODING)
             })
         })
     })

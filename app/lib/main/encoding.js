@@ -1,10 +1,23 @@
 const storage = require("./storage")
 
+const _documentSettings = {}
+
 let _mainMenu
-let _encodings
+let _storageDir
 
 function toId(encoding) {
     return `encoding-${encoding}`
+}
+
+function getDocumentSettings(filePath) {
+    return (
+        _documentSettings[filePath] ??
+        (_documentSettings[filePath] = storage.initDocumentSettings(
+            _storageDir,
+            storage.DOCUMENT_SETTINGS_FILE,
+            filePath
+        ))
+    )
 }
 
 // Based on https://encoding.spec.whatwg.org/
@@ -51,17 +64,14 @@ exports.ENCODINGS = [
 
 exports.init = (mainMenu, storageDir) => {
     _mainMenu = mainMenu
-    _encodings = storage.initEncodings(
-        storageDir ?? storage.getDefaultDir(),
-        storage.ENCODINGS_FILE
-    )
+    _storageDir = storageDir ?? storage.getDefaultDir()
 }
 
 exports.toId = toId
 
 exports.change = (filePath, encoding) => {
-    _encodings.save(filePath, encoding)
+    getDocumentSettings(filePath).encoding = encoding
     _mainMenu.getMenuItemById(toId(encoding)).checked = true
 }
 
-exports.load = filePath => _encodings.load(filePath)
+exports.load = filePath => getDocumentSettings(filePath).encoding
