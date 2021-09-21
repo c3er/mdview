@@ -89,7 +89,7 @@ function restorePosition() {
 }
 
 function createWindow() {
-    const documentSettings = storage.initDocumentSettings(
+    const documentSettings = storage.loadDocumentSettings(
         storage.getDefaultDir(),
         storage.DOCUMENT_SETTINGS_FILE,
         determineCurrentFilePath(process.argv)
@@ -110,7 +110,7 @@ function createWindow() {
     })
     mainWindow.loadFile(path.join(__dirname, "index.html"))
     mainWindow.on("close", () => {
-        const documentSettings = storage.initDocumentSettings(
+        const documentSettings = storage.loadDocumentSettings(
             storage.getDefaultDir(),
             storage.DOCUMENT_SETTINGS_FILE,
             determineCurrentFilePath(process.argv)
@@ -277,7 +277,7 @@ electron.app.on("ready", () => {
     _isTest = process.argv.includes("--test")
 
     storage.init()
-    _applicationSettings = storage.initApplicationSettings(
+    _applicationSettings = storage.loadApplicationSettings(
         storage.getDefaultDir(),
         storage.APPLICATION_SETTINGS_FILE
     )

@@ -118,11 +118,11 @@ exports.DOCUMENT_SETTINGS_FILE = DOCUMENT_SETTINGS_FILE
 
 exports.init = electronMock => (electron = electronMock ?? require("electron"))
 
-exports.initApplicationSettings = (storageDir, storageFile) =>
+exports.loadApplicationSettings = (storageDir, storageFile) =>
     _applicationSettings ??
     (_applicationSettings = new ApplicationSettings(storageDir, storageFile))
 
-exports.initDocumentSettings = (storageDir, storageFile, documentPath) =>
+exports.loadDocumentSettings = (storageDir, storageFile, documentPath) =>
     _documentSettings[documentPath] ??
     (_documentSettings[documentPath] = new DocumentSettings(storageDir, storageFile, documentPath))
 

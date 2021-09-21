@@ -12,7 +12,7 @@ function toId(encoding) {
 function getDocumentSettings(filePath) {
     return (
         _documentSettings[filePath] ??
-        (_documentSettings[filePath] = storage.initDocumentSettings(
+        (_documentSettings[filePath] = storage.loadDocumentSettings(
             _storageDir,
             storage.DOCUMENT_SETTINGS_FILE,
             filePath

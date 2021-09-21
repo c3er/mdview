@@ -99,7 +99,7 @@ describe("Integration tests with single app instance", () => {
             beforeEach(() => {
                 mocking.resetElectron()
                 storage.init(mocking.electron)
-                applicationSettings = storage.initApplicationSettings(
+                applicationSettings = storage.loadApplicationSettings(
                     mocking.dataDir,
                     storage.APPLICATION_SETTINGS_FILE
                 )
@@ -131,8 +131,8 @@ describe("Integration tests with single app instance", () => {
 
         describe("Document settings", () => {
             describe("Encodings", () => {
-                function initDocumentSettings(filePath) {
-                    return storage.initDocumentSettings(
+                function loadDocumentSettings(filePath) {
+                    return storage.loadDocumentSettings(
                         mocking.dataDir,
                         storage.DOCUMENT_SETTINGS_FILE,
                         filePath
@@ -141,13 +141,13 @@ describe("Integration tests with single app instance", () => {
 
                 it("loads known encoding", () => {
                     const ENCODING = "ISO-8859-15"
-                    const documentSettings = initDocumentSettings("test1")
+                    const documentSettings = loadDocumentSettings("test1")
                     documentSettings.encoding = ENCODING
                     assert.equal(documentSettings.encoding, ENCODING)
                 })
 
                 it("loads default encoding if path is not known", () => {
-                    const documentSettings = initDocumentSettings("unknown-file")
+                    const documentSettings = loadDocumentSettings("unknown-file")
                     assert.equal(documentSettings.encoding, documentSettings.ENCODING_DEFAULT)
                 })
             })
