@@ -59,8 +59,11 @@ class ApplicationSettings extends StorageBase {
 
 class DocumentSettings extends StorageBase {
     #ENCODING_KEY = "encoding"
+    #WINDOW_POSITION_KEY = "window-position"
 
-    DEFAULT_ENCODING = "UTF-8"
+    ENCODING_DEFAULT = "UTF-8"
+    WINDOW_WIDTH_DEFAULT = 1024
+    WINDOW_HEIGHT_DEFAULT = 768
 
     _documentData
 
@@ -73,11 +76,33 @@ class DocumentSettings extends StorageBase {
     }
 
     get encoding() {
-        return this._documentData[this.#ENCODING_KEY] ?? this.DEFAULT_ENCODING
+        return this._loadValue(this.#ENCODING_KEY, this.ENCODING_DEFAULT)
     }
 
     set encoding(value) {
-        this._documentData[this.#ENCODING_KEY] = value
+        this._storeValue(this.#ENCODING_KEY, value)
+    }
+
+    get windowPosition() {
+        const screenSize = electron.screen.getPrimaryDisplay().size
+        return this._loadValue(this.#WINDOW_POSITION_KEY, {
+            x: screenSize.width / 2 - this.WINDOW_WIDTH_DEFAULT / 2,
+            y: screenSize.height / 2 - this.WINDOW_HEIGHT_DEFAULT / 2,
+            width: this.WINDOW_WIDTH_DEFAULT,
+            height: this.WINDOW_HEIGHT_DEFAULT,
+        })
+    }
+
+    set windowPosition(value) {
+        this._storeValue(this.#WINDOW_POSITION_KEY, value)
+    }
+
+    _loadValue(key, defaultValue) {
+        return this._documentData[key] ?? defaultValue
+    }
+
+    _storeValue(key, value) {
+        this._documentData[key] = value
         this._save()
     }
 }

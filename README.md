@@ -65,6 +65,4 @@ You can use and copy this tool under the conditions of the MIT license.
 
 ## Todo
 
-- Remember position of last opened window
-    - Additional windows shall not open at the same place as the last window
 - Recognize the character encoding to display special characters automatically

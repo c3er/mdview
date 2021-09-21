@@ -129,25 +129,27 @@ describe("Integration tests with single app instance", () => {
             })
         })
 
-        describe("Encodings", () => {
-            function initDocumentSettings(filePath) {
-                return storage.initDocumentSettings(
-                    mocking.dataDir,
-                    storage.DOCUMENT_SETTINGS_FILE,
-                    filePath
-                )
-            }
+        describe("Document settings", () => {
+            describe("Encodings", () => {
+                function initDocumentSettings(filePath) {
+                    return storage.initDocumentSettings(
+                        mocking.dataDir,
+                        storage.DOCUMENT_SETTINGS_FILE,
+                        filePath
+                    )
+                }
 
-            it("loads known encoding", () => {
-                const ENCODING = "ISO-8859-15"
-                const documentSettings = initDocumentSettings("test1")
-                documentSettings.encoding = ENCODING
-                assert.equal(documentSettings.encoding, ENCODING)
-            })
+                it("loads known encoding", () => {
+                    const ENCODING = "ISO-8859-15"
+                    const documentSettings = initDocumentSettings("test1")
+                    documentSettings.encoding = ENCODING
+                    assert.equal(documentSettings.encoding, ENCODING)
+                })
 
-            it("loads default encoding if path is not known", () => {
-                const documentSettings = initDocumentSettings("unknown-file")
-                assert.equal(documentSettings.encoding, documentSettings.DEFAULT_ENCODING)
+                it("loads default encoding if path is not known", () => {
+                    const documentSettings = initDocumentSettings("unknown-file")
+                    assert.equal(documentSettings.encoding, documentSettings.ENCODING_DEFAULT)
+                })
             })
         })
     })

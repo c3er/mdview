@@ -14,9 +14,6 @@ const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
 
-const WINDOW_WIDTH = 1024
-const WINDOW_HEIGHT = 768
-
 const DEFAULT_FILE = path.join(__dirname, "..", "README.md")
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
@@ -49,20 +46,25 @@ function openFile(filePath, internalTarget, encoding) {
     }
 }
 
-function extractFilePath(args) {
-    return args.find(
-        arg =>
-            arg !== process.execPath &&
-            arg !== "." &&
-            arg !== electron.app.getAppPath() &&
-            arg !== "data:," &&
-            !arg.startsWith("-") &&
-            !arg.includes("spectron-menu-addon-v2")
-    )
-}
-
 function extractInternalTarget(args) {
     return args.find(arg => arg.startsWith("#"))
+}
+
+function determineCurrentFilePath(args) {
+    if (navigation.hasCurrentLocation()) {
+        return navigation.getCurrentLocation().filePath
+    }
+    return (
+        args.find(
+            arg =>
+                arg !== process.execPath &&
+                arg !== "." &&
+                arg !== electron.app.getAppPath() &&
+                arg !== "data:," &&
+                !arg.startsWith("-") &&
+                !arg.includes("spectron-menu-addon-v2")
+        ) ?? DEFAULT_FILE
+    )
 }
 
 function createChildWindow(filePath, internalTarget) {
@@ -87,9 +89,18 @@ function restorePosition() {
 }
 
 function createWindow() {
+    const documentSettings = storage.initDocumentSettings(
+        storage.getDefaultDir(),
+        storage.DOCUMENT_SETTINGS_FILE,
+        determineCurrentFilePath(process.argv)
+    )
+    const windowPosition = documentSettings.windowPosition
+
     const mainWindow = new electron.BrowserWindow({
-        width: WINDOW_WIDTH,
-        height: WINDOW_HEIGHT,
+        x: windowPosition.x,
+        y: windowPosition.y,
+        width: windowPosition.width,
+        height: windowPosition.height,
         backgroundColor: "#fff",
         webPreferences: {
             nodeIntegration: true,
@@ -98,6 +109,20 @@ function createWindow() {
         },
     })
     mainWindow.loadFile(path.join(__dirname, "index.html"))
+    mainWindow.on("close", () => {
+        const documentSettings = storage.initDocumentSettings(
+            storage.getDefaultDir(),
+            storage.DOCUMENT_SETTINGS_FILE,
+            determineCurrentFilePath(process.argv)
+        )
+        const position = mainWindow.getBounds()
+        documentSettings.windowPosition = {
+            x: position.x,
+            y: position.y,
+            width: position.width,
+            height: position.height,
+        }
+    })
     mainWindow.on("closed", () => (_mainWindow = null))
     mainWindow.webContents.on("did-finish-load", () => {
         if (_isReloading) {
@@ -286,15 +311,8 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     const args = process.argv
     console.debug(args)
 
-    const filePath = navigation.hasCurrentLocation()
-        ? navigation.getCurrentLocation().filePath
-        : extractFilePath(args)
-    const internalTarget = extractInternalTarget(args)
-    if (filePath !== undefined) {
-        openFile(filePath, internalTarget, encodingLib.load(filePath))
-    } else {
-        openFile(DEFAULT_FILE, internalTarget, encodingLib.load(DEFAULT_FILE))
-    }
+    const filePath = determineCurrentFilePath(args)
+    openFile(filePath, extractInternalTarget(args), encodingLib.load(filePath))
 })
 
 electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
