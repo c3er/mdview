@@ -89,12 +89,11 @@ function restorePosition() {
 }
 
 function createWindow() {
-    const documentSettings = storage.loadDocumentSettings(
+    const windowPosition = storage.loadDocumentSettings(
         storage.getDefaultDir(),
         storage.DOCUMENT_SETTINGS_FILE,
         determineCurrentFilePath(process.argv)
-    )
-    const windowPosition = documentSettings.windowPosition
+    ).windowPosition
 
     const mainWindow = new electron.BrowserWindow({
         x: windowPosition.x,
