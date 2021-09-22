@@ -158,24 +158,24 @@ exports.dataDir = path.join(__dirname, "data")
 exports.elements = {
     mainMenu: {
         file: {
-            label: "File",
+            label: "&File",
             sub: {
                 open: {
-                    label: "Open",
+                    label: "&Open",
                     isEnabled: true,
                 },
                 print: {
-                    label: "Print",
+                    label: "&Print",
                     isEnabled: true,
                 },
                 quit: {
-                    label: "Quit",
+                    label: "&Quit",
                     isEnabled: true,
                 },
             },
         },
         edit: {
-            label: "Edit",
+            label: "&Edit",
             sub: {
                 copy: {
                     label: "Copy",
@@ -184,43 +184,52 @@ exports.elements = {
             },
         },
         view: {
-            label: "View",
+            label: "&View",
             sub: {
                 back: {
-                    label: "Back",
+                    label: "&Back",
                     isEnabled: false,
                 },
                 forward: {
-                    label: "Forward",
+                    label: "&Forward",
                     isEnabled: false,
                 },
                 refresh: {
-                    label: "Refresh",
+                    label: "&Refresh",
                     isEnabled: true,
                 },
                 unblock: {
-                    label: "Unblock All External Content",
+                    label: "&Unblock All External Content",
                     isEnabled: true,
                 },
                 rawText: {
-                    label: "View Raw Text",
+                    label: "&View Raw Text",
                     isEnabled: true,
                 },
                 switchTheme: {
-                    label: "Switch Theme",
+                    label: "Switch &Theme",
                     isEnabled: true,
                 },
             },
         },
         encoding: {
-            label: "Encoding",
+            label: "En&coding",
             sub: {},
         },
         tools: {
-            label: "Tools",
+            label: "&Tools",
             sub: {
                 developer: {
-                    label: "Developer Tools",
+                    label: "&Developer Tools",
+                    isEnabled: true,
+                },
+            },
+        },
+        help: {
+            label: "&Help",
+            sub: {
+                about: {
+                    label: "&About",
                     isEnabled: true,
                 },
             },

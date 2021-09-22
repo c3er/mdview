@@ -171,10 +171,10 @@ function createWindow() {
 
     const mainMenu = electron.Menu.buildFromTemplate([
         {
-            label: "File",
+            label: "&File",
             submenu: [
                 {
-                    label: "Open",
+                    label: "&Open",
                     accelerator: "CmdOrCtrl+O",
                     async click() {
                         try {
@@ -197,7 +197,7 @@ function createWindow() {
                     },
                 },
                 {
-                    label: "Print",
+                    label: "&Print",
                     accelerator: "Ctrl+P",
                     click() {
                         mainWindow.webContents.print()
@@ -205,7 +205,7 @@ function createWindow() {
                 },
                 { type: "separator" },
                 {
-                    label: "Quit",
+                    label: "&Quit",
                     accelerator: "Esc",
                     click() {
                         mainWindow.close()
@@ -214,14 +214,14 @@ function createWindow() {
             ],
         },
         {
-            label: "Edit",
+            label: "&Edit",
             submenu: [{ role: "copy" }],
         },
         {
-            label: "View",
+            label: "&View",
             submenu: [
                 {
-                    label: "Back",
+                    label: "&Back",
                     accelerator: "Alt+Left",
                     id: navigation.BACK_MENU_ID,
                     click() {
@@ -229,7 +229,7 @@ function createWindow() {
                     },
                 },
                 {
-                    label: "Forward",
+                    label: "&Forward",
                     accelerator: "Alt+Right",
                     id: navigation.FORWARD_MENU_ID,
                     click() {
@@ -238,14 +238,14 @@ function createWindow() {
                 },
                 { type: "separator" },
                 {
-                    label: "Refresh",
+                    label: "&Refresh",
                     accelerator: "F5",
                     click() {
                         reload(false)
                     },
                 },
                 {
-                    label: "Unblock All External Content",
+                    label: "&Unblock All External Content",
                     accelerator: "Alt+U",
                     id: contentBlocking.UNBLOCK_CONTENT_MENU_ID,
                     click() {
@@ -253,7 +253,7 @@ function createWindow() {
                     },
                 },
                 {
-                    label: "View Raw Text",
+                    label: "&View Raw Text",
                     accelerator: "Ctrl+U",
                     id: rawText.VIEW_RAW_TEXT_MENU_ID,
                     click() {
@@ -262,7 +262,7 @@ function createWindow() {
                 },
                 { type: "separator" },
                 {
-                    label: "Switch Theme",
+                    label: "Switch &Theme",
                     click() {
                         _applicationSettings.theme = electron.nativeTheme.shouldUseDarkColors
                             ? _applicationSettings.LIGHT_THEME
@@ -272,7 +272,7 @@ function createWindow() {
             ],
         },
         {
-            label: "Encoding",
+            label: "En&coding",
             submenu: encodingLib.ENCODINGS.map(encoding => ({
                 label: encoding,
                 type: "radio",
@@ -284,10 +284,10 @@ function createWindow() {
             })),
         },
         {
-            label: "Tools",
+            label: "&Tools",
             submenu: [
                 {
-                    label: "Developer Tools",
+                    label: "&Developer Tools",
                     accelerator: "F10",
                     click() {
                         mainWindow.webContents.openDevTools()
@@ -296,10 +296,10 @@ function createWindow() {
             ],
         },
         {
-            label: "Help",
+            label: "&Help",
             submenu: [
                 {
-                    label: "About",
+                    label: "&About",
                     click() {
                         showAboutDialog(mainWindow)
                     },
