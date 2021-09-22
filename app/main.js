@@ -3,6 +3,7 @@
 const fs = require("fs")
 const path = require("path")
 
+const aboutWindow = require("about-window")
 const childProcess = require("child_process")
 const electron = require("electron")
 
@@ -33,6 +34,36 @@ function error(msg) {
     console.error("Error:", msg)
     electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
+}
+
+function showAboutDialog(parentWindow) {
+    const POSITION_OFFSET = 20
+    const parentPosition = parentWindow.getBounds()
+
+    const aboutDialog = aboutWindow.default({
+        adjust_window_size: true,
+        copyright: "Copyright © Christian Dreier",
+        icon_path: path.join(__dirname, "..", "icon", "md-icon.svg"),
+        package_json_dir: path.join(__dirname, ".."),
+        product_name: "Markdown Viewer",
+        win_options: {
+            maximizable: false,
+            minimizable: false,
+            modal: true,
+            parent: parentWindow,
+            resizable: false,
+            skipTaskbar: true,
+            title: "About Markdown Viewer",
+            x: parentPosition.x + POSITION_OFFSET,
+            y: parentPosition.y + POSITION_OFFSET,
+        },
+    })
+    aboutDialog.webContents.on("before-input-event", (event, input) => {
+        if (input.key === "Escape") {
+            aboutDialog.close()
+            event.preventDefault()
+        }
+    })
 }
 
 function openFile(filePath, internalTarget, encoding) {
@@ -260,6 +291,17 @@ function createWindow() {
                     accelerator: "F10",
                     click() {
                         mainWindow.webContents.openDevTools()
+                    },
+                },
+            ],
+        },
+        {
+            label: "Help",
+            submenu: [
+                {
+                    label: "About",
+                    click() {
+                        showAboutDialog(mainWindow)
                     },
                 },
             ],

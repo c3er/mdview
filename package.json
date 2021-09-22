@@ -8,6 +8,7 @@
     "viewer",
     "standalone"
   ],
+  "homepage": "https://github.com/c3er/mdview",
   "repository": {
     "type": "git",
     "url": "https://github.com/c3er/mdview.git"
@@ -67,6 +68,7 @@
   },
   "dependencies": {
     "@electron/remote": "2.0.1",
+    "about-window": "1.14.0",
     "github-markdown-css": "4.0.0",
     "github-markdown-dracula-css": "4.0.3",
     "highlight.js": "11.2.0",
