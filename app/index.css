@@ -31,22 +31,34 @@ div.error {
 }
 
 #status-bar {
-    background-color: #ddd;
+    background-color: #fff;
     bottom: 0;
-    color: black;
-    height: 25px;
+    color: #555;
+    height: 20px;
     left: 0;
     position: fixed;
     right: 0;
+    border-top: 1px solid #ccc;
 }
 
 #status-text {
     font-family: Sans-serif;
-    font-size: 10pt;
+    font-size: 9pt;
     line-height: 0;
     padding-left: 10px;
     vertical-align: middle;
     white-space: nowrap;
+    display: unset;
+}
+
+#menu-border {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0px;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
 }
 
 #blocked-content-info {
@@ -86,7 +98,7 @@ div.error {
 }
 
 body {
-    margin-bottom: 25px;
+    margin: 10px 15px 35px 15px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -107,8 +119,13 @@ body {
     }
 
     #status-bar {
+        border-top: 1px solid black;
         background: #292a2d;
         color: #f8f8f2;
+    }
+    #menu-border {
+        border-bottom: 1px solid black;
+        background-color: #292a2d;
     }
 }
 
