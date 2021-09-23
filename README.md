@@ -1,6 +1,8 @@
 # Markdown Viewer
 
-![Screenshot](doc/screenshot.png)
+![Screenshot of the application in light mode](doc/images/screenshot-light.png)
+
+![Screenshot of the application in dark mode](doc/images/screenshot-dark.png)
 
 A standalone application that renders and displays Markdown files. It does nothing else! No direct editing nor any fancy note taking features. It is not distributed as a browser extension nor does it fire up a web server - so no web browser is needed to see the rendered Markdown file.
 
@@ -18,7 +20,9 @@ Following plugins are supported:
 - [`markdown-it-sub`](https://github.com/markdown-it/markdown-it-sub)
 - [`markdown-it-sup`](https://github.com/markdown-it/markdown-it-sup)
 
-## Note on Windows installation and download security
+## Known issues
+
+### Windows installation and download security
 
 Issues occurred with browser download security features and Windows SmartScreen. I checked both, the Windows Setup-EXE and the ZIP file in [VirusTotal](https://www.virustotal.com) and no engine detected anything at upload time.
 
@@ -32,6 +36,12 @@ As a workaround to remove this delay, you can add the path to the `mdview.exe` t
 
 - `C:\Program Files\mdview` for system wide installation
 - `%appdata%\..\Local\Programs\mdview` for installation in the user account (non elevated)
+
+### Build error ERR_ELECTRON_BUILDER_CANNOT_EXECUTE (development)
+
+You may encounter some issue when trying to build the Electron distribution (binaries) i.e. the build may (partially) fail.
+
+A possible fix is described here [not able to build installer/uninstaller (ERR_ELECTRON_BUILDER_CANNOT_EXECUTE)](./doc/development-build-installer-issue.md)
 
 ## Developing
 
@@ -47,7 +57,7 @@ Binaries can be built by typing `npm run dist`. Under Windows, a ZIP package and
 
 The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMagick](https://www.imagemagick.org). While the application icon does not look too bad, a proper icon for Markdown *documents* is missing yet.
 
-Note: you may encounter some issue when trying to build the electron distribution i.e. the build may (partially) fail. A possible fix is described here [not able to build installer/uninstaller (ERR_ELECTRON_BUILDER_CANNOT_EXECUTE)](doc/development-build-installer-issue.md)
+Note: you may encounter some issue when trying to build the Electron distribution i.e. the build may (partially) fail. A possible fix is described here [not able to build installer/uninstaller (ERR_ELECTRON_BUILDER_CANNOT_EXECUTE)](doc/development-build-installer-issue.md)
 
 ### Debugging
 
@@ -64,6 +74,10 @@ See [section Startup speed](#startup-speed) above. If you observe a big delay at
 This tool is made by Christian Dreier. If you find a copy somewhere, you find the original at [GitHub](https://github.com/c3er/mdview).
 
 You can use and copy this tool under the conditions of the MIT license.
+
+## Further notes
+
+There is [a fork of this project](https://github.com/khatastroffik/mdview) by [Loïs Bégué](https://github.com/khatastroffik).
 
 ## Todo
 
