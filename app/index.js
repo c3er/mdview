@@ -197,3 +197,7 @@ electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, enco
 )
 
 electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => scrollTo(position))
+
+electron.ipcRenderer.on(ipc.messages.changeZoom, (_, zoomFactor) =>
+    electron.webFrame.setZoomFactor(zoomFactor)
+)

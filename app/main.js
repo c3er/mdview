@@ -18,6 +18,7 @@ const storage = require("./lib/main/storage")
 const DEFAULT_FILE = path.join(__dirname, "..", "README.md")
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
+const ZOOM_STEP = 0.1
 
 let _isTest = false
 
@@ -119,6 +120,27 @@ function restorePosition() {
     _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
+function setZoom(zoomFactor) {
+    _applicationSettings.zoom = zoomFactor
+    _mainWindow.webContents.send(ipc.messages.changeZoom, _applicationSettings.zoom)
+}
+
+function zoomIn() {
+    setZoom(_applicationSettings.zoom + ZOOM_STEP)
+}
+
+function zoomOut() {
+    let zoom = _applicationSettings.zoom - ZOOM_STEP
+    if (zoom < 0.1) {
+        zoom = 0.1
+    }
+    setZoom(zoom)
+}
+
+function resetZoom() {
+    setZoom(_applicationSettings.ZOOM_DEFAULT)
+}
+
 function createWindow() {
     const windowPosition = storage.loadDocumentSettings(
         storage.getDefaultDir(),
@@ -161,9 +183,15 @@ function createWindow() {
         }
     })
     mainWindow.webContents.on("before-input-event", (event, input) => {
-        if (input.type === "keyDown" && input.key === "Backspace") {
-            event.preventDefault()
-            navigation.back()
+        if (input.type === "keyDown") {
+            if (input.key === "Backspace") {
+                event.preventDefault()
+                navigation.back()
+            } else if (input.control && input.key === "+") {
+                // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
+                event.preventDefault()
+                zoomIn()
+            }
         }
     })
 
@@ -262,6 +290,34 @@ function createWindow() {
                 },
                 { type: "separator" },
                 {
+                    label: "&Zoom",
+                    submenu: [
+                        {
+                            label: "Zoom &In",
+                            accelerator: "CmdOrCtrl+Plus",
+                            click() {
+                                zoomIn()
+                            },
+                        },
+                        {
+                            label: "Zoom &Out",
+                            accelerator: "CmdOrCtrl+-",
+                            click() {
+                                zoomOut()
+                            },
+                        },
+                        { type: "separator" },
+                        {
+                            label: "&Reset Zoom",
+                            accelerator: "CmdOrCtrl+0",
+                            click() {
+                                resetZoom()
+                            },
+                        },
+                    ],
+                },
+                { type: "separator" },
+                {
                     label: "Switch &Theme",
                     click() {
                         _applicationSettings.theme = electron.nativeTheme.shouldUseDarkColors
@@ -354,6 +410,7 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
 
     const filePath = determineCurrentFilePath(args)
     openFile(filePath, extractInternalTarget(args), encodingLib.load(filePath))
+    setZoom(_applicationSettings.zoom)
 })
 
 electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {

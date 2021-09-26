@@ -1,5 +1,6 @@
 exports.messages = {
     allContentUnblocked: "all-content-unblocked",
+    changeZoom: "change-zoom",
     contentBlocked: "content-blocked",
     disableRawView: "disable-raw-view",
     enableRawView: "enable-raw-view",

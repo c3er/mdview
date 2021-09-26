@@ -38,12 +38,15 @@ class StorageBase {
 
 class ApplicationSettings extends StorageBase {
     #THEME_KEY = "theme"
+    #ZOOM_KEY = "zoom"
+
+    ZOOM_DEFAULT = 1.0
 
     LIGHT_THEME = "light"
     DARK_THEME = "dark"
 
     get theme() {
-        return this._data[this.#THEME_KEY] ?? electron.nativeTheme.themeSource
+        return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
     }
 
     set theme(value) {
@@ -52,7 +55,24 @@ class ApplicationSettings extends StorageBase {
             throw new Error(`"${value}" is not in allowed values ${allowedThemes.join(", ")}`)
         }
 
-        this._data[this.#THEME_KEY] = electron.nativeTheme.themeSource = value
+        electron.nativeTheme.themeSource = value
+        this._storeValue(this.#THEME_KEY, value)
+    }
+
+    get zoom() {
+        return this._loadValue(this.#ZOOM_KEY, this.ZOOM_DEFAULT)
+    }
+
+    set zoom(value) {
+        this._storeValue(this.#ZOOM_KEY, value)
+    }
+
+    _loadValue(key, defaultValue) {
+        return this._data[key] ?? defaultValue
+    }
+
+    _storeValue(key, value) {
+        this._data[key] = value
         this._save()
     }
 }
