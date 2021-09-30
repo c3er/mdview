@@ -159,6 +159,7 @@ exports.elements = {
     mainMenu: {
         file: {
             label: "&File",
+            isEnabled: true,
             sub: {
                 open: {
                     label: "&Open",
@@ -176,6 +177,7 @@ exports.elements = {
         },
         edit: {
             label: "&Edit",
+            isEnabled: true,
             sub: {
                 copy: {
                     label: "Copy",
@@ -185,6 +187,7 @@ exports.elements = {
         },
         view: {
             label: "&View",
+            isEnabled: true,
             sub: {
                 back: {
                     label: "&Back",
@@ -206,6 +209,24 @@ exports.elements = {
                     label: "&View Raw Text",
                     isEnabled: true,
                 },
+                zoom: {
+                    label: "&Zoom",
+                    isEnabled: true,
+                    sub: {
+                        zoomIn: {
+                            label: "Zoom &In",
+                            isEnabled: true,
+                        },
+                        zoomOut: {
+                            label: "Zoom &Out",
+                            isEnabled: true,
+                        },
+                        resetZoom: {
+                            label: "&Reset Zoom",
+                            isEnabled: true,
+                        },
+                    },
+                },
                 switchTheme: {
                     label: "Switch &Theme",
                     isEnabled: true,
@@ -214,10 +235,12 @@ exports.elements = {
         },
         encoding: {
             label: "En&coding",
+            isEnabled: true,
             sub: {},
         },
         tools: {
             label: "&Tools",
+            isEnabled: true,
             sub: {
                 developer: {
                     label: "&Developer Tools",
@@ -227,6 +250,7 @@ exports.elements = {
         },
         help: {
             label: "&Help",
+            isEnabled: true,
             sub: {
                 about: {
                     label: "&About",

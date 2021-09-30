@@ -155,25 +155,30 @@ describe("Integration tests with single app instance", () => {
     })
 
     describe("Main menu", () => {
-        for (const [_, mainItem] of Object.entries(mocking.elements.mainMenu)) {
-            describe(`Menu "${mainItem.label}"`, () => {
-                for (const [_, item] of Object.entries(mainItem.sub)) {
-                    it(`has item "${item.label}"`, async () => {
-                        assert.notEqual(
-                            await menuAddon.getMenuItem(mainItem.label, item.label).label,
-                            ""
+        function assertMenu(menu, itemPath) {
+            for (const [_, currentItem] of Object.entries(menu)) {
+                const currentItemLabel = currentItem.label
+                const currentItemPath = [...itemPath, currentItemLabel]
+                describe(`Menu item "${currentItemLabel}"`, () => {
+                    it("exists", async () => {
+                        assert.notEqual((await menuAddon.getMenuItem(...currentItemPath)).label, "")
+                    })
+
+                    it(`is ${currentItem.isEnabled ? "enabled" : "disabled"}`, async () => {
+                        assert.equal(
+                            (await menuAddon.getMenuItem(...currentItemPath)).enabled,
+                            currentItem.isEnabled
                         )
                     })
 
-                    it(`item "${item.label}" is ${
-                        item.isEnabled ? "enabled" : "disabled"
-                    }`, async () => {
-                        const actualItem = await menuAddon.getMenuItem(mainItem.label, item.label)
-                        assert.equal(actualItem.enabled, item.isEnabled)
-                    })
-                }
-            })
+                    const subMenu = currentItem.sub
+                    if (subMenu) {
+                        assertMenu(subMenu, currentItemPath)
+                    }
+                })
+            }
         }
+        assertMenu(mocking.elements.mainMenu, [])
     })
 
     describe("Raw text", () => {
