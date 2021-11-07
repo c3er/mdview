@@ -1,6 +1,6 @@
 {
   "name": "mdview",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Standalone Markdown Viewer",
   "keywords": [
     "markdown",
@@ -34,7 +34,8 @@
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
       "license": "LICENSE",
-      "shortcutName": "Markdown Viewer"
+      "shortcutName": "Markdown Viewer",
+      "createDesktopShortcut": false
     },
     "linux": {
       "target": [
