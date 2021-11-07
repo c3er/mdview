@@ -20,6 +20,17 @@ Following plugins are supported:
 - [`markdown-it-sub`](https://github.com/markdown-it/markdown-it-sub)
 - [`markdown-it-sup`](https://github.com/markdown-it/markdown-it-sup)
 
+## Installation and usage
+
+You find the latest binaries and setup file [at GitHub](https://github.com/c3er/mdview/releases&/latest). For Windows, there is an installer package and a ZIP archive. For Linux, there is an AppImage package.
+
+### Windows
+
+The Windows setup file supports following parameters:
+
+- `/S` runs the setup silently, i.e. in the background, without UI and without asking any questions.
+- `/D=C:\path\to\install` sets the installation directory. This parameter has to be the last one. The path must not contain quotes, even if the path contains whitespaces.
+
 ## Known issues
 
 ### Windows installation and download security
