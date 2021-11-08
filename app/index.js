@@ -1,5 +1,6 @@
 "use strict"
 
+const fs = require("fs")
 const path = require("path")
 
 const electron = require("electron")
@@ -8,6 +9,7 @@ const remote = require("@electron/remote")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/renderer/documentRendering")
+const encodingLib = require("./lib/encoding/encodingRenderer")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
 const navigation = require("./lib/navigation/navigationRenderer")
@@ -89,7 +91,13 @@ electron.ipcRenderer.on(
         contentBlocking.changeInfoElementVisiblity(false)
         clearStatusBar()
 
-        let content = file.open(filePath, encoding)
+        const buffer = fs.readFileSync(filePath)
+        if (!encoding) {
+            encoding = encodingLib.detect(buffer)
+            electron.ipcRenderer.send(ipc.messages.changeEncoding, filePath, encoding)
+        }
+        let content = encodingLib.decode(buffer, encoding)
+
         if (!file.isMarkdown(filePath)) {
             const pathParts = filePath.split(".")
             const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""

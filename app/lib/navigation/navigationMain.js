@@ -149,7 +149,7 @@ exports.init = (mainWindow, mainMenu, electronMock, storageDir) => {
     _mainWindow = mainWindow
     _mainMenu = mainMenu
 
-    encodingLib.init(mainMenu, storageDir)
+    encodingLib.init(mainMenu, storageDir, electronMock)
 
     reset()
 

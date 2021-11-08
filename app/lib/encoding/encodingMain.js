@@ -1,4 +1,8 @@
+const encodingShared = require("./encodingShared")
+const ipc = require("../ipc")
 const storage = require("../main/storage")
+
+let electron
 
 const _documentSettings = {}
 
@@ -6,7 +10,7 @@ let _mainMenu
 let _storageDir
 
 function toId(encoding) {
-    return `encoding-${encoding}`
+    return `encoding-${encodingShared.normalize(encoding)}`
 }
 
 function getDocumentSettings(filePath) {
@@ -18,6 +22,12 @@ function getDocumentSettings(filePath) {
             filePath
         ))
     )
+}
+
+function changeEncoding(filePath, encoding) {
+    encoding = encodingShared.normalize(encoding)
+    getDocumentSettings(filePath).encoding = encoding
+    _mainMenu.getMenuItemById(toId(encoding)).checked = true
 }
 
 // Based on https://encoding.spec.whatwg.org/
@@ -62,16 +72,18 @@ exports.ENCODINGS = [
     "UTF-16LE",
 ]
 
-exports.init = (mainMenu, storageDir) => {
+exports.init = (mainMenu, storageDir, electronMock) => {
+    electron = electronMock ?? require("electron")
     _mainMenu = mainMenu
     _storageDir = storageDir ?? storage.getDefaultDir()
+
+    electron.ipcMain.on(ipc.messages.changeEncoding, (_, filePath, encoding) =>
+        changeEncoding(filePath, encoding)
+    )
 }
 
 exports.toId = toId
 
-exports.change = (filePath, encoding) => {
-    getDocumentSettings(filePath).encoding = encoding
-    _mainMenu.getMenuItemById(toId(encoding)).checked = true
-}
+exports.change = changeEncoding
 
 exports.load = filePath => getDocumentSettings(filePath).encoding

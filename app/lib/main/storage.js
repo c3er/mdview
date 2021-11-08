@@ -81,7 +81,7 @@ class DocumentSettings extends StorageBase {
     #ENCODING_KEY = "encoding"
     #WINDOW_POSITION_KEY = "window-position"
 
-    ENCODING_DEFAULT = "UTF-8"
+    ENCODING_DEFAULT = null
     WINDOW_WIDTH_DEFAULT = 1024
     WINDOW_HEIGHT_DEFAULT = 768
 

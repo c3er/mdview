@@ -9,13 +9,6 @@ describe('Library "file"', () => {
     const nonMdFilePath = path.join(__dirname, "mocking.js")
     const binFilePath = path.join(__dirname, "documents", "font1", "Daedric.ttf")
 
-    describe("file.open", () => {
-        it("opens a file", () => {
-            const content = file.open(mdFilePath, "utf8")
-            assert.isTrue(content.includes("Test file"))
-        })
-    })
-
     describe("file.isText", () => {
         it("recognizes a Markdown file", () => {
             assert.isTrue(file.isText(mdFilePath))
