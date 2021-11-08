@@ -9,7 +9,7 @@ const electron = require("electron")
 
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
-const encodingLib = require("./lib/main/encoding")
+const encodingLib = require("./lib/encoding/encodingMain")
 const ipc = require("./lib/ipc")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")

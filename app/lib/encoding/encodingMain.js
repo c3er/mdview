@@ -1,4 +1,4 @@
-const storage = require("./storage")
+const storage = require("../main/storage")
 
 const _documentSettings = {}
 

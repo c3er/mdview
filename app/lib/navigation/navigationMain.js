@@ -1,4 +1,4 @@
-const encodingLib = require("../main/encoding")
+const encodingLib = require("../encoding/encodingMain")
 const ipc = require("../ipc")
 
 let electron
