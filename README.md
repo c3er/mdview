@@ -89,7 +89,3 @@ You can use and copy this tool under the conditions of the MIT license.
 ## Further notes
 
 There is [a fork of this project](https://github.com/khatastroffik/mdview) by [Loïs Bégué](https://github.com/khatastroffik).
-
-## Todo
-
-- Recognize the character encoding to display special characters automatically
