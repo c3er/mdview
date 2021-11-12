@@ -83,20 +83,17 @@ function extractInternalTarget(args) {
 }
 
 function determineCurrentFilePath(args) {
-    if (navigation.hasCurrentLocation()) {
-        return navigation.getCurrentLocation().filePath
-    }
-    return (
-        args.find(
-            arg =>
-                arg !== process.execPath &&
-                arg !== "." &&
-                arg !== electron.app.getAppPath() &&
-                arg !== "data:," &&
-                !arg.startsWith("-") &&
-                !arg.includes("spectron-menu-addon-v2")
-        ) ?? DEFAULT_FILE
-    )
+    return navigation.hasCurrentLocation()
+        ? navigation.getCurrentLocation().filePath
+        : args.find(
+              arg =>
+                  arg !== process.execPath &&
+                  arg !== "." &&
+                  arg !== electron.app.getAppPath() &&
+                  arg !== "data:," &&
+                  !arg.startsWith("-") &&
+                  !arg.includes("spectron-menu-addon-v2")
+          ) ?? DEFAULT_FILE
 }
 
 function createChildWindow(filePath, internalTarget) {
@@ -112,7 +109,7 @@ function reload(isFileModification, encoding) {
     _mainWindow.webContents.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding || encodingLib.load(navigation.getCurrentLocation().filePath)
+        encoding ?? encodingLib.load(navigation.getCurrentLocation().filePath)
     )
 }
 
@@ -130,9 +127,10 @@ function zoomIn() {
 }
 
 function zoomOut() {
+    const minZoom = 0.1
     let zoom = _applicationSettings.zoom - ZOOM_STEP
-    if (zoom < 0.1) {
-        zoom = 0.1
+    if (zoom < minZoom) {
+        zoom = minZoom
     }
     setZoom(zoom)
 }
@@ -167,13 +165,7 @@ function createWindow() {
             storage.DOCUMENT_SETTINGS_FILE,
             determineCurrentFilePath(process.argv)
         )
-        const position = mainWindow.getBounds()
-        documentSettings.windowPosition = {
-            x: position.x,
-            y: position.y,
-            width: position.width,
-            height: position.height,
-        }
+        documentSettings.windowPosition = mainWindow.getBounds()
     })
     mainWindow.on("closed", () => (_mainWindow = null))
     mainWindow.webContents.on("did-finish-load", () => {
@@ -449,21 +441,22 @@ process.on("uncaughtException", error => {
 })
 
 setInterval(() => {
-    if (navigation.hasCurrentLocation()) {
-        const filePath = navigation.getCurrentLocation().filePath
-        fs.stat(filePath, (err, stats) => {
-            if (err) {
-                console.error(`Updating file "${filePath}" was aborted with error ${err}`)
-                return
-            }
-            let mtime = stats.mtimeMs
-            if (_lastModificationTime && mtime !== _lastModificationTime) {
-                console.debug("Reloading...")
-                _lastModificationTime = mtime
-                reload(true)
-            }
-        })
+    if (!navigation.hasCurrentLocation()) {
+        return
     }
+    const filePath = navigation.getCurrentLocation().filePath
+    fs.stat(filePath, (err, stats) => {
+        if (err) {
+            console.error(`Updating file "${filePath}" was aborted with error ${err}`)
+            return
+        }
+        let mtime = stats.mtimeMs
+        if (_lastModificationTime && mtime !== _lastModificationTime) {
+            console.debug("Reloading...")
+            _lastModificationTime = mtime
+            reload(true)
+        }
+    })
 }, UPDATE_INTERVAL)
 
 navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {

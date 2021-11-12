@@ -29,13 +29,13 @@
   },
   "build": {
     "nsis": {
-      "oneClick": false,
-      "perMachine": false,
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": false,
       "license": "LICENSE",
-      "shortcutName": "Markdown Viewer",
-      "createDesktopShortcut": false
+      "oneClick": false,
+      "perMachine": false,
+      "shortcutName": "Markdown Viewer"
     },
     "linux": {
       "target": [

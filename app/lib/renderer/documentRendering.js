@@ -1,7 +1,7 @@
 const hljs = require("highlight.js")
 
 const markdown = require("markdown-it")({
-    highlight: (text, language) => {
+    highlight(text, language) {
         // Originated from VS Code
         // File extensions/markdown-language-features/src/markdownEngine.ts
         // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
@@ -28,12 +28,13 @@ const markdown = require("markdown-it")({
 
 markdown
     .use(require("markdown-it-headinganchor"), {
-        slugify: text =>
-            text
+        slugify(text) {
+            return text
                 .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
                 .trim()
                 .replace(/\s/g, "-")
-                .toLowerCase(),
+                .toLowerCase()
+        },
     })
     .use(require("markdown-it-multimd-table"), {
         headerless: true,
