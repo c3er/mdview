@@ -27,7 +27,11 @@ function getDocumentSettings(filePath) {
 function changeEncoding(filePath, encoding) {
     encoding = encodingShared.normalize(encoding)
     getDocumentSettings(filePath).encoding = encoding
-    _mainMenu.getMenuItemById(toId(encoding)).checked = true
+
+    const menuItem = _mainMenu.getMenuItemById(toId(encoding))
+    if (menuItem) {
+        menuItem.checked = true
+    }
 }
 
 // Based on https://encoding.spec.whatwg.org/
