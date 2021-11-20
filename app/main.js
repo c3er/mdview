@@ -6,6 +6,7 @@ const path = require("path")
 const aboutWindow = require("about-window")
 const childProcess = require("child_process")
 const electron = require("electron")
+const remote = require("@electron/remote/main")
 
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
@@ -158,7 +159,6 @@ function createWindow() {
             contextIsolation: false,
         },
     })
-    mainWindow.loadFile(path.join(__dirname, "index.html"))
     mainWindow.on("close", () => {
         const documentSettings = storage.loadDocumentSettings(
             storage.getDefaultDir(),
@@ -186,6 +186,11 @@ function createWindow() {
             }
         }
     })
+
+    remote.initialize()
+    remote.enable(mainWindow.webContents)
+
+    mainWindow.loadFile(path.join(__dirname, "index.html"))
 
     electron.nativeTheme.themeSource = _applicationSettings.theme
 
@@ -361,8 +366,6 @@ function createWindow() {
 }
 
 electron.app.on("ready", () => {
-    require("@electron/remote/main").initialize()
-
     _isTest = process.argv.includes("--test")
 
     storage.init()
