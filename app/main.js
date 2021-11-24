@@ -71,11 +71,14 @@ function showAboutDialog(parentWindow) {
 function openFile(filePath, internalTarget, encoding) {
     if (!fs.existsSync(filePath)) {
         error(`Unknown file: "${filePath}"`)
+        return false
     } else if (!fs.lstatSync(filePath).isFile()) {
         error("Given path does not lead to a file")
+        return false
     } else {
         navigation.go(filePath, internalTarget, encoding)
         _lastModificationTime = fs.statSync(filePath).mtimeMs
+        return true
     }
 }
 
@@ -404,8 +407,9 @@ electron.ipcMain.on(ipc.messages.finishLoad, () => {
     console.debug(args)
 
     const filePath = determineCurrentFilePath(args)
-    openFile(filePath, extractInternalTarget(args), encodingLib.load(filePath))
-    setZoom(_applicationSettings.zoom)
+    if (openFile(filePath, extractInternalTarget(args), encodingLib.load(filePath))) {
+        setZoom(_applicationSettings.zoom)
+    }
 })
 
 electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
