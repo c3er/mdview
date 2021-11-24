@@ -8,6 +8,7 @@ const childProcess = require("child_process")
 const electron = require("electron")
 const remote = require("@electron/remote/main")
 
+const cli = require("./lib/main/cli")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
@@ -21,6 +22,7 @@ const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 const ZOOM_STEP = 0.1
 
+let _cliArgs
 let _isTest = false
 
 let _mainWindow
@@ -82,22 +84,10 @@ function openFile(filePath, internalTarget, encoding) {
     }
 }
 
-function extractInternalTarget(args) {
-    return args.find(arg => arg.startsWith("#"))
-}
-
-function determineCurrentFilePath(args) {
+function determineCurrentFilePath() {
     return navigation.hasCurrentLocation()
         ? navigation.getCurrentLocation().filePath
-        : args.find(
-              arg =>
-                  arg !== process.execPath &&
-                  arg !== "." &&
-                  arg !== electron.app.getAppPath() &&
-                  arg !== "data:," &&
-                  !arg.startsWith("-") &&
-                  !arg.includes("spectron-menu-addon-v2")
-          ) ?? DEFAULT_FILE
+        : _cliArgs.filePath
 }
 
 function createChildWindow(filePath, internalTarget) {
@@ -145,9 +135,9 @@ function resetZoom() {
 
 function createWindow() {
     const windowPosition = storage.loadDocumentSettings(
-        storage.getDefaultDir(),
+        storage.dataDir,
         storage.DOCUMENT_SETTINGS_FILE,
-        determineCurrentFilePath(process.argv)
+        determineCurrentFilePath()
     ).windowPosition
 
     const mainWindow = new electron.BrowserWindow({
@@ -164,9 +154,9 @@ function createWindow() {
     })
     mainWindow.on("close", () => {
         const documentSettings = storage.loadDocumentSettings(
-            storage.getDefaultDir(),
+            storage.dataDir,
             storage.DOCUMENT_SETTINGS_FILE,
-            determineCurrentFilePath(process.argv)
+            determineCurrentFilePath()
         )
         documentSettings.windowPosition = mainWindow.getBounds()
     })
@@ -369,11 +359,12 @@ function createWindow() {
 }
 
 electron.app.on("ready", () => {
-    _isTest = process.argv.includes("--test")
+    cli.init()
+    _cliArgs = cli.parse(process.argv)
 
-    storage.init()
+    storage.init(_cliArgs.storageDir)
     _applicationSettings = storage.loadApplicationSettings(
-        storage.getDefaultDir(),
+        storage.dataDir,
         storage.APPLICATION_SETTINGS_FILE
     )
 
@@ -403,11 +394,8 @@ electron.app.on("activate", () => {
 })
 
 electron.ipcMain.on(ipc.messages.finishLoad, () => {
-    const args = process.argv
-    console.debug(args)
-
-    const filePath = determineCurrentFilePath(args)
-    if (openFile(filePath, extractInternalTarget(args), encodingLib.load(filePath))) {
+    const filePath = _cliArgs.filePath
+    if (openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))) {
         setZoom(_applicationSettings.zoom)
     }
 })

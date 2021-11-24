@@ -6,6 +6,8 @@ let electron
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 
+let _dataDir
+
 let _applicationSettings
 let _documentSettings = {}
 
@@ -28,7 +30,7 @@ class StorageBase {
     }
 
     static _initStorageDir(storageDir) {
-        fs.mkdirSync(storageDir ?? getDefaultDir(), { recursive: true })
+        fs.mkdirSync(storageDir ?? _dataDir, { recursive: true })
     }
 
     static _initData(storagePath) {
@@ -127,16 +129,14 @@ class DocumentSettings extends StorageBase {
     }
 }
 
-function getDefaultDir() {
-    // electron.app.getPath does not work in tests
-    return path.join(electron.app.getPath("userData"), "storage")
-}
-
 exports.APPLICATION_SETTINGS_FILE = APPLICATION_SETTINGS_FILE
 
 exports.DOCUMENT_SETTINGS_FILE = DOCUMENT_SETTINGS_FILE
 
-exports.init = electronMock => (electron = electronMock ?? require("electron"))
+exports.init = (dataDir, electronMock) => {
+    electron = electronMock ?? require("electron")
+    exports.dataDir = _dataDir = dataDir
+}
 
 exports.loadApplicationSettings = (storageDir, storageFile) =>
     _applicationSettings ??
@@ -145,5 +145,3 @@ exports.loadApplicationSettings = (storageDir, storageFile) =>
 exports.loadDocumentSettings = (storageDir, storageFile, documentPath) =>
     _documentSettings[documentPath] ??
     (_documentSettings[documentPath] = new DocumentSettings(storageDir, storageFile, documentPath))
-
-exports.getDefaultDir = getDefaultDir

@@ -79,7 +79,7 @@ exports.ENCODINGS = [
 exports.init = (mainMenu, storageDir, electronMock) => {
     electron = electronMock ?? require("electron")
     _mainMenu = mainMenu
-    _storageDir = storageDir ?? storage.getDefaultDir()
+    _storageDir = storageDir ?? storage.dataDir
 
     electron.ipcMain.on(ipc.messages.changeEncoding, (_, filePath, encoding) =>
         changeEncoding(filePath, encoding)

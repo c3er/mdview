@@ -98,7 +98,7 @@ describe("Integration tests with single app instance", () => {
 
             beforeEach(() => {
                 mocking.resetElectron()
-                storage.init(mocking.electron)
+                storage.init(mocking.dataDir, mocking.electron)
                 applicationSettings = storage.loadApplicationSettings(
                     mocking.dataDir,
                     storage.APPLICATION_SETTINGS_FILE
