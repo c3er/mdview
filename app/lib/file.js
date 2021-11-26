@@ -1,5 +1,4 @@
 const fs = require("fs")
-const iconv = require("iconv-lite")
 
 const common = require("./common")
 

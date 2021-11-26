@@ -72,6 +72,8 @@ function unblockURL(url) {
         changeInfoElementVisiblity(false)
         electron.ipcRenderer.send(ipc.messages.allContentUnblocked)
     }
+
+    console.log(`Unblocked: ${url}`)
 }
 
 function unblockAll() {
