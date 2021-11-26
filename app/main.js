@@ -309,6 +309,7 @@ function createWindow() {
                 { type: "separator" },
                 {
                     label: "Switch &Theme",
+                    id: "switch-theme",
                     click() {
                         _applicationSettings.theme = electron.nativeTheme.shouldUseDarkColors
                             ? _applicationSettings.LIGHT_THEME

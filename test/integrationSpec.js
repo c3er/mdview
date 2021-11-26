@@ -1,93 +1,88 @@
+const fs = require("fs/promises")
 const path = require("path")
 
-const chai = require("chai")
-const chaiAsPromised = require("chai-as-promised")
-const electron = require("electron")
-const menuAddon = require("spectron-menu-addon-v2").default
+const assert = require("chai").assert
+const electronPath = require("electron")
+const playwright = require("playwright")
 
 const mocking = require("./mocking")
 
-const assert = chai.assert
+const electron = playwright._electron
 
 const defaultDocumentFile = "testfile_utf8.md"
 const defaultDocumentPath = path.join(__dirname, "documents", defaultDocumentFile)
 
 let app
-let client
+let page
 
-// Based on https://stackoverflow.com/a/39914235/13949398 (What is the JavaScript version of sleep()?)
-function sleep(ms) {
-    // console.debug(`sleep ${ms} ${process.hrtime()}`) // For debugging
-    return new Promise(resolve => setTimeout(resolve, ms))
+const consoleMessages = []
+
+function clearMessages() {
+    consoleMessages.length = 0
+}
+
+function addMessage(msg) {
+    consoleMessages.push(msg)
 }
 
 async function startApp(documentPath) {
-    const app = menuAddon.createApplication({
-        path: electron,
-        args: [path.join(__dirname, ".."), documentPath, "--test"],
+    clearMessages()
+    await fs.rm(mocking.dataDir, { force: true, recursive: true })
+
+    const app = await electron.launch({
+        args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
+        executablePath: electronPath,
     })
-    chaiAsPromised.transferPromiseness = app.transferPromiseness
-    return app.start()
+
+    const page = await app.firstWindow()
+    page.on("console", msg => addMessage(msg.text()))
+    page.on("crash", () => assert.fail("Crash happened"))
+    page.on("pageerror", error => assert.fail(`Page error: ${error}`))
+    page.setDefaultTimeout(2000)
+    await page.waitForSelector("div") // Wait until the window is actually loaded
+
+    return [app, page]
 }
 
-async function stopApp(app) {
-    if (app && app.isRunning()) {
-        await app.stop()
-    }
+async function clickMenuItemById(app, id) {
+    app.evaluate(
+        ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).click(),
+        id
+    )
 }
 
-async function wait(predicate, tries, timeout) {
-    tries = tries || 10
-    timeout = timeout || 100
-    for (let i = 0; i < tries; i++) {
-        if (await predicate()) {
-            return true
-        }
-        await sleep(timeout)
-    }
-    return false
+function containsConsoleMessage(message) {
+    return !!consoleMessages.find(msg => msg.toLowerCase().includes(message))
 }
 
-async function containsConsoleMessage(message) {
-    let hasFoundMessage = false
-    ;(await client.getMainProcessLogs()).forEach(log => {
-        if (log.toLowerCase().includes(message)) {
-            hasFoundMessage = true
-        }
-    })
-    return hasFoundMessage
+function hasUnblockedContentMessage() {
+    return containsConsoleMessage("unblocked")
 }
 
-async function checkUnblockedMessage() {
-    return await containsConsoleMessage("unblocked")
+async function elementIsHidden(page, elementPath) {
+    return (
+        (await page.waitForSelector(elementPath, {
+            state: "hidden",
+        })) === null
+    )
 }
-
-async function elementIsVisible(element) {
-    return (await element.getCSSProperty("display")).value !== "none"
-}
-
-global.before(() => chai.use(chaiAsPromised))
 
 describe("Integration tests with single app instance", () => {
-    before(async () => {
-        app = await startApp(defaultDocumentPath)
-        client = app.client
-    })
+    before(async () => ([app, page] = await startApp(defaultDocumentPath)))
 
-    after(async () => await stopApp(app))
+    after(async () => await app.close())
 
-    it("opens a window", async () => {
-        client.waitUntilWindowLoaded()
-        await assert.eventually.equal(client.getWindowCount(), 1)
+    it("opens a window", () => {
+        assert.exists(page)
     })
 
     it("has file name in title bar", async () => {
-        await assert.eventually.include(client.getTitle(), defaultDocumentFile)
+        assert.include(await page.title(), defaultDocumentFile)
     })
 
     it("displays blocked content banner", async () => {
-        const elem = await client.$(mocking.elements.blockedContentArea.path)
-        assert.equal(await elem.getAttribute("hidden"), null)
+        const elem = await page.$(mocking.elements.blockedContentArea.path)
+        assert.isTrue(await elem.isVisible())
     })
 
     describe('Library "storage"', () => {
@@ -155,18 +150,33 @@ describe("Integration tests with single app instance", () => {
     })
 
     describe("Main menu", () => {
+        async function searchMenuItem(menuItemPath) {
+            return await app.evaluate(({ Menu }, itemPath) => {
+                let menu = Menu.getApplicationMenu()
+                let item
+                for (const label of itemPath) {
+                    item = menu.items.find(item => item.label === label)
+                    menu = item.submenu
+                }
+                return {
+                    label: item.label, // For debugging
+                    enabled: item.enabled,
+                }
+            }, menuItemPath)
+        }
+
         function assertMenu(menu, itemPath) {
             for (const [_, currentItem] of Object.entries(menu)) {
                 const currentItemLabel = currentItem.label
                 const currentItemPath = [...itemPath, currentItemLabel]
                 describe(`Menu item "${currentItemLabel}"`, () => {
                     it("exists", async () => {
-                        assert.notEqual((await menuAddon.getMenuItem(...currentItemPath)).label, "")
+                        assert.exists(await searchMenuItem(currentItemPath))
                     })
 
                     it(`is ${currentItem.isEnabled ? "enabled" : "disabled"}`, async () => {
                         assert.equal(
-                            (await menuAddon.getMenuItem(...currentItemPath)).enabled,
+                            (await searchMenuItem(currentItemPath)).enabled,
                             currentItem.isEnabled
                         )
                     })
@@ -178,82 +188,76 @@ describe("Integration tests with single app instance", () => {
                 })
             }
         }
+
         assertMenu(mocking.elements.mainMenu, [])
     })
 
     describe("Raw text", () => {
         it("is invisible", async () => {
-            await assert.eventually.isFalse(
-                elementIsVisible(await client.$(mocking.elements.rawText.path))
-            )
+            assert.isTrue(await elementIsHidden(page, mocking.elements.rawText.path))
         })
     })
 })
 
 describe("Integration tests with their own app instance each", () => {
-    beforeEach(async () => {
-        app = await startApp(defaultDocumentPath)
-        client = app.client
-    })
+    beforeEach(async () => ([app, page] = await startApp(defaultDocumentPath)))
 
-    afterEach(async () => await stopApp(app))
+    afterEach(async () => await app.close())
 
     describe("Blocked content", () => {
         describe("UI element", () => {
             it("disappears at click on X", async () => {
-                ;(await client.$(mocking.elements.blockedContentArea.closeButton.path)).click()
-                await assert.eventually.isFalse(
-                    elementIsVisible(await client.$(mocking.elements.blockedContentArea.path))
+                const blockedContentArea = mocking.elements.blockedContentArea
+                const blockedContentAreaElement = await page.waitForSelector(
+                    blockedContentArea.path
                 )
+                const blockedContentCloseButtonElement = await page.waitForSelector(
+                    blockedContentArea.closeButton.path
+                )
+
+                await blockedContentCloseButtonElement.click()
+                assert.isFalse(await blockedContentAreaElement.isVisible())
             })
 
             it("unblocks content", async () => {
-                const blockedContentElement = await client.$(
-                    mocking.elements.blockedContentArea.path
+                const blockedContentArea = mocking.elements.blockedContentArea
+                const blockedContentAreaElement = await page.waitForSelector(
+                    blockedContentArea.path
                 )
-                blockedContentElement.click()
-                await assert.eventually.isTrue(wait(checkUnblockedMessage))
+                const blockedContentTextContainerElement = await page.waitForSelector(
+                    blockedContentArea.textContainer.path
+                )
+
+                await blockedContentTextContainerElement.click()
+                assert.isFalse(await blockedContentAreaElement.isVisible())
+                assert.isTrue(hasUnblockedContentMessage())
             })
         })
 
         describe("Menu item", () => {
             it("unblocks content", async () => {
-                const viewMenu = mocking.elements.mainMenu.view
-                const viewMenuLabel = viewMenu.label
-                const unblockMenuLabel = viewMenu.sub.unblock.label
+                const contentBlocking = require("../app/lib/contentBlocking/contentBlockingMain")
+                const unblockContentMenuId = contentBlocking.UNBLOCK_CONTENT_MENU_ID
 
-                await menuAddon.clickMenu(viewMenuLabel, unblockMenuLabel)
-                const blockedConetentMenuItem = await menuAddon.getMenuItem(
-                    viewMenuLabel,
-                    unblockMenuLabel
+                await clickMenuItemById(app, unblockContentMenuId)
+
+                assert.isTrue(await elementIsHidden(page, mocking.elements.blockedContentArea.path))
+                assert.isFalse(
+                    await app.evaluate(
+                        ({ Menu }, menuId) =>
+                            Menu.getApplicationMenu().getMenuItemById(menuId).enabled,
+                        unblockContentMenuId
+                    )
                 )
-
-                await assert.eventually.isTrue(wait(checkUnblockedMessage))
-                assert.isFalse(blockedConetentMenuItem.enabled)
+                assert.isTrue(hasUnblockedContentMessage())
             })
-        })
-    })
-
-    describe("Raw text", () => {
-        it("can be activated", async () => {
-            const viewMenu = mocking.elements.mainMenu.view
-
-            await menuAddon.clickMenu(viewMenu.label, viewMenu.sub.rawText.label)
-
-            await assert.eventually.isTrue(
-                elementIsVisible(await client.$(mocking.elements.rawText.path))
-            )
-            await assert.eventually.isFalse(
-                elementIsVisible(await client.$("//div[@class='markdown-body']"))
-            )
         })
     })
 
     describe("Theme switching", () => {
         it("can be done", async () => {
-            const viewMenu = mocking.elements.mainMenu.view
-            await menuAddon.clickMenu(viewMenu.label, viewMenu.sub.switchTheme.label)
-            await assert.eventually.isFalse(containsConsoleMessage("error"))
+            await clickMenuItemById(app, "switch-theme")
+            assert.isFalse(containsConsoleMessage("error"))
         })
     })
 })

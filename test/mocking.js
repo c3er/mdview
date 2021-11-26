@@ -260,13 +260,16 @@ exports.elements = {
         },
     },
     blockedContentArea: {
-        path: "//div[@id='blocked-content-info']",
+        path: "#blocked-content-info",
+        textContainer: {
+            path: "#blocked-content-info-text-container",
+        },
         closeButton: {
-            path: "//span[@id='blocked-content-info-close-button']",
+            path: "#blocked-content-info-close-button",
         },
     },
     rawText: {
-        path: "//div[@id='raw-text']",
+        path: "#raw-text",
     },
 }
 
