@@ -18,7 +18,6 @@ const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
 
-const DEFAULT_FILE = path.join(__dirname, "..", "README.md")
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 const ZOOM_STEP = 0.1
