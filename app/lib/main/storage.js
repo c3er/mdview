@@ -44,6 +44,7 @@ class ApplicationSettings extends StorageBase {
 
     ZOOM_DEFAULT = 1.0
 
+    SYSTEM_THEME = "system"
     LIGHT_THEME = "light"
     DARK_THEME = "dark"
 
@@ -52,7 +53,7 @@ class ApplicationSettings extends StorageBase {
     }
 
     set theme(value) {
-        const allowedThemes = [this.LIGHT_THEME, this.DARK_THEME]
+        const allowedThemes = [this.SYSTEM_THEME, this.LIGHT_THEME, this.DARK_THEME]
         if (!allowedThemes.includes(value)) {
             throw new Error(`"${value}" is not in allowed values ${allowedThemes.join(", ")}`)
         }

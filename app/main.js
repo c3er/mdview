@@ -26,6 +26,7 @@ let _cliArgs
 let _isTest = false
 
 let _mainWindow
+let _mainMenu
 
 let _lastModificationTime
 
@@ -128,6 +129,17 @@ function zoomOut() {
 
 function resetZoom() {
     setZoom(_applicationSettings.ZOOM_DEFAULT)
+}
+
+function changeTheme(theme) {
+    _applicationSettings.theme = theme
+    _mainMenu.getMenuItemById(
+        {
+            system: "system-theme",
+            light: "light-theme",
+            dark: "dark-theme",
+        }[theme]
+    ).checked = true
 }
 
 function createWindow() {
@@ -303,15 +315,34 @@ function createWindow() {
                         },
                     ],
                 },
-                { type: "separator" },
                 {
-                    label: "Switch &Theme",
-                    id: "switch-theme",
-                    click() {
-                        _applicationSettings.theme = electron.nativeTheme.shouldUseDarkColors
-                            ? _applicationSettings.LIGHT_THEME
-                            : _applicationSettings.DARK_THEME
-                    },
+                    label: "Theme",
+                    submenu: [
+                        {
+                            label: "System Default",
+                            type: "radio",
+                            id: "system-theme",
+                            click() {
+                                changeTheme(_applicationSettings.SYSTEM_THEME)
+                            },
+                        },
+                        {
+                            label: "Light",
+                            type: "radio",
+                            id: "light-theme",
+                            click() {
+                                changeTheme(_applicationSettings.LIGHT_THEME)
+                            },
+                        },
+                        {
+                            label: "Dark",
+                            type: "radio",
+                            id: "dark-theme",
+                            click() {
+                                changeTheme(_applicationSettings.DARK_THEME)
+                            },
+                        },
+                    ],
                 },
             ],
         },
@@ -368,6 +399,9 @@ electron.app.on("ready", () => {
 
     const [mainWindow, mainMenu] = createWindow()
     _mainWindow = mainWindow
+    _mainMenu = mainMenu
+
+    changeTheme(_applicationSettings.theme)
 
     navigation.init(mainWindow, mainMenu)
     encodingLib.init(mainMenu)

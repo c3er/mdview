@@ -3,7 +3,7 @@ const path = require("path")
 const assert = require("chai").assert
 const lodashClonedeep = require("lodash.clonedeep")
 
-const DEFAULT_THEME = "light"
+const DEFAULT_THEME = "system"
 
 const _electronIpcEvent = {}
 
@@ -227,9 +227,23 @@ exports.elements = {
                         },
                     },
                 },
-                switchTheme: {
-                    label: "Switch &Theme",
+                theme: {
+                    label: "Theme",
                     isEnabled: true,
+                    sub: [
+                        {
+                            label: "System Default",
+                            isEnabled: true,
+                        },
+                        {
+                            label: "Light",
+                            isEnabled: true,
+                        },
+                        {
+                            label: "Dark",
+                            isEnabled: true,
+                        },
+                    ],
                 },
             },
         },
