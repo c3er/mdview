@@ -8,7 +8,7 @@ const remote = require("@electron/remote")
 
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
-const documentRendering = require("./lib/renderer/documentRendering")
+const documentRendering = require("./lib/documentRendering/documentRenderingRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
@@ -75,6 +75,15 @@ function fittingTarget(target, nodeName) {
 
 function scrollTo(position) {
     document.documentElement.scrollTop = position
+}
+
+function reload(isFileModification, encoding) {
+    electron.ipcRenderer.send(
+        ipc.messages.reloadPrepared,
+        isFileModification,
+        encoding,
+        document.documentElement.scrollTop
+    )
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -196,12 +205,7 @@ electron.ipcRenderer.on(
 )
 
 electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, encoding) =>
-    electron.ipcRenderer.send(
-        ipc.messages.reloadPrepared,
-        isFileModification,
-        encoding,
-        document.documentElement.scrollTop
-    )
+    reload(isFileModification, encoding)
 )
 
 electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => scrollTo(position))
@@ -209,3 +213,8 @@ electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => scrollTo(
 electron.ipcRenderer.on(ipc.messages.changeZoom, (_, zoomFactor) =>
     electron.webFrame.setZoomFactor(zoomFactor)
 )
+
+electron.ipcRenderer.on(ipc.messages.changeRenderingOptions, (_, options) => {
+    documentRendering.reset(options)
+    reload(false)
+})

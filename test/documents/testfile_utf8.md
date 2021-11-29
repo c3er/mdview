@@ -277,6 +277,11 @@ An inline footnote.^[This is the inline footnote]
 
 (c) (C) (r) (R) (tm) (TM) (p) (P) +-
 
+### Line breaks
+
+A text with a line break
+in the middle of a paragraph
+
 ### Sub and sup
 
 H~2~0

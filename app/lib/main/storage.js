@@ -41,12 +41,19 @@ class StorageBase {
 class ApplicationSettings extends StorageBase {
     #THEME_KEY = "theme"
     #ZOOM_KEY = "zoom"
+    #LINE_BREAKS_KEY = "line-breaks-enabled"
+    #TYPOGRAPHY_KEY = "typography-enabled"
+    #EMOJIS_KEY = "emojis-enabled"
 
     ZOOM_DEFAULT = 1.0
 
     SYSTEM_THEME = "system"
     LIGHT_THEME = "light"
     DARK_THEME = "dark"
+
+    LINE_BREAKS_ENABLED_DEFAULT = false
+    TYPOGRAPHY_ENABLED_DEFAULT = true
+    EMOJIS_ENABLED_DEFAULT = true
 
     get theme() {
         return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
@@ -68,6 +75,30 @@ class ApplicationSettings extends StorageBase {
 
     set zoom(value) {
         this._storeValue(this.#ZOOM_KEY, value)
+    }
+
+    get lineBreaksEnabled() {
+        return this._loadValue(this.#LINE_BREAKS_KEY, this.LINE_BREAKS_ENABLED_DEFAULT)
+    }
+
+    set lineBreaksEnabled(value) {
+        this._storeValue(this.#LINE_BREAKS_KEY, value)
+    }
+
+    get typographyEnabled() {
+        return this._loadValue(this.#TYPOGRAPHY_KEY, this.TYPOGRAPHY_ENABLED_DEFAULT)
+    }
+
+    set typographyEnabled(value) {
+        this._storeValue(this.#TYPOGRAPHY_KEY, value)
+    }
+
+    get emojisEnabled() {
+        return this._loadValue(this.#EMOJIS_KEY, this.EMOJIS_ENABLED_DEFAULT)
+    }
+
+    set emojisEnabled(value) {
+        this._storeValue(this.#EMOJIS_KEY, value)
     }
 
     _loadValue(key, defaultValue) {

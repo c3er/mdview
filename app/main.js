@@ -11,13 +11,13 @@ const remote = require("@electron/remote/main")
 const cli = require("./lib/main/cli")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
+const documentRendering = require("./lib/documentRendering/documentRenderingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
 const ipc = require("./lib/ipc")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
 
-const DEFAULT_FILE = path.join(__dirname, "..", "README.md")
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 const ZOOM_STEP = 0.1
@@ -344,6 +344,35 @@ function createWindow() {
                         },
                     ],
                 },
+                {
+                    label: "Markdown rendering",
+                    submenu: [
+                        {
+                            label: "Convert line breaks \\n",
+                            type: "checkbox",
+                            id: documentRendering.ENABLE_LINE_BREAKS_MENU_ID,
+                            click() {
+                                documentRendering.switchEnableLineBreaks()
+                            },
+                        },
+                        {
+                            label: "Enable typographic replacements",
+                            type: "checkbox",
+                            id: documentRendering.ENABLE_TYPOGRAPHY_MENU_ID,
+                            click() {
+                                documentRendering.switchEnableTypography()
+                            },
+                        },
+                        {
+                            label: "Convert Emoticons to Emojis",
+                            type: "checkbox",
+                            id: documentRendering.ENABLE_EMOJIS_MENU_ID,
+                            click() {
+                                documentRendering.switchEnableEmojis()
+                            },
+                        },
+                    ],
+                },
             ],
         },
         {
@@ -426,6 +455,7 @@ electron.app.on("activate", () => {
 })
 
 electron.ipcMain.on(ipc.messages.finishLoad, () => {
+    documentRendering.init(_mainWindow, _mainMenu, _applicationSettings)
     setZoom(_applicationSettings.zoom)
 
     const filePath = _cliArgs.filePath
@@ -438,7 +468,7 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
 
     const currentLocation = navigation.getCurrentLocation()
     const filePath = currentLocation.filePath
-    if (isFileModification) {
+    if (isFileModification || !encoding) {
         navigation.reloadCurrent(position)
     } else {
         encodingLib.change(filePath, encoding)
