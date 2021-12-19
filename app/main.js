@@ -348,7 +348,7 @@ function createWindow() {
                     label: "Markdown rendering",
                     submenu: [
                         {
-                            label: "Convert line breaks \\n",
+                            label: "Respect single line breaks",
                             type: "checkbox",
                             id: documentRendering.ENABLE_LINE_BREAKS_MENU_ID,
                             click() {
