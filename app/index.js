@@ -86,6 +86,14 @@ function reload(isFileModification, encoding) {
     )
 }
 
+function handleDOMContentLoadedEvent() {
+    document.title = TITLE
+    contentBlocking.init(document, window)
+    rawText.init(document, window, updateStatusBar)
+    navigation.init(document)
+    electron.ipcRenderer.send(ipc.messages.finishLoad)
+}
+
 function handleContextMenuEvent(event) {
     const MenuItem = remote.MenuItem
     const menu = new remote.Menu()
@@ -126,13 +134,7 @@ function handleContextMenuEvent(event) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    document.title = TITLE
-    contentBlocking.init(document, window)
-    rawText.init(document, window, updateStatusBar)
-    navigation.init(document)
-    electron.ipcRenderer.send(ipc.messages.finishLoad)
-})
+document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
 electron.ipcRenderer.on(
     ipc.messages.fileOpen,
