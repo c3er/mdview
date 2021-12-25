@@ -86,6 +86,46 @@ function reload(isFileModification, encoding) {
     )
 }
 
+function handleContextMenuEvent(event) {
+    const MenuItem = remote.MenuItem
+    const menu = new remote.Menu()
+
+    if (window.getSelection().toString()) {
+        menu.append(
+            new MenuItem({
+                label: "Copy selection",
+                role: "copy",
+            })
+        )
+    }
+
+    const target = fittingTarget(event.target, "A")
+    if (target) {
+        menu.append(
+            new MenuItem({
+                label: "Copy link text",
+                click() {
+                    electron.clipboard.writeText(target.innerText)
+                },
+            })
+        )
+        menu.append(
+            new MenuItem({
+                label: "Copy link target",
+                click() {
+                    electron.clipboard.writeText(target.getAttribute("href"))
+                },
+            })
+        )
+    }
+
+    if (menu.items.length > 0) {
+        menu.popup({
+            window: remote.getCurrentWindow(),
+        })
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.title = TITLE
     contentBlocking.init(document, window)
@@ -162,45 +202,7 @@ electron.ipcRenderer.on(
         }
         document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
-        window.addEventListener("contextmenu", event => {
-            const MenuItem = remote.MenuItem
-            const menu = new remote.Menu()
-
-            if (window.getSelection().toString()) {
-                menu.append(
-                    new MenuItem({
-                        label: "Copy selection",
-                        role: "copy",
-                    })
-                )
-            }
-
-            const target = fittingTarget(event.target, "A")
-            if (target) {
-                menu.append(
-                    new MenuItem({
-                        label: "Copy link text",
-                        click() {
-                            electron.clipboard.writeText(target.innerText)
-                        },
-                    })
-                )
-                menu.append(
-                    new MenuItem({
-                        label: "Copy link target",
-                        click() {
-                            electron.clipboard.writeText(target.getAttribute("href"))
-                        },
-                    })
-                )
-            }
-
-            if (menu.items.length > 0) {
-                menu.popup({
-                    window: remote.getCurrentWindow(),
-                })
-            }
-        })
+        window.addEventListener("contextmenu", handleContextMenuEvent)
     }
 )
 
