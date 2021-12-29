@@ -41,6 +41,14 @@
 
 https://www.google.com/
 
+## Images
+
+![Basic test image](images/image.png)
+
+![Test image with space in file name](<images/test image.png>)
+
+![Image with hash sign in file name](images/image#.png)
+
 ## Heading 1
 
 ### Sub heading 1

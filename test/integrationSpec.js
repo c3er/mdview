@@ -52,7 +52,7 @@ async function clickMenuItemById(app, id) {
 }
 
 function containsConsoleMessage(message) {
-    return !!consoleMessages.find(msg => msg.toLowerCase().includes(message))
+    return !!consoleMessages.find(msg => msg.toLowerCase().includes(message.toLowerCase()))
 }
 
 function hasUnblockedContentMessage() {
@@ -83,6 +83,10 @@ describe("Integration tests with single app instance", () => {
     it("displays blocked content banner", async () => {
         const elem = await page.$(mocking.elements.blockedContentArea.path)
         assert.isTrue(await elem.isVisible())
+    })
+
+    it("loads all local images", () => {
+        assert.isFalse(containsConsoleMessage("ERR_FILE_NOT_FOUND"))
     })
 
     describe('Library "storage"', () => {

@@ -176,7 +176,7 @@ electron.ipcRenderer.on(
         alterTags("img", image => {
             const imageUrl = image.getAttribute("src")
             if (!common.isWebURL(imageUrl)) {
-                image.src = path.join(documentDirectory, imageUrl)
+                image.src = path.join(documentDirectory, imageUrl).replace("#", "%23")
             }
             statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
 
