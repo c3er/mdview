@@ -1,6 +1,7 @@
 const fs = require("fs")
 
 const common = require("./common")
+const log = require("./log/log")
 
 function readBytesSync(filePath, filePosition, numBytesToRead) {
     // Based on https://stackoverflow.com/a/51033457 (Reading data a block at a time, synchronously)
@@ -30,7 +31,7 @@ exports.isText = filePath => {
     try {
         data = readBytesSync(filePath, 0, BYTECOUNT)
     } catch (err) {
-        console.error(err.message)
+        log.error(err.message)
         return false
     }
 

@@ -1,5 +1,7 @@
 const path = require("path")
 
+const log = require("../log/log")
+
 let electron
 
 const DEFAULT_FILE = path.join(__dirname, "..", "..", "..", "README.md")
@@ -45,7 +47,7 @@ function parseTestArgs(args) {
 exports.init = electronMock => (electron = electronMock ?? require("electron"))
 
 exports.parse = args => {
-    console.debug(args)
+    log.debug(args)
     const { isTest, storageDir, storageDirArgIndex } = parseTestArgs(args)
     const parsedArgs = {
         filePath: extractFilePath(args, storageDirArgIndex),
@@ -53,6 +55,6 @@ exports.parse = args => {
         isTest: isTest,
         storageDir: storageDir,
     }
-    console.debug(parsedArgs)
+    log.debug(parsedArgs)
     return parsedArgs
 }

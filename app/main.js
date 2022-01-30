@@ -14,6 +14,7 @@ const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const documentRendering = require("./lib/documentRendering/documentRenderingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
 const ipc = require("./lib/ipc")
+const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
@@ -36,7 +37,7 @@ let _scrollPosition = 0
 let _applicationSettings
 
 function error(msg) {
-    console.error("Error:", msg)
+    log.error("Error:", msg)
     electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
     process.exit(1)
 }
@@ -420,6 +421,7 @@ electron.app.on("ready", () => {
     cli.init()
     _cliArgs = cli.parse(process.argv)
 
+    log.init(_cliArgs.isTest)
     storage.init(_cliArgs.storageDir)
     _applicationSettings = storage.loadApplicationSettings(
         storage.dataDir,
@@ -486,7 +488,7 @@ electron.ipcMain.on(ipc.messages.openInternalInNewWindow, (_, target) =>
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {
-    console.error(`Unhandled error: ${error.stack}`)
+    log.error(`Unhandled error: ${error.stack}`)
     if (!_isTest) {
         electron.dialog.showMessageBoxSync({
             type: "error",
@@ -504,12 +506,12 @@ setInterval(() => {
     const filePath = navigation.getCurrentLocation().filePath
     fs.stat(filePath, (err, stats) => {
         if (err) {
-            console.error(`Updating file "${filePath}" was aborted with error ${err}`)
+            log.error(`Updating file "${filePath}" was aborted with error ${err}`)
             return
         }
         let mtime = stats.mtimeMs
         if (_lastModificationTime && mtime !== _lastModificationTime) {
-            console.debug("Reloading...")
+            log.debug("Reloading...")
             _lastModificationTime = mtime
             reload(true)
         }

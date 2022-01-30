@@ -12,6 +12,7 @@ const documentRendering = require("./lib/documentRendering/documentRenderingRend
 const encodingLib = require("./lib/encoding/encodingRenderer")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc")
+const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
 
@@ -88,6 +89,7 @@ function reload(isFileModification, encoding) {
 
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
+    log.init()
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)

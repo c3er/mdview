@@ -1,5 +1,6 @@
 const common = require("../common")
 const ipc = require("../ipc")
+const log = require("../log/log")
 const navigation = require("../navigation/navigationMain")
 
 const UNBLOCK_CONTENT_MENU_ID = "unblock-content"
@@ -15,7 +16,7 @@ function unblockURL(url) {
     if (!url) {
         throw new Error("No url given")
     }
-    console.log(`Unblocked: ${url}`)
+    log.info(`Unblocked: ${url}`)
     _unblockedURLs.push(url)
 }
 
@@ -40,7 +41,7 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
 
         const url = details.url
         const isBlocked = common.isWebURL(url) && !_unblockedURLs.includes(url)
-        console.log(
+        log.info(
             `${isBlocked ? "Blocked" : "Loading"}: ${url} (${
                 currentTime - lastTime
             } ms since last load)`
@@ -56,7 +57,7 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
     })
     webRequest.onBeforeRedirect(details => {
         const url = details.redirectURL
-        console.log("Redirecting: " + url)
+        log.info("Redirecting: " + url)
         unblockURL(url)
     })
 

@@ -1,5 +1,6 @@
 const common = require("../common")
 const ipc = require("../ipc")
+const log = require("../log/log")
 
 let electron
 
@@ -73,7 +74,7 @@ function unblockURL(url) {
         electron.ipcRenderer.send(ipc.messages.allContentUnblocked)
     }
 
-    console.log(`Unblocked: ${url}`)
+    log.info(`Unblocked: ${url}`)
 }
 
 function unblockAll() {

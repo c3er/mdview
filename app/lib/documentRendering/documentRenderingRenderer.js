@@ -1,5 +1,7 @@
 const hljs = require("highlight.js")
 
+const log = require("../log/log")
+
 let _markdown
 
 function generateCodeText(text, options = {}) {
@@ -35,7 +37,7 @@ exports.reset = options => {
                         { isHighlighted: true }
                     )
                 } catch (err) {
-                    console.error(`Error at highlighting: ${err}`)
+                    log.error(`Error at highlighting: ${err}`)
                 }
             }
             return generateCodeText(_markdown.utils.escapeHtml(text), { isHighlighted: true })

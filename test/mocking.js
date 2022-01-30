@@ -114,8 +114,8 @@ const _electronDefault = {
         on(message, callback) {
             _ipcTorendererChannels.addTarget(message, callback)
         },
-        send(message) {
-            _ipcToMainChannels.send(message, _electronIpcEvent)
+        send(message, ...args) {
+            _ipcToMainChannels.send(message, _electronIpcEvent, ...args)
         },
     },
     nativeTheme: {

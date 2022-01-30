@@ -1,6 +1,8 @@
 const fs = require("fs")
 const path = require("path")
 
+const log = require("../log/log")
+
 let electron
 
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
@@ -25,7 +27,7 @@ class StorageBase {
         try {
             fs.writeFileSync(this._storagePath, JSON.stringify(this._data))
         } catch (error) {
-            console.error(error)
+            log.error(error)
         }
     }
 
