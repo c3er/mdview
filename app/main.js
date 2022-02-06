@@ -398,6 +398,17 @@ function createWindow() {
                         mainWindow.webContents.openDevTools()
                     },
                 },
+                {
+                    label: "De&bug",
+                    submenu: [
+                        {
+                            label: "Throw &exception",
+                            click() {
+                                throw new Error("An exception")
+                            },
+                        },
+                    ],
+                },
             ],
         },
         {
