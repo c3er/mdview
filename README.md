@@ -22,7 +22,7 @@ Following plugins are supported:
 
 ## Installation and usage
 
-You find the latest binaries and setup file [at GitHub](https://github.com/c3er/mdview/releases&/latest). For Windows, there is an installer package and a ZIP archive. For Linux, there is an AppImage package.
+You find the latest binaries and setup file [at GitHub](https://github.com/c3er/mdview/releases/latest). For Windows, there is an installer package and a ZIP archive. For Linux, there is an AppImage package.
 
 ### Windows
 
