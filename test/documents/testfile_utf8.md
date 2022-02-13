@@ -41,6 +41,12 @@ Another link to Google: https://www.google.com/
 
 [LICENSE](../../LICENSE)
 
+## Task list
+
+- [ ] Unchecked item 1
+- [ ] Unchecked item 2
+- [x] Checked item 1
+
 ## Images
 
 ![Basic test image](images/image.png)

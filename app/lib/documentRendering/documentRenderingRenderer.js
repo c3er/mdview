@@ -72,6 +72,7 @@ exports.reset = options => {
         .use(require("markdown-it-new-katex"))
         .use(require("markdown-it-sub"))
         .use(require("markdown-it-sup"))
+        .use(require("markdown-it-task-checkbox"), { disabled: false })
 
     if (options.emojisEnabled) {
         _markdown.use(require("markdown-it-emoji"))
