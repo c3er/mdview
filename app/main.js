@@ -83,6 +83,14 @@ function openFile(filePath, internalTarget, encoding) {
     }
 }
 
+function loadDocumentSettings() {
+    return storage.loadDocumentSettings(
+        storage.dataDir,
+        storage.DOCUMENT_SETTINGS_FILE,
+        determineCurrentFilePath()
+    )
+}
+
 function determineCurrentFilePath() {
     return navigation.hasCurrentLocation()
         ? navigation.getCurrentLocation().filePath
@@ -144,11 +152,7 @@ function changeTheme(theme) {
 }
 
 function createWindow() {
-    const windowPosition = storage.loadDocumentSettings(
-        storage.dataDir,
-        storage.DOCUMENT_SETTINGS_FILE,
-        determineCurrentFilePath()
-    ).windowPosition
+    const windowPosition = loadDocumentSettings().windowPosition
 
     const mainWindow = new electron.BrowserWindow({
         x: windowPosition.x,
@@ -163,11 +167,7 @@ function createWindow() {
         },
     })
     mainWindow.on("close", () => {
-        const documentSettings = storage.loadDocumentSettings(
-            storage.dataDir,
-            storage.DOCUMENT_SETTINGS_FILE,
-            determineCurrentFilePath()
-        )
+        const documentSettings = loadDocumentSettings()
         documentSettings.windowPosition = mainWindow.getBounds()
     })
     mainWindow.on("closed", () => (_mainWindow = null))
