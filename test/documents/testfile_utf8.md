@@ -19,6 +19,8 @@
 
 [External link to Google](http://www.google.com)
 
+Another link to Google: https://www.google.com/
+
 [Link to README.md](../../README.md)
 
 [Internal link](#sub-heading-1)
@@ -39,8 +41,6 @@
 
 [LICENSE](../../LICENSE)
 
-https://www.google.com/
-
 ## Images
 
 ![Basic test image](images/image.png)
@@ -48,6 +48,8 @@ https://www.google.com/
 ![Test image with space in file name](<images/test image.png>)
 
 ![Image with hash sign in file name](images/image#.png)
+
+![Image from the evil Internet](http://placekitten.com/1000/2000)
 
 ## Heading 1
 
@@ -101,10 +103,6 @@ This is another paragraph.
 | Row 1, column 1 | Row 1, column 2 | Row 1, column 3 |
 | Row 2, column 1 | Row 2, column 2 | Row 2, column 3 |
 | Row 3, column 1 | Row 3, column 2 | Row 3, column 3 |
-
-## External image
-
-![Image from the evil Internet](http://placekitten.com/1000/2000)
 
 ## Some JavaScript
 
