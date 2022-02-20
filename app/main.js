@@ -500,7 +500,7 @@ electron.ipcMain.on(ipc.messages.openInternalInNewWindow, (_, target) =>
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {
     log.error(`Unhandled error: ${error.stack}`)
-    if (!_isTest) {
+    if (!_isTest && !process.argv[0].includes("electron")) {
         electron.dialog.showMessageBoxSync({
             type: "error",
             title: "Unhandled error (fault of Markdown Viewer)",
