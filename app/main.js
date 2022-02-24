@@ -317,10 +317,10 @@ function createWindow() {
                     ],
                 },
                 {
-                    label: "Theme",
+                    label: "&Theme",
                     submenu: [
                         {
-                            label: "System Default",
+                            label: "&System Default",
                             type: "radio",
                             id: "system-theme",
                             click() {
@@ -328,7 +328,7 @@ function createWindow() {
                             },
                         },
                         {
-                            label: "Light",
+                            label: "&Light",
                             type: "radio",
                             id: "light-theme",
                             click() {
@@ -336,7 +336,7 @@ function createWindow() {
                             },
                         },
                         {
-                            label: "Dark",
+                            label: "&Dark",
                             type: "radio",
                             id: "dark-theme",
                             click() {
@@ -345,11 +345,12 @@ function createWindow() {
                         },
                     ],
                 },
+                { type: "separator" },
                 {
-                    label: "Markdown Render Options",
+                    label: "Markdown Render &Options",
                     submenu: [
                         {
-                            label: "Respect Single Line Breaks",
+                            label: "Respect Single &Line Breaks",
                             type: "checkbox",
                             id: documentRendering.ENABLE_LINE_BREAKS_MENU_ID,
                             click() {
@@ -357,7 +358,7 @@ function createWindow() {
                             },
                         },
                         {
-                            label: "Enable Typographic Replacements",
+                            label: "Enable &Typographic Replacements",
                             type: "checkbox",
                             id: documentRendering.ENABLE_TYPOGRAPHY_MENU_ID,
                             click() {
@@ -365,7 +366,7 @@ function createWindow() {
                             },
                         },
                         {
-                            label: "Convert Emoticons To Emojis",
+                            label: "Convert &Emoticons To Emojis",
                             type: "checkbox",
                             id: documentRendering.ENABLE_EMOJIS_MENU_ID,
                             click() {

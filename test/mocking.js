@@ -228,37 +228,37 @@ exports.elements = {
                     },
                 },
                 theme: {
-                    label: "Theme",
+                    label: "&Theme",
                     isEnabled: true,
                     sub: [
                         {
-                            label: "System Default",
+                            label: "&System Default",
                             isEnabled: true,
                         },
                         {
-                            label: "Light",
+                            label: "&Light",
                             isEnabled: true,
                         },
                         {
-                            label: "Dark",
+                            label: "&Dark",
                             isEnabled: true,
                         },
                     ],
                 },
                 markdownRendering: {
-                    label: "Markdown Render Options",
+                    label: "Markdown Render &Options",
                     isEnabled: true,
                     sub: [
                         {
-                            label: "Respect Single Line Breaks",
+                            label: "Respect Single &Line Breaks",
                             isEnabled: true,
                         },
                         {
-                            label: "Enable Typographic Replacements",
+                            label: "Enable &Typographic Replacements",
                             isEnabled: true,
                         },
                         {
-                            label: "Convert Emoticons To Emojis",
+                            label: "Convert &Emoticons To Emojis",
                             isEnabled: true,
                         },
                     ],
