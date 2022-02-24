@@ -79,15 +79,9 @@ function canGoForward() {
     return _locations.forward.length > 0
 }
 
-function openFile(filePath, internalTarget, encoding, scrollPosition) {
+function openFile(file) {
     // log.debug(`Navigate to "${_locations.current}"`)
-    _mainWindow.webContents.send(
-        ipc.messages.fileOpen,
-        filePath,
-        internalTarget,
-        encoding,
-        scrollPosition
-    )
+    _mainWindow.webContents.send(ipc.messages.fileOpen, file)
 }
 
 function handleCallbacks(oldLocation, destination) {
@@ -111,12 +105,12 @@ function goStep(canGoCallback, pushDirection, popDirection) {
     allowForward(canGoForward())
 
     const filePath = destination.filePath
-    openFile(
-        filePath,
-        destination.internalTarget,
-        encodingLib.load(filePath),
-        destination.scrollPosition
-    )
+    openFile({
+        path: filePath,
+        internalTarget: destination.internalTarget,
+        encoding: encodingLib.load(filePath),
+        scrollPosition: destination.scrollPosition,
+    })
     handleCallbacks(oldLocation, destination)
 }
 
@@ -136,7 +130,12 @@ function go(filePath, internalTarget, encoding, lastScrollPosition) {
         encoding = encodingLib.load(filePath)
     }
 
-    openFile(filePath, internalTarget, encoding, 0)
+    openFile({
+        path: filePath,
+        internalTarget: internalTarget,
+        encoding: encoding,
+        scrollPosition: 0,
+    })
     handleCallbacks(oldLocation, destination)
 }
 
@@ -171,7 +170,12 @@ exports.go = go
 exports.reloadCurrent = scrollPosition => {
     const currentLoaction = _locations.current
     const filePath = currentLoaction.filePath
-    openFile(filePath, currentLoaction.internalTarget, encodingLib.load(filePath), scrollPosition)
+    openFile({
+        path: filePath,
+        internalTarget: currentLoaction.internalTarget,
+        encoding: encodingLib.load(filePath),
+        scrollPosition: scrollPosition,
+    })
 }
 
 exports.register = (id, callback) => (_callbacks[id] = callback)
