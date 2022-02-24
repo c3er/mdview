@@ -245,6 +245,24 @@ exports.elements = {
                         },
                     ],
                 },
+                markdownRendering: {
+                    label: "Markdown Render Options",
+                    isEnabled: true,
+                    sub: [
+                        {
+                            label: "Respect Single Line Breaks",
+                            isEnabled: true,
+                        },
+                        {
+                            label: "Enable Typographic Replacements",
+                            isEnabled: true,
+                        },
+                        {
+                            label: "Convert Emoticons To Emojis",
+                            isEnabled: true,
+                        },
+                    ],
+                },
             },
         },
         encoding: {
