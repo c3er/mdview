@@ -346,10 +346,10 @@ function createWindow() {
                     ],
                 },
                 {
-                    label: "Markdown rendering",
+                    label: "Markdown Render Options",
                     submenu: [
                         {
-                            label: "Respect single line breaks",
+                            label: "Respect Single Line Breaks",
                             type: "checkbox",
                             id: documentRendering.ENABLE_LINE_BREAKS_MENU_ID,
                             click() {
@@ -357,7 +357,7 @@ function createWindow() {
                             },
                         },
                         {
-                            label: "Enable typographic replacements",
+                            label: "Enable Typographic Replacements",
                             type: "checkbox",
                             id: documentRendering.ENABLE_TYPOGRAPHY_MENU_ID,
                             click() {
@@ -365,7 +365,7 @@ function createWindow() {
                             },
                         },
                         {
-                            label: "Convert Emoticons to Emojis",
+                            label: "Convert Emoticons To Emojis",
                             type: "checkbox",
                             id: documentRendering.ENABLE_EMOJIS_MENU_ID,
                             click() {
