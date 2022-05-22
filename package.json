@@ -68,17 +68,17 @@
     ]
   },
   "dependencies": {
-    "@electron/remote": "2.0.4",
+    "@electron/remote": "2.0.8",
     "about-window": "1.15.2",
     "github-markdown-css": "5.1.0",
     "github-markdown-dracula-css": "4.0.3",
-    "highlight.js": "11.4.0",
+    "highlight.js": "11.5.1",
     "iconv-lite": "0.6.3",
     "jschardet": "3.0.0",
-    "markdown-it": "12.3.2",
+    "markdown-it": "13.0.1",
     "markdown-it-abbr": "1.0.4",
     "markdown-it-container": "3.0.0",
-    "markdown-it-emoji": "2.0.0",
+    "markdown-it-emoji": "2.0.2",
     "markdown-it-footnote": "3.0.3",
     "markdown-it-headinganchor": "1.3.0",
     "markdown-it-mark": "3.0.1",
@@ -90,12 +90,12 @@
   },
   "devDependencies": {
     "chai": "4.3.6",
-    "electron": "17.0.0",
-    "electron-builder": "22.14.13",
+    "electron": "18.2.4",
+    "electron-builder": "23.0.3",
     "lodash.clonedeep": "4.5.0",
-    "mocha": "9.2.0",
-    "playwright": "1.19.0",
-    "prettier": "2.5.1",
-    "tslib": "2.3.1"
+    "mocha": "10.0.0",
+    "playwright": "1.22.2",
+    "prettier": "2.6.2",
+    "tslib": "2.4.0"
   }
 }
