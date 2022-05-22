@@ -44,8 +44,10 @@
     },
     "mac": {
       "target": [
-        "default"
-      ]
+        "dmg"
+      ],
+      "category": "public.app-category.utilities",
+      "icon": "icon/md.icns"
     },
     "win": {
       "target": [
