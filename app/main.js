@@ -186,6 +186,14 @@ function createWindow() {
                 // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
                 event.preventDefault()
                 zoomIn()
+            } else if (
+                process.platform === "darwin" &&
+                input.modifiers.includes("meta") &&
+                input.key === "q"
+            ) {
+                // Cmd+Q on MacOS
+                event.preventDefault()
+                electron.app.quit()
             }
         }
     })
@@ -226,7 +234,7 @@ function createWindow() {
                 },
                 {
                     label: "&Print",
-                    accelerator: "Ctrl+P",
+                    accelerator: "CmdOrCtrl+P",
                     click() {
                         mainWindow.webContents.print()
                     },
