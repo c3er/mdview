@@ -77,9 +77,10 @@ describe("Content blocking", () => {
         const ipc = require("../app/lib/ipc/ipcRenderer")
         const contentBlocking = require("../app/lib/contentBlocking/contentBlockingRenderer")
 
-        beforeEach(() =>
+        beforeEach(() => {
+            ipc.init(mocking.electron)
             contentBlocking.init(mocking.document, mocking.window, mocking.electron, true)
-        )
+        })
 
         afterEach(() => {
             mocking.clear()

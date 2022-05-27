@@ -50,9 +50,10 @@ describe("Raw text", () => {
             statusBarUpdateCallback(text)
         }
 
-        beforeEach(() =>
+        beforeEach(() => {
+            ipc.init(mocking.electron)
             rawText.init(mocking.document, mocking.window, updateStatusBar, mocking.electron)
-        )
+        })
 
         afterEach(() => mocking.clear())
 

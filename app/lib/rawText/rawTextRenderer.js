@@ -11,14 +11,11 @@ function switchRawView(isRawView) {
     contentBlocking.changeInfoElementVisiblity(!isRawView && contentBlocking.hasBlockedElements())
 }
 
-exports.init = (document, window, updateStatusBar, electronMock) => {
-    const electron = electronMock ?? require("electron")
+exports.init = (document, window, updateStatusBar) => {
     _document = document
     _updateStatusBar = updateStatusBar
 
-    contentBlocking.init(document, window, electron)
-
-    electron.ipcRenderer.on(ipc.messages.viewRawText, () => switchRawView(true))
-
-    electron.ipcRenderer.on(ipc.messages.leaveRawText, () => switchRawView(false))
+    contentBlocking.init(document, window)
+    ipc.listen(ipc.messages.viewRawText, () => switchRawView(true))
+    ipc.listen(ipc.messages.leaveRawText, () => switchRawView(false))
 }

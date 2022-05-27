@@ -2,8 +2,6 @@ const common = require("../common")
 const ipc = require("../ipc/ipcRenderer")
 const log = require("../log/log")
 
-let electron
-
 const _elementIDs = {
     element: "blocked-content-info",
     textContainer: "blocked-content-info-text-container",
@@ -48,7 +46,7 @@ function hasBlockedElements() {
 }
 
 function unblockURL(url) {
-    electron.ipcRenderer.send(ipc.messages.unblockURL, url)
+    ipc.send(ipc.messages.unblockURL, url)
 
     const elements = _blockedElements[url]
     if (elements) {
@@ -71,7 +69,7 @@ function unblockURL(url) {
 
     if (!hasBlockedElements()) {
         changeInfoElementVisiblity(false)
-        electron.ipcRenderer.send(ipc.messages.allContentUnblocked)
+        ipc.send(ipc.messages.allContentUnblocked)
     }
 
     log.info(`Unblocked: ${url}`)
@@ -87,16 +85,15 @@ function reset() {
     _blockedElements = {}
 }
 
-exports.init = (document, window, electronMock, shallForceInitialization) => {
+exports.init = (document, window, shallForceInitialization) => {
     if (_isInitialized && !shallForceInitialization) {
         return
     }
 
     _document = document
     _window = window
-    electron = electronMock ?? require("electron")
 
-    electron.ipcRenderer.on(ipc.messages.contentBlocked, (_, url) => {
+    ipc.listen(ipc.messages.contentBlocked, url => {
         const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
         elements.forEach(element => (element.onclick = () => unblockURL(url)))
 
@@ -105,10 +102,8 @@ exports.init = (document, window, electronMock, shallForceInitialization) => {
         _document.getElementById(_elementIDs.closeButton).onclick = () =>
             changeInfoElementVisiblity(false)
     })
-
-    electron.ipcRenderer.on(ipc.messages.resetContentBlocking, reset)
-
-    electron.ipcRenderer.on(ipc.messages.unblockAll, unblockAll)
+    ipc.listen(ipc.messages.resetContentBlocking, reset)
+    ipc.listen(ipc.messages.unblockAll, unblockAll)
 
     _isInitialized = true
 }

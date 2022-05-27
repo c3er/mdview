@@ -79,7 +79,7 @@ function scrollTo(position) {
 }
 
 function reload(isFileModification, encoding) {
-    electron.ipcRenderer.send(
+    ipc.send(
         ipc.messages.reloadPrepared,
         isFileModification,
         encoding,
@@ -89,11 +89,14 @@ function reload(isFileModification, encoding) {
 
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
+
+    ipc.init()
     log.init()
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)
-    electron.ipcRenderer.send(ipc.messages.finishLoad)
+
+    ipc.send(ipc.messages.finishLoad)
 }
 
 function handleContextMenuEvent(event) {
@@ -138,7 +141,7 @@ function handleContextMenuEvent(event) {
 
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
-electron.ipcRenderer.on(ipc.messages.fileOpen, (_, file) => {
+ipc.listen(ipc.messages.fileOpen, file => {
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
 
@@ -147,7 +150,7 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, file) => {
     let encoding = file.encoding
     if (!encoding) {
         encoding = encodingLib.detect(buffer)
-        electron.ipcRenderer.send(ipc.messages.changeEncoding, filePath, encoding)
+        ipc.send(ipc.messages.changeEncoding, filePath, encoding)
     }
     let content = encodingLib.decode(buffer, encoding)
 
@@ -155,9 +158,9 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, file) => {
         const pathParts = filePath.split(".")
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
         content = "```" + language + "\n" + content + "\n```"
-        electron.ipcRenderer.send(ipc.messages.disableRawView)
+        ipc.send(ipc.messages.disableRawView)
     } else {
-        electron.ipcRenderer.send(ipc.messages.enableRawView)
+        ipc.send(ipc.messages.enableRawView)
     }
 
     // URLs in cotaining style definitions have to be altered before rendering
@@ -209,17 +212,13 @@ electron.ipcRenderer.on(ipc.messages.fileOpen, (_, file) => {
     window.addEventListener("contextmenu", handleContextMenuEvent)
 })
 
-electron.ipcRenderer.on(ipc.messages.prepareReload, (_, isFileModification, encoding) =>
-    reload(isFileModification, encoding)
-)
+ipc.listen(ipc.messages.prepareReload, reload)
 
-electron.ipcRenderer.on(ipc.messages.restorePosition, (_, position) => scrollTo(position))
+ipc.listen(ipc.messages.restorePosition, scrollTo)
 
-electron.ipcRenderer.on(ipc.messages.changeZoom, (_, zoomFactor) =>
-    electron.webFrame.setZoomFactor(zoomFactor)
-)
+ipc.listen(ipc.messages.changeZoom, zoomFactor => electron.webFrame.setZoomFactor(zoomFactor))
 
-electron.ipcRenderer.on(ipc.messages.changeRenderingOptions, (_, options) => {
+ipc.listen(ipc.messages.changeRenderingOptions, options => {
     documentRendering.reset(options)
     reload(false)
 })
