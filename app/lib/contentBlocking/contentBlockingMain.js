@@ -1,5 +1,5 @@
 const common = require("../common")
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipc")
 const log = require("../log/log")
 const navigation = require("../navigation/navigationMain")
 

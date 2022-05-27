@@ -2,7 +2,7 @@ const path = require("path")
 
 const common = require("../common")
 const file = require("../file")
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipc")
 
 let electron
 

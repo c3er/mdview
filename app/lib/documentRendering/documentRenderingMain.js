@@ -1,4 +1,4 @@
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipc")
 
 const ENABLE_LINE_BREAKS_MENU_ID = "enable-line-breaks"
 const ENABLE_TYPOGRAPHY_MENU_ID = "enable-typographic-replacements"

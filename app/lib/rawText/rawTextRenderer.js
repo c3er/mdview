@@ -1,5 +1,5 @@
 const contentBlocking = require("../contentBlocking/contentBlockingRenderer")
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipc")
 
 let _document
 let _updateStatusBar

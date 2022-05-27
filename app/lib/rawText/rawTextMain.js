@@ -1,4 +1,4 @@
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipc")
 
 const VIEW_RAW_TEXT_MENU_ID = "view-raw-text"
 

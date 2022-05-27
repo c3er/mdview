@@ -4,7 +4,7 @@ const assert = require("chai").assert
 
 const mocking = require("./mocking")
 
-const ipc = require("../app/lib/ipc")
+const ipc = require("../app/lib/ipc/ipc")
 
 const documentDirectory = path.join(__dirname, "documents", "navigation")
 const mdFilePath1 = path.join(documentDirectory, "file1.md")

@@ -1,4 +1,4 @@
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipc")
 
 const shared = require("./logShared")
 

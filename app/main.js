@@ -13,7 +13,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const documentRendering = require("./lib/documentRendering/documentRenderingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
-const ipc = require("./lib/ipc")
+const ipc = require("./lib/ipc/ipc")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
@@ -151,61 +151,8 @@ function changeTheme(theme) {
     ).checked = true
 }
 
-function createWindow() {
-    const windowPosition = loadDocumentSettings().windowPosition
-
-    const mainWindow = new electron.BrowserWindow({
-        x: windowPosition.x,
-        y: windowPosition.y,
-        width: windowPosition.width,
-        height: windowPosition.height,
-        backgroundColor: "#fff",
-        webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true,
-            contextIsolation: false,
-        },
-    })
-    mainWindow.on("close", () => {
-        const documentSettings = loadDocumentSettings()
-        documentSettings.windowPosition = mainWindow.getBounds()
-    })
-    mainWindow.on("closed", () => (_mainWindow = null))
-    mainWindow.webContents.on("did-finish-load", () => {
-        if (_isReloading) {
-            restorePosition()
-            _isReloading = false
-        }
-    })
-    mainWindow.webContents.on("before-input-event", (event, input) => {
-        if (input.type === "keyDown") {
-            if (input.key === "Backspace") {
-                event.preventDefault()
-                navigation.back()
-            } else if (input.control && input.key === "+") {
-                // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
-                event.preventDefault()
-                zoomIn()
-            } else if (
-                process.platform === "darwin" &&
-                input.modifiers.includes("meta") &&
-                input.key === "q"
-            ) {
-                // Cmd+Q on MacOS
-                event.preventDefault()
-                electron.app.quit()
-            }
-        }
-    })
-
-    remote.initialize()
-    remote.enable(mainWindow.webContents)
-
-    mainWindow.loadFile(path.join(__dirname, "index.html"))
-
-    electron.nativeTheme.themeSource = _applicationSettings.theme
-
-    const mainMenu = electron.Menu.buildFromTemplate([
+function createMainMenu() {
+    return electron.Menu.buildFromTemplate([
         {
             label: "&File",
             submenu: [
@@ -236,7 +183,7 @@ function createWindow() {
                     label: "&Print",
                     accelerator: "CmdOrCtrl+P",
                     click() {
-                        mainWindow.webContents.print()
+                        _mainWindow.webContents.print()
                     },
                 },
                 { type: "separator" },
@@ -244,7 +191,7 @@ function createWindow() {
                     label: "&Quit",
                     accelerator: "Esc",
                     click() {
-                        mainWindow.close()
+                        _mainWindow.close()
                     },
                 },
             ],
@@ -404,7 +351,7 @@ function createWindow() {
                     label: "&Developer Tools",
                     accelerator: "F10",
                     click() {
-                        mainWindow.webContents.openDevTools()
+                        _mainWindow.webContents.openDevTools()
                     },
                 },
                 {
@@ -426,15 +373,66 @@ function createWindow() {
                 {
                     label: "&About",
                     click() {
-                        showAboutDialog(mainWindow)
+                        showAboutDialog(_mainWindow)
                     },
                 },
             ],
         },
     ])
-    electron.Menu.setApplicationMenu(mainMenu)
+}
 
-    return [mainWindow, mainMenu]
+function createWindow() {
+    const windowPosition = loadDocumentSettings().windowPosition
+
+    const mainWindow = new electron.BrowserWindow({
+        x: windowPosition.x,
+        y: windowPosition.y,
+        width: windowPosition.width,
+        height: windowPosition.height,
+        backgroundColor: "#fff",
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true,
+            contextIsolation: false,
+        },
+    })
+    mainWindow.on("close", () => {
+        const documentSettings = loadDocumentSettings()
+        documentSettings.windowPosition = mainWindow.getBounds()
+    })
+    mainWindow.on("closed", () => (_mainWindow = null))
+    mainWindow.webContents.on("did-finish-load", () => {
+        if (_isReloading) {
+            restorePosition()
+            _isReloading = false
+        }
+    })
+    mainWindow.webContents.on("before-input-event", (event, input) => {
+        if (input.type === "keyDown") {
+            if (input.key === "Backspace") {
+                event.preventDefault()
+                navigation.back()
+            } else if (input.control && input.key === "+") {
+                // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
+                event.preventDefault()
+                zoomIn()
+            } else if (
+                process.platform === "darwin" &&
+                input.modifiers.includes("meta") &&
+                input.key === "q"
+            ) {
+                // Cmd+Q on MacOS
+                event.preventDefault()
+                electron.app.quit()
+            }
+        }
+    })
+
+    remote.enable(mainWindow.webContents)
+
+    mainWindow.loadFile(path.join(__dirname, "index.html"))
+
+    return mainWindow
 }
 
 electron.app.whenReady().then(() => {
@@ -448,22 +446,27 @@ electron.app.whenReady().then(() => {
         storage.APPLICATION_SETTINGS_FILE
     )
 
-    const [mainWindow, mainMenu] = createWindow()
-    _mainWindow = mainWindow
-    _mainMenu = mainMenu
+    remote.initialize()
+    electron.nativeTheme.themeSource = _applicationSettings.theme
+
+    _mainMenu = createMainMenu()
+    electron.Menu.setApplicationMenu(_mainMenu)
+
+    _mainWindow = createWindow()
 
     changeTheme(_applicationSettings.theme)
 
-    navigation.init(mainWindow, mainMenu)
-    encodingLib.init(mainMenu)
-    contentBlocking.init(mainWindow, mainMenu)
-    rawText.init(mainWindow, mainMenu)
+    // XXX _mainWindow can be destroyed and reinitialized in MacOS
+    navigation.init(_mainWindow, _mainMenu)
+    encodingLib.init(_mainMenu)
+    contentBlocking.init(_mainWindow, _mainMenu)
+    rawText.init(_mainWindow, _mainMenu)
 
-    electron.app.on("activate", function () {
+    electron.app.on("activate", () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (electron.BrowserWindow.getAllWindows().length === 0) {
-            ;[_mainWindow, _mainMenu] = createWindow()
+            _mainWindow = createWindow()
         }
     })
 })

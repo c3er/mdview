@@ -1,6 +1,6 @@
 const assert = require("chai").assert
 
-const ipc = require("../app/lib/ipc")
+const ipc = require("../app/lib/ipc/ipc")
 
 const mocking = require("./mocking")
 

@@ -2,7 +2,7 @@ const assert = require("chai").assert
 
 const mocking = require("./mocking")
 
-const ipc = require("../app/lib/ipc")
+const ipc = require("../app/lib/ipc/ipc")
 
 describe("Raw text", () => {
     describe("Main part", () => {
