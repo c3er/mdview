@@ -2,10 +2,9 @@ const assert = require("chai").assert
 
 const mocking = require("./mocking")
 
-const ipc = require("../app/lib/ipc/ipc")
-
 describe("Raw text", () => {
     describe("Main part", () => {
+        const ipc = require("../app/lib/ipc/ipcMain")
         const rawText = require("../app/lib/rawText/rawTextMain")
 
         beforeEach(() => rawText.init(mocking.mainWindow, mocking.mainMenu, mocking.electron))
@@ -38,6 +37,7 @@ describe("Raw text", () => {
     })
 
     describe("Renderer part", () => {
+        const ipc = require("../app/lib/ipc/ipcRenderer")
         const rawText = require("../app/lib/rawText/rawTextRenderer")
 
         let statusBarUpdateCallback

@@ -2,12 +2,11 @@ const assert = require("chai").assert
 
 const mocking = require("./mocking")
 
-const ipc = require("../app/lib/ipc/ipc")
-
 describe("Content blocking", () => {
     const expectedUrl = "http://example.com"
 
     describe("Main part", () => {
+        const ipc = require("../app/lib/ipc/ipcMain")
         const contentBlocking = require("../app/lib/contentBlocking/contentBlockingMain")
 
         beforeEach(() =>
@@ -74,6 +73,7 @@ describe("Content blocking", () => {
     })
 
     describe("Renderer part", () => {
+        const ipc = require("../app/lib/ipc/ipcRenderer")
         const contentBlocking = require("../app/lib/contentBlocking/contentBlockingRenderer")
 
         beforeEach(() =>

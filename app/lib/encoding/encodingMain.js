@@ -1,5 +1,5 @@
 const encodingShared = require("./encodingShared")
-const ipc = require("../ipc/ipc")
+const ipc = require("../ipc/ipcMain")
 const storage = require("../main/storage")
 
 let electron

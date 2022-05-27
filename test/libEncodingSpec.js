@@ -1,11 +1,10 @@
 const assert = require("chai").assert
 
-const ipc = require("../app/lib/ipc/ipc")
-
 const mocking = require("./mocking")
 
 describe("Encoding library", () => {
     describe("Main part", () => {
+        const ipc = require("../app/lib/ipc/ipcMain")
         const encodingLib = require("../app/lib/encoding/encodingMain")
 
         const encoding = "utf16le"

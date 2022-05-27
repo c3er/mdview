@@ -1,5 +1,5 @@
 const common = require("../common")
-const ipc = require("../ipc/ipc")
+const ipc = require("../ipc/ipcRenderer")
 const log = require("../log/log")
 
 let electron

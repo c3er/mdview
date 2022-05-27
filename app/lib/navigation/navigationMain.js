@@ -1,5 +1,5 @@
 const encodingLib = require("../encoding/encodingMain")
-const ipc = require("../ipc/ipc")
+const ipc = require("../ipc/ipcMain")
 
 let electron
 
