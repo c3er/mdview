@@ -43,9 +43,7 @@ describe("Navigation", () => {
             navigation.forward()
         }
 
-        beforeEach(() =>
-            navigation.init(mocking.mainWindow, mocking.mainMenu, mocking.electron, mocking.dataDir)
-        )
+        beforeEach(() => navigation.init(mocking.mainMenu, mocking.dataDir))
 
         it("goes to a Markdown file without previous history", () => {
             go(mdFilePath1)

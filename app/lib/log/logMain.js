@@ -2,8 +2,6 @@ const ipc = require("../ipc/ipcMain")
 
 const shared = require("./logShared")
 
-let electron
-
 function debug(...args) {
     shared.output(shared.debugMessages, console.debug, args)
 }
@@ -16,14 +14,13 @@ function error(...args) {
     shared.output(shared.errorMessages, console.error, args)
 }
 
-exports.init = (isTest, electronMock) => {
-    electron = electronMock ?? require("electron")
+exports.init = isTest => {
     shared.init(isTest)
     shared.clearMessages()
 
-    electron.ipcMain.on(ipc.messages.logToMainDebug, (_, ...args) => debug(...args))
-    electron.ipcMain.on(ipc.messages.logToMainInfo, (_, ...args) => info(...args))
-    electron.ipcMain.on(ipc.messages.logToMainError, (_, ...args) => error(...args))
+    ipc.listen(ipc.messages.logToMainDebug, debug)
+    ipc.listen(ipc.messages.logToMainInfo, info)
+    ipc.listen(ipc.messages.logToMainError, error)
 }
 
 exports.debug = debug

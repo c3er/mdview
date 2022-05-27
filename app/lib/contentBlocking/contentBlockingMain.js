@@ -6,7 +6,6 @@ const navigation = require("../navigation/navigationMain")
 const UNBLOCK_CONTENT_MENU_ID = "unblock-content"
 const CONTENT_BLOCKING_NAV_ID = "content-blocking"
 
-let _mainWindow
 let _mainMenu
 
 let _contentIsBlocked = false
@@ -28,9 +27,8 @@ exports.UNBLOCK_CONTENT_MENU_ID = UNBLOCK_CONTENT_MENU_ID
 
 exports.unblockedURLs = _unblockedURLs
 
-exports.init = (mainWindow, mainMenu, electronMock) => {
+exports.init = (mainMenu, electronMock) => {
     const electron = electronMock ?? require("electron")
-    _mainWindow = mainWindow
     _mainMenu = mainMenu
 
     let lastTime = Date.now()
@@ -49,7 +47,7 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
         callback({ cancel: isBlocked })
         if (isBlocked) {
             _contentIsBlocked = true
-            _mainWindow.webContents.send(ipc.messages.contentBlocked, url)
+            ipc.send(ipc.messages.contentBlocked, url)
         }
         allowUnblockContent(_contentIsBlocked)
 
@@ -61,9 +59,9 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
         unblockURL(url)
     })
 
-    electron.ipcMain.on(ipc.messages.unblockURL, (_, url) => unblockURL(url))
+    ipc.listen(ipc.messages.unblockURL, unblockURL)
 
-    electron.ipcMain.on(ipc.messages.allContentUnblocked, () => {
+    ipc.listen(ipc.messages.allContentUnblocked, () => {
         _contentIsBlocked = false
         allowUnblockContent(false)
     })
@@ -75,7 +73,7 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
         _contentIsBlocked = info?.contentIsBlocked ?? false
         _unblockedURLs = info?.unblockedURLs ?? []
 
-        _mainWindow.webContents.send(ipc.messages.resetContentBlocking)
+        ipc.send(ipc.messages.resetContentBlocking)
 
         return {
             contentIsBlocked: contentIsBlocked,
@@ -84,6 +82,6 @@ exports.init = (mainWindow, mainMenu, electronMock) => {
     })
 }
 
-exports.unblockAll = () => _mainWindow.webContents.send(ipc.messages.unblockAll)
+exports.unblockAll = () => ipc.send(ipc.messages.unblockAll)
 
 exports.clearUnblockedURLs = () => (_unblockedURLs.length = 0)

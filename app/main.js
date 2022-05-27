@@ -107,7 +107,7 @@ function createChildWindow(filePath, internalTarget) {
 }
 
 function reload(isFileModification, encoding) {
-    _mainWindow.webContents.send(
+    ipc.send(
         ipc.messages.prepareReload,
         isFileModification,
         encoding ?? encodingLib.load(navigation.getCurrentLocation().filePath)
@@ -115,12 +115,12 @@ function reload(isFileModification, encoding) {
 }
 
 function restorePosition() {
-    _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
+    ipc.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
 function setZoom(zoomFactor) {
     _applicationSettings.zoom = zoomFactor
-    _mainWindow.webContents.send(ipc.messages.changeZoom, _applicationSettings.zoom)
+    ipc.send(ipc.messages.changeZoom, _applicationSettings.zoom)
 }
 
 function zoomIn() {
@@ -456,17 +456,18 @@ electron.app.whenReady().then(() => {
 
     changeTheme(_applicationSettings.theme)
 
-    // XXX _mainWindow can be destroyed and reinitialized in MacOS
-    navigation.init(_mainWindow, _mainMenu)
+    ipc.init(_mainWindow)
+    navigation.init(_mainMenu)
     encodingLib.init(_mainMenu)
-    contentBlocking.init(_mainWindow, _mainMenu)
-    rawText.init(_mainWindow, _mainMenu)
+    contentBlocking.init(_mainMenu)
+    rawText.init(_mainMenu)
 
     electron.app.on("activate", () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (electron.BrowserWindow.getAllWindows().length === 0) {
             _mainWindow = createWindow()
+            ipc.reset(_mainWindow)
         }
     })
 })
@@ -480,15 +481,15 @@ electron.app.on("window-all-closed", () => {
     }
 })
 
-electron.ipcMain.on(ipc.messages.finishLoad, () => {
-    documentRendering.init(_mainWindow, _mainMenu, _applicationSettings)
+ipc.listen(ipc.messages.finishLoad, () => {
+    documentRendering.init(_mainMenu, _applicationSettings)
     setZoom(_applicationSettings.zoom)
 
     const filePath = _cliArgs.filePath
     openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
 })
 
-electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
+ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
 
@@ -504,9 +505,9 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
     restorePosition()
 })
 
-electron.ipcMain.on(ipc.messages.openFileInNewWindow, (_, filePath) => createChildWindow(filePath))
+ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
 
-electron.ipcMain.on(ipc.messages.openInternalInNewWindow, (_, target) =>
+ipc.listen(ipc.messages.openInternalInNewWindow, target =>
     createChildWindow(navigation.getCurrentLocation().filePath, target)
 )
 

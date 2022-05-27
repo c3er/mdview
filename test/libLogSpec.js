@@ -15,7 +15,10 @@ describe("Logging", () => {
             assert.deepInclude(messageArray, [testMessage])
         }
 
-        beforeEach(() => log.init(true, mocking.electron))
+        beforeEach(() => {
+            ipc.init(mocking.mainWindow, mocking.electron)
+            log.init(true)
+        })
 
         it("receives debug message from renderer process", () => {
             assertMessageFromrenderer(ipc.messages.logToMainDebug, log.debugMessages)

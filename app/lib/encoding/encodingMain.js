@@ -2,8 +2,6 @@ const encodingShared = require("./encodingShared")
 const ipc = require("../ipc/ipcMain")
 const storage = require("../main/storage")
 
-let electron
-
 const _documentSettings = {}
 
 let _mainMenu
@@ -76,14 +74,11 @@ exports.ENCODINGS = [
     "UTF-16LE",
 ]
 
-exports.init = (mainMenu, storageDir, electronMock) => {
-    electron = electronMock ?? require("electron")
+exports.init = (mainMenu, storageDir) => {
     _mainMenu = mainMenu
     _storageDir = storageDir ?? storage.dataDir
 
-    electron.ipcMain.on(ipc.messages.changeEncoding, (_, filePath, encoding) =>
-        changeEncoding(filePath, encoding)
-    )
+    ipc.listen(ipc.messages.changeEncoding, changeEncoding)
 }
 
 exports.toId = toId
