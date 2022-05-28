@@ -28,6 +28,8 @@
     "format": "prettier --write ."
   },
   "build": {
+    "productName": "Markdown Viewer",
+    "artifactName": "${name}-${version}-${arch}.${ext}",
     "nsis": {
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
@@ -36,6 +38,9 @@
       "oneClick": false,
       "perMachine": false,
       "shortcutName": "Markdown Viewer"
+    },
+    "dmg": {
+      "title": "Markdown Viewer"
     },
     "linux": {
       "target": [
