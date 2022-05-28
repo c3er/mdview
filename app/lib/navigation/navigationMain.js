@@ -1,11 +1,10 @@
 const encodingLib = require("../encoding/encodingMain")
 const ipc = require("../ipc/ipcMain")
 
-let electron
-
 const BACK_MENU_ID = "back"
 const FORWARD_MENU_ID = "forward"
 
+let _isInitialized = false
 let _mainMenu
 
 const _locations = {
@@ -151,10 +150,11 @@ exports.init = (mainMenu, storageDir) => {
     ipc.listen(ipc.messages.openFile, (filePath, lastScrollPosition) =>
         go(filePath, null, null, lastScrollPosition)
     )
-
     ipc.listen(ipc.messages.openInternal, (target, lastScrollPosition) =>
         go(_locations.current.filePath, target, null, lastScrollPosition)
     )
+
+    _isInitialized = true
 }
 
 exports.back = () => goStep(canGoBack, _locations.forward, _locations.back)
@@ -183,3 +183,5 @@ exports.hasCurrentLocation = () => !!_locations.current
 exports.canGoBack = canGoBack
 
 exports.canGoForward = canGoForward
+
+exports.isInitialized = () => _isInitialized

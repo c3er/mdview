@@ -428,6 +428,15 @@ function createWindow() {
     return mainWindow
 }
 
+function ensureWindowExists() {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (electron.BrowserWindow.getAllWindows().length === 0) {
+        _mainWindow = createWindow()
+        ipc.reset(_mainWindow)
+    }
+}
+
 electron.app.whenReady().then(() => {
     cli.init()
     _cliArgs = cli.parse(process.argv)
@@ -455,14 +464,7 @@ electron.app.whenReady().then(() => {
     contentBlocking.init(_mainMenu)
     rawText.init(_mainMenu)
 
-    electron.app.on("activate", () => {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (electron.BrowserWindow.getAllWindows().length === 0) {
-            _mainWindow = createWindow()
-            ipc.reset(_mainWindow)
-        }
-    })
+    electron.app.on("activate", ensureWindowExists)
 
     if (process.platform === "darwin") {
         electron.globalShortcut.register("Command+Q", () => electron.app.quit())
@@ -481,7 +483,12 @@ electron.app.on("window-all-closed", () => {
 // Mac specific event handler
 electron.app.on("open-file", (event, path) => {
     event.preventDefault()
-    _filePath = path
+    if (navigation.isInitialized()) {
+        ensureWindowExists()
+        navigation.go(path)
+    } else {
+        _filePath = path
+    }
 })
 
 ipc.listen(ipc.messages.finishLoad, () => {
