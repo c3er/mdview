@@ -191,7 +191,7 @@ function createMainMenu() {
                     label: "&Quit",
                     accelerator: "Esc",
                     click() {
-                        _mainWindow.close()
+                        _mainWindow?.close()
                     },
                 },
             ],
@@ -416,14 +416,6 @@ function createWindow() {
                 // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
                 event.preventDefault()
                 zoomIn()
-            } else if (
-                process.platform === "darwin" &&
-                input.modifiers.includes("meta") &&
-                input.key === "q"
-            ) {
-                // Cmd+Q on MacOS
-                event.preventDefault()
-                electron.app.quit()
             }
         }
     })
@@ -470,6 +462,10 @@ electron.app.whenReady().then(() => {
             ipc.reset(_mainWindow)
         }
     })
+
+    if (process.platform === "darwin") {
+        electron.globalShortcut.register("Command+Q", () => electron.app.quit())
+    }
 })
 
 electron.app.on("window-all-closed", () => {
