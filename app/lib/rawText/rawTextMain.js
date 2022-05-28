@@ -22,7 +22,6 @@ exports.init = mainMenu => {
         enterRawTextView(false)
         _mainMenu.getMenuItemById(VIEW_RAW_TEXT_MENU_ID).enabled = false
     })
-
     ipc.listen(ipc.messages.enableRawView, () => {
         enterRawTextView(false)
         _mainMenu.getMenuItemById(VIEW_RAW_TEXT_MENU_ID).enabled = true

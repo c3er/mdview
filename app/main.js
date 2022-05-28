@@ -393,7 +393,6 @@ function createMainMenu() {
 
 function createWindow() {
     const windowPosition = loadDocumentSettings().windowPosition
-
     const mainWindow = new electron.BrowserWindow({
         x: windowPosition.x,
         y: windowPosition.y,
@@ -429,11 +428,8 @@ function createWindow() {
             }
         }
     })
-
     remote.enable(mainWindow.webContents)
-
     mainWindow.loadFile(path.join(__dirname, "index.html"))
-
     return mainWindow
 }
 
