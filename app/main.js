@@ -25,6 +25,7 @@ const ZOOM_STEP = 0.1
 
 let _cliArgs
 let _isTest = false
+let _filePath
 
 let _mainWindow
 let _mainMenu
@@ -477,11 +478,17 @@ electron.app.on("window-all-closed", () => {
     }
 })
 
+// Mac specific event handler
+electron.app.on("open-file", (event, path) => {
+    event.preventDefault()
+    _filePath = path
+})
+
 ipc.listen(ipc.messages.finishLoad, () => {
     documentRendering.init(_mainMenu, _applicationSettings)
     setZoom(_applicationSettings.zoom)
 
-    const filePath = _cliArgs.filePath
+    const filePath = _filePath ?? _cliArgs.filePath
     openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
 })
 
