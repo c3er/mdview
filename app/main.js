@@ -43,6 +43,10 @@ function error(msg) {
     process.exit(1)
 }
 
+function isMacOS() {
+    return process.platform === "darwin"
+}
+
 function showAboutDialog(parentWindow) {
     const POSITION_OFFSET = 20
     const parentPosition = parentWindow.getBounds()
@@ -50,7 +54,12 @@ function showAboutDialog(parentWindow) {
     const aboutDialog = aboutWindow.default({
         adjust_window_size: true,
         copyright: "Copyright © Christian Dreier",
-        icon_path: path.join(__dirname, "..", "icon", "md-icon.svg"),
+        icon_path: path.join(
+            __dirname,
+            "..",
+            "icon",
+            isMacOS() ? "md-mac-icon.svg" : "md-icon.svg"
+        ),
         package_json_dir: path.join(__dirname, ".."),
         product_name: "Markdown Viewer",
         win_options: {
@@ -466,7 +475,7 @@ electron.app.whenReady().then(() => {
 
     electron.app.on("activate", ensureWindowExists)
 
-    if (process.platform === "darwin") {
+    if (isMacOS()) {
         electron.globalShortcut.register("Command+Q", () => electron.app.quit())
     }
 })
@@ -475,7 +484,7 @@ electron.app.on("window-all-closed", () => {
     // Quit when all windows are closed, except on macOS. There, it's common
     // for applications and their menu bar to stay active until the user quits
     // explicitly with Cmd + Q.
-    if (process.platform !== "darwin") {
+    if (!isMacOS()) {
         electron.app.quit()
     }
 })
