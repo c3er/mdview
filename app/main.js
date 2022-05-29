@@ -25,7 +25,7 @@ const ZOOM_STEP = 0.1
 
 let _cliArgs
 let _isTest = false
-let _filePath
+let _finderFilePath
 
 let _mainWindow
 let _mainMenu
@@ -104,7 +104,7 @@ function loadDocumentSettings() {
 function determineCurrentFilePath() {
     return navigation.hasCurrentLocation()
         ? navigation.getCurrentLocation().filePath
-        : _cliArgs.filePath
+        : _cliArgs.filePath ?? _finderFilePath
 }
 
 function createChildWindow(filePath, internalTarget) {
@@ -124,7 +124,7 @@ function reload(isFileModification, encoding) {
     )
 }
 
-function restorePosition() {
+function restoreScrollPosition() {
     ipc.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
@@ -405,14 +405,11 @@ function createWindow() {
             contextIsolation: false,
         },
     })
-    mainWindow.on("close", () => {
-        const documentSettings = loadDocumentSettings()
-        documentSettings.windowPosition = mainWindow.getBounds()
-    })
+    mainWindow.on("close", () => (loadDocumentSettings().windowPosition = mainWindow.getBounds()))
     mainWindow.on("closed", () => (_mainWindow = null))
     mainWindow.webContents.on("did-finish-load", () => {
         if (_isReloading) {
-            restorePosition()
+            restoreScrollPosition()
             _isReloading = false
         }
     })
@@ -492,7 +489,7 @@ electron.app.on("open-file", (event, path) => {
         ensureWindowExists()
         navigation.go(path)
     } else {
-        _filePath = path
+        _finderFilePath = path
     }
 })
 
@@ -500,8 +497,12 @@ ipc.listen(ipc.messages.finishLoad, () => {
     documentRendering.init(_mainMenu, _applicationSettings)
     setZoom(_applicationSettings.zoom)
 
-    const filePath = _filePath ?? _cliArgs.filePath
+    const filePath = _finderFilePath ?? _cliArgs.filePath
     openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
+
+    if (_finderFilePath) {
+        _mainWindow.setBounds(loadDocumentSettings().windowPosition)
+    }
 })
 
 ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position) => {
@@ -517,7 +518,7 @@ ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position)
         _mainWindow.reload()
     }
 
-    restorePosition()
+    restoreScrollPosition()
 })
 
 ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
