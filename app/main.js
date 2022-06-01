@@ -13,7 +13,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const documentRendering = require("./lib/documentRendering/documentRenderingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
-const ipc = require("./lib/ipc")
+const ipc = require("./lib/ipc/ipcMain")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
@@ -25,6 +25,7 @@ const ZOOM_STEP = 0.1
 
 let _cliArgs
 let _isTest = false
+let _finderFilePath
 
 let _mainWindow
 let _mainMenu
@@ -42,6 +43,10 @@ function error(msg) {
     process.exit(1)
 }
 
+function isMacOS() {
+    return process.platform === "darwin"
+}
+
 function showAboutDialog(parentWindow) {
     const POSITION_OFFSET = 20
     const parentPosition = parentWindow.getBounds()
@@ -49,7 +54,12 @@ function showAboutDialog(parentWindow) {
     const aboutDialog = aboutWindow.default({
         adjust_window_size: true,
         copyright: "Copyright © Christian Dreier",
-        icon_path: path.join(__dirname, "..", "icon", "md-icon.svg"),
+        icon_path: path.join(
+            __dirname,
+            "..",
+            "icon",
+            isMacOS() ? "md-mac-icon.svg" : "md-icon.svg"
+        ),
         package_json_dir: path.join(__dirname, ".."),
         product_name: "Markdown Viewer",
         win_options: {
@@ -94,7 +104,7 @@ function loadDocumentSettings() {
 function determineCurrentFilePath() {
     return navigation.hasCurrentLocation()
         ? navigation.getCurrentLocation().filePath
-        : _cliArgs.filePath
+        : _cliArgs.filePath ?? _finderFilePath
 }
 
 function createChildWindow(filePath, internalTarget) {
@@ -107,20 +117,20 @@ function createChildWindow(filePath, internalTarget) {
 }
 
 function reload(isFileModification, encoding) {
-    _mainWindow.webContents.send(
+    ipc.send(
         ipc.messages.prepareReload,
         isFileModification,
         encoding ?? encodingLib.load(navigation.getCurrentLocation().filePath)
     )
 }
 
-function restorePosition() {
-    _mainWindow.webContents.send(ipc.messages.restorePosition, _scrollPosition)
+function restoreScrollPosition() {
+    ipc.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
 function setZoom(zoomFactor) {
     _applicationSettings.zoom = zoomFactor
-    _mainWindow.webContents.send(ipc.messages.changeZoom, _applicationSettings.zoom)
+    ipc.send(ipc.messages.changeZoom, _applicationSettings.zoom)
 }
 
 function zoomIn() {
@@ -151,53 +161,8 @@ function changeTheme(theme) {
     ).checked = true
 }
 
-function createWindow() {
-    const windowPosition = loadDocumentSettings().windowPosition
-
-    const mainWindow = new electron.BrowserWindow({
-        x: windowPosition.x,
-        y: windowPosition.y,
-        width: windowPosition.width,
-        height: windowPosition.height,
-        backgroundColor: "#fff",
-        webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true,
-            contextIsolation: false,
-        },
-    })
-    mainWindow.on("close", () => {
-        const documentSettings = loadDocumentSettings()
-        documentSettings.windowPosition = mainWindow.getBounds()
-    })
-    mainWindow.on("closed", () => (_mainWindow = null))
-    mainWindow.webContents.on("did-finish-load", () => {
-        if (_isReloading) {
-            restorePosition()
-            _isReloading = false
-        }
-    })
-    mainWindow.webContents.on("before-input-event", (event, input) => {
-        if (input.type === "keyDown") {
-            if (input.key === "Backspace") {
-                event.preventDefault()
-                navigation.back()
-            } else if (input.control && input.key === "+") {
-                // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
-                event.preventDefault()
-                zoomIn()
-            }
-        }
-    })
-
-    remote.initialize()
-    remote.enable(mainWindow.webContents)
-
-    mainWindow.loadFile(path.join(__dirname, "index.html"))
-
-    electron.nativeTheme.themeSource = _applicationSettings.theme
-
-    const mainMenu = electron.Menu.buildFromTemplate([
+function createMainMenu() {
+    return electron.Menu.buildFromTemplate([
         {
             label: "&File",
             submenu: [
@@ -226,9 +191,9 @@ function createWindow() {
                 },
                 {
                     label: "&Print",
-                    accelerator: "Ctrl+P",
+                    accelerator: "CmdOrCtrl+P",
                     click() {
-                        mainWindow.webContents.print()
+                        _mainWindow.webContents.print()
                     },
                 },
                 { type: "separator" },
@@ -236,7 +201,7 @@ function createWindow() {
                     label: "&Quit",
                     accelerator: "Esc",
                     click() {
-                        mainWindow.close()
+                        _mainWindow?.close()
                     },
                 },
             ],
@@ -396,7 +361,7 @@ function createWindow() {
                     label: "&Developer Tools",
                     accelerator: "F10",
                     click() {
-                        mainWindow.webContents.openDevTools()
+                        _mainWindow.webContents.openDevTools()
                     },
                 },
                 {
@@ -418,15 +383,60 @@ function createWindow() {
                 {
                     label: "&About",
                     click() {
-                        showAboutDialog(mainWindow)
+                        showAboutDialog(_mainWindow)
                     },
                 },
             ],
         },
     ])
-    electron.Menu.setApplicationMenu(mainMenu)
+}
 
-    return [mainWindow, mainMenu]
+function createWindow() {
+    const windowPosition = loadDocumentSettings().windowPosition
+    const mainWindow = new electron.BrowserWindow({
+        x: windowPosition.x,
+        y: windowPosition.y,
+        width: windowPosition.width,
+        height: windowPosition.height,
+        backgroundColor: "#fff",
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true,
+            contextIsolation: false,
+        },
+    })
+    mainWindow.on("close", () => (loadDocumentSettings().windowPosition = mainWindow.getBounds()))
+    mainWindow.on("closed", () => (_mainWindow = null))
+    mainWindow.webContents.on("did-finish-load", () => {
+        if (_isReloading) {
+            restoreScrollPosition()
+            _isReloading = false
+        }
+    })
+    mainWindow.webContents.on("before-input-event", (event, input) => {
+        if (input.type === "keyDown") {
+            if (input.key === "Backspace") {
+                event.preventDefault()
+                navigation.back()
+            } else if (input.control && input.key === "+") {
+                // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
+                event.preventDefault()
+                zoomIn()
+            }
+        }
+    })
+    remote.enable(mainWindow.webContents)
+    mainWindow.loadFile(path.join(__dirname, "index.html"))
+    return mainWindow
+}
+
+function ensureWindowExists() {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (electron.BrowserWindow.getAllWindows().length === 0) {
+        _mainWindow = createWindow()
+        ipc.reset(_mainWindow)
+    }
 }
 
 electron.app.whenReady().then(() => {
@@ -440,44 +450,62 @@ electron.app.whenReady().then(() => {
         storage.APPLICATION_SETTINGS_FILE
     )
 
-    const [mainWindow, mainMenu] = createWindow()
-    _mainWindow = mainWindow
-    _mainMenu = mainMenu
+    remote.initialize()
+    electron.nativeTheme.themeSource = _applicationSettings.theme
+
+    _mainMenu = createMainMenu()
+    electron.Menu.setApplicationMenu(_mainMenu)
+
+    _mainWindow = createWindow()
 
     changeTheme(_applicationSettings.theme)
 
-    navigation.init(mainWindow, mainMenu)
-    encodingLib.init(mainMenu)
-    contentBlocking.init(mainWindow, mainMenu)
-    rawText.init(mainWindow, mainMenu)
+    ipc.init(_mainWindow)
+    navigation.init(_mainMenu)
+    encodingLib.init(_mainMenu)
+    contentBlocking.init(_mainMenu)
+    rawText.init(_mainMenu)
 
-    electron.app.on("activate", function () {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (electron.BrowserWindow.getAllWindows().length === 0) {
-            ;[_mainWindow, _mainMenu] = createWindow()
-        }
-    })
+    electron.app.on("activate", ensureWindowExists)
+
+    if (isMacOS()) {
+        electron.globalShortcut.register("Command+Q", () => electron.app.quit())
+    }
 })
 
 electron.app.on("window-all-closed", () => {
     // Quit when all windows are closed, except on macOS. There, it's common
     // for applications and their menu bar to stay active until the user quits
     // explicitly with Cmd + Q.
-    if (process.platform !== "darwin") {
+    if (!isMacOS()) {
         electron.app.quit()
     }
 })
 
-electron.ipcMain.on(ipc.messages.finishLoad, () => {
-    documentRendering.init(_mainWindow, _mainMenu, _applicationSettings)
-    setZoom(_applicationSettings.zoom)
-
-    const filePath = _cliArgs.filePath
-    openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
+// Mac specific event handler
+electron.app.on("open-file", (event, path) => {
+    event.preventDefault()
+    if (navigation.isInitialized()) {
+        ensureWindowExists()
+        navigation.go(path)
+    } else {
+        _finderFilePath = path
+    }
 })
 
-electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
+ipc.listen(ipc.messages.finishLoad, () => {
+    documentRendering.init(_mainMenu, _applicationSettings)
+    setZoom(_applicationSettings.zoom)
+
+    const filePath = _finderFilePath ?? _cliArgs.filePath
+    openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
+
+    if (_finderFilePath) {
+        _mainWindow.setBounds(loadDocumentSettings().windowPosition)
+    }
+})
+
+ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
 
@@ -490,12 +518,12 @@ electron.ipcMain.on(ipc.messages.reloadPrepared, (_, isFileModification, encodin
         _mainWindow.reload()
     }
 
-    restorePosition()
+    restoreScrollPosition()
 })
 
-electron.ipcMain.on(ipc.messages.openFileInNewWindow, (_, filePath) => createChildWindow(filePath))
+ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
 
-electron.ipcMain.on(ipc.messages.openInternalInNewWindow, (_, target) =>
+ipc.listen(ipc.messages.openInternalInNewWindow, target =>
     createChildWindow(navigation.getCurrentLocation().filePath, target)
 )
 

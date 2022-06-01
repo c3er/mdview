@@ -4,8 +4,6 @@ const assert = require("chai").assert
 
 const mocking = require("./mocking")
 
-const ipc = require("../app/lib/ipc")
-
 const documentDirectory = path.join(__dirname, "documents", "navigation")
 const mdFilePath1 = path.join(documentDirectory, "file1.md")
 const mdFilePath2 = path.join(documentDirectory, "file2.md")
@@ -14,6 +12,7 @@ const htmlFilePath = path.join(documentDirectory, "file.html")
 
 describe("Navigation", () => {
     describe("Main part", () => {
+        const ipc = require("../app/lib/ipc/ipcMain")
         const navigation = require("../app/lib/navigation/navigationMain")
 
         function prepareAssertion(expectedFilePath) {
@@ -44,9 +43,7 @@ describe("Navigation", () => {
             navigation.forward()
         }
 
-        beforeEach(() =>
-            navigation.init(mocking.mainWindow, mocking.mainMenu, mocking.electron, mocking.dataDir)
-        )
+        beforeEach(() => navigation.init(mocking.mainMenu, mocking.dataDir))
 
         it("goes to a Markdown file without previous history", () => {
             go(mdFilePath1)

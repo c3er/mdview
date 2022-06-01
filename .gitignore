@@ -2,7 +2,11 @@ node_modules/
 .vscode/
 dist/
 
+.DS_Store
+
 package-lock.json
 *.log
 
 !.vscode/launch.json
+
+tmp.md

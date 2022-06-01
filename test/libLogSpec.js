@@ -2,12 +2,11 @@ const assert = require("chai").assert
 
 const mocking = require("./mocking")
 
-const ipc = require("../app/lib/ipc")
-
 describe("Logging", () => {
     const testMessage = "this is a test"
 
     describe("Main part", () => {
+        const ipc = require("../app/lib/ipc/ipcMain")
         const log = require("../app/lib/log/logMain")
 
         function assertMessageFromrenderer(ipcMessage, messageArray) {
@@ -16,7 +15,10 @@ describe("Logging", () => {
             assert.deepInclude(messageArray, [testMessage])
         }
 
-        beforeEach(() => log.init(true, mocking.electron))
+        beforeEach(() => {
+            ipc.init(mocking.mainWindow, mocking.electron)
+            log.init(true)
+        })
 
         it("receives debug message from renderer process", () => {
             assertMessageFromrenderer(ipc.messages.logToMainDebug, log.debugMessages)
@@ -32,6 +34,7 @@ describe("Logging", () => {
     })
 
     describe("Renderer part", () => {
+        const ipc = require("../app/lib/ipc/ipcRenderer")
         const log = require("../app/lib/log/logRenderer")
 
         function assertMessageToMain(ipcMessage, logFunc, messageArray) {

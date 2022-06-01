@@ -1,10 +1,9 @@
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipcMain")
 
 const ENABLE_LINE_BREAKS_MENU_ID = "enable-line-breaks"
 const ENABLE_TYPOGRAPHY_MENU_ID = "enable-typographic-replacements"
 const ENABLE_EMOJIS_MENU_ID = "enable-emojis"
 
-let _mainWindow
 let _mainMenu
 let _applicationSettings
 
@@ -17,7 +16,7 @@ function getMenuItemState(id) {
 }
 
 function notifyOptionChanges() {
-    _mainWindow.webContents.send(ipc.messages.changeRenderingOptions, {
+    ipc.send(ipc.messages.changeRenderingOptions, {
         lineBreaksEnabled: _applicationSettings.lineBreaksEnabled,
         typographyEnabled: _applicationSettings.typographyEnabled,
         emojisEnabled: _applicationSettings.emojisEnabled,
@@ -35,8 +34,7 @@ exports.ENABLE_TYPOGRAPHY_MENU_ID = ENABLE_TYPOGRAPHY_MENU_ID
 
 exports.ENABLE_EMOJIS_MENU_ID = ENABLE_EMOJIS_MENU_ID
 
-exports.init = (mainWindow, mainMenu, applicationSettings) => {
-    _mainWindow = mainWindow
+exports.init = (mainMenu, applicationSettings) => {
     _mainMenu = mainMenu
     _applicationSettings = applicationSettings
 

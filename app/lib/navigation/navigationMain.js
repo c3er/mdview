@@ -1,12 +1,10 @@
 const encodingLib = require("../encoding/encodingMain")
-const ipc = require("../ipc")
-
-let electron
+const ipc = require("../ipc/ipcMain")
 
 const BACK_MENU_ID = "back"
 const FORWARD_MENU_ID = "forward"
 
-let _mainWindow
+let _isInitialized = false
 let _mainMenu
 
 const _locations = {
@@ -81,7 +79,7 @@ function canGoForward() {
 
 function openFile(file) {
     // log.debug(`Navigate to "${_locations.current}"`)
-    _mainWindow.webContents.send(ipc.messages.fileOpen, file)
+    ipc.send(ipc.messages.fileOpen, file)
 }
 
 function handleCallbacks(oldLocation, destination) {
@@ -143,22 +141,20 @@ exports.BACK_MENU_ID = BACK_MENU_ID
 
 exports.FORWARD_MENU_ID = FORWARD_MENU_ID
 
-exports.init = (mainWindow, mainMenu, electronMock, storageDir) => {
-    electron = electronMock ?? require("electron")
-    _mainWindow = mainWindow
+exports.init = (mainMenu, storageDir) => {
     _mainMenu = mainMenu
 
-    encodingLib.init(mainMenu, storageDir, electronMock)
-
+    encodingLib.init(mainMenu, storageDir)
     reset()
 
-    electron.ipcMain.on(ipc.messages.openFile, (_, filePath, lastScrollPosition) =>
+    ipc.listen(ipc.messages.openFile, (filePath, lastScrollPosition) =>
         go(filePath, null, null, lastScrollPosition)
     )
-
-    electron.ipcMain.on(ipc.messages.openInternal, (_, target, lastScrollPosition) =>
+    ipc.listen(ipc.messages.openInternal, (target, lastScrollPosition) =>
         go(_locations.current.filePath, target, null, lastScrollPosition)
     )
+
+    _isInitialized = true
 }
 
 exports.back = () => goStep(canGoBack, _locations.forward, _locations.back)
@@ -187,3 +183,5 @@ exports.hasCurrentLocation = () => !!_locations.current
 exports.canGoBack = canGoBack
 
 exports.canGoForward = canGoForward
+
+exports.isInitialized = () => _isInitialized

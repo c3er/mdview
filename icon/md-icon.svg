@@ -2,23 +2,23 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="90mm"
    height="90mm"
    viewBox="0 0 90 90"
    version="1.1"
    id="svg3705"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   inkscape:version="1.2 (dc2aeda, 2022-05-15)"
    sodipodi:docname="md-icon.svg"
    inkscape:export-filename="D:\eigene dateien\devel\web\mdview\icon\master.png"
    inkscape:export-xdpi="185.18059"
-   inkscape:export-ydpi="185.18059">
+   inkscape:export-ydpi="185.18059"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs3699" />
   <sodipodi:namedview
@@ -28,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="291.122"
-     inkscape:cy="-53.8096"
+     inkscape:zoom="1.4960144"
+     inkscape:cx="141.04142"
+     inkscape:cy="184.15598"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -43,16 +43,19 @@
      inkscape:bbox-paths="false"
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-nodes="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1057"
-     inkscape:window-x="1912"
-     inkscape:window-y="-8"
+     inkscape:window-width="1364"
+     inkscape:window-height="847"
+     inkscape:window-x="76"
+     inkscape:window-y="25"
      inkscape:window-maximized="1"
      inkscape:snap-others="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0" />
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata3702">
     <rdf:RDF>
@@ -61,7 +64,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -69,49 +71,55 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-7.4712504,-4.9838003)">
+     transform="translate(-7.4712504,-4.9838003)"
+     style="fill:#000000;fill-opacity:1">
     <rect
-       id="rect11"
-       width="89.415474"
-       height="89.415474"
-       x="7.763514"
-       y="5.2760639"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.58452725;stroke-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+       id="rect4555"
+       width="89.844276"
+       height="90.374855"
+       x="7.55968"
+       y="4.7185121" />
+    <g
+       id="g172"
+       transform="matrix(1.0515838,0,0,1.3463485,-0.35555428,-16.297141)"
+       style="fill:#000000;fill-opacity:1">
+      <path
+         sodipodi:type="star"
+         id="path3711"
+         sodipodi:sides="3"
+         sodipodi:cx="68.527084"
+         sodipodi:cy="34.004166"
+         sodipodi:r1="12.932145"
+         sodipodi:r2="6.4660726"
+         sodipodi:arg1="-0.53691074"
+         sodipodi:arg2="0.51028681"
+         inkscape:flatsided="false"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m 79.639585,27.389582 -5.470177,9.772792 -5.470176,9.772791 -5.728398,-9.623708 -5.728397,-9.623707 11.198574,-0.149084 z"
+         inkscape:transform-center-x="0.092235374"
+         inkscape:transform-center-y="1.9389795"
+         style="fill:#000000;fill-opacity:1;stroke-width:0.264583"
+         transform="matrix(1.071565,0,0,0.61394946,3.8394573,36.673764)" />
+      <rect
+         id="rect3715"
+         width="8.9958334"
+         height="29.104166"
+         x="72.680534"
+         y="28.61875"
+         style="fill:#000000;fill-opacity:1;stroke-width:0.693743" />
+    </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="14.287499"
-       y="65.489586"
+       style="font-style:normal;font-weight:normal;font-size:14.4023px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.360055"
+       x="6.0431142"
+       y="72.15329"
        id="text3709"><tspan
          sodipodi:role="line"
          id="tspan3707"
-         x="14.287499"
-         y="65.489586"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:50.79999924px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.26458332">M</tspan></text>
-    <path
-       sodipodi:type="star"
-       id="path3711"
-       sodipodi:sides="3"
-       sodipodi:cx="68.527084"
-       sodipodi:cy="34.004166"
-       sodipodi:r1="12.932145"
-       sodipodi:r2="6.4660726"
-       sodipodi:arg1="-0.53691074"
-       sodipodi:arg2="0.51028681"
-       inkscape:flatsided="false"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="m 79.639585,27.389582 -5.470177,9.772792 -5.470176,9.772791 -5.728398,-9.623708 -5.728397,-9.623707 11.198574,-0.149084 z"
-       inkscape:transform-center-x="0.092235374"
-       inkscape:transform-center-y="1.9389795"
-       style="stroke-width:0.26458332"
-       transform="matrix(1.071565,0,0,0.61394946,3.8394573,36.673764)" />
-    <rect
-       id="rect3715"
-       width="8.9958334"
-       height="29.104166"
-       x="72.680534"
-       y="28.61875"
-       style="stroke-width:0.69374335" />
+         x="6.0431142"
+         y="72.15329"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:69.1308px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#000000;fill-opacity:1;stroke-width:0.360055">M</tspan></text>
   </g>
 </svg>

@@ -28,6 +28,8 @@
     "format": "prettier --write ."
   },
   "build": {
+    "productName": "Markdown Viewer",
+    "artifactName": "${name}-${version}-${arch}.${ext}",
     "nsis": {
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
@@ -37,6 +39,9 @@
       "perMachine": false,
       "shortcutName": "Markdown Viewer"
     },
+    "dmg": {
+      "title": "Markdown Viewer"
+    },
     "linux": {
       "target": [
         "AppImage"
@@ -44,8 +49,10 @@
     },
     "mac": {
       "target": [
-        "default"
-      ]
+        "dmg"
+      ],
+      "category": "public.app-category.utilities",
+      "icon": "icon/md.icns"
     },
     "win": {
       "target": [

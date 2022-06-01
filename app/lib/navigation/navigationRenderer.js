@@ -2,7 +2,7 @@ const path = require("path")
 
 const common = require("../common")
 const file = require("../file")
-const ipc = require("../ipc")
+const ipc = require("../ipc/ipcRenderer")
 
 let electron
 
@@ -18,7 +18,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     if (common.isWebURL(target) || target.startsWith("mailto:")) {
         electron.shell.openExternal(target)
     } else if (isInternalLink(target)) {
-        electron.ipcRenderer.send(
+        ipc.send(
             shallOpenInNewWindow ? ipc.messages.openInternalInNewWindow : ipc.messages.openInternal,
             target,
             scrollPosition
@@ -26,7 +26,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
         electron.shell.openPath(fullPath)
     } else {
-        electron.ipcRenderer.send(
+        ipc.send(
             shallOpenInNewWindow ? ipc.messages.openFileInNewWindow : ipc.messages.openFile,
             fullPath,
             scrollPosition
