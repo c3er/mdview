@@ -263,6 +263,14 @@ exports.elements = {
                         },
                     ],
                 },
+                renderFileAsMarkdown: {
+                    label: "Render this file as Markdown",
+                    isEnabled: true,
+                },
+                renderFileTypeAsMarkdown: {
+                    label: "Render all XXX files as Markdown",
+                    isEnabled: true,
+                },
             },
         },
         encoding: {

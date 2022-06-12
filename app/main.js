@@ -340,6 +340,23 @@ function createMainMenu() {
                         },
                     ],
                 },
+                { type: "separator" },
+                {
+                    label: "Render this file as Markdown",
+                    type: "checkbox",
+                    id: "render-file-as-markdown",
+                    click() {
+                        log.info("Render this file as Markdown")
+                    },
+                },
+                {
+                    label: "Render all XXX files as Markdown",
+                    type: "checkbox",
+                    id: "render-file-type-as-markdown",
+                    click() {
+                        log.info("Render all XXX files as Markdown")
+                    },
+                },
             ],
         },
         {
