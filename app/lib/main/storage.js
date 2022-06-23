@@ -184,19 +184,19 @@ class DocumentSettings extends StorageBase {
     }
 }
 
-exports.APPLICATION_SETTINGS_FILE = APPLICATION_SETTINGS_FILE
-
-exports.DOCUMENT_SETTINGS_FILE = DOCUMENT_SETTINGS_FILE
-
 exports.init = (dataDir, electronMock) => {
     electron = electronMock ?? require("electron")
     exports.dataDir = _dataDir = dataDir
 }
 
-exports.loadApplicationSettings = (storageDir, storageFile) =>
+exports.loadApplicationSettings = () =>
     _applicationSettings ??
-    (_applicationSettings = new ApplicationSettings(storageDir, storageFile))
+    (_applicationSettings = new ApplicationSettings(_dataDir, APPLICATION_SETTINGS_FILE))
 
-exports.loadDocumentSettings = (storageDir, storageFile, documentPath) =>
+exports.loadDocumentSettings = documentPath =>
     _documentSettings[documentPath] ??
-    (_documentSettings[documentPath] = new DocumentSettings(storageDir, storageFile, documentPath))
+    (_documentSettings[documentPath] = new DocumentSettings(
+        _dataDir,
+        DOCUMENT_SETTINGS_FILE,
+        documentPath
+    ))

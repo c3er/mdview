@@ -94,11 +94,7 @@ function openFile(filePath, internalTarget, encoding) {
 }
 
 function loadDocumentSettings() {
-    return storage.loadDocumentSettings(
-        storage.dataDir,
-        storage.DOCUMENT_SETTINGS_FILE,
-        determineCurrentFilePath()
-    )
+    return storage.loadDocumentSettings(determineCurrentFilePath())
 }
 
 function determineCurrentFilePath() {
@@ -462,10 +458,7 @@ electron.app.whenReady().then(() => {
 
     log.init(_cliArgs.isTest)
     storage.init(_cliArgs.storageDir)
-    _applicationSettings = storage.loadApplicationSettings(
-        storage.dataDir,
-        storage.APPLICATION_SETTINGS_FILE
-    )
+    _applicationSettings = storage.loadApplicationSettings()
 
     remote.initialize()
     electron.nativeTheme.themeSource = _applicationSettings.theme
