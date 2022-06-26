@@ -7,6 +7,8 @@ const navigation = require("../navigation/navigationMain")
 
 let electron
 
+const JSON_INDENTATION = 4
+
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 
@@ -27,7 +29,7 @@ class StorageBase {
 
     _save() {
         try {
-            fs.writeFileSync(this._storagePath, JSON.stringify(this._data))
+            fs.writeFileSync(this._storagePath, JSON.stringify(this._data, null, JSON_INDENTATION))
         } catch (error) {
             log.error(error)
         }
