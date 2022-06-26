@@ -1,3 +1,4 @@
+const fileLib = require("../file")
 const ipc = require("../ipc/ipcMain")
 const navigation = require("../navigation/navigationMain")
 const storage = require("../main/storage")
@@ -13,6 +14,25 @@ const UPDATE_FILE_SPECIFICA_NAV_ID = "update-file-specific-document-rendering"
 let _mainMenu
 let _applicationSettings
 
+function isMarkdownFileType(filePath) {
+    return _applicationSettings.mdFileTypes.includes(fileLib.extractFileEnding(filePath))
+}
+
+function setRenderFileTypeAsMarkdown(filePath, shallRenderAsMarkdown) {
+    const mdFileTypes = _applicationSettings.mdFileTypes
+    const ending = fileLib.extractFileEnding(filePath)
+    if (shallRenderAsMarkdown) {
+        if (mdFileTypes.find(item => item === ending)) {
+            return
+        }
+        console.log(mdFileTypes)
+        mdFileTypes.push(ending)
+        _applicationSettings.mdFileTypes = mdFileTypes
+    } else {
+        _applicationSettings.mdFileTypes = mdFileTypes.filter(item => item !== ending)
+    }
+}
+
 function setMenuItemState(id, isChecked) {
     _mainMenu.getMenuItemById(id).checked = isChecked
 }
@@ -21,13 +41,14 @@ function getMenuItemState(id) {
     return _mainMenu.getMenuItemById(id).checked
 }
 
-function notifyOptionChanges(documentSettings) {
-    documentSettings = documentSettings ?? storage.loadDocumentSettings()
+function notifyOptionChanges(filePath) {
+    filePath = filePath ?? navigation.getCurrentLocation().filePath
+    const documentSettings = storage.loadDocumentSettings(filePath)
     ipc.send(ipc.messages.changeRenderingOptions, {
         lineBreaksEnabled: _applicationSettings.lineBreaksEnabled,
         typographyEnabled: _applicationSettings.typographyEnabled,
         emojisEnabled: _applicationSettings.emojisEnabled,
-        renderAsMarkdown: documentSettings.renderAsMarkdown,
+        renderAsMarkdown: documentSettings.renderAsMarkdown || isMarkdownFileType(filePath),
     })
 }
 
@@ -51,7 +72,7 @@ exports.RENDER_FILE_AS_MD_MENU_ID = RENDER_FILE_AS_MD_MENU_ID
 
 exports.RENDER_FILE_TYPE_AS_MD_MENU_ID = RENDER_FILE_TYPE_AS_MD_MENU_ID
 
-exports.init = (mainMenu, applicationSettings, documentSettings) => {
+exports.init = (mainMenu, applicationSettings, filePath) => {
     _mainMenu = mainMenu
     _applicationSettings = applicationSettings
     navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, updateFileSpecificRendering)
@@ -59,9 +80,13 @@ exports.init = (mainMenu, applicationSettings, documentSettings) => {
     setMenuItemState(ENABLE_LINE_BREAKS_MENU_ID, applicationSettings.lineBreaksEnabled)
     setMenuItemState(ENABLE_TYPOGRAPHY_MENU_ID, applicationSettings.typographyEnabled)
     setMenuItemState(ENABLE_EMOJIS_MENU_ID, applicationSettings.emojisEnabled)
-    setMenuItemState(RENDER_FILE_AS_MD_MENU_ID, documentSettings.renderAsMarkdown)
+    setMenuItemState(RENDER_FILE_TYPE_AS_MD_MENU_ID, isMarkdownFileType(filePath))
+    setMenuItemState(
+        RENDER_FILE_AS_MD_MENU_ID,
+        storage.loadDocumentSettings(filePath).renderAsMarkdown
+    )
 
-    notifyOptionChanges(documentSettings)
+    notifyOptionChanges(filePath)
 }
 
 exports.switchEnableLineBreaks = () =>
@@ -80,10 +105,15 @@ exports.switchEnableEmojis = () =>
         () => (_applicationSettings.emojisEnabled = getMenuItemState(ENABLE_EMOJIS_MENU_ID))
     )
 
-exports.switchRenderFileAsMarkdown = () => {
+exports.switchRenderFileAsMarkdown = filePath => {
     changeOption(
         () =>
-            (storage.loadDocumentSettings().renderAsMarkdown =
+            (storage.loadDocumentSettings(filePath).renderAsMarkdown =
                 getMenuItemState(RENDER_FILE_AS_MD_MENU_ID))
     )
 }
+
+exports.switchRenderFileTypeAsMarkdown = filePath =>
+    changeOption(() =>
+        setRenderFileTypeAsMarkdown(filePath, getMenuItemState(RENDER_FILE_TYPE_AS_MD_MENU_ID))
+    )

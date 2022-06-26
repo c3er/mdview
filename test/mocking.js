@@ -268,7 +268,7 @@ exports.elements = {
                     isEnabled: true,
                 },
                 renderFileTypeAsMarkdown: {
-                    label: "Render all XXX files as Markdown",
+                    label: "Render all files of this type as Markdown",
                     isEnabled: true,
                 },
             },

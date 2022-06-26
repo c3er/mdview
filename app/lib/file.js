@@ -42,3 +42,8 @@ exports.isText = filePath => {
         .slice(0, data.bytesRead - 1)
         .every(byte => byte >= 32 || [10, 13, 9].includes(byte))
 }
+
+exports.extractFileEnding = filePath => {
+    const parts = filePath.split(".")
+    return parts.length > 1 ? parts.at(-1) : ""
+}
