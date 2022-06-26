@@ -154,7 +154,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
     }
     let content = encodingLib.decode(buffer, encoding)
 
-    if (!fileLib.isMarkdown(filePath)) {
+    if (!fileLib.isMarkdown(filePath) || !documentRendering.shallRenderAsMarkdown()) {
         const pathParts = filePath.split(".")
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
         content = "```" + language + "\n" + content + "\n```"

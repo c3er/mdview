@@ -340,15 +340,15 @@ function createMainMenu() {
                 {
                     label: "Render this file as Markdown",
                     type: "checkbox",
-                    id: "render-file-as-markdown",
+                    id: documentRendering.RENDER_FILE_AS_MD_MENU_ID,
                     click() {
-                        log.info("Render this file as Markdown")
+                        documentRendering.switchRenderFileAsMarkdown()
                     },
                 },
                 {
                     label: "Render all XXX files as Markdown",
                     type: "checkbox",
-                    id: "render-file-type-as-markdown",
+                    id: documentRendering.RENDER_FILE_TYPE_AS_MD_MENU_ID,
                     click() {
                         log.info("Render all XXX files as Markdown")
                     },
@@ -504,7 +504,7 @@ electron.app.on("open-file", (event, path) => {
 })
 
 ipc.listen(ipc.messages.finishLoad, () => {
-    documentRendering.init(_mainMenu, _applicationSettings)
+    documentRendering.init(_mainMenu, _applicationSettings, loadDocumentSettings())
     setZoom(_applicationSettings.zoom)
 
     const filePath = _finderFilePath ?? _cliArgs.filePath

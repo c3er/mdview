@@ -3,6 +3,7 @@ const path = require("path")
 
 const common = require("../common")
 const log = require("../log/log")
+const navigation = require("../navigation/navigationMain")
 
 let electron
 
@@ -193,10 +194,14 @@ exports.loadApplicationSettings = () =>
     _applicationSettings ??
     (_applicationSettings = new ApplicationSettings(_dataDir, APPLICATION_SETTINGS_FILE))
 
-exports.loadDocumentSettings = documentPath =>
-    _documentSettings[documentPath] ??
-    (_documentSettings[documentPath] = new DocumentSettings(
-        _dataDir,
-        DOCUMENT_SETTINGS_FILE,
-        documentPath
-    ))
+exports.loadDocumentSettings = documentPath => {
+    documentPath = documentPath ?? navigation.getCurrentLocation().filePath
+    return (
+        _documentSettings[documentPath] ??
+        (_documentSettings[documentPath] = new DocumentSettings(
+            _dataDir,
+            DOCUMENT_SETTINGS_FILE,
+            documentPath
+        ))
+    )
+}
