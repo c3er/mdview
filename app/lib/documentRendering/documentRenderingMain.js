@@ -59,6 +59,7 @@ exports.init = (mainMenu, applicationSettings, documentSettings) => {
     setMenuItemState(ENABLE_LINE_BREAKS_MENU_ID, applicationSettings.lineBreaksEnabled)
     setMenuItemState(ENABLE_TYPOGRAPHY_MENU_ID, applicationSettings.typographyEnabled)
     setMenuItemState(ENABLE_EMOJIS_MENU_ID, applicationSettings.emojisEnabled)
+    setMenuItemState(RENDER_FILE_AS_MD_MENU_ID, documentSettings.renderAsMarkdown)
 
     notifyOptionChanges(documentSettings)
 }
