@@ -25,7 +25,6 @@ function setRenderFileTypeAsMarkdown(filePath, shallRenderAsMarkdown) {
         if (mdFileTypes.find(item => item === ending)) {
             return
         }
-        console.log(mdFileTypes)
         mdFileTypes.push(ending)
         _applicationSettings.mdFileTypes = mdFileTypes
     } else {
