@@ -154,6 +154,7 @@ describe("Integration tests with single app instance", () => {
                 return {
                     label: item.label, // For debugging
                     enabled: item.enabled,
+                    checked: item.checked,
                 }
             }, menuItemPath)
         }
@@ -172,6 +173,11 @@ describe("Integration tests with single app instance", () => {
                             (await searchMenuItem(currentItemPath)).enabled,
                             currentItem.isEnabled
                         )
+                    })
+
+                    const isChecked = currentItem.isChecked ?? false
+                    it(`is ${isChecked ? "checked" : "unchecked"}`, async () => {
+                        assert.equal((await searchMenuItem(currentItemPath)).checked, isChecked)
                     })
 
                     const subMenu = currentItem.sub
