@@ -1,6 +1,6 @@
 {
   "name": "mdview",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Standalone Markdown Viewer",
   "keywords": [
     "markdown",
@@ -97,12 +97,12 @@
   },
   "devDependencies": {
     "chai": "4.3.6",
-    "electron": "18.2.4",
-    "electron-builder": "23.0.3",
+    "electron": "19.0.6",
+    "electron-builder": "23.1.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.0.0",
     "playwright": "1.22.2",
-    "prettier": "2.6.2",
+    "prettier": "2.7.1",
     "tslib": "2.4.0"
   }
 }
