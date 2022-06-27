@@ -2,29 +2,15 @@ const encodingShared = require("./encodingShared")
 const ipc = require("../ipc/ipcMain")
 const storage = require("../main/storage")
 
-const _documentSettings = {}
-
 let _mainMenu
-let _storageDir
 
 function toId(encoding) {
     return `encoding-${encodingShared.normalize(encoding)}`
 }
 
-function getDocumentSettings(filePath) {
-    return (
-        _documentSettings[filePath] ??
-        (_documentSettings[filePath] = storage.loadDocumentSettings(
-            _storageDir,
-            storage.DOCUMENT_SETTINGS_FILE,
-            filePath
-        ))
-    )
-}
-
 function changeEncoding(filePath, encoding) {
     encoding = encodingShared.normalize(encoding)
-    getDocumentSettings(filePath).encoding = encoding
+    storage.loadDocumentSettings(filePath).encoding = encoding
 
     const menuItem = _mainMenu.getMenuItemById(toId(encoding))
     if (menuItem) {
@@ -74,9 +60,8 @@ exports.ENCODINGS = [
     "UTF-16LE",
 ]
 
-exports.init = (mainMenu, storageDir) => {
+exports.init = mainMenu => {
     _mainMenu = mainMenu
-    _storageDir = storageDir ?? storage.dataDir
 
     ipc.listen(ipc.messages.changeEncoding, changeEncoding)
 }
@@ -85,4 +70,4 @@ exports.toId = toId
 
 exports.change = changeEncoding
 
-exports.load = filePath => getDocumentSettings(filePath).encoding
+exports.load = filePath => storage.loadDocumentSettings(filePath).encoding

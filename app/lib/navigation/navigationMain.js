@@ -141,10 +141,10 @@ exports.BACK_MENU_ID = BACK_MENU_ID
 
 exports.FORWARD_MENU_ID = FORWARD_MENU_ID
 
-exports.init = (mainMenu, storageDir) => {
+exports.init = mainMenu => {
     _mainMenu = mainMenu
 
-    encodingLib.init(mainMenu, storageDir)
+    encodingLib.init(mainMenu)
     reset()
 
     ipc.listen(ipc.messages.openFile, (filePath, lastScrollPosition) =>

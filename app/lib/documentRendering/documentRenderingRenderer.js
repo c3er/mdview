@@ -4,6 +4,8 @@ const log = require("../log/log")
 
 let _markdown
 
+let _shallRenderAsMarkdown = false
+
 function generateCodeText(text, options = {}) {
     const defaults = {
         isHighlighted: false,
@@ -77,9 +79,13 @@ exports.reset = options => {
     if (options.emojisEnabled) {
         _markdown.use(require("markdown-it-emoji"))
     }
+
+    _shallRenderAsMarkdown = options.renderAsMarkdown
 }
 
 exports.renderContent = content => _markdown.render(content)
 
 exports.renderRawText = content =>
     generateCodeText(_markdown.utils.escapeHtml(content), { isMdRawText: true })
+
+exports.shallRenderAsMarkdown = () => _shallRenderAsMarkdown

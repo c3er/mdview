@@ -234,14 +234,17 @@ exports.elements = {
                         {
                             label: "&System Default",
                             isEnabled: true,
+                            isChecked: true,
                         },
                         {
                             label: "&Light",
                             isEnabled: true,
+                            isChecked: false,
                         },
                         {
                             label: "&Dark",
                             isEnabled: true,
+                            isChecked: false,
                         },
                     ],
                 },
@@ -252,16 +255,29 @@ exports.elements = {
                         {
                             label: "Respect Single &Line Breaks",
                             isEnabled: true,
+                            isChecked: false,
                         },
                         {
                             label: "Enable &Typographic Replacements",
                             isEnabled: true,
+                            isChecked: true,
                         },
                         {
                             label: "Convert &Emoticons To Emojis",
                             isEnabled: true,
+                            isChecked: true,
                         },
                     ],
+                },
+                renderFileAsMarkdown: {
+                    label: "Render this file as Markdown",
+                    isEnabled: true,
+                    isChecked: false,
+                },
+                renderFileTypeAsMarkdown: {
+                    label: "Render all files of this type as Markdown",
+                    isEnabled: true,
+                    isChecked: true,
                 },
             },
         },

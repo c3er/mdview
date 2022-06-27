@@ -1,9 +1,13 @@
 const fs = require("fs")
 const path = require("path")
 
+const common = require("../common")
 const log = require("../log/log")
+const navigation = require("../navigation/navigationMain")
 
 let electron
+
+const JSON_INDENTATION = 4
 
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
@@ -25,7 +29,7 @@ class StorageBase {
 
     _save() {
         try {
-            fs.writeFileSync(this._storagePath, JSON.stringify(this._data))
+            fs.writeFileSync(this._storagePath, JSON.stringify(this._data, null, JSON_INDENTATION))
         } catch (error) {
             log.error(error)
         }
@@ -46,6 +50,7 @@ class ApplicationSettings extends StorageBase {
     #LINE_BREAKS_KEY = "line-breaks-enabled"
     #TYPOGRAPHY_KEY = "typography-enabled"
     #EMOJIS_KEY = "emojis-enabled"
+    #MD_FILE_TYPES_KEY = "md-file-types"
 
     ZOOM_DEFAULT = 1.0
 
@@ -56,6 +61,7 @@ class ApplicationSettings extends StorageBase {
     LINE_BREAKS_ENABLED_DEFAULT = false
     TYPOGRAPHY_ENABLED_DEFAULT = true
     EMOJIS_ENABLED_DEFAULT = true
+    MD_FILE_TYPES_DEFAULT = common.FILE_EXTENSIONS
 
     get theme() {
         return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
@@ -103,6 +109,14 @@ class ApplicationSettings extends StorageBase {
         this._storeValue(this.#EMOJIS_KEY, value)
     }
 
+    get mdFileTypes() {
+        return this._loadValue(this.#MD_FILE_TYPES_KEY, this.MD_FILE_TYPES_DEFAULT)
+    }
+
+    set mdFileTypes(value) {
+        this._storeValue(this.#MD_FILE_TYPES_KEY, value)
+    }
+
     _loadValue(key, defaultValue) {
         return this._data[key] ?? defaultValue
     }
@@ -115,9 +129,11 @@ class ApplicationSettings extends StorageBase {
 
 class DocumentSettings extends StorageBase {
     #ENCODING_KEY = "encoding"
+    #RENDER_AS_MD_KEY = "render-as-md"
     #WINDOW_POSITION_KEY = "window-position"
 
     ENCODING_DEFAULT = null
+    RENDER_AS_MD_DEFAULT = false
     WINDOW_WIDTH_DEFAULT = 1024
     WINDOW_HEIGHT_DEFAULT = 768
 
@@ -137,6 +153,14 @@ class DocumentSettings extends StorageBase {
 
     set encoding(value) {
         this._storeValue(this.#ENCODING_KEY, value)
+    }
+
+    get renderAsMarkdown() {
+        return this._loadValue(this.#RENDER_AS_MD_KEY, this.RENDER_AS_MD_DEFAULT)
+    }
+
+    set renderAsMarkdown(value) {
+        this._storeValue(this.#RENDER_AS_MD_KEY, value)
     }
 
     get windowPosition() {
@@ -163,19 +187,23 @@ class DocumentSettings extends StorageBase {
     }
 }
 
-exports.APPLICATION_SETTINGS_FILE = APPLICATION_SETTINGS_FILE
-
-exports.DOCUMENT_SETTINGS_FILE = DOCUMENT_SETTINGS_FILE
-
 exports.init = (dataDir, electronMock) => {
     electron = electronMock ?? require("electron")
     exports.dataDir = _dataDir = dataDir
 }
 
-exports.loadApplicationSettings = (storageDir, storageFile) =>
+exports.loadApplicationSettings = () =>
     _applicationSettings ??
-    (_applicationSettings = new ApplicationSettings(storageDir, storageFile))
+    (_applicationSettings = new ApplicationSettings(_dataDir, APPLICATION_SETTINGS_FILE))
 
-exports.loadDocumentSettings = (storageDir, storageFile, documentPath) =>
-    _documentSettings[documentPath] ??
-    (_documentSettings[documentPath] = new DocumentSettings(storageDir, storageFile, documentPath))
+exports.loadDocumentSettings = documentPath => {
+    documentPath = documentPath ?? navigation.getCurrentLocation().filePath
+    return (
+        _documentSettings[documentPath] ??
+        (_documentSettings[documentPath] = new DocumentSettings(
+            _dataDir,
+            DOCUMENT_SETTINGS_FILE,
+            documentPath
+        ))
+    )
+}

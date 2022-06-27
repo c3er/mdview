@@ -1,18 +1,19 @@
 const assert = require("chai").assert
+const lodashClonedeep = require("lodash.clonedeep")
 
 const documentRendering = require("../app/lib/documentRendering/documentRenderingRenderer")
 
 describe("Document rendering", () => {
+    const defaultOptions = {
+        lineBreaksEnabled: false,
+        typographyEnabled: true,
+        emojisEnabled: true,
+        renderAsMarkdown: true,
+    }
     const headerText = "This is a test"
     const mdHeader = `# ${headerText}`
 
-    before(() =>
-        documentRendering.reset({
-            lineBreaksEnabled: false,
-            typographyEnabled: true,
-            emojisEnabled: true,
-        })
-    )
+    beforeEach(() => documentRendering.reset(defaultOptions))
 
     it("renders a header", () => {
         assert.isTrue(
@@ -31,6 +32,20 @@ describe("Document rendering", () => {
 
         it("does not change the input", () => {
             assert.include(actual, mdHeader)
+        })
+    })
+
+    describe("Render as Markdown", () => {
+        it("is active after enabling the option", () => {
+            assert.isTrue(documentRendering.shallRenderAsMarkdown())
+        })
+
+        it("is inactive after disabling the option", () => {
+            const options = lodashClonedeep(defaultOptions)
+            options.renderAsMarkdown = false
+            documentRendering.reset(options)
+
+            assert.isFalse(documentRendering.shallRenderAsMarkdown())
         })
     })
 })

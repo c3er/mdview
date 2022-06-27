@@ -10,7 +10,7 @@ describe("Encoding library", () => {
         const encoding = "utf16le"
         const filename = "testfile"
 
-        beforeEach(() => encodingLib.init(mocking.mainMenu, mocking.dataDir, mocking.electron))
+        beforeEach(() => encodingLib.init(mocking.mainMenu))
 
         it("remembers the encoding", () => {
             encodingLib.change(filename, encoding)

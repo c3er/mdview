@@ -98,10 +98,7 @@ describe("Integration tests with single app instance", () => {
             beforeEach(() => {
                 mocking.resetElectron()
                 storage.init(mocking.dataDir, mocking.electron)
-                applicationSettings = storage.loadApplicationSettings(
-                    mocking.dataDir,
-                    storage.APPLICATION_SETTINGS_FILE
-                )
+                applicationSettings = storage.loadApplicationSettings()
                 applicationSettings.theme = mocking.DEFAULT_THEME
             })
 
@@ -130,23 +127,15 @@ describe("Integration tests with single app instance", () => {
 
         describe("Document settings", () => {
             describe("Encodings", () => {
-                function loadDocumentSettings(filePath) {
-                    return storage.loadDocumentSettings(
-                        mocking.dataDir,
-                        storage.DOCUMENT_SETTINGS_FILE,
-                        filePath
-                    )
-                }
-
                 it("loads known encoding", () => {
                     const ENCODING = "ISO-8859-15"
-                    const documentSettings = loadDocumentSettings("test1")
+                    const documentSettings = storage.loadDocumentSettings("test1")
                     documentSettings.encoding = ENCODING
                     assert.equal(documentSettings.encoding, ENCODING)
                 })
 
                 it("loads default encoding if path is not known", () => {
-                    const documentSettings = loadDocumentSettings("unknown-file")
+                    const documentSettings = storage.loadDocumentSettings("unknown-file")
                     assert.equal(documentSettings.encoding, documentSettings.ENCODING_DEFAULT)
                 })
             })
@@ -165,6 +154,7 @@ describe("Integration tests with single app instance", () => {
                 return {
                     label: item.label, // For debugging
                     enabled: item.enabled,
+                    checked: item.checked,
                 }
             }, menuItemPath)
         }
@@ -183,6 +173,11 @@ describe("Integration tests with single app instance", () => {
                             (await searchMenuItem(currentItemPath)).enabled,
                             currentItem.isEnabled
                         )
+                    })
+
+                    const isChecked = currentItem.isChecked ?? false
+                    it(`is ${isChecked ? "checked" : "unchecked"}`, async () => {
+                        assert.equal((await searchMenuItem(currentItemPath)).checked, isChecked)
                     })
 
                     const subMenu = currentItem.sub

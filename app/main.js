@@ -94,11 +94,7 @@ function openFile(filePath, internalTarget, encoding) {
 }
 
 function loadDocumentSettings() {
-    return storage.loadDocumentSettings(
-        storage.dataDir,
-        storage.DOCUMENT_SETTINGS_FILE,
-        determineCurrentFilePath()
-    )
+    return storage.loadDocumentSettings(determineCurrentFilePath())
 }
 
 function determineCurrentFilePath() {
@@ -340,6 +336,23 @@ function createMainMenu() {
                         },
                     ],
                 },
+                { type: "separator" },
+                {
+                    label: "Render this file as Markdown",
+                    type: "checkbox",
+                    id: documentRendering.RENDER_FILE_AS_MD_MENU_ID,
+                    click() {
+                        documentRendering.switchRenderFileAsMarkdown(determineCurrentFilePath())
+                    },
+                },
+                {
+                    label: "Render all files of this type as Markdown",
+                    type: "checkbox",
+                    id: documentRendering.RENDER_FILE_TYPE_AS_MD_MENU_ID,
+                    click() {
+                        documentRendering.switchRenderFileTypeAsMarkdown(determineCurrentFilePath())
+                    },
+                },
             ],
         },
         {
@@ -445,10 +458,7 @@ electron.app.whenReady().then(() => {
 
     log.init(_cliArgs.isTest)
     storage.init(_cliArgs.storageDir)
-    _applicationSettings = storage.loadApplicationSettings(
-        storage.dataDir,
-        storage.APPLICATION_SETTINGS_FILE
-    )
+    _applicationSettings = storage.loadApplicationSettings()
 
     remote.initialize()
     electron.nativeTheme.themeSource = _applicationSettings.theme
@@ -494,7 +504,7 @@ electron.app.on("open-file", (event, path) => {
 })
 
 ipc.listen(ipc.messages.finishLoad, () => {
-    documentRendering.init(_mainMenu, _applicationSettings)
+    documentRendering.init(_mainMenu, _applicationSettings, determineCurrentFilePath())
     setZoom(_applicationSettings.zoom)
 
     const filePath = _finderFilePath ?? _cliArgs.filePath

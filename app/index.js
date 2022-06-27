@@ -154,10 +154,15 @@ ipc.listen(ipc.messages.fileOpen, file => {
     }
     let content = encodingLib.decode(buffer, encoding)
 
-    if (!fileLib.isMarkdown(filePath)) {
+    if (!documentRendering.shallRenderAsMarkdown()) {
         const pathParts = filePath.split(".")
         const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
-        content = "```" + language + "\n" + content + "\n```"
+
+        // If a Markdown file has to be rendered as source code, the code block enclosings
+        // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
+        // fits this purpose.
+        content = "```" + language + "\n" + content.replaceAll("```", "\u2063```") + "\n```"
+
         ipc.send(ipc.messages.disableRawView)
     } else {
         ipc.send(ipc.messages.enableRawView)
