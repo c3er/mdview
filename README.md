@@ -31,6 +31,15 @@ The Windows setup file supports following parameters:
 - `/S` runs the setup silently, i.e. in the background, without UI and without asking any questions.
 - `/D=C:\path\to\install` sets the installation directory. This parameter has to be the last one. The path must not contain quotes, even if the path contains whitespaces.
 
+### Command line arguments
+
+| CLI                     | Explanation                                                                 |
+| ----------------------- | --------------------------------------------------------------------------- |
+| `<file path>`           | Path of the file to display in the application windows                      |
+| `<file path> #<target>` | Path of file to display and internal target to scroll to                    |
+| `--test`                | Test mode needed by automatic tests                                         |
+| `--test <storage dir>`  | Test mode with overridden path to the storage containing the settings files |
+
 ## Known issues
 
 ### Windows installation and download security
