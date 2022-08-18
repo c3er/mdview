@@ -264,4 +264,12 @@ describe("Integration tests with their own app instance each", () => {
             assert.isFalse(containsConsoleMessage("error"))
         })
     })
+
+    describe("Links in document", () => {
+        it("changes title after click", async () => {
+            const internalLinkElement = await page.waitForSelector("#internal-test-link")
+            await internalLinkElement.click()
+            assert.include(await page.title(), "#some-javascript")
+        })
+    })
 })
