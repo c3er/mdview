@@ -1,60 +1,50 @@
 const path = require("path")
 
+const yargs = require("yargs/yargs")
+const yargsHelpers = require("yargs/helpers")
+
 const log = require("../log/log")
 
 let electron
 
 const DEFAULT_FILE = path.join(__dirname, "..", "..", "..", "README.md")
 
-function extractInternalTarget(args) {
-    return args.find(arg => arg.startsWith("#"))
-}
-
-function extractFilePath(args, storageDirArgIndex) {
-    return (
-        args.find(
-            arg =>
-                arg !== process.execPath &&
-                arg !== "." &&
-                arg !== electron.app.getAppPath() &&
-                arg !== "data:," &&
-                !arg.startsWith("-") &&
-                !arg.startsWith("#") &&
-                args.indexOf(arg) !== storageDirArgIndex
-        ) ?? DEFAULT_FILE
-    )
-}
-
-function parseTestArgs(args) {
-    const testArgIndex = args.indexOf("--test")
-    const isTest = testArgIndex >= 0
-
-    let storageDirArgIndex = -1
-    if (isTest && testArgIndex < args.length - 1) {
-        storageDirArgIndex = testArgIndex + 1
-    }
-
-    return {
-        isTest: isTest,
-        storageDir:
-            storageDirArgIndex >= 0
-                ? args[storageDirArgIndex]
-                : path.join(electron.app.getPath("userData"), "storage"),
-        storageDirArgIndex: storageDirArgIndex,
-    }
-}
-
 exports.init = electronMock => (electron = electronMock ?? require("electron"))
 
 exports.parse = args => {
     log.debug(args)
-    const { isTest, storageDir, storageDirArgIndex } = parseTestArgs(args)
-    const parsedArgs = {
-        filePath: extractFilePath(args, storageDirArgIndex),
-        internalTarget: extractInternalTarget(args),
-        isTest: isTest,
-        storageDir: storageDir,
+
+    const argv = yargs(yargsHelpers.hideBin(args))
+        .option("internal-target", {
+            describe: "Target to scroll to inside the document",
+            type: "string",
+            default: "",
+        })
+        .option("test", {
+            describe: "Flag for application's test mode",
+            type: "boolean",
+            default: false,
+        })
+        .option("storage-dir", {
+            describe: "Override application's default directory for storing settings",
+            type: "string",
+            default: path.join(electron.app.getPath("userData"), "storage"),
+        }).argv
+    log.debug(argv)
+
+    // Assume that the last argument is the file to open. If the application is
+    // invoked by Playwright, the Yargs hideBin function fails.
+    // See issues:
+    // https://github.com/yargs/yargs/issues/2225
+    // https://github.com/microsoft/playwright/issues/16614
+    const positionalArgs = argv._
+    const parsed = {
+        filePath: positionalArgs[positionalArgs.length - 1] ?? DEFAULT_FILE,
+        internalTarget: argv.internalTarget,
+        isTest: argv.test,
+        storageDir: argv.storageDir,
     }
-    log.debug(parsedArgs)
-    return parsedArgs
+    log.debug(parsed)
+
+    return parsed
 }

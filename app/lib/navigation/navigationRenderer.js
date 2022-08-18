@@ -20,7 +20,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     } else if (isInternalLink(target)) {
         ipc.send(
             shallOpenInNewWindow ? ipc.messages.openInternalInNewWindow : ipc.messages.openInternal,
-            target,
+            target.slice(1), // Remove # prefix
             scrollPosition
         )
     } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {

@@ -107,7 +107,7 @@ function createChildWindow(filePath, internalTarget) {
     const processName = process.argv[0]
     const args = processName.includes("electron") ? [".", filePath] : [filePath]
     if (internalTarget !== undefined) {
-        args.push(internalTarget)
+        args.push(`--internal-target=${internalTarget}`)
     }
     childProcess.spawn(processName, args)
 }

@@ -30,7 +30,12 @@ async function startApp(documentPath) {
     await fs.rm(mocking.dataDir, { force: true, recursive: true })
 
     const app = await electron.launch({
-        args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
+        args: [
+            path.join(__dirname, "..", "app", "main.js"),
+            documentPath,
+            "--test",
+            `--storage-dir="${mocking.dataDir}"`,
+        ],
         executablePath: electronPath,
     })
 

@@ -199,15 +199,15 @@ ipc.listen(ipc.messages.fileOpen, file => {
     if (scrollPosition) {
         scrollTo(scrollPosition)
     } else if (internalTarget) {
-        const targetElement = document.getElementById(internalTarget.replace("#", "").split(".")[0])
+        const targetElement = document.getElementById(internalTarget.split(".")[0])
         if (targetElement) {
             scrollTo(
                 targetElement.getBoundingClientRect().top -
                     document.body.getBoundingClientRect().top
             )
-            titlePrefix += internalTarget
+            titlePrefix += `#${internalTarget}`
         } else {
-            titlePrefix += ` ("${internalTarget}" not found)`
+            titlePrefix += ` ("#${internalTarget}" not found)`
         }
     } else {
         scrollTo(0)

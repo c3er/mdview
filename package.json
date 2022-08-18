@@ -93,7 +93,8 @@
     "markdown-it-new-katex": "2.0.3",
     "markdown-it-sub": "1.0.0",
     "markdown-it-sup": "1.0.0",
-    "markdown-it-task-checkbox": "1.0.6"
+    "markdown-it-task-checkbox": "1.0.6",
+    "yargs": "17.5.1"
   },
   "devDependencies": {
     "chai": "4.3.6",
