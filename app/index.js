@@ -198,18 +198,22 @@ ipc.listen(ipc.messages.fileOpen, file => {
     let titlePrefix = filePath
     if (scrollPosition) {
         scrollTo(scrollPosition)
-    } else if (internalTarget) {
+    }
+    if (internalTarget) {
         const targetElement = document.getElementById(internalTarget.replace("#", "").split(".")[0])
         if (targetElement) {
-            scrollTo(
-                targetElement.getBoundingClientRect().top -
-                    document.body.getBoundingClientRect().top
-            )
+            if (!scrollPosition) {
+                scrollTo(
+                    targetElement.getBoundingClientRect().top -
+                        document.body.getBoundingClientRect().top
+                )
+            }
             titlePrefix += internalTarget
         } else {
             titlePrefix += ` ("${internalTarget}" not found)`
         }
-    } else {
+    }
+    if (!scrollPosition && !internalTarget) {
         scrollTo(0)
     }
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`

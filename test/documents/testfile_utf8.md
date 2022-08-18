@@ -25,6 +25,8 @@ Another link to Google: https://www.google.com/
 
 [Internal link](#sub-heading-1)
 
+<a href="#some-javascript" id="internal-test-link">Another internal link</a>
+
 [Broken internal link](#broken-link)
 
 [Link to font file](font1/Daedric.ttf)
