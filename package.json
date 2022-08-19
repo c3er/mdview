@@ -98,11 +98,11 @@
   },
   "devDependencies": {
     "chai": "4.3.6",
-    "electron": "20.0.1",
+    "electron": "20.0.3",
     "electron-builder": "23.3.3",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.0.0",
-    "playwright": "1.24.2",
+    "playwright": "1.25.0",
     "prettier": "2.7.1",
     "tslib": "2.4.0"
   }
