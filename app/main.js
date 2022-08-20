@@ -456,8 +456,8 @@ electron.app.whenReady().then(() => {
     cli.init()
     _cliArgs = cli.parse(process.argv)
 
-    log.init(_cliArgs.isTest)
-    settings.init(path.join(_cliArgs.storageDir, settings.SETTINGS_SUBDIR))
+    log.init(_cliArgs.isTest, path.join(_cliArgs.storageDir, log.SUBDIR))
+    settings.init(path.join(_cliArgs.storageDir, settings.SUBDIR))
     _applicationSettings = settings.loadApplicationSettings()
 
     remote.initialize()

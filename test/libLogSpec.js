@@ -1,3 +1,5 @@
+const path = require("path")
+
 const assert = require("chai").assert
 
 const mocking = require("./mocking")
@@ -17,7 +19,7 @@ describe("Logging", () => {
 
         beforeEach(() => {
             ipc.init(mocking.mainWindow, mocking.electron)
-            log.init(true)
+            log.init(true, path.join(mocking.dataDir, log.SUBDIR))
         })
 
         it("receives debug message from renderer process", () => {

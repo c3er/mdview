@@ -187,7 +187,7 @@ class DocumentSettings extends StorageBase {
     }
 }
 
-exports.SETTINGS_SUBDIR = "settings"
+exports.SUBDIR = "settings"
 
 exports.init = (dataDir, electronMock) => {
     electron = electronMock ?? require("electron")

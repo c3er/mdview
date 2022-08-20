@@ -102,10 +102,7 @@ describe("Integration tests with single app instance", () => {
 
             beforeEach(() => {
                 mocking.resetElectron()
-                settings.init(
-                    path.join(mocking.dataDir, settings.SETTINGS_SUBDIR),
-                    mocking.electron
-                )
+                settings.init(path.join(mocking.dataDir, settings.SUBDIR), mocking.electron)
                 applicationSettings = settings.loadApplicationSettings()
                 applicationSettings.theme = mocking.DEFAULT_THEME
             })

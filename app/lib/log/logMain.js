@@ -1,27 +1,51 @@
+const path = require("path")
+
+const log4js = require("log4js")
+
 const ipc = require("../ipc/ipcMain")
 
 const shared = require("./logShared")
 
+let _logger
+
 function debug(...args) {
-    shared.output(shared.debugMessages, console.debug, args)
+    shared.output(shared.debugMessages, msg => _logger.debug(msg), args)
 }
 
 function info(...args) {
-    shared.output(shared.infoMessages, console.log, args)
+    shared.output(shared.infoMessages, msg => _logger.info(msg), args)
 }
 
 function error(...args) {
-    shared.output(shared.errorMessages, console.error, args)
+    shared.output(shared.errorMessages, msg => _logger.error(msg), args)
 }
 
-exports.init = isTest => {
+exports.init = (isTest, dataDir) => {
     shared.init(isTest)
-    shared.clearMessages()
+
+    log4js.configure({
+        appenders: {
+            default: {
+                type: "file",
+                filename: path.join(dataDir, "app.log"),
+                maxLogSize: "100K",
+                layout: { type: "pattern", pattern: "[%d] [%p] %m" },
+            },
+        },
+        categories: { default: { appenders: ["default"], level: "debug" } },
+    })
+    _logger = log4js.getLogger("default")
 
     ipc.listen(ipc.messages.logToMainDebug, debug)
     ipc.listen(ipc.messages.logToMainInfo, info)
     ipc.listen(ipc.messages.logToMainError, error)
+
+    shared.dumpPreInitMessages(shared.debugMessages, debug)
+    shared.dumpPreInitMessages(shared.infoMessages, info)
+    shared.dumpPreInitMessages(shared.errorMessages, error)
 }
+
+exports.SUBDIR = "log"
 
 exports.debug = debug
 
