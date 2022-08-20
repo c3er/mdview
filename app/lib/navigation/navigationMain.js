@@ -77,9 +77,9 @@ function canGoForward() {
     return _locations.forward.length > 0
 }
 
-function openFile(file) {
+function openFile(fileInfo) {
     // log.debug(`Navigate to "${_locations.current}"`)
-    ipc.send(ipc.messages.fileOpen, file)
+    ipc.send(ipc.messages.fileOpen, fileInfo)
 }
 
 function handleCallbacks(oldLocation, destination) {

@@ -9,7 +9,7 @@ describe("Logging", () => {
         const ipc = require("../app/lib/ipc/ipcMain")
         const log = require("../app/lib/log/logMain")
 
-        function assertMessageFromrenderer(ipcMessage, messageArray) {
+        function assertMessageFromRenderer(ipcMessage, messageArray) {
             mocking.register.ipc.mainOn(ipcMessage, (_, msg) => assert.equal(msg, testMessage))
             mocking.send.ipc.toMain(ipcMessage, null, testMessage)
             assert.deepInclude(messageArray, [testMessage])
@@ -21,15 +21,15 @@ describe("Logging", () => {
         })
 
         it("receives debug message from renderer process", () => {
-            assertMessageFromrenderer(ipc.messages.logToMainDebug, log.debugMessages)
+            assertMessageFromRenderer(ipc.messages.logToMainDebug, log.debugMessages)
         })
 
         it("receives info message from renderer process", () => {
-            assertMessageFromrenderer(ipc.messages.logToMainInfo, log.infoMessages)
+            assertMessageFromRenderer(ipc.messages.logToMainInfo, log.infoMessages)
         })
 
         it("receives error message from renderer process", () => {
-            assertMessageFromrenderer(ipc.messages.logToMainError, log.errorMessages)
+            assertMessageFromRenderer(ipc.messages.logToMainError, log.errorMessages)
         })
     })
 

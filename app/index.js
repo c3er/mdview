@@ -10,7 +10,6 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/documentRendering/documentRenderingRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
-const fileLib = require("./lib/file")
 const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
@@ -141,13 +140,13 @@ function handleContextMenuEvent(event) {
 
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
-ipc.listen(ipc.messages.fileOpen, file => {
+ipc.listen(ipc.messages.fileOpen, fileInfo => {
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
 
-    const filePath = file.path
+    const filePath = fileInfo.path
     const buffer = fs.readFileSync(filePath)
-    let encoding = file.encoding
+    let encoding = fileInfo.encoding
     if (!encoding) {
         encoding = encodingLib.detect(buffer)
         ipc.send(ipc.messages.changeEncoding, filePath, encoding)
@@ -193,8 +192,8 @@ ipc.listen(ipc.messages.fileOpen, file => {
         image.onerror = () => (image.style.backgroundColor = "#ffe6cc")
     })
 
-    const scrollPosition = file.scrollPosition
-    const internalTarget = file.internalTarget
+    const scrollPosition = fileInfo.scrollPosition
+    const internalTarget = fileInfo.internalTarget
     let titlePrefix = filePath
     if (scrollPosition) {
         scrollTo(scrollPosition)
