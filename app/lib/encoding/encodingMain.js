@@ -1,6 +1,6 @@
 const encodingShared = require("./encodingShared")
 const ipc = require("../ipc/ipcMain")
-const storage = require("../main/storage")
+const settings = require("../main/settings")
 
 let _mainMenu
 
@@ -10,7 +10,7 @@ function toId(encoding) {
 
 function changeEncoding(filePath, encoding) {
     encoding = encodingShared.normalize(encoding)
-    storage.loadDocumentSettings(filePath).encoding = encoding
+    settings.loadDocumentSettings(filePath).encoding = encoding
 
     const menuItem = _mainMenu.getMenuItemById(toId(encoding))
     if (menuItem) {
@@ -70,4 +70,4 @@ exports.toId = toId
 
 exports.change = changeEncoding
 
-exports.load = filePath => storage.loadDocumentSettings(filePath).encoding
+exports.load = filePath => settings.loadDocumentSettings(filePath).encoding

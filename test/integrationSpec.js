@@ -94,16 +94,19 @@ describe("Integration tests with single app instance", () => {
         assert.isFalse(containsConsoleMessage("ERR_FILE_NOT_FOUND"))
     })
 
-    describe('Library "storage"', () => {
-        const storage = require("../app/lib/main/storage")
+    describe('Library "settings"', () => {
+        const settings = require("../app/lib/main/settings")
 
         describe("Application settings", () => {
             let applicationSettings
 
             beforeEach(() => {
                 mocking.resetElectron()
-                storage.init(mocking.dataDir, mocking.electron)
-                applicationSettings = storage.loadApplicationSettings()
+                settings.init(
+                    path.join(mocking.dataDir, settings.SETTINGS_SUBDIR),
+                    mocking.electron
+                )
+                applicationSettings = settings.loadApplicationSettings()
                 applicationSettings.theme = mocking.DEFAULT_THEME
             })
 
@@ -134,13 +137,13 @@ describe("Integration tests with single app instance", () => {
             describe("Encodings", () => {
                 it("loads known encoding", () => {
                     const ENCODING = "ISO-8859-15"
-                    const documentSettings = storage.loadDocumentSettings("test1")
+                    const documentSettings = settings.loadDocumentSettings("test1")
                     documentSettings.encoding = ENCODING
                     assert.equal(documentSettings.encoding, ENCODING)
                 })
 
                 it("loads default encoding if path is not known", () => {
-                    const documentSettings = storage.loadDocumentSettings("unknown-file")
+                    const documentSettings = settings.loadDocumentSettings("unknown-file")
                     assert.equal(documentSettings.encoding, documentSettings.ENCODING_DEFAULT)
                 })
             })

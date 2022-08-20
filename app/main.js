@@ -17,7 +17,7 @@ const ipc = require("./lib/ipc/ipcMain")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
-const storage = require("./lib/main/storage")
+const settings = require("./lib/main/settings")
 
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
@@ -94,7 +94,7 @@ function openFile(filePath, internalTarget, encoding) {
 }
 
 function loadDocumentSettings() {
-    return storage.loadDocumentSettings(determineCurrentFilePath())
+    return settings.loadDocumentSettings(determineCurrentFilePath())
 }
 
 function determineCurrentFilePath() {
@@ -457,8 +457,8 @@ electron.app.whenReady().then(() => {
     _cliArgs = cli.parse(process.argv)
 
     log.init(_cliArgs.isTest)
-    storage.init(_cliArgs.storageDir)
-    _applicationSettings = storage.loadApplicationSettings()
+    settings.init(path.join(_cliArgs.storageDir, settings.SETTINGS_SUBDIR))
+    _applicationSettings = settings.loadApplicationSettings()
 
     remote.initialize()
     electron.nativeTheme.themeSource = _applicationSettings.theme

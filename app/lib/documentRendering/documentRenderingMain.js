@@ -1,7 +1,7 @@
 const fileLib = require("../file")
 const ipc = require("../ipc/ipcMain")
 const navigation = require("../navigation/navigationMain")
-const storage = require("../main/storage")
+const settings = require("../main/settings")
 
 const ENABLE_LINE_BREAKS_MENU_ID = "enable-line-breaks"
 const ENABLE_TYPOGRAPHY_MENU_ID = "enable-typographic-replacements"
@@ -42,7 +42,7 @@ function getMenuItemState(id) {
 
 function notifyOptionChanges(filePath) {
     filePath = filePath ?? navigation.getCurrentLocation().filePath
-    const documentSettings = storage.loadDocumentSettings(filePath)
+    const documentSettings = settings.loadDocumentSettings(filePath)
     ipc.send(ipc.messages.changeRenderingOptions, {
         lineBreaksEnabled: _applicationSettings.lineBreaksEnabled,
         typographyEnabled: _applicationSettings.typographyEnabled,
@@ -57,7 +57,7 @@ function changeOption(setter) {
 }
 
 function updateFileSpecificRendering() {
-    setMenuItemState(RENDER_FILE_AS_MD_MENU_ID, storage.loadDocumentSettings().renderAsMarkdown)
+    setMenuItemState(RENDER_FILE_AS_MD_MENU_ID, settings.loadDocumentSettings().renderAsMarkdown)
     notifyOptionChanges()
 }
 
@@ -82,7 +82,7 @@ exports.init = (mainMenu, applicationSettings, filePath) => {
     setMenuItemState(RENDER_FILE_TYPE_AS_MD_MENU_ID, isMarkdownFileType(filePath))
     setMenuItemState(
         RENDER_FILE_AS_MD_MENU_ID,
-        storage.loadDocumentSettings(filePath).renderAsMarkdown
+        settings.loadDocumentSettings(filePath).renderAsMarkdown
     )
 
     notifyOptionChanges(filePath)
@@ -107,7 +107,7 @@ exports.switchEnableEmojis = () =>
 exports.switchRenderFileAsMarkdown = filePath => {
     changeOption(
         () =>
-            (storage.loadDocumentSettings(filePath).renderAsMarkdown =
+            (settings.loadDocumentSettings(filePath).renderAsMarkdown =
                 getMenuItemState(RENDER_FILE_AS_MD_MENU_ID))
     )
 }
