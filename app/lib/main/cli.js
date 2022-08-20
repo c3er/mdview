@@ -12,7 +12,7 @@ const DEFAULT_FILE = path.join(__dirname, "..", "..", "..", "README.md")
 exports.init = electronMock => (electron = electronMock ?? require("electron"))
 
 exports.parse = args => {
-    log.debug(args)
+    log.debug("Raw arguments:", args)
 
     const argv = yargs(yargsHelpers.hideBin(args))
         .option("internal-target", {
@@ -30,7 +30,7 @@ exports.parse = args => {
             type: "string",
             default: path.join(electron.app.getPath("userData"), "storage"),
         }).argv
-    log.debug(argv)
+    log.debug("Parsed by Yargs:", argv)
 
     // Assume that the last argument is the file to open. If the application is
     // invoked by Playwright, the Yargs hideBin function fails.
@@ -44,7 +44,7 @@ exports.parse = args => {
         isTest: argv.test,
         storageDir: argv.storageDir,
     }
-    log.debug(parsed)
+    log.debug("Parsed arguments:", parsed)
 
     return parsed
 }
