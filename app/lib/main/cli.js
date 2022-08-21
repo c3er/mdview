@@ -34,21 +34,25 @@ exports.parse = args => {
             describe: "Output the user data path and exit",
             type: "boolean",
             default: false,
-        }).argv
+        })
+        .help().argv
     log.debug("Parsed by Yargs:", argv)
 
-    // Assume that the last argument is the file to open. If the application is
-    // invoked by Playwright, the Yargs hideBin function fails.
-    // See issues:
-    // https://github.com/yargs/yargs/issues/2225
-    // https://github.com/microsoft/playwright/issues/16614
     const positionalArgs = argv._
+    const getUserDataPath = argv.getUserDataPath
     const parsed = {
+        // Assume that the last argument is the file to open. If the application is
+        // invoked by Playwright, the Yargs hideBin function fails.
+        // See issues:
+        // https://github.com/yargs/yargs/issues/2225
+        // https://github.com/microsoft/playwright/issues/16614
         filePath: positionalArgs[positionalArgs.length - 1] ?? DEFAULT_FILE,
+
         internalTarget: argv.internalTarget,
         isTest: argv.test,
         storageDir: argv.storageDir,
-        shallOutputUserDataPath: argv.getUserDataPath,
+        shallOutputUserDataPath: getUserDataPath,
+        shallExitImmediately: [getUserDataPath, argv.help, argv.version].some(flag => flag),
     }
     log.debug("Parsed arguments:", parsed)
 

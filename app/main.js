@@ -456,13 +456,12 @@ electron.app.whenReady().then(() => {
     cli.init()
     _cliArgs = cli.parse(process.argv)
 
-    const shallOutputUserDataPath = _cliArgs.shallOutputUserDataPath
-    if (shallOutputUserDataPath) {
+    if (_cliArgs.shallOutputUserDataPath) {
         console.log(electron.app.getPath("userData"))
+    }
+    if (_cliArgs.shallExitImmediately) {
         process.exit(0)
-
-        // In Electron, it appears necessary to do an explicit return additionally
-        return
+        return // In Electron, it appears necessary to do an explicit return additionally
     }
 
     log.init(_cliArgs.isTest, path.join(_cliArgs.storageDir, log.SUBDIR))
