@@ -21,7 +21,7 @@ exports.parse = args => {
             default: "",
         })
         .option("test", {
-            describe: "Flag for application's test mode",
+            describe: "Flag for test mode needed by automatic tests",
             type: "boolean",
             default: false,
         })

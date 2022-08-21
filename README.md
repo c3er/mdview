@@ -33,12 +33,15 @@ The Windows setup file supports following parameters:
 
 ### Command line arguments
 
-| CLI                     | Explanation                                                                 |
-| ----------------------- | --------------------------------------------------------------------------- |
-| `<file path>`           | Path of the file to display in the application windows                      |
-| `<file path> #<target>` | Path of file to display and internal target to scroll to                    |
-| `--test`                | Test mode needed by automatic tests                                         |
-| `--test <storage dir>`  | Test mode with overridden path to the storage containing the settings files |
+| CLI                           | Explanation                                                   |
+| ----------------------------- | ------------------------------------------------------------- |
+| `<file path>`                 | Path of the file to display in the application windows        |
+| `--internal-target=<target>`  | Target to scroll to inside the document                       |
+| `--test`                      | Flag for test mode needed by automatic tests                  |
+| `--storage-dir=<storage dir>` | Override application's default directory for storing settings |
+| `--get-user-data-path`        | Output the user data path and exit                            |
+| `--help`                      | Output help about the command line options and exit           |
+| `--version`                   | Output the application version and exit                       |
 
 ## Known issues
 
