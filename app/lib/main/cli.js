@@ -29,6 +29,11 @@ exports.parse = args => {
             describe: "Override application's default directory for storing settings",
             type: "string",
             default: path.join(electron.app.getPath("userData"), "storage"),
+        })
+        .option("get-user-data-path", {
+            describe: "Output the user data path and exit",
+            type: "boolean",
+            default: false,
         }).argv
     log.debug("Parsed by Yargs:", argv)
 
@@ -43,6 +48,7 @@ exports.parse = args => {
         internalTarget: argv.internalTarget,
         isTest: argv.test,
         storageDir: argv.storageDir,
+        shallOutputUserDataPath: argv.getUserDataPath,
     }
     log.debug("Parsed arguments:", parsed)
 

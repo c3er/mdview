@@ -456,6 +456,15 @@ electron.app.whenReady().then(() => {
     cli.init()
     _cliArgs = cli.parse(process.argv)
 
+    const shallOutputUserDataPath = _cliArgs.shallOutputUserDataPath
+    if (shallOutputUserDataPath) {
+        console.log(electron.app.getPath("userData"))
+        process.exit(0)
+
+        // In Electron, it appears necessary to do an explicit return additionally
+        return
+    }
+
     log.init(_cliArgs.isTest, path.join(_cliArgs.storageDir, log.SUBDIR))
     settings.init(path.join(_cliArgs.storageDir, settings.SUBDIR))
     _applicationSettings = settings.loadApplicationSettings()
