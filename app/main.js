@@ -461,7 +461,11 @@ electron.app.whenReady().then(() => {
     }
     if (_cliArgs.shallExitImmediately) {
         process.exit(0)
-        return // In Electron, it appears necessary to do an explicit return additionally
+
+        // In Electron, it appears necessary to do an explicit return additionally.
+        // Otherwise, it appears that the remainder of the function is still executed
+        // before process terminates.
+        return
     }
 
     log.init(_cliArgs.isTest, path.join(_cliArgs.storageDir, log.SUBDIR))
