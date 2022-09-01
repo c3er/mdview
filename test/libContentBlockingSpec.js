@@ -27,7 +27,7 @@ describe("Content blocking", () => {
         it("unblocks a URL", () => {
             const unblockMessage = ipc.messages.unblockURL
             mocking.register.ipc.mainOn(unblockMessage, (_, url) => assert.equal(url, expectedUrl))
-            mocking.send.ipc.toMain(unblockMessage, {}, expectedUrl)
+            mocking.send.ipc.toMain(unblockMessage, mocking.electronIpcEvent, expectedUrl)
         })
 
         it("unblocks always redirection URLs", () => {
@@ -62,7 +62,11 @@ describe("Content blocking", () => {
             })
 
             it("does not block an unblocked URL", () => {
-                mocking.send.ipc.toMain(ipc.messages.unblockURL, {}, expectedUrl)
+                mocking.send.ipc.toMain(
+                    ipc.messages.unblockURL,
+                    mocking.electronIpcEvent,
+                    expectedUrl
+                )
                 mocking.send.webRequest.beforeRequest(
                     {
                         url: expectedUrl,

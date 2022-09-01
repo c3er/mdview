@@ -5,7 +5,11 @@ const lodashClonedeep = require("lodash.clonedeep")
 
 const DEFAULT_THEME = "system"
 
-const _electronIpcEvent = {}
+const _electronIpcEvent = {
+    sender: {
+        id: 123,
+    },
+}
 
 class WebRequestChannel {
     constructor() {
@@ -370,6 +374,8 @@ exports.event = class {
         this.preventDefaultIsCalled = true
     }
 }
+
+exports.electronIpcEvent = _electronIpcEvent
 
 exports.createHtmlElement = createHtmlElement
 

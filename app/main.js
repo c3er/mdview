@@ -527,7 +527,7 @@ ipc.listen(ipc.messages.finishLoad, () => {
     }
 })
 
-ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position) => {
+ipc.listen(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
     _isReloading = true
 
@@ -543,9 +543,11 @@ ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position)
     restoreScrollPosition()
 })
 
-ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
+ipc.listen(ipc.messages.openFileInNewWindow, (_, filePath, internalTarget) =>
+    createChildWindow(filePath, internalTarget)
+)
 
-ipc.listen(ipc.messages.openInternalInNewWindow, target =>
+ipc.listen(ipc.messages.openInternalInNewWindow, (_, target) =>
     createChildWindow(navigation.getCurrentLocation().filePath, target)
 )
 

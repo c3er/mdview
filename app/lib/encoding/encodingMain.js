@@ -63,7 +63,9 @@ exports.ENCODINGS = [
 exports.init = mainMenu => {
     _mainMenu = mainMenu
 
-    ipc.listen(ipc.messages.changeEncoding, changeEncoding)
+    ipc.listen(ipc.messages.changeEncoding, (_, filePath, encoding) =>
+        changeEncoding(filePath, encoding)
+    )
 }
 
 exports.toId = toId

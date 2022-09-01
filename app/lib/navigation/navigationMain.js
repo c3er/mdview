@@ -147,10 +147,10 @@ exports.init = mainMenu => {
     encodingLib.init(mainMenu)
     reset()
 
-    ipc.listen(ipc.messages.openFile, (filePath, lastScrollPosition) =>
+    ipc.listen(ipc.messages.openFile, (_, filePath, lastScrollPosition) =>
         go(filePath, null, null, lastScrollPosition)
     )
-    ipc.listen(ipc.messages.openInternal, (target, lastScrollPosition) =>
+    ipc.listen(ipc.messages.openInternal, (_, target, lastScrollPosition) =>
         go(_locations.current.filePath, target, null, lastScrollPosition)
     )
 

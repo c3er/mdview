@@ -59,7 +59,7 @@ exports.init = (mainMenu, electronMock) => {
         unblockURL(url)
     })
 
-    ipc.listen(ipc.messages.unblockURL, unblockURL)
+    ipc.listen(ipc.messages.unblockURL, (_, url) => unblockURL(url))
     ipc.listen(ipc.messages.allContentUnblocked, () => {
         _contentIsBlocked = false
         allowUnblockContent(false)

@@ -13,7 +13,7 @@ describe("Logging", () => {
 
         function assertMessageFromRenderer(ipcMessage, messageArray) {
             mocking.register.ipc.mainOn(ipcMessage, (_, msg) => assert.equal(msg, testMessage))
-            mocking.send.ipc.toMain(ipcMessage, null, testMessage)
+            mocking.send.ipc.toMain(ipcMessage, mocking.electronIpcEvent, testMessage)
             assert.deepInclude(messageArray, [testMessage])
         }
 

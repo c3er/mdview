@@ -23,7 +23,7 @@ describe("Encoding library", () => {
                 assert.equal(filePath, filename)
                 assert.equal(actualEncoding, encoding)
             })
-            mocking.send.ipc.toMain(message, null, filename, encoding)
+            mocking.send.ipc.toMain(message, mocking.electronIpcEvent, filename, encoding)
         })
     })
 

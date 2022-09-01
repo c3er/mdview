@@ -36,9 +36,9 @@ exports.init = (isTest, dataDir) => {
     })
     _logger = log4js.getLogger("default")
 
-    ipc.listen(ipc.messages.logToMainDebug, debug)
-    ipc.listen(ipc.messages.logToMainInfo, info)
-    ipc.listen(ipc.messages.logToMainError, error)
+    ipc.listen(ipc.messages.logToMainDebug, (_, ...args) => debug(...args))
+    ipc.listen(ipc.messages.logToMainInfo, (_, ...args) => info(...args))
+    ipc.listen(ipc.messages.logToMainError, (_, ...args) => error(...args))
 
     shared.dumpPreInitMessages(shared.debugMessages, debug)
     shared.dumpPreInitMessages(shared.infoMessages, info)

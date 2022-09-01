@@ -7,7 +7,9 @@ const _preInitIpcListeners = []
 
 function listen(message, callback) {
     if (electron) {
-        electron.ipcMain.on(message, (_, ...args) => callback(...args))
+        electron.ipcMain.on(message, (event, ...args) => {
+            callback(event.sender.id, ...args)
+        })
     } else {
         _preInitIpcListeners.push({
             message: message,
