@@ -23,7 +23,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
             target.slice(1), // Remove # prefix
             scrollPosition
         )
-    } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
+    } else if (!file.isText(fullPath)) {
         electron.shell.openPath(fullPath)
     } else {
         ipc.send(

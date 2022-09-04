@@ -22,14 +22,4 @@ describe('Library "file"', () => {
             assert.isFalse(file.isText(binFilePath))
         })
     })
-
-    describe("file.isMarkdown", () => {
-        it("recognizes a Markdown file", () => {
-            assert.isTrue(file.isMarkdown(mdFilePath))
-        })
-
-        it("recognizes a non Markdown file", () => {
-            assert.isFalse(file.isMarkdown(nonMdFilePath))
-        })
-    })
 })

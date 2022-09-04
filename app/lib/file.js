@@ -1,6 +1,5 @@
 const fs = require("fs")
 
-const common = require("./common")
 const log = require("./log/log")
 
 function readBytesSync(filePath, filePosition, numBytesToRead) {
@@ -21,9 +20,6 @@ function readBytesSync(filePath, filePosition, numBytesToRead) {
         buffer: buffer,
     }
 }
-
-exports.isMarkdown = filePath =>
-    common.FILE_EXTENSIONS.map(ext => "." + ext).some(ext => filePath.toLowerCase().endsWith(ext))
 
 exports.isText = filePath => {
     const BYTECOUNT = 50000
