@@ -7,6 +7,9 @@ const FORWARD_MENU_ID = "forward"
 let _isInitialized = false
 let _mainMenu
 
+let _cliFilePath
+let _finderFilePath
+
 const _locations = {
     back: [],
     forward: [],
@@ -141,8 +144,9 @@ exports.BACK_MENU_ID = BACK_MENU_ID
 
 exports.FORWARD_MENU_ID = FORWARD_MENU_ID
 
-exports.init = mainMenu => {
+exports.init = (mainMenu, cliFilePath) => {
     _mainMenu = mainMenu
+    _cliFilePath = cliFilePath
 
     encodingLib.init(mainMenu)
     reset()
@@ -185,3 +189,7 @@ exports.canGoBack = canGoBack
 exports.canGoForward = canGoForward
 
 exports.isInitialized = () => _isInitialized
+
+exports.setFinderFilePath = path => (_finderFilePath = path)
+
+exports.determineCurrentFilePath = () => _locations?.current ?? _cliFilePath ?? _finderFilePath

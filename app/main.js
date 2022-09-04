@@ -18,6 +18,7 @@ const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const settings = require("./lib/main/settings")
+const windowManagement = require("./lib/main/windowManagement")
 
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
@@ -32,7 +33,6 @@ let _mainMenu
 
 let _lastModificationTime
 
-let _isReloading = false
 let _scrollPosition = 0
 
 let _applicationSettings
@@ -94,13 +94,7 @@ function openFile(filePath, internalTarget, encoding) {
 }
 
 function loadDocumentSettings() {
-    return settings.loadDocumentSettings(determineCurrentFilePath())
-}
-
-function determineCurrentFilePath() {
-    return navigation.hasCurrentLocation()
-        ? navigation.getCurrentLocation().filePath
-        : _cliArgs.filePath ?? _finderFilePath
+    return settings.loadDocumentSettings(navigation.determineCurrentFilePath())
 }
 
 function createChildWindow(filePath, internalTarget) {
@@ -342,7 +336,9 @@ function createMainMenu() {
                     type: "checkbox",
                     id: documentRendering.RENDER_FILE_AS_MD_MENU_ID,
                     click() {
-                        documentRendering.switchRenderFileAsMarkdown(determineCurrentFilePath())
+                        documentRendering.switchRenderFileAsMarkdown(
+                            navigation.determineCurrentFilePath()
+                        )
                     },
                 },
                 {
@@ -350,7 +346,9 @@ function createMainMenu() {
                     type: "checkbox",
                     id: documentRendering.RENDER_FILE_TYPE_AS_MD_MENU_ID,
                     click() {
-                        documentRendering.switchRenderFileTypeAsMarkdown(determineCurrentFilePath())
+                        documentRendering.switchRenderFileTypeAsMarkdown(
+                            navigation.determineCurrentFilePath()
+                        )
                     },
                 },
             ],
@@ -404,50 +402,11 @@ function createMainMenu() {
     ])
 }
 
-function createWindow() {
-    const windowPosition = loadDocumentSettings().windowPosition
-    const mainWindow = new electron.BrowserWindow({
-        x: windowPosition.x,
-        y: windowPosition.y,
-        width: windowPosition.width,
-        height: windowPosition.height,
-        backgroundColor: "#fff",
-        webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true,
-            contextIsolation: false,
-        },
-    })
-    mainWindow.on("close", () => (loadDocumentSettings().windowPosition = mainWindow.getBounds()))
-    mainWindow.on("closed", () => (_mainWindow = null))
-    mainWindow.webContents.on("did-finish-load", () => {
-        if (_isReloading) {
-            restoreScrollPosition()
-            _isReloading = false
-        }
-    })
-    mainWindow.webContents.on("before-input-event", (event, input) => {
-        if (input.type === "keyDown") {
-            if (input.key === "Backspace") {
-                event.preventDefault()
-                navigation.back()
-            } else if (input.control && input.key === "+") {
-                // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
-                event.preventDefault()
-                zoomIn()
-            }
-        }
-    })
-    remote.enable(mainWindow.webContents)
-    mainWindow.loadFile(path.join(__dirname, "index.html"))
-    return mainWindow
-}
-
 function ensureWindowExists() {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (electron.BrowserWindow.getAllWindows().length === 0) {
-        _mainWindow = createWindow()
+        _mainWindow = windowManagement.createWindow()
         ipc.reset(_mainWindow)
     }
 }
@@ -478,12 +437,13 @@ electron.app.whenReady().then(() => {
     _mainMenu = createMainMenu()
     electron.Menu.setApplicationMenu(_mainMenu)
 
-    _mainWindow = createWindow()
+    navigation.init(_mainMenu, _cliArgs.filePath)
+
+    _mainWindow = windowManagement.createWindow()
 
     changeTheme(_applicationSettings.theme)
 
     ipc.init(_mainWindow)
-    navigation.init(_mainMenu)
     encodingLib.init(_mainMenu)
     contentBlocking.init(_mainMenu)
     rawText.init(_mainMenu)
@@ -511,25 +471,27 @@ electron.app.on("open-file", (event, path) => {
         ensureWindowExists()
         navigation.go(path)
     } else {
-        _finderFilePath = path
+        navigation.setFinderFilePath(path)
     }
 })
 
 ipc.listen(ipc.messages.finishLoad, () => {
-    documentRendering.init(_mainMenu, _applicationSettings, determineCurrentFilePath())
+    documentRendering.init(_mainMenu, _applicationSettings, navigation.determineCurrentFilePath())
     setZoom(_applicationSettings.zoom)
 
     const filePath = _finderFilePath ?? _cliArgs.filePath
     openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
 
     if (_finderFilePath) {
-        _mainWindow.setBounds(loadDocumentSettings().windowPosition)
+        _mainWindow.setBounds(
+            settings.loadDocumentSettings(navigation.determineCurrentFilePath()).windowPosition
+        )
     }
 })
 
 ipc.listen(ipc.messages.reloadPrepared, (_, isFileModification, encoding, position) => {
     _scrollPosition = position
-    _isReloading = true
+    windowManagement.startReload()
 
     const currentLocation = navigation.getCurrentLocation()
     const filePath = currentLocation.filePath
