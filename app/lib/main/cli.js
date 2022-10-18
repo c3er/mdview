@@ -41,12 +41,7 @@ exports.parse = args => {
     const positionalArgs = argv._
     const getUserDataPath = argv.getUserDataPath
     const parsed = {
-        // Assume that the last argument is the file to open. If the application is
-        // invoked by Playwright, the Yargs hideBin function fails.
-        // See issues:
-        // https://github.com/yargs/yargs/issues/2225
-        // https://github.com/microsoft/playwright/issues/16614
-        filePath: positionalArgs[positionalArgs.length - 1] ?? DEFAULT_FILE,
+        filePath: positionalArgs[0] ?? DEFAULT_FILE,
 
         internalTarget: argv.internalTarget,
         isTest: argv.test,
