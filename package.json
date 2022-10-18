@@ -82,7 +82,7 @@
     "highlight.js": "11.6.0",
     "iconv-lite": "0.6.3",
     "jschardet": "3.0.0",
-    "log4js": "6.6.1",
+    "log4js": "6.7.0",
     "markdown-it": "13.0.1",
     "markdown-it-abbr": "1.0.4",
     "markdown-it-container": "3.0.0",
@@ -95,15 +95,15 @@
     "markdown-it-sub": "1.0.0",
     "markdown-it-sup": "1.0.0",
     "markdown-it-task-checkbox": "1.0.6",
-    "yargs": "17.5.1"
+    "yargs": "17.6.0"
   },
   "devDependencies": {
     "chai": "4.3.6",
-    "electron": "20.1.0",
-    "electron-builder": "23.3.3",
+    "electron": "21.1.1",
+    "electron-builder": "23.6.0",
     "lodash.clonedeep": "4.5.0",
-    "mocha": "10.0.0",
-    "playwright": "1.25.1",
+    "mocha": "10.1.0",
+    "playwright": "1.27.1",
     "prettier": "2.7.1",
     "tslib": "2.4.0"
   }
