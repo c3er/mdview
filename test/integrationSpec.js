@@ -10,7 +10,8 @@ const mocking = require("./mocking")
 const electron = playwright._electron
 
 const defaultDocumentFile = "testfile_utf8.md"
-const defaultDocumentPath = path.join(__dirname, "documents", defaultDocumentFile)
+const defaultDocumentDir = path.join(__dirname, "documents")
+const defaultDocumentPath = path.join(defaultDocumentDir, defaultDocumentFile)
 
 let app
 let page
@@ -271,5 +272,16 @@ describe("Integration tests with their own app instance each", () => {
             await internalLinkElement.click()
             assert.include(await page.title(), "#some-javascript")
         })
+    })
+})
+
+describe("Integration tests with special documents", () => {
+    it("loads image encoded as data URL", async () => {
+        ;[app, page] = await startApp(path.join(defaultDocumentDir, "gh-issue23.md"))
+        try {
+            assert.isFalse(containsConsoleMessage("Failed to load resource"))
+        } finally {
+            await app.close()
+        }
     })
 })

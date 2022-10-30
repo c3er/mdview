@@ -86,6 +86,10 @@ function reload(isFileModification, encoding) {
     )
 }
 
+function isDataUrl(url) {
+    return url.startsWith("data:")
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
@@ -184,7 +188,7 @@ ipc.listen(ipc.messages.fileOpen, fileInfo => {
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
-        if (!common.isWebURL(imageUrl)) {
+        if (!common.isWebURL(imageUrl) && !isDataUrl(imageUrl)) {
             image.src = path.join(documentDirectory, imageUrl).replace("#", "%23")
         }
         statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
