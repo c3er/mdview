@@ -10,7 +10,6 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/documentRendering/documentRenderingRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
-const fileLib = require("./lib/file")
 const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
@@ -85,6 +84,10 @@ function reload(isFileModification, encoding) {
         encoding,
         document.documentElement.scrollTop
     )
+}
+
+function isDataUrl(url) {
+    return url.startsWith("data:")
 }
 
 function handleDOMContentLoadedEvent() {
@@ -185,7 +188,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
-        if (!common.isWebURL(imageUrl)) {
+        if (!common.isWebURL(imageUrl) && !isDataUrl(imageUrl)) {
             image.src = path.join(documentDirectory, imageUrl).replace("#", "%23")
         }
         statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
