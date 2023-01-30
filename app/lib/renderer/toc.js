@@ -18,7 +18,7 @@ class Section {
         return section
     }
 
-    equals(other, excludedSubSection) {
+    equals(other) {
         if (!other) {
             return false
         }
@@ -31,25 +31,13 @@ class Section {
             return false
         }
 
-        if (!this.parent && other.parent) {
-            return false
-        }
-
-        if (this.parent && !this.parent.equals(other.parent, this)) {
-            return false
-        }
-
         const subSectionCount = this.subSections.length
         if (subSectionCount !== other.subSections.length) {
             return false
         }
 
         for (let i = 0; i < subSectionCount; i++) {
-            const subSection = this.subSections[i]
-            if (
-                subSection.id !== excludedSubSection?.id &&
-                !subSection.equals(other.subSections[i])
-            ) {
+            if (!this.subSections[i].equals(other.subSections[i])) {
                 return false
             }
         }
@@ -73,6 +61,23 @@ exports.Section = Section
 
 exports.build = fileContent => {
     const rootSection = new Section()
-    rootSection.addSubSection("Some header") // XXX Read header from file content
+
+    let isInCode = false
+    const lines = fileContent
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(line => !!line)
+    for (const line of lines) {
+        if (line.startsWith("```")) {
+            isInCode = !isInCode
+        }
+        if (!isInCode) {
+            if (line.startsWith("#")) {
+                const headerLineParts = line.split("#")
+                rootSection.addSubSection(headerLineParts[headerLineParts.length - 1].trim())
+            }
+        }
+    }
+
     return rootSection
 }
