@@ -3,14 +3,12 @@ const assert = require("chai").assert
 const toc = require("../app/lib/renderer/toc")
 
 describe('Library "TOC"', () => {
-    it("Recognizes a header", () => {
+    it("recognizes a header", () => {
         const headerText = "Some header"
         const content = `# ${headerText}`
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
-                    header: "",
-                    parent: null,
                     subSections: [
                         {
                             header: headerText,
@@ -22,7 +20,7 @@ describe('Library "TOC"', () => {
         )
     })
 
-    it("Recognizes two headers", () => {
+    it("recognizes two headers", () => {
         const headerText1 = "Header 1"
         const headerText2 = "Header 2"
         const content = `
@@ -33,8 +31,6 @@ describe('Library "TOC"', () => {
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
-                    header: "",
-                    parent: null,
                     subSections: [
                         {
                             header: headerText1,
