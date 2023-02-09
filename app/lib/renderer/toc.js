@@ -11,11 +11,13 @@ class Section {
         this.id = ++Section._lastId
     }
 
-    addSubSection(header) {
-        const section = new Section(header)
+    addSubSection(section) {
         section.parent = this
         this.subSections.push(section)
-        return section
+    }
+
+    addSubsequentSection(section) {
+        this.parent.addSubSection(section)
     }
 
     equals(other) {
@@ -61,7 +63,8 @@ exports.Section = Section
 
 exports.build = fileContent => {
     const rootSection = new Section()
-
+    let currentSection = rootSection
+    let lastSectionLevel = 0
     let isInCode = false
     const lines = fileContent
         .split(/\r?\n/)
@@ -71,13 +74,20 @@ exports.build = fileContent => {
         if (line.startsWith("```")) {
             isInCode = !isInCode
         }
-        if (!isInCode) {
-            if (line.startsWith("#")) {
-                const headerLineParts = line.split("#")
-                rootSection.addSubSection(headerLineParts[headerLineParts.length - 1].trim())
-            }
+        if (isInCode || !line.startsWith("#")) {
+            continue
+        }
+        const headerLineParts = line.split("#").map(part => part.trim())
+        const headerLinePartCount = headerLineParts.length
+        const sectionLevel = headerLinePartCount - 1
+        const section = new Section(headerLineParts[headerLinePartCount - 1])
+        if (sectionLevel > lastSectionLevel) {
+            lastSectionLevel = sectionLevel
+            currentSection.addSubSection(section)
+            currentSection = section
+        } else if (sectionLevel === lastSectionLevel) {
+            currentSection.addSubsequentSection(section)
         }
     }
-
     return rootSection
 }

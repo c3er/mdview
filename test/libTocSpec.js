@@ -45,4 +45,31 @@ describe('Library "TOC"', () => {
             )
         )
     })
+
+    it("recognizes a section with subsection", () => {
+        const sectionText = "Main section"
+        const subSectionText = "Sub section"
+        const content = `
+            # ${sectionText}
+
+            ## ${subSectionText}
+        `
+        assert.isTrue(
+            toc.build(content).equals(
+                toc.Section.fromObject({
+                    subSections: [
+                        {
+                            header: sectionText,
+                            subSections: [
+                                {
+                                    header: subSectionText,
+                                    subSections: [],
+                                },
+                            ],
+                        },
+                    ],
+                })
+            )
+        )
+    })
 })
