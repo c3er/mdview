@@ -72,4 +72,38 @@ describe('Library "TOC"', () => {
             )
         )
     })
+
+    it("recognizes a higher section after sub section", () => {
+        const sectionText1 = "Main section 1"
+        const subSectionText = "Sub section"
+        const sectionText2 = "Main section 2"
+        const content = `
+            # ${sectionText1}
+
+            ## ${subSectionText}
+
+            # ${sectionText2}
+        `
+        assert.isTrue(
+            toc.build(content).equals(
+                toc.Section.fromObject({
+                    subSections: [
+                        {
+                            header: sectionText1,
+                            subSections: [
+                                {
+                                    header: subSectionText,
+                                    subSections: [],
+                                },
+                            ],
+                        },
+                        {
+                            header: sectionText2,
+                            subSections: [],
+                        },
+                    ],
+                })
+            )
+        )
+    })
 })

@@ -87,6 +87,10 @@ exports.build = fileContent => {
             currentSection = section
         } else if (sectionLevel === lastSectionLevel) {
             currentSection.addSubsequentSection(section)
+        } else {
+            lastSectionLevel = sectionLevel
+            currentSection = currentSection.parent
+            currentSection.addSubsequentSection(section)
         }
     }
     return rootSection
