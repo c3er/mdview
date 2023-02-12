@@ -61,15 +61,14 @@ class Section {
 
 exports.Section = Section
 
-exports.build = fileContent => {
-    const rootSection = new Section()
-    let currentSection = rootSection
-    let lastSectionLevel = 0
-    let isInCode = false
-    const lines = fileContent
+exports.build = content => {
+    const lines = content
         .split(/\r?\n/)
         .map(line => line.trim())
         .filter(line => !!line)
+    let isInCode = false
+    const rawSections = []
+    let sectionId = 0
     for (const line of lines) {
         if (line.startsWith("```")) {
             isInCode = !isInCode
@@ -77,21 +76,44 @@ exports.build = fileContent => {
         if (isInCode || !line.startsWith("#")) {
             continue
         }
+
         const headerLineParts = line.split("#").map(part => part.trim())
         const headerLinePartCount = headerLineParts.length
-        const sectionLevel = headerLinePartCount - 1
-        const section = new Section(headerLineParts[headerLinePartCount - 1])
-        if (sectionLevel > lastSectionLevel) {
-            lastSectionLevel = sectionLevel
+        rawSections.push({
+            id: sectionId++,
+            level: headerLinePartCount - 1,
+            header: headerLineParts[headerLinePartCount - 1],
+        })
+    }
+
+    // Normalize section levels
+    const sectionCount = rawSections.length
+    for (let i = 0; i < sectionCount; i++) {
+        const rawSection = rawSections[i]
+        const previousLevel = rawSections[i - 1]?.level
+        if (rawSection.level - previousLevel > 1) {
+            rawSection.level = previousLevel + 1
+        }
+    }
+
+    const rootSection = new Section()
+    let currentSection = rootSection
+    for (let i = 0; i < sectionCount; i++) {
+        const rawSection = rawSections[i]
+        const previousRawSection = rawSections[i - 1]
+        const sectionLevel = rawSection.level
+        const previousSectionLevel = previousRawSection?.level
+        const section = new Section(rawSection.header)
+        if (!previousRawSection || sectionLevel > previousSectionLevel) {
             currentSection.addSubSection(section)
             currentSection = section
-        } else if (sectionLevel === lastSectionLevel) {
+        } else if (sectionLevel === previousSectionLevel) {
             currentSection.addSubsequentSection(section)
         } else {
-            lastSectionLevel = sectionLevel
             currentSection = currentSection.parent
             currentSection.addSubsequentSection(section)
         }
     }
+
     return rootSection
 }

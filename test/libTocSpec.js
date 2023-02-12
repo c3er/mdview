@@ -106,4 +106,45 @@ describe('Library "TOC"', () => {
             )
         )
     })
+
+    it("indents only one level at finding sub section two levels deeper", () => {
+        const mainSectionText1 = "Main section 1"
+        const subSectionText1 = "Sub section 1"
+        const subSectionText2 = "Sub section 2"
+        const mainSectionText2 = "Main section 2"
+        const content = `
+            # ${mainSectionText1}
+
+            ### ${subSectionText1}
+
+            ## ${subSectionText2}
+
+            # ${mainSectionText2}
+        `
+        assert.isTrue(
+            toc.build(content).equals(
+                toc.Section.fromObject({
+                    subSections: [
+                        {
+                            header: mainSectionText1,
+                            subSections: [
+                                {
+                                    header: subSectionText1,
+                                    subSections: [],
+                                },
+                                {
+                                    header: subSectionText2,
+                                    subSections: [],
+                                },
+                            ],
+                        },
+                        {
+                            header: mainSectionText2,
+                            subSections: [],
+                        },
+                    ],
+                })
+            )
+        )
+    })
 })
