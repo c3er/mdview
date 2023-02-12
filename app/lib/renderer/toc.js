@@ -1,14 +1,10 @@
 class Section {
-    static _lastId = 0
-
-    id = 0
     header = ""
     parent = null
     subSections = []
 
     constructor(header) {
         this.header = header ?? ""
-        this.id = ++Section._lastId
     }
 
     addSubSection(section) {
@@ -68,7 +64,6 @@ exports.build = content => {
         .filter(line => !!line)
     let isInCode = false
     const rawSections = []
-    let sectionId = 0
     for (const line of lines) {
         if (line.startsWith("```")) {
             isInCode = !isInCode
@@ -80,7 +75,6 @@ exports.build = content => {
         const headerLineParts = line.split("#").map(part => part.trim())
         const headerLinePartCount = headerLineParts.length
         rawSections.push({
-            id: sectionId++,
             level: headerLinePartCount - 1,
             header: headerLineParts[headerLinePartCount - 1],
         })
@@ -114,6 +108,5 @@ exports.build = content => {
             currentSection.addSubsequentSection(section)
         }
     }
-
     return rootSection
 }

@@ -25,7 +25,6 @@ describe('Library "TOC"', () => {
         const headerText2 = "Header 2"
         const content = `
             # ${headerText1}
-
             # ${headerText2}
         `
         assert.isTrue(
@@ -46,12 +45,11 @@ describe('Library "TOC"', () => {
         )
     })
 
-    it("recognizes a section with subsection", () => {
+    it("recognizes a section with sub section", () => {
         const sectionText = "Main section"
         const subSectionText = "Sub section"
         const content = `
             # ${sectionText}
-
             ## ${subSectionText}
         `
         assert.isTrue(
@@ -79,9 +77,7 @@ describe('Library "TOC"', () => {
         const sectionText2 = "Main section 2"
         const content = `
             # ${sectionText1}
-
             ## ${subSectionText}
-
             # ${sectionText2}
         `
         assert.isTrue(
@@ -114,11 +110,8 @@ describe('Library "TOC"', () => {
         const mainSectionText2 = "Main section 2"
         const content = `
             # ${mainSectionText1}
-
             ### ${subSectionText1}
-
             ## ${subSectionText2}
-
             # ${mainSectionText2}
         `
         assert.isTrue(
