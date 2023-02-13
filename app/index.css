@@ -98,6 +98,30 @@ div.error {
     display: table-cell;
 }
 
+#content {
+    display: flex;
+}
+
+#separator {
+    background-color: #aaa;
+    cursor: col-resize;
+    margin: -10px 10px -30px 10px;
+    width: 3px;
+
+    /* Prevent the browser's built-in drag from interfering */
+    user-select: none;
+}
+
+#outline {
+    min-width: 10px;
+    width: 20%;
+}
+
+#content-body {
+    min-width: 10px;
+    width: 80%;
+}
+
 body {
     margin: 10px 15px 35px 15px;
 }

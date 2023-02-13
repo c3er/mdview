@@ -32,7 +32,14 @@
                 </p>
             </span>
         </div>
-        <div class="markdown-body" id="content"></div>
+
+        <!-- See https://stackoverflow.com/a/55202728 (Best way to do a split pane in HTML [closed]) -->
+        <div id="content">
+            <div id="outline"></div>
+            <div id="separator"></div>
+            <div class="markdown-body" id="content-body"></div>
+        </div>
+
         <div id="raw-text"></div>
         <div id="status-bar">
             <p id="status-text"></p>

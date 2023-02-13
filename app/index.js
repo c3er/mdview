@@ -90,8 +90,41 @@ function isDataUrl(url) {
     return url.startsWith("data:")
 }
 
+function registerDraggableElement(separatorElement, leftElementId, rightElementId) {
+    let mouseDownInfo
+    const left = document.getElementById(leftElementId)
+    const right = document.getElementById(rightElementId)
+
+    separatorElement.onmousedown = event => {
+        mouseDownInfo = {
+            event,
+            offsetLeft: separatorElement.offsetLeft,
+            offsetTop: separatorElement.offsetTop,
+            leftWidth: left.offsetWidth,
+            rightWidth: right.offsetWidth,
+        }
+        document.onmousemove = event => {
+            const delta = {
+                x: event.clientX - mouseDownInfo.event.clientX,
+                y: event.clientY - mouseDownInfo.event.clientY,
+            }
+            // Horizontal; prevent negative-sized elements
+            delta.x = Math.min(
+                Math.max(delta.x, -mouseDownInfo.leftWidth),
+                mouseDownInfo.rightWidth
+            )
+            separatorElement.style.left = mouseDownInfo.offsetLeft + delta.x + "px"
+            left.style.width = mouseDownInfo.leftWidth + delta.x + "px"
+            right.style.width = mouseDownInfo.rightWidth - delta.x + "px"
+        }
+        document.onmouseup = () => (document.onmousemove = document.onmouseup = null)
+    }
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
+
+    registerDraggableElement(document.getElementById("separator"), "outline", "content-body")
 
     ipc.init()
     log.init()
@@ -175,7 +208,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
     const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
-    document.getElementById("content").innerHTML = documentRendering.renderContent(content)
+    document.getElementById("content-body").innerHTML = documentRendering.renderContent(content)
     document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
 
     // Alter local references to be relativ to the document
