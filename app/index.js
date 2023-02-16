@@ -90,16 +90,17 @@ function isDataUrl(url) {
     return url.startsWith("data:")
 }
 
-function registerDraggableElement(separatorElement, leftElementId, rightElementId) {
-    let mouseDownInfo
+function registerDraggableElement(separatorElementId, leftElementId, rightElementId) {
+    const separator = document.getElementById(separatorElementId)
     const left = document.getElementById(leftElementId)
     const right = document.getElementById(rightElementId)
 
-    separatorElement.onmousedown = event => {
+    let mouseDownInfo
+    separator.onmousedown = event => {
         mouseDownInfo = {
             event,
-            offsetLeft: separatorElement.offsetLeft,
-            offsetTop: separatorElement.offsetTop,
+            offsetLeft: separator.offsetLeft,
+            offsetTop: separator.offsetTop,
             leftWidth: left.offsetWidth,
             rightWidth: right.offsetWidth,
         }
@@ -113,7 +114,7 @@ function registerDraggableElement(separatorElement, leftElementId, rightElementI
                 Math.max(delta.x, -mouseDownInfo.leftWidth),
                 mouseDownInfo.rightWidth
             )
-            separatorElement.style.left = mouseDownInfo.offsetLeft + delta.x + "px"
+            separator.style.left = mouseDownInfo.offsetLeft + delta.x + "px"
             left.style.width = mouseDownInfo.leftWidth + delta.x + "px"
             right.style.width = mouseDownInfo.rightWidth - delta.x + "px"
         }
@@ -124,7 +125,7 @@ function registerDraggableElement(separatorElement, leftElementId, rightElementI
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
-    registerDraggableElement(document.getElementById("separator"), "outline", "content-body")
+    registerDraggableElement("separator", "outline", "content-body")
 
     ipc.init()
     log.init()
