@@ -14,6 +14,7 @@ const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
+const toc = require("./lib/renderer/toc")
 
 const TITLE = "Markdown Viewer"
 
@@ -118,6 +119,10 @@ function registerDraggableElement(separatorElementId, leftElementId, rightElemen
     }
 }
 
+function populateToc(content, outlineElementId) {
+    document.getElementById(outlineElementId).innerHTML = toc.build(content).toHtml()
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
@@ -207,6 +212,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
 
     document.getElementById("content-body").innerHTML = documentRendering.renderContent(content)
     document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
+    populateToc(content, "outline-content")
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {

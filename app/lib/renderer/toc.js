@@ -1,3 +1,5 @@
+const SECTION_HTML_CLASS = "toc-section"
+
 class Section {
     header = ""
     parent = null
@@ -39,6 +41,16 @@ class Section {
         return true
     }
 
+    toHtml(level) {
+        level ??= 0
+        return `
+            <div class="${SECTION_HTML_CLASS}" style="margin-left: ${level * 10}px">
+                <nobr>${this.header}</nobr>
+            </div>
+            <div>${this.subSections.map(section => section.toHtml(level + 1)).join("\n")}</div>
+        `
+    }
+
     static fromObject(obj, parent) {
         const section = new Section(obj.header)
         if (parent) {
@@ -50,6 +62,8 @@ class Section {
         return section
     }
 }
+
+exports.SECTION_HTML_CLASS = SECTION_HTML_CLASS
 
 exports.Section = Section
 

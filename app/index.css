@@ -100,12 +100,17 @@ div.error {
 
 #content {
     display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 #separator {
     background-color: #aaa;
     cursor: col-resize;
-    margin: -10px 10px -30px 10px;
+    margin: -10px 10px -30px 0;
     width: 3px;
 
     /* Prevent the browser's built-in drag from interfering */
@@ -114,11 +119,17 @@ div.error {
 
 #outline {
     min-width: 10px;
+    overflow: scroll;
     width: 20%;
+}
+
+#outline-content {
+    position: sticky;
 }
 
 #content-body {
     min-width: 10px;
+    overflow: auto;
     width: 80%;
 }
 
