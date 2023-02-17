@@ -140,4 +140,81 @@ describe('Library "TOC"', () => {
             )
         )
     })
+
+    it("structures README as expected", () => {
+        const content = `
+            # Markdown Viewer
+            ## Installation and usage
+            ### Windows
+            ## Known issues
+            ### Windows installation and download security
+            ### Startup speed
+            ### Build error ERR_ELECTRON_BUILDER_CANNOT_EXECUTE (development)
+            ## Developing
+            ### Debugging
+            ### Note for Windows
+            ## Copyright and License
+            ## Further notes
+        `
+        assert.isTrue(
+            toc.build(content).equals(
+                toc.Section.fromObject({
+                    subSections: [
+                        {
+                            header: "Markdown Viewer",
+                            subSections: [
+                                {
+                                    header: "Installation and usage",
+                                    subSections: [
+                                        {
+                                            header: "Windows",
+                                            subSections: [],
+                                        },
+                                    ],
+                                },
+                                {
+                                    header: "Known issues",
+                                    subSections: [
+                                        {
+                                            header: "Windows installation and download security",
+                                            subSections: [],
+                                        },
+                                        {
+                                            header: "Startup speed",
+                                            subSections: [],
+                                        },
+                                        {
+                                            header: "Build error ERR_ELECTRON_BUILDER_CANNOT_EXECUTE (development)",
+                                            subSections: [],
+                                        },
+                                    ],
+                                },
+                                {
+                                    header: "Developing",
+                                    subSections: [
+                                        {
+                                            header: "Debugging",
+                                            subSections: [],
+                                        },
+                                        {
+                                            header: "Note for Windows",
+                                            subSections: [],
+                                        },
+                                    ],
+                                },
+                                {
+                                    header: "Copyright and License",
+                                    subSections: [],
+                                },
+                                {
+                                    header: "Further notes",
+                                    subSections: [],
+                                },
+                            ],
+                        },
+                    ],
+                })
+            )
+        )
+    })
 })

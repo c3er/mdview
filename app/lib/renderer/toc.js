@@ -12,10 +12,12 @@ class Section {
     addSubSection(section) {
         section.parent = this
         this.subSections.push(section)
+        return section
     }
 
     addSubsequentSection(section) {
         this.parent.addSubSection(section)
+        return section
     }
 
     equals(other) {
@@ -109,13 +111,11 @@ exports.build = content => {
         const previousSectionLevel = previousRawSection?.level
         const section = new Section(rawSection.header)
         if (!previousRawSection || sectionLevel > previousSectionLevel) {
-            currentSection.addSubSection(section)
-            currentSection = section
+            currentSection = currentSection.addSubSection(section)
         } else if (sectionLevel === previousSectionLevel) {
-            currentSection.addSubsequentSection(section)
+            currentSection = currentSection.addSubsequentSection(section)
         } else {
-            currentSection = currentSection.parent
-            currentSection.addSubsequentSection(section)
+            currentSection = currentSection.parent.addSubsequentSection(section)
         }
     }
     return rootSection
