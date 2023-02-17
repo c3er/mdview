@@ -17,15 +17,11 @@ class Section {
     }
 
     equals(other) {
-        if (!other) {
-            return false
-        }
-
-        if (this.constructor.name !== other.constructor.name) {
-            return false
-        }
-
-        if (this.header !== other.header) {
+        if (
+            !other ||
+            this.constructor.name !== other.constructor.name ||
+            this.header !== other.header
+        ) {
             return false
         }
 

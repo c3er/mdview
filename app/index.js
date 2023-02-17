@@ -100,23 +100,19 @@ function registerDraggableElement(separatorElementId, leftElementId, rightElemen
         mouseDownInfo = {
             event,
             offsetLeft: separator.offsetLeft,
-            offsetTop: separator.offsetTop,
             leftWidth: left.offsetWidth,
             rightWidth: right.offsetWidth,
         }
         document.onmousemove = event => {
-            const delta = {
-                x: event.clientX - mouseDownInfo.event.clientX,
-                y: event.clientY - mouseDownInfo.event.clientY,
-            }
             // Horizontal; prevent negative-sized elements
-            delta.x = Math.min(
-                Math.max(delta.x, -mouseDownInfo.leftWidth),
+            const deltaX = Math.min(
+                Math.max(event.clientX - mouseDownInfo.event.clientX, -mouseDownInfo.leftWidth),
                 mouseDownInfo.rightWidth
             )
-            separator.style.left = mouseDownInfo.offsetLeft + delta.x + "px"
-            left.style.width = mouseDownInfo.leftWidth + delta.x + "px"
-            right.style.width = mouseDownInfo.rightWidth - delta.x + "px"
+
+            separator.style.left = `${mouseDownInfo.offsetLeft + deltaX}px`
+            left.style.width = `${mouseDownInfo.leftWidth + deltaX}px`
+            right.style.width = `${mouseDownInfo.rightWidth - deltaX}px`
         }
         document.onmouseup = () => (document.onmousemove = document.onmouseup = null)
     }
