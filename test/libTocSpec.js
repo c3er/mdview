@@ -4,14 +4,13 @@ const toc = require("../app/lib/renderer/toc")
 
 describe('Library "TOC"', () => {
     it("recognizes a header", () => {
-        const headerText = "Some header"
-        const content = `# ${headerText}`
+        const content = "# Some header"
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
                     subSections: [
                         {
-                            header: headerText,
+                            header: "Some header",
                             subSection: [],
                         },
                     ],
@@ -21,22 +20,20 @@ describe('Library "TOC"', () => {
     })
 
     it("recognizes two headers", () => {
-        const headerText1 = "Header 1"
-        const headerText2 = "Header 2"
         const content = `
-            # ${headerText1}
-            # ${headerText2}
+            # Header 1
+            # Header 2
         `
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
                     subSections: [
                         {
-                            header: headerText1,
+                            header: "Header 1",
                             subSection: [],
                         },
                         {
-                            header: headerText2,
+                            header: "Header 2",
                             subSection: [],
                         },
                     ],
@@ -46,21 +43,19 @@ describe('Library "TOC"', () => {
     })
 
     it("recognizes a section with sub section", () => {
-        const sectionText = "Main section"
-        const subSectionText = "Sub section"
         const content = `
-            # ${sectionText}
-            ## ${subSectionText}
+            # Main section
+            ## Sub section
         `
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
                     subSections: [
                         {
-                            header: sectionText,
+                            header: "Main section",
                             subSections: [
                                 {
-                                    header: subSectionText,
+                                    header: "Sub section",
                                     subSections: [],
                                 },
                             ],
@@ -72,29 +67,26 @@ describe('Library "TOC"', () => {
     })
 
     it("recognizes a higher section after sub section", () => {
-        const sectionText1 = "Main section 1"
-        const subSectionText = "Sub section"
-        const sectionText2 = "Main section 2"
         const content = `
-            # ${sectionText1}
-            ## ${subSectionText}
-            # ${sectionText2}
+            # Main section 1
+            ## Sub section
+            # Main section 2
         `
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
                     subSections: [
                         {
-                            header: sectionText1,
+                            header: "Main section 1",
                             subSections: [
                                 {
-                                    header: subSectionText,
+                                    header: "Sub section",
                                     subSections: [],
                                 },
                             ],
                         },
                         {
-                            header: sectionText2,
+                            header: "Main section 2",
                             subSections: [],
                         },
                     ],
@@ -104,35 +96,31 @@ describe('Library "TOC"', () => {
     })
 
     it("indents only one level at finding sub section two levels deeper", () => {
-        const mainSectionText1 = "Main section 1"
-        const subSectionText1 = "Sub section 1"
-        const subSectionText2 = "Sub section 2"
-        const mainSectionText2 = "Main section 2"
         const content = `
-            # ${mainSectionText1}
-            ### ${subSectionText1}
-            ## ${subSectionText2}
-            # ${mainSectionText2}
+            # Main section 1
+            ### Sub section 1
+            ## Sub section 2
+            # Main section 2
         `
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
                     subSections: [
                         {
-                            header: mainSectionText1,
+                            header: "Main section 1",
                             subSections: [
                                 {
-                                    header: subSectionText1,
+                                    header: "Sub section 1",
                                     subSections: [],
                                 },
                                 {
-                                    header: subSectionText2,
+                                    header: "Sub section 2",
                                     subSections: [],
                                 },
                             ],
                         },
                         {
-                            header: mainSectionText2,
+                            header: "Main section 2",
                             subSections: [],
                         },
                     ],
