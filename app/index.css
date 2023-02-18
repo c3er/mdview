@@ -118,24 +118,24 @@ div.error {
 }
 
 #outline {
+    margin: 0px 0px 20px 0px;
     min-width: 10px;
     overflow: scroll;
+    padding: 10px 10px 10px 10px;
     width: 20%;
 }
 
-#outline-content {
-    position: sticky;
-}
-
 #content-body {
+    margin: 0px 0px 20px 0px;
     min-width: 10px;
     overflow: auto;
+    padding: 10px 15px 10px 10px;
     width: 80%;
 }
 
-body {
+/* body {
     margin: 10px 15px 35px 15px;
-}
+} */
 
 @media (prefers-color-scheme: dark) {
     div.info {

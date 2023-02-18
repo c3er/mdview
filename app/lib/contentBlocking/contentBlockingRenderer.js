@@ -38,7 +38,9 @@ function changeInfoElementVisiblity(isVisible) {
 
     // If the info element is visible, adapt the top margin of the body element,
     // otherwise, remove (set to an empty string) the custom margin from the body element
-    _document.body.style.marginTop = isVisible ? _window.getComputedStyle(infoElement).height : ""
+    _document.getElementById("content").style.marginTop = isVisible
+        ? _window.getComputedStyle(infoElement).height
+        : ""
 }
 
 function hasBlockedElements() {
