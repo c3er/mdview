@@ -65,6 +65,23 @@ class Section {
     }
 }
 
+function parseHeaderLine(line) {
+    line = line.trim()
+    const lineLength = line.length
+    for (let i = 0; i < lineLength; i++) {
+        if (line[i] !== "#") {
+            return {
+                level: i,
+                header: [...line].slice(i).join("").trim(),
+            }
+        }
+    }
+    return {
+        level: lineLength,
+        header: "",
+    }
+}
+
 exports.SECTION_HTML_CLASS = SECTION_HTML_CLASS
 
 exports.Section = Section
@@ -84,19 +101,14 @@ exports.build = content => {
             continue
         }
 
-        const headerLineParts = line.split("#").map(part => part.trim())
-        const headerLinePartCount = headerLineParts.length
-        rawSections.push({
-            level: headerLinePartCount - 1,
-            header: headerLineParts[headerLinePartCount - 1],
-        })
+        rawSections.push(parseHeaderLine(line))
     }
 
     // Normalize section levels
     const sectionCount = rawSections.length
     for (let i = 0; i < sectionCount; i++) {
         const rawSection = rawSections[i]
-        const previousLevel = rawSections[i - 1]?.level
+        const previousLevel = rawSections[i - 1]?.level ?? 0
         if (rawSection.level - previousLevel > 1) {
             rawSection.level = previousLevel + 1
         }

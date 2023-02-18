@@ -129,6 +129,29 @@ describe('Library "TOC"', () => {
         )
     })
 
+    it("recognizes headers with # sign", () => {
+        const content = `
+            # C#
+            # # Header
+        `
+        assert.isTrue(
+            toc.build(content).equals(
+                toc.Section.fromObject({
+                    subSections: [
+                        {
+                            header: "C#",
+                            subSections: [],
+                        },
+                        {
+                            header: "# Header",
+                            subSections: [],
+                        },
+                    ],
+                })
+            )
+        )
+    })
+
     it("structures README as expected", () => {
         const content = `
             # Markdown Viewer
