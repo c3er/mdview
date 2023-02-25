@@ -189,7 +189,9 @@ function createMainMenu() {
                     label: "&Print",
                     accelerator: "CmdOrCtrl+P",
                     click() {
-                        _mainWindow.webContents.print()
+                        // Workaround for Electron issue, see
+                        // https://github.com/electron/electron/issues/36897
+                        _mainWindow.webContents.executeJavaScript("window.print();")
                     },
                 },
                 { type: "separator" },
