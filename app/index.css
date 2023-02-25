@@ -149,6 +149,11 @@ body {
         white-space: pre-wrap;
     }
 
+    .markdown-body table {
+        overflow-wrap: anywhere;
+        table-layout: fixed;
+    }
+
     p,
     pre {
         page-break-inside: avoid;
