@@ -1,6 +1,7 @@
 const hljs = require("highlight.js")
 
 const log = require("../log/log")
+const toc = require("../renderer/toc")
 
 let _markdown
 
@@ -54,11 +55,7 @@ exports.reset = options => {
     _markdown
         .use(require("markdown-it-headinganchor"), {
             slugify(text) {
-                return text
-                    .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
-                    .trim()
-                    .replace(/\s/g, "-")
-                    .toLowerCase()
+                return toc.slugify(text)
             },
         })
         .use(require("markdown-it-multimd-table"), {

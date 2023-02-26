@@ -90,6 +90,12 @@ describe("Integration tests with single app instance", () => {
         assert.isFalse(containsConsoleMessage("ERR_FILE_NOT_FOUND"))
     })
 
+    it("adds a zero to the first header ID", async () => {
+        const header = await page.waitForSelector("h1")
+        const headerId = await header.getAttribute("id")
+        assert.isTrue(headerId.endsWith("-0"))
+    })
+
     describe('Library "storage"', () => {
         const storage = require("../app/lib/main/storage")
 

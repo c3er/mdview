@@ -180,6 +180,7 @@ function handleContextMenuEvent(event) {
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
 ipc.listen(ipc.messages.fileOpen, file => {
+    toc.reset()
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
 
