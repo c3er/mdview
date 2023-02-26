@@ -64,14 +64,14 @@ function alterStyleURLs(documentDirectory, fileContent) {
     return lines.join("\n")
 }
 
-function fittingTarget(target, nodeName) {
+function fittingTarget(target, nodePattern) {
     if (!target) {
         return null
     }
-    if (target.nodeName === nodeName) {
+    if (target.nodeName.toLowerCase().match(nodePattern)) {
         return target
     }
-    return fittingTarget(target.parentNode, nodeName)
+    return fittingTarget(target.parentNode, nodePattern)
 }
 
 function scrollTo(position) {
@@ -138,6 +138,7 @@ function handleDOMContentLoadedEvent() {
 }
 
 function handleContextMenuEvent(event) {
+    const toClipboard = electron.clipboard.writeText
     const MenuItem = remote.MenuItem
     const menu = new remote.Menu()
 
@@ -150,13 +151,26 @@ function handleContextMenuEvent(event) {
         )
     }
 
-    const target = fittingTarget(event.target, "A")
-    if (target) {
+    const target = event.target
+    const headerElement = fittingTarget(target, /h\d/)
+    if (headerElement) {
+        menu.append(
+            new MenuItem({
+                label: "Copy header anchor",
+                click() {
+                    toClipboard(headerElement.getAttribute("id"))
+                },
+            })
+        )
+    }
+
+    const linkElement = fittingTarget(target, /a/)
+    if (linkElement) {
         menu.append(
             new MenuItem({
                 label: "Copy link text",
                 click() {
-                    electron.clipboard.writeText(target.innerText)
+                    toClipboard(linkElement.innerText)
                 },
             })
         )
@@ -164,7 +178,7 @@ function handleContextMenuEvent(event) {
             new MenuItem({
                 label: "Copy link target",
                 click() {
-                    electron.clipboard.writeText(target.getAttribute("href"))
+                    toClipboard(linkElement.getAttribute("href"))
                 },
             })
         )
