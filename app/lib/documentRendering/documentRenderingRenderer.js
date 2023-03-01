@@ -30,17 +30,13 @@ exports.reset = options => {
             // File extensions/markdown-language-features/src/markdownEngine.ts
             // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
             if (language && hljs.getLanguage(language)) {
-                try {
-                    return generateCodeText(
-                        hljs.highlight(text, {
-                            language: language,
-                            ignoreIllegals: true,
-                        }).value,
-                        { isHighlighted: true }
-                    )
-                } catch (err) {
-                    log.error(`Error at highlighting: ${err}`)
-                }
+                return generateCodeText(
+                    hljs.highlight(text, {
+                        language: language,
+                        ignoreIllegals: true,
+                    }).value,
+                    { isHighlighted: true }
+                )
             }
             return generateCodeText(_markdown.utils.escapeHtml(text), { isHighlighted: true })
         },

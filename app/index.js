@@ -92,7 +92,7 @@ function isDataUrl(url) {
     return url.startsWith("data:")
 }
 
-function registerDraggableElement(separatorElementId, leftElementId, rightElementId) {
+function registerSplitterElement(separatorElementId, leftElementId, rightElementId) {
     const separator = document.getElementById(separatorElementId)
     const left = document.getElementById(leftElementId)
     const right = document.getElementById(rightElementId)
@@ -127,7 +127,7 @@ function populateToc(content, outlineElementId) {
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
-    registerDraggableElement("separator", "outline", "content-body")
+    registerSplitterElement("separator", "outline", "content-body")
 
     renderer.init(document)
     ipc.init()
