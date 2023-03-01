@@ -47,11 +47,23 @@ class Section {
 
     toHtml(level) {
         level ??= 0
+        const subSectionsHtml = this.subSections
+            .map(section => section.toHtml(level + 1))
+            .join("\n")
+
+        // The root section has never a valid header
+        if (level === 0) {
+            return subSectionsHtml
+        }
+
         return `
             <div class="${SECTION_HTML_CLASS}" style="margin-left: ${level * 10}px">
-                <nobr>${this.header}</nobr>
+                <nobr>
+                    <span>⯈</span>
+                    <span>${this.header}</span>
+                </nobr>
             </div>
-            <div>${this.subSections.map(section => section.toHtml(level + 1)).join("\n")}</div>
+            <div>${subSectionsHtml}</div>
         `
     }
 
