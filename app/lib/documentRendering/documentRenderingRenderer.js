@@ -1,7 +1,6 @@
 const hljs = require("highlight.js")
 
 const log = require("../log/log")
-const toc = require("../renderer/toc")
 
 let _markdown
 
@@ -53,11 +52,6 @@ exports.reset = options => {
     })
 
     _markdown
-        .use(require("markdown-it-headinganchor"), {
-            slugify(text) {
-                return toc.slugify(text)
-            },
-        })
         .use(require("markdown-it-multimd-table"), {
             headerless: true,
             multiline: true,
@@ -67,6 +61,7 @@ exports.reset = options => {
         .use(require("markdown-it-container"), "info")
         .use(require("markdown-it-container"), "warning")
         .use(require("markdown-it-footnote"))
+        .use(require("markdown-it-github-headings"), { prefixHeadingIds: false })
         .use(require("markdown-it-mark"))
         .use(require("markdown-it-new-katex"))
         .use(require("markdown-it-sub"))

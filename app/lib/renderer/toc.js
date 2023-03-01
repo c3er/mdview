@@ -1,7 +1,5 @@
 const SECTION_HTML_CLASS = "toc-section"
 
-let _headers = {}
-
 class Section {
     header = ""
     parent = null
@@ -99,23 +97,6 @@ function parseHeaderLine(line) {
 exports.SECTION_HTML_CLASS = SECTION_HTML_CLASS
 
 exports.Section = Section
-
-exports.reset = () => (_headers = [])
-
-exports.slugify = text => {
-    if (!_headers[text]) {
-        _headers[text] = []
-    }
-    const identicalHeaders = _headers[text]
-    const slugified =
-        text
-            .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
-            .trim()
-            .replace(/\s/g, "-")
-            .toLowerCase() + `-${identicalHeaders.length}`
-    identicalHeaders.push(slugified)
-    return slugified
-}
 
 exports.build = content => {
     const lines = content

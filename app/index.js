@@ -160,7 +160,7 @@ function handleContextMenuEvent(event) {
             new MenuItem({
                 label: "Copy header anchor",
                 click() {
-                    toClipboard(headerElement.getAttribute("id"))
+                    toClipboard(headerElement.children[0].getAttribute("id"))
                 },
             })
         )
@@ -196,7 +196,6 @@ function handleContextMenuEvent(event) {
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
 ipc.listen(ipc.messages.fileOpen, file => {
-    toc.reset()
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
 
