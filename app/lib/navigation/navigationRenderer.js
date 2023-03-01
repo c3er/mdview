@@ -3,6 +3,7 @@ const path = require("path")
 const common = require("../common")
 const file = require("../file")
 const ipc = require("../ipc/ipcRenderer")
+const renderer = require("../renderer/common")
 
 let electron
 
@@ -14,7 +15,7 @@ function isInternalLink(url) {
 
 function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     const fullPath = path.join(documentDirectory, target)
-    const scrollPosition = _document.documentElement.scrollTop
+    const scrollPosition = renderer.contentElement().scrollTop
     if (common.isWebURL(target) || target.startsWith("mailto:")) {
         electron.shell.openExternal(target)
     } else if (isInternalLink(target)) {

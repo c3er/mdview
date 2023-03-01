@@ -14,6 +14,7 @@ const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
+const renderer = require("./lib/renderer/common")
 const toc = require("./lib/renderer/toc")
 
 const TITLE = "Markdown Viewer"
@@ -75,7 +76,7 @@ function fittingTarget(target, nodePattern) {
 }
 
 function scrollTo(position) {
-    document.documentElement.scrollTop = position
+    renderer.contentElement().scrollTop = position
 }
 
 function reload(isFileModification, encoding) {
@@ -83,7 +84,7 @@ function reload(isFileModification, encoding) {
         ipc.messages.reloadPrepared,
         isFileModification,
         encoding,
-        document.documentElement.scrollTop
+        renderer.contentElement().scrollTop
     )
 }
 
@@ -128,6 +129,7 @@ function handleDOMContentLoadedEvent() {
 
     registerDraggableElement("separator", "outline", "content-body")
 
+    renderer.init(document)
     ipc.init()
     log.init()
     contentBlocking.init(document, window)
@@ -254,12 +256,14 @@ ipc.listen(ipc.messages.fileOpen, file => {
         scrollTo(scrollPosition)
     }
     if (internalTarget) {
-        const targetElement = document.getElementById(internalTarget.replace("#", "").split(".")[0])
+        const targetElement = document.getElementById(internalTarget.replace("#", ""))
         if (targetElement) {
             if (!scrollPosition) {
+                const containerElement = renderer.contentElement().children[0]
                 scrollTo(
-                    targetElement.getBoundingClientRect().top -
-                        document.body.getBoundingClientRect().top
+                    targetElement.parentElement.getBoundingClientRect().top -
+                        (containerElement.getBoundingClientRect().top -
+                            Number(containerElement.style.paddingTop.replace("px", "")))
                 )
             }
             titlePrefix += internalTarget
