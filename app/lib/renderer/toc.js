@@ -1,12 +1,16 @@
 const SECTION_HTML_CLASS = "toc-section"
 
+let _headers = []
+
 class Section {
     header = ""
+    id = ""
     parent = null
     subSections = []
 
-    constructor(header) {
+    constructor(header, id) {
         this.header = header ?? ""
+        this.id = id ?? ""
     }
 
     addSubSection(section) {
@@ -77,26 +81,24 @@ class Section {
     }
 }
 
-function parseHeaderLine(line) {
+function calcSectionLevel(line) {
     line = line.trim()
     const lineLength = line.length
     for (let i = 0; i < lineLength; i++) {
         if (line[i] !== "#") {
-            return {
-                level: i,
-                header: [...line].slice(i).join("").trim(),
-            }
+            return i
         }
     }
-    return {
-        level: lineLength,
-        header: "",
-    }
+    return lineLength
 }
 
 exports.SECTION_HTML_CLASS = SECTION_HTML_CLASS
 
 exports.Section = Section
+
+exports.reset = () => (_headers = [])
+
+exports.addHeader = (title, id) => _headers.push({ title, id })
 
 exports.build = content => {
     const lines = content
@@ -104,7 +106,7 @@ exports.build = content => {
         .map(line => line.trim())
         .filter(line => !!line)
     let isInCode = false
-    const rawSections = []
+    const sectionLevels = []
     for (const line of lines) {
         if (line.startsWith("```")) {
             isInCode = !isInCode
@@ -113,28 +115,27 @@ exports.build = content => {
             continue
         }
 
-        rawSections.push(parseHeaderLine(line))
+        sectionLevels.push(calcSectionLevel(line))
     }
 
     // Normalize section levels
-    const sectionCount = rawSections.length
+    const sectionCount = sectionLevels.length
     for (let i = 0; i < sectionCount; i++) {
-        const rawSection = rawSections[i]
-        const previousLevel = rawSections[i - 1]?.level ?? 0
-        if (rawSection.level - previousLevel > 1) {
-            rawSection.level = previousLevel + 1
+        const previousLevel = sectionLevels[i - 1] ?? 0
+        if (sectionLevels[i] - previousLevel > 1) {
+            sectionLevels[i] = previousLevel + 1
         }
     }
 
     const rootSection = new Section()
     let currentSection = rootSection
     for (let i = 0; i < sectionCount; i++) {
-        const rawSection = rawSections[i]
-        const previousRawSection = rawSections[i - 1]
-        const sectionLevel = rawSection.level
-        const previousSectionLevel = previousRawSection?.level
-        const section = new Section(rawSection.header)
-        if (!previousRawSection || sectionLevel > previousSectionLevel) {
+        const sectionLevel = sectionLevels[i]
+        const previousSectionLevel = sectionLevels[i - 1] ?? -1
+        const headerInfo = _headers[i]
+        const section = new Section(headerInfo.title, headerInfo.id)
+
+        if (previousSectionLevel < 0 || sectionLevel > previousSectionLevel) {
             currentSection = currentSection.addSubSection(section)
         } else if (sectionLevel === previousSectionLevel) {
             currentSection = currentSection.addSubsequentSection(section)

@@ -1,10 +1,29 @@
 const assert = require("chai").assert
 
+const documentRendering = require("../app/lib/documentRendering/documentRenderingRenderer")
 const toc = require("../app/lib/renderer/toc")
 
+function trimLines(content) {
+    return content
+        .split("\n")
+        .map(line => line.trim())
+        .join("\n")
+}
+
 describe('Library "TOC"', () => {
+    beforeEach(() => {
+        toc.reset()
+        documentRendering.reset({
+            lineBreaksEnabled: false,
+            typographyEnabled: false,
+            emojisEnabled: false,
+            renderAsMarkdown: false,
+        })
+    })
+
     it("recognizes a header", () => {
         const content = "# Some header"
+        documentRendering.renderContent(content)
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
@@ -20,10 +39,11 @@ describe('Library "TOC"', () => {
     })
 
     it("recognizes two headers", () => {
-        const content = `
+        const content = trimLines(`
             # Header 1
             # Header 2
-        `
+        `)
+        documentRendering.renderContent(content)
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
@@ -43,10 +63,11 @@ describe('Library "TOC"', () => {
     })
 
     it("recognizes a section with sub section", () => {
-        const content = `
+        const content = trimLines(`
             # Main section
             ## Sub section
-        `
+        `)
+        documentRendering.renderContent(content)
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
@@ -67,11 +88,12 @@ describe('Library "TOC"', () => {
     })
 
     it("recognizes a higher section after sub section", () => {
-        const content = `
+        const content = trimLines(`
             # Main section 1
             ## Sub section
             # Main section 2
-        `
+        `)
+        documentRendering.renderContent(content)
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
@@ -96,12 +118,13 @@ describe('Library "TOC"', () => {
     })
 
     it("indents only one level at finding sub section two levels deeper", () => {
-        const content = `
+        const content = trimLines(`
             # Main section 1
             ### Sub section 1
             ## Sub section 2
             # Main section 2
-        `
+        `)
+        documentRendering.renderContent(content)
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
@@ -130,10 +153,11 @@ describe('Library "TOC"', () => {
     })
 
     it("recognizes headers with # sign", () => {
-        const content = `
+        const content = trimLines(`
             # C#
             # # Header
-        `
+        `)
+        documentRendering.renderContent(content)
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({
@@ -153,7 +177,7 @@ describe('Library "TOC"', () => {
     })
 
     it("structures README as expected", () => {
-        const content = `
+        const content = trimLines(`
             # Markdown Viewer
             ## Installation and usage
             ### Windows
@@ -166,7 +190,8 @@ describe('Library "TOC"', () => {
             ### Note for Windows
             ## Copyright and License
             ## Further notes
-        `
+        `)
+        documentRendering.renderContent(content)
         assert.isTrue(
             toc.build(content).equals(
                 toc.Section.fromObject({

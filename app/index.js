@@ -198,6 +198,7 @@ document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 ipc.listen(ipc.messages.fileOpen, file => {
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
+    toc.reset()
 
     const filePath = file.path
     const buffer = fs.readFileSync(filePath)

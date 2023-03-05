@@ -1,6 +1,6 @@
 const hljs = require("highlight.js")
 
-const log = require("../log/log")
+const toc = require("../renderer/toc")
 
 let _markdown
 
@@ -48,12 +48,16 @@ exports.reset = options => {
     })
 
     _markdown
+        .use(require("markdown-it-anchor"), {
+            callback(_, info) {
+                toc.addHeader(info.title, info.slug)
+            },
+        })
         .use(require("markdown-it-multimd-table"), {
             headerless: true,
             multiline: true,
         })
         .use(require("markdown-it-abbr"))
-        .use(require("markdown-it-anchor"))
         .use(require("markdown-it-container"), "error")
         .use(require("markdown-it-container"), "info")
         .use(require("markdown-it-container"), "warning")
