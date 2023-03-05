@@ -53,11 +53,11 @@ exports.reset = options => {
             multiline: true,
         })
         .use(require("markdown-it-abbr"))
+        .use(require("markdown-it-anchor"))
         .use(require("markdown-it-container"), "error")
         .use(require("markdown-it-container"), "info")
         .use(require("markdown-it-container"), "warning")
         .use(require("markdown-it-footnote"))
-        .use(require("markdown-it-github-headings"), { prefixHeadingIds: false })
         .use(require("markdown-it-mark"))
         .use(require("markdown-it-new-katex"))
         .use(require("markdown-it-sub"))

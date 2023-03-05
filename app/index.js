@@ -160,7 +160,7 @@ function handleContextMenuEvent(event) {
             new MenuItem({
                 label: "Copy header anchor",
                 click() {
-                    toClipboard(headerElement.children[0].getAttribute("id"))
+                    toClipboard(headerElement.getAttribute("id"))
                 },
             })
         )
@@ -260,7 +260,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
             if (!scrollPosition) {
                 const containerElement = renderer.contentElement().children[0]
                 scrollTo(
-                    targetElement.parentElement.getBoundingClientRect().top -
+                    targetElement.getBoundingClientRect().top -
                         (containerElement.getBoundingClientRect().top -
                             Number(containerElement.style.paddingTop.replace("px", "")))
                 )
