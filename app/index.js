@@ -121,7 +121,12 @@ function registerSplitterElement(separatorElementId, leftElementId, rightElement
 }
 
 function populateToc(content, outlineElementId) {
-    document.getElementById(outlineElementId).innerHTML = toc.build(content).toHtml()
+    const rootSection = toc.build(content)
+    document.getElementById(outlineElementId).innerHTML = rootSection.toHtml()
+    for (const section of rootSection.flattenTree()) {
+        document.getElementById(section.buttonHtmlId).onclick = () =>
+            toc.handleExpandButtonClick(section)
+    }
 }
 
 function handleDOMContentLoadedEvent() {

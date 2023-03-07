@@ -1,4 +1,7 @@
 const SECTION_HTML_CLASS = "toc-section"
+const EXPAND_BUTTON_HTML_CLASS = "toc-expand-button"
+const ID_PREFIX = "toc-"
+const BUTTON_ID_PREFIX = "toc-button-"
 
 let _headers = []
 
@@ -11,6 +14,14 @@ class Section {
     constructor(header, id) {
         this.header = header ?? ""
         this.id = id ?? ""
+    }
+
+    get htmlId() {
+        return `${ID_PREFIX}${this.id}`
+    }
+
+    get buttonHtmlId() {
+        return `${BUTTON_ID_PREFIX}${this.id}`
     }
 
     addSubSection(section) {
@@ -61,12 +72,23 @@ class Section {
         return `
             <div class="${SECTION_HTML_CLASS}" style="margin-left: ${level * 10}px">
                 <nobr>
-                    <span>⯈</span>
+                    <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">⯈</span>
                     <a href="#${this.id}">${this.header}</a>
                 </nobr>
             </div>
-            <div>${subSectionsHtml}</div>
+            <div id="${this.htmlId}">${subSectionsHtml}</div>
         `
+    }
+
+    flattenTree(flattened) {
+        flattened ??= []
+        if (this.id) {
+            flattened.push(this)
+        }
+        for (const subSection of this.subSections) {
+            subSection.flattenTree(flattened)
+        }
+        return flattened
     }
 
     static fromObject(obj, parent) {
@@ -91,8 +113,6 @@ function calcSectionLevel(line) {
     }
     return lineLength
 }
-
-exports.SECTION_HTML_CLASS = SECTION_HTML_CLASS
 
 exports.Section = Section
 
@@ -144,4 +164,8 @@ exports.build = content => {
         }
     }
     return rootSection
+}
+
+exports.handleExpandButtonClick = section => {
+    console.log(section.id, section.header)
 }
