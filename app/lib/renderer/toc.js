@@ -62,7 +62,7 @@ class Section {
             <div class="${SECTION_HTML_CLASS}" style="margin-left: ${level * 10}px">
                 <nobr>
                     <span>⯈</span>
-                    <span>${this.header}</span>
+                    <a href="#${this.id}">${this.header}</a>
                 </nobr>
             </div>
             <div>${subSectionsHtml}</div>
