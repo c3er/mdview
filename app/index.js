@@ -134,9 +134,10 @@ function handleDOMContentLoadedEvent() {
 
     registerSplitterElement("separator", "outline", "content-body")
 
-    renderer.init(document)
     ipc.init()
     log.init()
+    renderer.init(document)
+    toc.init(document)
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)

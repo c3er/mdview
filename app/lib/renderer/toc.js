@@ -3,9 +3,15 @@ const EXPAND_BUTTON_HTML_CLASS = "toc-expand-button"
 const ID_PREFIX = "toc-"
 const BUTTON_ID_PREFIX = "toc-button-"
 
+const COLLAPSED_SYMBOL = " ⯈ "
+const EXPANDED_SYMBOL = " ⯆ "
+
+let _document
 let _headers = []
 
 class Section {
+    #isExpanded = true
+
     header = ""
     id = ""
     parent = null
@@ -33,6 +39,14 @@ class Section {
     addSubsequentSection(section) {
         this.parent.addSubSection(section)
         return section
+    }
+
+    toggleExpanded() {
+        _document.getElementById(this.htmlId).style.display = this.#isExpanded ? "none" : "block"
+        _document.getElementById(this.buttonHtmlId).innerText = this.#isExpanded
+            ? COLLAPSED_SYMBOL
+            : EXPANDED_SYMBOL
+        this.#isExpanded = !this.#isExpanded
     }
 
     equals(other) {
@@ -72,7 +86,9 @@ class Section {
         return `
             <div class="${SECTION_HTML_CLASS}" style="margin-left: ${level * 10}px">
                 <nobr>
-                    <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">⯈</span>
+                    <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
+                        ${EXPANDED_SYMBOL}
+                    </span>
                     <a href="#${this.id}">${this.header}</a>
                 </nobr>
             </div>
@@ -103,6 +119,10 @@ class Section {
     }
 }
 
+function reset() {
+    _headers = []
+}
+
 function calcSectionLevel(line) {
     line = line.trim()
     const lineLength = line.length
@@ -116,7 +136,12 @@ function calcSectionLevel(line) {
 
 exports.Section = Section
 
-exports.reset = () => (_headers = [])
+exports.init = document => {
+    reset()
+    _document = document
+}
+
+exports.reset = reset
 
 exports.addHeader = (title, id) => _headers.push({ title, id })
 
@@ -166,6 +191,4 @@ exports.build = content => {
     return rootSection
 }
 
-exports.handleExpandButtonClick = section => {
-    console.log(section.id, section.header)
-}
+exports.handleExpandButtonClick = section => section.toggleExpanded()
