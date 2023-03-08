@@ -185,7 +185,11 @@ exports.build = content => {
         } else if (sectionLevel === previousSectionLevel) {
             currentSection = currentSection.addSubsequentSection(section)
         } else {
-            currentSection = currentSection.parent.addSubsequentSection(section)
+            const sectionLevelDifference = previousSectionLevel - sectionLevel
+            for (let i = 0; i < sectionLevelDifference; i++) {
+                currentSection = currentSection.parent
+            }
+            currentSection = currentSection.addSubsequentSection(section)
         }
     }
     return rootSection

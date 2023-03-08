@@ -161,6 +161,39 @@ describe('Library "TOC"', () => {
         )
     })
 
+    it("recognizes a main section after a sub-sub-section", () => {
+        assertSections(
+            `
+                # Test 1
+                ## Test 1.1
+                ### Test 1.1.1
+                # Test 2
+            `,
+            {
+                subSections: [
+                    {
+                        header: "Test 1",
+                        subSections: [
+                            {
+                                header: "Test 1.1",
+                                subSections: [
+                                    {
+                                        header: "Test 1.1.1",
+                                        subSections: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        header: "Test 2",
+                        subSections: [],
+                    },
+                ],
+            }
+        )
+    })
+
     it("structures README as expected", () => {
         assertSections(
             `
