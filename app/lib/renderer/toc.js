@@ -32,6 +32,10 @@ class Section {
         return `${BUTTON_ID_PREFIX}${this.id}`
     }
 
+    get hasSubSections() {
+        return this.subSections.length > 0
+    }
+
     addSubSection(section) {
         section.parent = this
         this.subSections.push(section)
