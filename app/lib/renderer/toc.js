@@ -6,6 +6,8 @@ const BUTTON_ID_PREFIX = "toc-button-"
 const COLLAPSED_SYMBOL = " ⯈ "
 const EXPANDED_SYMBOL = " ⯆ "
 
+const INDENTATION_WIDTH_PX = 15
+
 let _document
 let _headers = []
 
@@ -84,8 +86,8 @@ class Section {
         }
 
         return `
-            <div class="${SECTION_HTML_CLASS}" style="margin-left: ${level * 10}px">
-                <nobr>
+            <div class="${SECTION_HTML_CLASS}">
+                <nobr style="margin-left: ${level * INDENTATION_WIDTH_PX}px">
                     <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
                         ${EXPANDED_SYMBOL}
                     </span>

@@ -43,7 +43,6 @@ div.error {
 
 #status-text {
     display: unset;
-    font-family: Sans-serif;
     font-size: 9pt;
     line-height: 0;
     padding-left: 10px;
@@ -81,7 +80,6 @@ div.error {
 }
 
 .blocked-content-info-text {
-    font-family: Sans-serif;
     font-size: 10pt;
     margin-bottom: 0px;
     margin-top: 0px;
@@ -108,7 +106,7 @@ div.error {
 }
 
 #separator {
-    background-color: #aaa;
+    background-color: #ccc;
     cursor: col-resize;
     margin: -10px 10px -30px 0;
     width: 3px;
@@ -121,8 +119,43 @@ div.error {
     margin: 0px 0px 20px 0px;
     min-width: 10px;
     overflow: auto;
-    padding: 10px 10px 10px 10px;
+    padding: 10px;
     width: 20%;
+}
+
+#outline * {
+    cursor: default;
+    vertical-align: middle;
+}
+
+.toc-section {
+    margin: 0px -10px;
+    padding: 0;
+}
+
+.toc-section a {
+    color: black;
+    display: inline-block;
+    font-size: 11pt;
+    height: 100%;
+    padding: 5px 0px;
+    text-decoration: none;
+    width: 100%;
+}
+
+.toc-section:hover {
+    background-color: #ddd;
+}
+
+.toc-expand-button {
+    display: inline-block;
+    font-size: 2em;
+    text-align: center;
+    line-height: 0.8em;
+}
+
+.toc-expand-button:hover {
+    background-color: #aaa;
 }
 
 #content-body {
@@ -133,9 +166,9 @@ div.error {
     width: 80%;
 }
 
-/* body {
-    margin: 10px 15px 35px 15px;
-} */
+body {
+    font-family: sans-serif;
+}
 
 @media (prefers-color-scheme: dark) {
     div.info {
@@ -169,6 +202,23 @@ div.error {
         background-color: #7a1f28;
         border-color: black;
         color: #f8f8f2;
+    }
+
+    #separator {
+        background-color: #555;
+    }
+
+    .toc-section a,
+    .toc-section * {
+        color: #f8f8f2;
+    }
+
+    .toc-section:hover {
+        background-color: #444;
+    }
+
+    .toc-expand-button:hover {
+        background-color: #777;
     }
 }
 
