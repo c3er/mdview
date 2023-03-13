@@ -97,15 +97,24 @@ function registerSplitterElement(separatorElementId, leftElementId, rightElement
     const left = document.getElementById(leftElementId)
     const right = document.getElementById(rightElementId)
 
+    const leftStyle = getComputedStyle(left)
+    const rightStyle = getComputedStyle(right)
+
     let mouseDownInfo
     separator.onmousedown = event => {
         mouseDownInfo = {
             event,
             offsetLeft: separator.offsetLeft,
-            leftWidth: left.offsetWidth,
-            rightWidth: right.offsetWidth,
+            leftWidth:
+                left.offsetWidth -
+                (parseInt(leftStyle.paddingLeft) + parseInt(leftStyle.paddingRight)),
+            rightWidth:
+                right.offsetWidth -
+                (parseInt(rightStyle.paddingLeft) + parseInt(rightStyle.paddingRight)),
         }
         document.onmousemove = event => {
+            event.preventDefault()
+
             // Horizontal; prevent negative-sized elements
             const deltaX = Math.min(
                 Math.max(event.clientX - mouseDownInfo.event.clientX, -mouseDownInfo.leftWidth),
