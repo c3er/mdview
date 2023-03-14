@@ -158,6 +158,8 @@ function handleDOMContentLoadedEvent() {
 }
 
 function handleContextMenuEvent(event) {
+    event.preventDefault()
+
     const toClipboard = electron.clipboard.writeText
     const MenuItem = remote.MenuItem
     const menu = new remote.Menu()
