@@ -1,6 +1,6 @@
 const hljs = require("highlight.js")
 
-const toc = require("../renderer/toc")
+const toc = require("../toc/tocRenderer")
 
 let _markdown
 
