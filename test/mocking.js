@@ -209,6 +209,16 @@ exports.elements = {
                     label: "&View Raw Text",
                     isEnabled: true,
                 },
+                tocApplication: {
+                    label: "Show Table Of &Content For All Documents",
+                    isEnabled: true,
+                    isChecked: false,
+                },
+                tocDocument: {
+                    label: "Show Table Of Content For This &Document",
+                    isEnabled: true,
+                    isChecked: false,
+                },
                 zoom: {
                     label: "&Zoom",
                     isEnabled: true,

@@ -1,3 +1,7 @@
+const ipc = require("../ipc/ipcRenderer")
+
+const shared = require("./tocShared")
+
 const SECTION_HTML_CLASS = "toc-section"
 const EXPAND_BUTTON_HTML_CLASS = "toc-expand-button"
 const ID_PREFIX = "toc-"
@@ -11,6 +15,11 @@ const INDENTATION_OFFSET_PX = 20
 
 let _document
 let _headers = []
+let _rootSection
+const _info = {
+    widthPx: shared.WIDTH_DEFAULT_PX,
+    collapsedEntries: [],
+}
 
 class Section {
     #isExpanded = true
@@ -37,6 +46,18 @@ class Section {
         return this.subSections.length > 0
     }
 
+    get isExpanded() {
+        return this.#isExpanded
+    }
+
+    set isExpanded(value) {
+        _document.getElementById(this.htmlId).style.display = value ? "none" : "block"
+        _document.getElementById(this.buttonHtmlId).innerText = value
+            ? COLLAPSED_SYMBOL
+            : EXPANDED_SYMBOL
+        this.#isExpanded = value
+    }
+
     addSubSection(section) {
         section.parent = this
         this.subSections.push(section)
@@ -49,11 +70,20 @@ class Section {
     }
 
     toggleExpanded() {
-        _document.getElementById(this.htmlId).style.display = this.#isExpanded ? "none" : "block"
-        _document.getElementById(this.buttonHtmlId).innerText = this.#isExpanded
-            ? COLLAPSED_SYMBOL
-            : EXPANDED_SYMBOL
-        this.#isExpanded = !this.#isExpanded
+        this.isExpanded = !this.isExpanded
+    }
+
+    findId(id) {
+        if (this.id === id) {
+            return this
+        }
+        for (const section of this.subSections) {
+            const found = section.findId(id)
+            if (found) {
+                return found
+            }
+        }
+        return null
     }
 
     equals(other) {
@@ -131,8 +161,48 @@ class Section {
     }
 }
 
+function registerSplitterElement(separatorElementId, leftElementId, rightElementId) {
+    const left = _document.getElementById(leftElementId)
+    const right = _document.getElementById(rightElementId)
+
+    const leftStyle = getComputedStyle(left)
+    const rightStyle = getComputedStyle(right)
+
+    let mouseDownInfo
+    _document.getElementById(separatorElementId).onmousedown = event => {
+        mouseDownInfo = {
+            event,
+            leftWidth:
+                left.offsetWidth -
+                (parseInt(leftStyle.paddingLeft) + parseInt(leftStyle.paddingRight)),
+            rightWidth:
+                right.offsetWidth -
+                (parseInt(rightStyle.paddingLeft) + parseInt(rightStyle.paddingRight)),
+        }
+        _document.onmousemove = event => {
+            event.preventDefault()
+
+            // Horizontal; prevent negative-sized elements
+            const deltaX = Math.min(
+                Math.max(event.clientX - mouseDownInfo.event.clientX, -mouseDownInfo.leftWidth),
+                mouseDownInfo.rightWidth
+            )
+
+            left.style.width = `${mouseDownInfo.leftWidth + deltaX}px`
+            right.style.width = `${mouseDownInfo.rightWidth - deltaX}px`
+        }
+        _document.onmouseup = () => {
+            _document.onmousemove = _document.onmouseup = null
+
+            _info.widthPx = mouseDownInfo.leftWidth // XXX Not the proper width value
+            ipc.send(ipc.messages.updateToc, _info)
+        }
+    }
+}
+
 function reset() {
     _headers = []
+    registerSplitterElement("separator", "outline", "content-body")
 }
 
 function calcSectionLevel(line) {
@@ -146,11 +216,30 @@ function calcSectionLevel(line) {
     return lineLength
 }
 
+function setTocVisibility(isVisible) {
+    const displayStyle = isVisible ? "block" : "none"
+    _document.getElementById("outline").style.display = displayStyle
+    _document.getElementById("separator").style.display = displayStyle
+}
+
 exports.Section = Section
 
 exports.init = document => {
-    reset()
     _document = document
+    reset()
+
+    ipc.listen(ipc.messages.updateToc, tocInfo => {
+        setTocVisibility(tocInfo.isVisible)
+
+        // XXX Set width...
+
+        for (const entryId of tocInfo.collapsedEntries) {
+            const section = _rootSection.findId(entryId)
+            if (section) {
+                section.isExpanded = false
+            }
+        }
+    })
 }
 
 exports.reset = reset
@@ -184,8 +273,7 @@ exports.build = content => {
         }
     }
 
-    const rootSection = new Section()
-    let currentSection = rootSection
+    let currentSection = (_rootSection = new Section())
     for (let i = 0; i < sectionCount; i++) {
         const sectionLevel = sectionLevels[i]
         const previousSectionLevel = sectionLevels[i - 1] ?? -1
@@ -204,7 +292,14 @@ exports.build = content => {
             currentSection = currentSection.addSubsequentSection(section)
         }
     }
-    return rootSection
+    return _rootSection
 }
 
-exports.handleExpandButtonClick = section => section.toggleExpanded()
+exports.handleExpandButtonClick = section => {
+    section.toggleExpanded()
+    _info.collapsedEntries = _rootSection
+        .flattenTree()
+        .filter(section => !section.isExpanded)
+        .map(section => section.id)
+    ipc.send(ipc.messages.updateToc, _info)
+}

@@ -20,6 +20,7 @@ exports.messages = {
     reloadPrepared: "reload-prepared",
     resetContentBlocking: "reset-content-blocking",
     restorePosition: "restore-position",
+    updateToc: "update-toc",
     unblockAll: "unblock-all",
     unblockURL: "unblock-url",
     viewRawText: "view-raw-text",

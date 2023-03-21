@@ -1,0 +1,1 @@
+exports.WIDTH_DEFAULT_PX = 300

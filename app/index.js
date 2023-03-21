@@ -92,43 +92,6 @@ function isDataUrl(url) {
     return url.startsWith("data:")
 }
 
-function registerSplitterElement(separatorElementId, leftElementId, rightElementId) {
-    const separator = document.getElementById(separatorElementId)
-    const left = document.getElementById(leftElementId)
-    const right = document.getElementById(rightElementId)
-
-    const leftStyle = getComputedStyle(left)
-    const rightStyle = getComputedStyle(right)
-
-    let mouseDownInfo
-    separator.onmousedown = event => {
-        mouseDownInfo = {
-            event,
-            offsetLeft: separator.offsetLeft,
-            leftWidth:
-                left.offsetWidth -
-                (parseInt(leftStyle.paddingLeft) + parseInt(leftStyle.paddingRight)),
-            rightWidth:
-                right.offsetWidth -
-                (parseInt(rightStyle.paddingLeft) + parseInt(rightStyle.paddingRight)),
-        }
-        document.onmousemove = event => {
-            event.preventDefault()
-
-            // Horizontal; prevent negative-sized elements
-            const deltaX = Math.min(
-                Math.max(event.clientX - mouseDownInfo.event.clientX, -mouseDownInfo.leftWidth),
-                mouseDownInfo.rightWidth
-            )
-
-            separator.style.left = `${mouseDownInfo.offsetLeft + deltaX}px`
-            left.style.width = `${mouseDownInfo.leftWidth + deltaX}px`
-            right.style.width = `${mouseDownInfo.rightWidth - deltaX}px`
-        }
-        document.onmouseup = () => (document.onmousemove = document.onmouseup = null)
-    }
-}
-
 function populateToc(content, outlineElementId) {
     const rootSection = toc.build(content)
     document.getElementById(outlineElementId).innerHTML = rootSection.toHtml()
@@ -143,8 +106,6 @@ function populateToc(content, outlineElementId) {
 
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
-
-    registerSplitterElement("separator", "outline", "content-body")
 
     ipc.init()
     log.init()
@@ -249,7 +210,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
 
     document.getElementById("content-body").innerHTML = documentRendering.renderContent(content)
     document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
-    populateToc(content, "outline-content")
+    populateToc(content, "outline")
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {

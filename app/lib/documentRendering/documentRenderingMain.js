@@ -1,5 +1,6 @@
 const fileLib = require("../file")
 const ipc = require("../ipc/ipcMain")
+const mainMenu = require("../main/mainMenu")
 const navigation = require("../navigation/navigationMain")
 const storage = require("../main/storage")
 
@@ -32,14 +33,6 @@ function setRenderFileTypeAsMarkdown(filePath, shallRenderAsMarkdown) {
     }
 }
 
-function setMenuItemState(id, isChecked) {
-    _mainMenu.getMenuItemById(id).checked = isChecked
-}
-
-function getMenuItemState(id) {
-    return _mainMenu.getMenuItemById(id).checked
-}
-
 function notifyOptionChanges(filePath) {
     filePath = filePath ?? navigation.getCurrentLocation().filePath
     const documentSettings = storage.loadDocumentSettings(filePath)
@@ -57,7 +50,11 @@ function changeOption(setter) {
 }
 
 function updateFileSpecificRendering() {
-    setMenuItemState(RENDER_FILE_AS_MD_MENU_ID, storage.loadDocumentSettings().renderAsMarkdown)
+    mainMenu.setItemState(
+        _mainMenu,
+        RENDER_FILE_AS_MD_MENU_ID,
+        storage.loadDocumentSettings().renderAsMarkdown
+    )
     notifyOptionChanges()
 }
 
@@ -71,16 +68,25 @@ exports.RENDER_FILE_AS_MD_MENU_ID = RENDER_FILE_AS_MD_MENU_ID
 
 exports.RENDER_FILE_TYPE_AS_MD_MENU_ID = RENDER_FILE_TYPE_AS_MD_MENU_ID
 
-exports.init = (mainMenu, applicationSettings, filePath) => {
-    _mainMenu = mainMenu
+exports.init = (mainMenuObj, applicationSettings, filePath) => {
+    _mainMenu = mainMenuObj
     _applicationSettings = applicationSettings
     navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, updateFileSpecificRendering)
 
-    setMenuItemState(ENABLE_LINE_BREAKS_MENU_ID, applicationSettings.lineBreaksEnabled)
-    setMenuItemState(ENABLE_TYPOGRAPHY_MENU_ID, applicationSettings.typographyEnabled)
-    setMenuItemState(ENABLE_EMOJIS_MENU_ID, applicationSettings.emojisEnabled)
-    setMenuItemState(RENDER_FILE_TYPE_AS_MD_MENU_ID, isMarkdownFileType(filePath))
-    setMenuItemState(
+    mainMenu.setItemState(
+        _mainMenu,
+        ENABLE_LINE_BREAKS_MENU_ID,
+        applicationSettings.lineBreaksEnabled
+    )
+    mainMenu.setItemState(
+        _mainMenu,
+        ENABLE_TYPOGRAPHY_MENU_ID,
+        applicationSettings.typographyEnabled
+    )
+    mainMenu.setItemState(_mainMenu, ENABLE_EMOJIS_MENU_ID, applicationSettings.emojisEnabled)
+    mainMenu.setItemState(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID, isMarkdownFileType(filePath))
+    mainMenu.setItemState(
+        _mainMenu,
         RENDER_FILE_AS_MD_MENU_ID,
         storage.loadDocumentSettings(filePath).renderAsMarkdown
     )
@@ -91,28 +97,44 @@ exports.init = (mainMenu, applicationSettings, filePath) => {
 exports.switchEnableLineBreaks = () =>
     changeOption(
         () =>
-            (_applicationSettings.lineBreaksEnabled = getMenuItemState(ENABLE_LINE_BREAKS_MENU_ID))
+            (_applicationSettings.lineBreaksEnabled = mainMenu.getItemState(
+                _mainMenu,
+                ENABLE_LINE_BREAKS_MENU_ID
+            ))
     )
 
 exports.switchEnableTypography = () =>
     changeOption(
-        () => (_applicationSettings.typographyEnabled = getMenuItemState(ENABLE_TYPOGRAPHY_MENU_ID))
+        () =>
+            (_applicationSettings.typographyEnabled = mainMenu.getItemState(
+                _mainMenu,
+                ENABLE_TYPOGRAPHY_MENU_ID
+            ))
     )
 
 exports.switchEnableEmojis = () =>
     changeOption(
-        () => (_applicationSettings.emojisEnabled = getMenuItemState(ENABLE_EMOJIS_MENU_ID))
+        () =>
+            (_applicationSettings.emojisEnabled = mainMenu.getItemState(
+                _mainMenu,
+                ENABLE_EMOJIS_MENU_ID
+            ))
     )
 
 exports.switchRenderFileAsMarkdown = filePath => {
     changeOption(
         () =>
-            (storage.loadDocumentSettings(filePath).renderAsMarkdown =
-                getMenuItemState(RENDER_FILE_AS_MD_MENU_ID))
+            (storage.loadDocumentSettings(filePath).renderAsMarkdown = mainMenu.getItemState(
+                _mainMenu,
+                RENDER_FILE_AS_MD_MENU_ID
+            ))
     )
 }
 
 exports.switchRenderFileTypeAsMarkdown = filePath =>
     changeOption(() =>
-        setRenderFileTypeAsMarkdown(filePath, getMenuItemState(RENDER_FILE_TYPE_AS_MD_MENU_ID))
+        setRenderFileTypeAsMarkdown(
+            filePath,
+            mainMenu.getItemState(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID)
+        )
     )

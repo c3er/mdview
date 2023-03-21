@@ -18,6 +18,7 @@ const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
+const toc = require("./lib/toc/tocMain")
 
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
@@ -247,6 +248,25 @@ function createMainMenu() {
                     id: rawText.VIEW_RAW_TEXT_MENU_ID,
                     click() {
                         rawText.switchRawView()
+                    },
+                },
+                { type: "separator" },
+                {
+                    label: "Show Table Of &Content For All Documents",
+                    accelerator: "Alt+Shift+C",
+                    id: toc.SHOW_FOR_ALL_DOCS_MENU_ID,
+                    type: "checkbox",
+                    click() {
+                        toc.switchVisibilityForApplication()
+                    },
+                },
+                {
+                    label: "Show Table Of Content For This &Document",
+                    accelerator: "Alt+C",
+                    id: toc.SHOW_FOR_THIS_DOC_MENU_ID,
+                    type: "checkbox",
+                    click() {
+                        toc.switchVisibilityForDocument()
                     },
                 },
                 { type: "separator" },
@@ -513,6 +533,8 @@ ipc.listen(ipc.messages.finishLoad, () => {
     if (_finderFilePath) {
         _mainWindow.setBounds(loadDocumentSettings().windowPosition)
     }
+
+    toc.init(_mainMenu, _applicationSettings)
 })
 
 ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position) => {
