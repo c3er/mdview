@@ -1,5 +1,5 @@
 const ipc = require("../ipc/ipcMain")
-const mainMenu = require("../main/mainMenu")
+const menu = require("../main/menu")
 const storage = require("../main/storage")
 
 const shared = require("./tocShared")
@@ -15,8 +15,8 @@ exports.SHOW_FOR_ALL_DOCS_MENU_ID = SHOW_FOR_ALL_DOCS_MENU_ID
 
 exports.SHOW_FOR_THIS_DOC_MENU_ID = SHOW_FOR_THIS_DOC_MENU_ID
 
-exports.init = (mainMenuObj, applicationSettings) => {
-    _mainMenu = mainMenuObj
+exports.init = (mainMenu, applicationSettings) => {
+    _mainMenu = mainMenu
     _applicationSettings = applicationSettings
     const documentSettings = storage.loadDocumentSettings()
 
@@ -28,8 +28,8 @@ exports.init = (mainMenuObj, applicationSettings) => {
         widthPx: applicationSettings.tocWidth ?? shared.WIDTH_DEFAULT_PX,
         collapsedEntries: documentSettings.collapsedTocEntries,
     }
-    mainMenu.setItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID, showTocForAllDocs)
-    mainMenu.setItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID, showTocForThisDoc)
+    menu.setItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID, showTocForAllDocs)
+    menu.setItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID, showTocForThisDoc)
     ipc.send(ipc.messages.updateToc, _info)
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
@@ -39,7 +39,7 @@ exports.init = (mainMenuObj, applicationSettings) => {
 }
 
 exports.switchVisibilityForApplication = () => {
-    _info.isVisible = storage.loadApplicationSettings().showToc = mainMenu.getItemState(
+    _info.isVisible = storage.loadApplicationSettings().showToc = menu.getItemState(
         _mainMenu,
         SHOW_FOR_ALL_DOCS_MENU_ID
     )
@@ -49,7 +49,7 @@ exports.switchVisibilityForApplication = () => {
 exports.switchVisibilityForDocument = () => {
     const documentSettings = storage.loadDocumentSettings()
     documentSettings.showTocOverridesAppSettings = true
-    _info.isVisible = documentSettings.showToc = mainMenu.getItemState(
+    _info.isVisible = documentSettings.showToc = menu.getItemState(
         _mainMenu,
         SHOW_FOR_THIS_DOC_MENU_ID
     )
