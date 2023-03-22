@@ -110,7 +110,7 @@ function handleDOMContentLoadedEvent() {
     ipc.init()
     log.init()
     renderer.init(document)
-    toc.init(document)
+    toc.init(document, false)
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)

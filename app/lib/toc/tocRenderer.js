@@ -202,7 +202,6 @@ function registerSplitterElement(separatorElementId, leftElementId, rightElement
 
 function reset() {
     _headers = []
-    registerSplitterElement("separator", "outline", "content-body")
 }
 
 function calcSectionLevel(line) {
@@ -224,9 +223,12 @@ function setTocVisibility(isVisible) {
 
 exports.Section = Section
 
-exports.init = document => {
+exports.init = (document, isTest) => {
     _document = document
     reset()
+    if (!isTest) {
+        registerSplitterElement("separator", "outline", "content-body")
+    }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
         setTocVisibility(tocInfo.isVisible)

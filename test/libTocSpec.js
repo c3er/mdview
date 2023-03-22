@@ -1,5 +1,7 @@
 const assert = require("chai").assert
 
+const mocking = require("./mocking")
+
 const documentRendering = require("../app/lib/documentRendering/documentRenderingRenderer")
 const toc = require("../app/lib/toc/tocRenderer")
 
@@ -19,7 +21,7 @@ function assertSections(content, rootSection) {
 describe('Library "TOC"', () => {
     describe("Renderer part", () => {
         beforeEach(() => {
-            toc.reset()
+            toc.init(mocking.document, true)
             documentRendering.reset({
                 lineBreaksEnabled: false,
                 typographyEnabled: false,
