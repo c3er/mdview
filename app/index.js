@@ -97,8 +97,9 @@ function populateToc(content, outlineElementId) {
     document.getElementById(outlineElementId).innerHTML = rootSection.toHtml()
     for (const section of rootSection.flattenTree()) {
         const expandButtonElement = document.getElementById(section.buttonHtmlId)
-        expandButtonElement.onclick = () => toc.handleExpandButtonClick(section)
-        if (!section.hasSubSections) {
+        if (section.hasSubSections) {
+            expandButtonElement.onclick = () => toc.handleExpandButtonClick(section)
+        } else {
             expandButtonElement.style.display = "none"
         }
     }
