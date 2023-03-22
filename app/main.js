@@ -550,6 +550,7 @@ ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position)
         _mainWindow.reload()
     }
 
+    toc.update()
     restoreScrollPosition()
 })
 

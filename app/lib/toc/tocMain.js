@@ -11,6 +11,10 @@ let _mainMenu
 let _applicationSettings
 let _info
 
+function update() {
+    ipc.send(ipc.messages.updateToc, _info)
+}
+
 exports.SHOW_FOR_ALL_DOCS_MENU_ID = SHOW_FOR_ALL_DOCS_MENU_ID
 
 exports.SHOW_FOR_THIS_DOC_MENU_ID = SHOW_FOR_THIS_DOC_MENU_ID
@@ -30,7 +34,7 @@ exports.init = (mainMenu, applicationSettings) => {
     }
     menu.setItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID, showTocForAllDocs)
     menu.setItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID, showTocForThisDoc)
-    ipc.send(ipc.messages.updateToc, _info)
+    update()
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
         documentSettings.collapsedTocEntries = tocInfo.collapsedEntries
@@ -43,7 +47,7 @@ exports.switchVisibilityForApplication = () => {
         _mainMenu,
         SHOW_FOR_ALL_DOCS_MENU_ID
     )
-    ipc.send(ipc.messages.updateToc, _info)
+    update()
 }
 
 exports.switchVisibilityForDocument = () => {
@@ -53,5 +57,7 @@ exports.switchVisibilityForDocument = () => {
         _mainMenu,
         SHOW_FOR_THIS_DOC_MENU_ID
     )
-    ipc.send(ipc.messages.updateToc, _info)
+    update()
 }
+
+exports.update = update
