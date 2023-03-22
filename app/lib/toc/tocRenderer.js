@@ -51,10 +51,10 @@ class Section {
     }
 
     set isExpanded(value) {
-        _document.getElementById(this.htmlId).style.display = value ? "none" : "block"
+        _document.getElementById(this.htmlId).style.display = value ? "block" : "none"
         _document.getElementById(this.buttonHtmlId).innerText = value
-            ? COLLAPSED_SYMBOL
-            : EXPANDED_SYMBOL
+            ? EXPANDED_SYMBOL
+            : COLLAPSED_SYMBOL
         this.#isExpanded = value
     }
 
