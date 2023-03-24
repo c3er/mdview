@@ -117,7 +117,7 @@ div.error {
 
 #outline {
     margin: 0px 0px 20px 0px;
-    min-width: 10px;
+    min-width: 150px;
     overflow: auto;
     padding: 10px;
     width: 20%;
@@ -160,7 +160,7 @@ div.error {
 
 #content-body {
     margin: 0px 0px 20px 0px;
-    min-width: 10px;
+    min-width: 250px;
     overflow: auto;
     padding: 10px 15px 10px 10px;
 }
