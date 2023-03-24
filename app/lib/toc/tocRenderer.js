@@ -161,40 +161,48 @@ class Section {
     }
 }
 
-function registerSplitterElement(separatorElementId, leftElementId, rightElementId) {
+function registerSplitterElement(
+    containerElementId,
+    separatorElementId,
+    leftElementId,
+    rightElementId
+) {
+    const container = _document.getElementById(containerElementId)
+    const separator = _document.getElementById(separatorElementId)
     const left = _document.getElementById(leftElementId)
     const right = _document.getElementById(rightElementId)
 
-    const leftStyle = getComputedStyle(left)
-    const rightStyle = getComputedStyle(right)
+    separator.onmousedown = event => {
+        const separatorStyle = getComputedStyle(separator)
+        const leftStyle = getComputedStyle(left)
+        const rightStyle = getComputedStyle(right)
 
-    let mouseDownInfo
-    _document.getElementById(separatorElementId).onmousedown = event => {
-        mouseDownInfo = {
+        const leftWidth = parseInt(leftStyle.width)
+        const mouseDownInfo = {
             event,
-            leftWidth:
-                left.offsetWidth -
-                (parseInt(leftStyle.paddingLeft) + parseInt(leftStyle.paddingRight)),
+            leftWidth: leftWidth,
             rightWidth:
-                right.offsetWidth -
-                (parseInt(rightStyle.paddingLeft) + parseInt(rightStyle.paddingRight)),
+                parseInt(getComputedStyle(container).width) -
+                leftWidth -
+                (parseInt(leftStyle.paddingLeft) +
+                    parseInt(leftStyle.paddingRight) +
+                    parseInt(rightStyle.paddingLeft) +
+                    parseInt(rightStyle.paddingRight) +
+                    parseInt(separatorStyle.width) +
+                    parseInt(separatorStyle.marginLeft) +
+                    parseInt(separatorStyle.marginRight)),
         }
         _document.onmousemove = event => {
             event.preventDefault()
 
-            // Horizontal; prevent negative-sized elements
-            const deltaX = Math.min(
-                Math.max(event.clientX - mouseDownInfo.event.clientX, -mouseDownInfo.leftWidth),
-                mouseDownInfo.rightWidth
-            )
-
+            const deltaX = event.clientX - mouseDownInfo.event.clientX
             left.style.width = `${mouseDownInfo.leftWidth + deltaX}px`
             right.style.width = `${mouseDownInfo.rightWidth - deltaX}px`
         }
         _document.onmouseup = () => {
             _document.onmousemove = _document.onmouseup = null
 
-            _info.widthPx = mouseDownInfo.leftWidth // XXX Not the proper width value
+            _info.widthPx = mouseDownInfo.leftWidth
             ipc.send(ipc.messages.updateToc, _info)
         }
     }
@@ -227,7 +235,7 @@ exports.init = (document, isTest) => {
     _document = document
     reset()
     if (!isTest) {
-        registerSplitterElement("separator", "outline", "content-body")
+        registerSplitterElement("content", "separator", "outline", "content-body")
     }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
