@@ -166,39 +166,11 @@ class Section {
     }
 }
 
-function changeTocWidth(
-    tocWidth,
-    containerElementId,
-    separatorElementId,
-    tocElementId,
-    contentElementId,
-    deltaX
-) {
+function changeTocWidth(tocWidth, tocElementId, deltaX) {
     deltaX ??= 0
-
     const tocElement = _document.getElementById(tocElementId)
-    const contentElement = _document.getElementById(contentElementId)
-
-    const separatorStyle = getComputedStyle(_document.getElementById(separatorElementId))
-    const tocStyle = getComputedStyle(tocElement)
-    const contentStyle = getComputedStyle(contentElement)
-
     const updatedWidth = tocWidth + deltaX
-
-    tocElement.style.width = `${updatedWidth}px`
-    contentElement.style.width = `${
-        parseFloat(getComputedStyle(_document.getElementById(containerElementId)).width) -
-        tocWidth -
-        (parseFloat(tocStyle.paddingLeft) +
-            parseFloat(tocStyle.paddingRight) +
-            parseFloat(contentStyle.paddingLeft) +
-            parseFloat(contentStyle.paddingRight) +
-            parseFloat(separatorStyle.width) +
-            parseFloat(separatorStyle.marginLeft) +
-            parseFloat(separatorStyle.marginRight)) -
-        deltaX
-    }px`
-
+    tocElement.style.flex = `0 0 ${updatedWidth}px`
     return updatedWidth
 }
 
@@ -210,10 +182,7 @@ function registerSeparator(containerElementId, separatorElementId, tocElementId,
             event.preventDefault()
             updatedWidth = changeTocWidth(
                 tocWidth,
-                containerElementId,
-                separatorElementId,
                 tocElementId,
-                contentElementId,
                 event.clientX - mouseDownEvent.clientX
             )
         }
@@ -258,13 +227,7 @@ exports.init = (document, isTest) => {
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
         setTocVisibility(tocInfo.isVisible)
-        changeTocWidth(
-            tocInfo.widthPx,
-            CONTAINER_HTML_ID,
-            SEPARATOR_HTML_ID,
-            TOC_HTML_ID,
-            CONTENT_HTML_ID
-        )
+        changeTocWidth(tocInfo.widthPx, TOC_HTML_ID)
         for (const entryId of tocInfo.collapsedEntries) {
             const section = _rootSection.findId(entryId)
             if (section) {
