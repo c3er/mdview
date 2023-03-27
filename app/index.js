@@ -92,9 +92,9 @@ function isDataUrl(url) {
     return url.startsWith("data:")
 }
 
-function populateToc(content, outlineElementId) {
+function populateToc(content, tocElementId) {
     const rootSection = toc.build(content)
-    document.getElementById(outlineElementId).innerHTML = rootSection.toHtml()
+    document.getElementById(tocElementId).innerHTML = rootSection.toHtml()
     for (const section of rootSection.flattenTree()) {
         const expandButtonElement = document.getElementById(section.buttonHtmlId)
         if (section.hasSubSections) {
@@ -211,7 +211,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
 
     document.getElementById("content-body").innerHTML = documentRendering.renderContent(content)
     document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
-    populateToc(content, "outline")
+    populateToc(content, "toc")
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {

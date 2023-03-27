@@ -115,7 +115,7 @@ div.error {
     user-select: none;
 }
 
-#outline {
+#toc {
     margin: 0px 0px 20px 0px;
     min-width: 150px;
     overflow: auto;
@@ -123,7 +123,7 @@ div.error {
     width: 20%;
 }
 
-#outline * {
+#toc * {
     cursor: default;
     vertical-align: middle;
 }

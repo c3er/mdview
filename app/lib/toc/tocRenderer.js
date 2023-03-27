@@ -4,7 +4,7 @@ const shared = require("./tocShared")
 
 const CONTAINER_HTML_ID = "content"
 const SEPARATOR_HTML_ID = "separator"
-const TOC_HTML_ID = "outline"
+const TOC_HTML_ID = "toc"
 const CONTENT_HTML_ID = "content-body"
 
 const SECTION_HTML_CLASS = "toc-section"
@@ -243,8 +243,8 @@ function calcSectionLevel(line) {
 
 function setTocVisibility(isVisible) {
     const displayStyle = isVisible ? "block" : "none"
-    _document.getElementById("outline").style.display = displayStyle
-    _document.getElementById("separator").style.display = displayStyle
+    _document.getElementById(TOC_HTML_ID).style.display = displayStyle
+    _document.getElementById(SEPARATOR_HTML_ID).style.display = displayStyle
 }
 
 exports.Section = Section
