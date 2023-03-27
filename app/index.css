@@ -108,6 +108,8 @@ div.error {
 #separator {
     background-color: #ccc;
     cursor: col-resize;
+    flex-grow: 0;
+    flex-shrink: 0;
     margin: -10px 10px -30px 0;
     width: 3px;
 
