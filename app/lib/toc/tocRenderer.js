@@ -2,6 +2,11 @@ const ipc = require("../ipc/ipcRenderer")
 
 const shared = require("./tocShared")
 
+const CONTAINER_HTML_ID = "content"
+const SEPARATOR_HTML_ID = "separator"
+const TOC_HTML_ID = "outline"
+const CONTENT_HTML_ID = "content-body"
+
 const SECTION_HTML_CLASS = "toc-section"
 const EXPAND_BUTTON_HTML_CLASS = "toc-expand-button"
 const ID_PREFIX = "toc-"
@@ -161,48 +166,61 @@ class Section {
     }
 }
 
-function registerSplitterElement(
+function changeTocWidth(
+    tocWidth,
     containerElementId,
     separatorElementId,
-    leftElementId,
-    rightElementId
+    tocElementId,
+    contentElementId,
+    deltaX
 ) {
-    const container = _document.getElementById(containerElementId)
-    const separator = _document.getElementById(separatorElementId)
-    const left = _document.getElementById(leftElementId)
-    const right = _document.getElementById(rightElementId)
+    deltaX ??= 0
 
-    separator.onmousedown = event => {
-        const separatorStyle = getComputedStyle(separator)
-        const leftStyle = getComputedStyle(left)
-        const rightStyle = getComputedStyle(right)
+    const tocElement = _document.getElementById(tocElementId)
+    const contentElement = _document.getElementById(contentElementId)
 
-        const leftWidth = parseFloat(leftStyle.width)
-        const mouseDownInfo = {
-            event,
-            leftWidth: leftWidth,
-            rightWidth:
-                parseFloat(getComputedStyle(container).width) -
-                leftWidth -
-                (parseFloat(leftStyle.paddingLeft) +
-                    parseFloat(leftStyle.paddingRight) +
-                    parseFloat(rightStyle.paddingLeft) +
-                    parseFloat(rightStyle.paddingRight) +
-                    parseFloat(separatorStyle.width) +
-                    parseFloat(separatorStyle.marginLeft) +
-                    parseFloat(separatorStyle.marginRight)),
-        }
+    const separatorStyle = getComputedStyle(_document.getElementById(separatorElementId))
+    const tocStyle = getComputedStyle(tocElement)
+    const contentStyle = getComputedStyle(contentElement)
+
+    const updatedWidth = tocWidth + deltaX
+
+    tocElement.style.width = `${updatedWidth}px`
+    contentElement.style.width = `${
+        parseFloat(getComputedStyle(_document.getElementById(containerElementId)).width) -
+        tocWidth -
+        (parseFloat(tocStyle.paddingLeft) +
+            parseFloat(tocStyle.paddingRight) +
+            parseFloat(contentStyle.paddingLeft) +
+            parseFloat(contentStyle.paddingRight) +
+            parseFloat(separatorStyle.width) +
+            parseFloat(separatorStyle.marginLeft) +
+            parseFloat(separatorStyle.marginRight)) -
+        deltaX
+    }px`
+
+    return updatedWidth
+}
+
+function registerSeparator(containerElementId, separatorElementId, tocElementId, contentElementId) {
+    _document.getElementById(separatorElementId).onmousedown = mouseDownEvent => {
+        let updatedWidth = 0
+        const tocWidth = parseFloat(getComputedStyle(_document.getElementById(tocElementId)).width)
         _document.onmousemove = event => {
             event.preventDefault()
-
-            const deltaX = event.clientX - mouseDownInfo.event.clientX
-            left.style.width = `${mouseDownInfo.leftWidth + deltaX}px`
-            right.style.width = `${mouseDownInfo.rightWidth - deltaX}px`
+            updatedWidth = changeTocWidth(
+                tocWidth,
+                containerElementId,
+                separatorElementId,
+                tocElementId,
+                contentElementId,
+                event.clientX - mouseDownEvent.clientX
+            )
         }
         _document.onmouseup = () => {
             _document.onmousemove = _document.onmouseup = null
 
-            _info.widthPx = mouseDownInfo.leftWidth
+            _info.widthPx = updatedWidth
             ipc.send(ipc.messages.updateToc, _info)
         }
     }
@@ -235,14 +253,18 @@ exports.init = (document, isTest) => {
     _document = document
     reset()
     if (!isTest) {
-        registerSplitterElement("content", "separator", "outline", "content-body")
+        registerSeparator(CONTAINER_HTML_ID, SEPARATOR_HTML_ID, TOC_HTML_ID, CONTENT_HTML_ID)
     }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
         setTocVisibility(tocInfo.isVisible)
-
-        // XXX Set width...
-
+        changeTocWidth(
+            tocInfo.widthPx,
+            CONTAINER_HTML_ID,
+            SEPARATOR_HTML_ID,
+            TOC_HTML_ID,
+            CONTENT_HTML_ID
+        )
         for (const entryId of tocInfo.collapsedEntries) {
             const section = _rootSection.findId(entryId)
             if (section) {
