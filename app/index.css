@@ -116,6 +116,7 @@ div.error {
 }
 
 #toc {
+    display: none;
     margin: 0px 0px 20px 0px;
     min-width: 150px;
     overflow: auto;
