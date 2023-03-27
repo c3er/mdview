@@ -177,20 +177,20 @@ function registerSplitterElement(
         const leftStyle = getComputedStyle(left)
         const rightStyle = getComputedStyle(right)
 
-        const leftWidth = parseInt(leftStyle.width)
+        const leftWidth = parseFloat(leftStyle.width)
         const mouseDownInfo = {
             event,
             leftWidth: leftWidth,
             rightWidth:
-                parseInt(getComputedStyle(container).width) -
+                parseFloat(getComputedStyle(container).width) -
                 leftWidth -
-                (parseInt(leftStyle.paddingLeft) +
-                    parseInt(leftStyle.paddingRight) +
-                    parseInt(rightStyle.paddingLeft) +
-                    parseInt(rightStyle.paddingRight) +
-                    parseInt(separatorStyle.width) +
-                    parseInt(separatorStyle.marginLeft) +
-                    parseInt(separatorStyle.marginRight)),
+                (parseFloat(leftStyle.paddingLeft) +
+                    parseFloat(leftStyle.paddingRight) +
+                    parseFloat(rightStyle.paddingLeft) +
+                    parseFloat(rightStyle.paddingRight) +
+                    parseFloat(separatorStyle.width) +
+                    parseFloat(separatorStyle.marginLeft) +
+                    parseFloat(separatorStyle.marginRight)),
         }
         _document.onmousemove = event => {
             event.preventDefault()
