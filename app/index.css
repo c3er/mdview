@@ -163,6 +163,7 @@ div.error {
     min-width: 250px;
     overflow: auto;
     padding: 10px 15px 10px 10px;
+    width: 100%;
 }
 
 body {
