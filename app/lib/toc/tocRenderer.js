@@ -169,7 +169,11 @@ class Section {
 function changeTocWidth(tocWidth, tocElementId, deltaX) {
     deltaX ??= 0
     const tocElement = _document.getElementById(tocElementId)
-    const updatedWidth = tocWidth + deltaX
+    const tocMinWidth = parseFloat(getComputedStyle(tocElement).minWidth)
+    let updatedWidth = tocWidth + deltaX
+    if (updatedWidth < tocMinWidth) {
+        updatedWidth = tocMinWidth
+    }
     tocElement.style.flex = `0 0 ${updatedWidth}px`
     return updatedWidth
 }

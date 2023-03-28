@@ -20,6 +20,8 @@ const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/toc/tocMain")
 
+const MIN_WINDOW_WIDTH = 500 // Pixels
+const MIN_WINDOW_HEIGHT = 200 // Pixels
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 const ZOOM_STEP = 0.1
@@ -431,6 +433,8 @@ function createWindow() {
         y: windowPosition.y,
         width: windowPosition.width,
         height: windowPosition.height,
+        minWidth: MIN_WINDOW_WIDTH,
+        minHeight: MIN_WINDOW_HEIGHT,
         backgroundColor: "#fff",
         webPreferences: {
             nodeIntegration: true,
