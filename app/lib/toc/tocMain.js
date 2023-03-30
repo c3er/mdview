@@ -15,6 +15,12 @@ function update() {
     ipc.send(ipc.messages.updateToc, _info)
 }
 
+function determineTocVisibility(documentSettings) {
+    return documentSettings.showTocOverridesAppSettings
+        ? documentSettings.showToc
+        : _applicationSettings.showToc
+}
+
 exports.SHOW_FOR_ALL_DOCS_MENU_ID = SHOW_FOR_ALL_DOCS_MENU_ID
 
 exports.SHOW_FOR_THIS_DOC_MENU_ID = SHOW_FOR_THIS_DOC_MENU_ID
@@ -24,16 +30,13 @@ exports.init = (mainMenu, applicationSettings) => {
     _applicationSettings = applicationSettings
     const documentSettings = storage.loadDocumentSettings()
 
-    const showTocForAllDocs = applicationSettings.showToc
-    const showTocForThisDoc =
-        documentSettings.showTocOverridesAppSettings && documentSettings.showToc
     _info = {
-        isVisible: showTocForAllDocs || showTocForThisDoc,
+        isVisible: determineTocVisibility(documentSettings),
         widthPx: applicationSettings.tocWidth ?? shared.WIDTH_DEFAULT_PX,
         collapsedEntries: documentSettings.collapsedTocEntries,
     }
-    menu.setItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID, showTocForAllDocs)
-    menu.setItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID, showTocForThisDoc)
+    menu.setItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID, applicationSettings.showToc)
+    menu.setItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID, documentSettings.showToc)
     update()
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
@@ -43,20 +46,16 @@ exports.init = (mainMenu, applicationSettings) => {
 }
 
 exports.switchVisibilityForApplication = () => {
-    _info.isVisible = storage.loadApplicationSettings().showToc = menu.getItemState(
-        _mainMenu,
-        SHOW_FOR_ALL_DOCS_MENU_ID
-    )
+    _applicationSettings.showToc = menu.getItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID)
+    _info.isVisible = determineTocVisibility(storage.loadDocumentSettings())
     update()
 }
 
 exports.switchVisibilityForDocument = () => {
     const documentSettings = storage.loadDocumentSettings()
     documentSettings.showTocOverridesAppSettings = true
-    _info.isVisible = documentSettings.showToc = menu.getItemState(
-        _mainMenu,
-        SHOW_FOR_THIS_DOC_MENU_ID
-    )
+    documentSettings.showToc = menu.getItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID)
+    _info.isVisible = determineTocVisibility(documentSettings)
     update()
 }
 
