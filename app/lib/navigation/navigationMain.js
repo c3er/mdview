@@ -1,5 +1,6 @@
 const encodingLib = require("../encoding/encodingMain")
 const ipc = require("../ipc/ipcMain")
+const menu = require("../main/menu")
 
 const BACK_MENU_ID = "back"
 const FORWARD_MENU_ID = "forward"
@@ -46,11 +47,11 @@ class Location {
 }
 
 function allowBack(isAllowed) {
-    _mainMenu.getMenuItemById(BACK_MENU_ID).enabled = isAllowed
+    menu.setEnabled(_mainMenu, BACK_MENU_ID, isAllowed)
 }
 
 function allowForward(isAllowed) {
-    _mainMenu.getMenuItemById(FORWARD_MENU_ID).enabled = isAllowed
+    menu.setEnabled(_mainMenu, FORWARD_MENU_ID, isAllowed)
 }
 
 function clearBack() {

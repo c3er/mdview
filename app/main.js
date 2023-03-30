@@ -15,6 +15,7 @@ const documentRendering = require("./lib/documentRendering/documentRenderingMain
 const encodingLib = require("./lib/encoding/encodingMain")
 const ipc = require("./lib/ipc/ipcMain")
 const log = require("./lib/log/log")
+const menu = require("./lib/main/menu")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
@@ -151,13 +152,15 @@ function resetZoom() {
 
 function changeTheme(theme) {
     _applicationSettings.theme = theme
-    _mainMenu.getMenuItemById(
+    menu.setChecked(
+        _mainMenu,
         {
             system: "system-theme",
             light: "light-theme",
             dark: "dark-theme",
-        }[theme]
-    ).checked = true
+        }[theme],
+        true
+    )
 }
 
 function createMainMenu() {

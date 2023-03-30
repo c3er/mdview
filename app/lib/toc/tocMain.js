@@ -35,8 +35,8 @@ exports.init = (mainMenu, applicationSettings) => {
         widthPx: applicationSettings.tocWidth ?? shared.WIDTH_DEFAULT_PX,
         collapsedEntries: documentSettings.collapsedTocEntries,
     }
-    menu.setItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID, applicationSettings.showToc)
-    menu.setItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID, documentSettings.showToc)
+    menu.setChecked(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID, applicationSettings.showToc)
+    menu.setChecked(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID, documentSettings.showToc)
     update()
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
@@ -46,7 +46,7 @@ exports.init = (mainMenu, applicationSettings) => {
 }
 
 exports.switchVisibilityForApplication = () => {
-    _applicationSettings.showToc = menu.getItemState(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID)
+    _applicationSettings.showToc = menu.getChecked(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID)
     _info.isVisible = determineTocVisibility(storage.loadDocumentSettings())
     update()
 }
@@ -54,7 +54,7 @@ exports.switchVisibilityForApplication = () => {
 exports.switchVisibilityForDocument = () => {
     const documentSettings = storage.loadDocumentSettings()
     documentSettings.showTocOverridesAppSettings = true
-    documentSettings.showToc = menu.getItemState(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID)
+    documentSettings.showToc = menu.getChecked(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID)
     _info.isVisible = determineTocVisibility(documentSettings)
     update()
 }

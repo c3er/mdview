@@ -50,7 +50,7 @@ function changeOption(setter) {
 }
 
 function updateFileSpecificRendering() {
-    menu.setItemState(
+    menu.setChecked(
         _mainMenu,
         RENDER_FILE_AS_MD_MENU_ID,
         storage.loadDocumentSettings().renderAsMarkdown
@@ -73,11 +73,11 @@ exports.init = (mainMenu, applicationSettings, filePath) => {
     _applicationSettings = applicationSettings
     navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, updateFileSpecificRendering)
 
-    menu.setItemState(_mainMenu, ENABLE_LINE_BREAKS_MENU_ID, applicationSettings.lineBreaksEnabled)
-    menu.setItemState(_mainMenu, ENABLE_TYPOGRAPHY_MENU_ID, applicationSettings.typographyEnabled)
-    menu.setItemState(_mainMenu, ENABLE_EMOJIS_MENU_ID, applicationSettings.emojisEnabled)
-    menu.setItemState(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID, isMarkdownFileType(filePath))
-    menu.setItemState(
+    menu.setChecked(_mainMenu, ENABLE_LINE_BREAKS_MENU_ID, applicationSettings.lineBreaksEnabled)
+    menu.setChecked(_mainMenu, ENABLE_TYPOGRAPHY_MENU_ID, applicationSettings.typographyEnabled)
+    menu.setChecked(_mainMenu, ENABLE_EMOJIS_MENU_ID, applicationSettings.emojisEnabled)
+    menu.setChecked(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID, isMarkdownFileType(filePath))
+    menu.setChecked(
         _mainMenu,
         RENDER_FILE_AS_MD_MENU_ID,
         storage.loadDocumentSettings(filePath).renderAsMarkdown
@@ -89,7 +89,7 @@ exports.init = (mainMenu, applicationSettings, filePath) => {
 exports.switchEnableLineBreaks = () =>
     changeOption(
         () =>
-            (_applicationSettings.lineBreaksEnabled = menu.getItemState(
+            (_applicationSettings.lineBreaksEnabled = menu.getChecked(
                 _mainMenu,
                 ENABLE_LINE_BREAKS_MENU_ID
             ))
@@ -98,7 +98,7 @@ exports.switchEnableLineBreaks = () =>
 exports.switchEnableTypography = () =>
     changeOption(
         () =>
-            (_applicationSettings.typographyEnabled = menu.getItemState(
+            (_applicationSettings.typographyEnabled = menu.getChecked(
                 _mainMenu,
                 ENABLE_TYPOGRAPHY_MENU_ID
             ))
@@ -107,16 +107,13 @@ exports.switchEnableTypography = () =>
 exports.switchEnableEmojis = () =>
     changeOption(
         () =>
-            (_applicationSettings.emojisEnabled = menu.getItemState(
-                _mainMenu,
-                ENABLE_EMOJIS_MENU_ID
-            ))
+            (_applicationSettings.emojisEnabled = menu.getChecked(_mainMenu, ENABLE_EMOJIS_MENU_ID))
     )
 
 exports.switchRenderFileAsMarkdown = filePath => {
     changeOption(
         () =>
-            (storage.loadDocumentSettings(filePath).renderAsMarkdown = menu.getItemState(
+            (storage.loadDocumentSettings(filePath).renderAsMarkdown = menu.getChecked(
                 _mainMenu,
                 RENDER_FILE_AS_MD_MENU_ID
             ))
@@ -127,6 +124,6 @@ exports.switchRenderFileTypeAsMarkdown = filePath =>
     changeOption(() =>
         setRenderFileTypeAsMarkdown(
             filePath,
-            menu.getItemState(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID)
+            menu.getChecked(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID)
         )
     )
