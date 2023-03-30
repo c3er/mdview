@@ -255,24 +255,36 @@ function createMainMenu() {
                         rawText.switchRawView()
                     },
                 },
-                { type: "separator" },
                 {
-                    label: "Show Table Of &Content For All Documents",
-                    accelerator: "Alt+Shift+C",
-                    id: toc.SHOW_FOR_ALL_DOCS_MENU_ID,
-                    type: "checkbox",
-                    click() {
-                        toc.switchVisibilityForApplication()
-                    },
-                },
-                {
-                    label: "Show Table Of Content For This &Document",
-                    accelerator: "Alt+C",
-                    id: toc.SHOW_FOR_THIS_DOC_MENU_ID,
-                    type: "checkbox",
-                    click() {
-                        toc.switchVisibilityForDocument()
-                    },
+                    label: "Table Of &Content",
+                    submenu: [
+                        {
+                            label: "Show For &All Documents",
+                            accelerator: "Alt+Shift+C",
+                            id: toc.SHOW_FOR_ALL_DOCS_MENU_ID,
+                            type: "checkbox",
+                            click() {
+                                toc.switchVisibilityForApplication()
+                            },
+                        },
+                        {
+                            label: "Show For &This Document",
+                            accelerator: "Alt+C",
+                            id: toc.SHOW_FOR_THIS_DOC_MENU_ID,
+                            type: "checkbox",
+                            click() {
+                                toc.switchVisibilityForDocument()
+                            },
+                        },
+                        { type: "separator" },
+                        {
+                            label: "Forget Document Override",
+                            id: toc.FORGET_DOCUMENT_OVERRIDE_MENU_ID,
+                            click() {
+                                toc.forgetDocumentOverride()
+                            },
+                        },
+                    ],
                 },
                 { type: "separator" },
                 {
