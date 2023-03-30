@@ -336,6 +336,12 @@ exports.elements = {
             path: "#blocked-content-info-close-button",
         },
     },
+    toc: {
+        path: "#toc",
+    },
+    separator: {
+        path: "#separator",
+    },
     rawText: {
         path: "#raw-text",
     },

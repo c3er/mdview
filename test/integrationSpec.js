@@ -192,6 +192,18 @@ describe("Integration tests with single app instance", () => {
         assertMenu(mocking.elements.mainMenu, [])
     })
 
+    describe("Table Of Content", () => {
+        it("is invisible by default", async () => {
+            assert.isTrue(await elementIsHidden(page, mocking.elements.toc.path))
+        })
+    })
+
+    describe("Separator", () => {
+        it("is invisible by default", async () => {
+            assert.isTrue(await elementIsHidden(page, mocking.elements.separator.path))
+        })
+    })
+
     describe("Raw text", () => {
         it("is invisible", async () => {
             assert.isTrue(await elementIsHidden(page, mocking.elements.rawText.path))
