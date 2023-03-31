@@ -26,10 +26,12 @@ function addMessage(msg) {
     consoleMessages.push(msg)
 }
 
-async function startApp(documentPath) {
+async function cleanup() {
     clearMessages()
     await fs.rm(mocking.dataDir, { force: true, recursive: true })
+}
 
+async function startApp(documentPath) {
     const app = await electron.launch({
         args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
         executablePath: electronPath,
@@ -45,9 +47,23 @@ async function startApp(documentPath) {
     return [app, page]
 }
 
-async function clickMenuItemById(app, id) {
+async function clickMenuItem(app, id) {
     app.evaluate(
         ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).click(),
+        id
+    )
+}
+
+async function menuItemIsEnabled(app, id) {
+    return await app.evaluate(
+        ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).enabled,
+        id
+    )
+}
+
+async function menuItemIsChecked(app, id) {
+    return await app.evaluate(
+        ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).checked,
         id
     )
 }
@@ -69,7 +85,10 @@ async function elementIsHidden(page, elementPath) {
 }
 
 describe("Integration tests with single app instance", () => {
-    before(async () => ([app, page] = await startApp(defaultDocumentPath)))
+    before(async () => {
+        await cleanup()
+        ;[app, page] = await startApp(defaultDocumentPath)
+    })
 
     after(async () => await app.close())
 
@@ -212,7 +231,10 @@ describe("Integration tests with single app instance", () => {
 })
 
 describe("Integration tests with their own app instance each", () => {
-    beforeEach(async () => ([app, page] = await startApp(defaultDocumentPath)))
+    beforeEach(async () => {
+        await cleanup()
+        ;[app, page] = await startApp(defaultDocumentPath)
+    })
 
     afterEach(async () => await app.close())
 
@@ -251,16 +273,10 @@ describe("Integration tests with their own app instance each", () => {
                 const contentBlocking = require("../app/lib/contentBlocking/contentBlockingMain")
                 const unblockContentMenuId = contentBlocking.UNBLOCK_CONTENT_MENU_ID
 
-                await clickMenuItemById(app, unblockContentMenuId)
+                await clickMenuItem(app, unblockContentMenuId)
 
                 assert.isTrue(await elementIsHidden(page, mocking.elements.blockedContentArea.path))
-                assert.isFalse(
-                    await app.evaluate(
-                        ({ Menu }, menuId) =>
-                            Menu.getApplicationMenu().getMenuItemById(menuId).enabled,
-                        unblockContentMenuId
-                    )
-                )
+                assert.isFalse(await menuItemIsEnabled(app, unblockContentMenuId))
                 assert.isTrue(hasUnblockedContentMessage())
             })
         })
@@ -268,7 +284,7 @@ describe("Integration tests with their own app instance each", () => {
 
     describe("Theme switching", () => {
         it("can be done", async () => {
-            await clickMenuItemById(app, "switch-theme")
+            await clickMenuItem(app, "switch-theme")
             assert.isFalse(containsConsoleMessage("error"))
         })
     })
@@ -280,10 +296,57 @@ describe("Integration tests with their own app instance each", () => {
             assert.include(await page.title(), "#some-javascript")
         })
     })
+
+    describe("Table of Content", () => {
+        const toc = require("../app/lib/toc/tocMain")
+
+        async function assertTocIsVisible() {
+            assert.exists(await page.waitForSelector(mocking.elements.toc.path))
+            assert.exists(await page.waitForSelector(mocking.elements.separator.path))
+        }
+
+        async function assertMenuItemIsChecked(id, isChecked) {
+            assert.equal(await menuItemIsChecked(app, id), isChecked)
+        }
+
+        async function assertTocSetting(showTocMenuId) {
+            await clickMenuItem(app, showTocMenuId)
+            await assertMenuItemIsChecked(showTocMenuId, true)
+            await assertTocIsVisible()
+
+            await app.close()
+            ;[app, page] = await startApp(defaultDocumentPath)
+
+            await assertTocIsVisible()
+            await assertMenuItemIsChecked(showTocMenuId, true)
+        }
+
+        it("appears after menu click for all documents", async () => {
+            await clickMenuItem(app, toc.SHOW_FOR_ALL_DOCS_MENU_ID)
+            await assertMenuItemIsChecked(toc.SHOW_FOR_ALL_DOCS_MENU_ID, true)
+            await assertTocIsVisible()
+        })
+
+        it("appears after menu click for this document", async () => {
+            await clickMenuItem(app, toc.SHOW_FOR_THIS_DOC_MENU_ID)
+            await assertMenuItemIsChecked(toc.SHOW_FOR_THIS_DOC_MENU_ID, true)
+            assert.isTrue(await menuItemIsEnabled(app, toc.FORGET_DOCUMENT_OVERRIDE_MENU_ID))
+            await assertTocIsVisible()
+        })
+
+        it("remembers chosen visibility for all documents", async () => {
+            await assertTocSetting(toc.SHOW_FOR_ALL_DOCS_MENU_ID)
+        })
+
+        it("remembers chosen visibility for this document", async () => {
+            await assertTocSetting(toc.SHOW_FOR_THIS_DOC_MENU_ID)
+        })
+    })
 })
 
 describe("Integration tests with special documents", () => {
     it("loads image encoded as data URL", async () => {
+        await cleanup()
         ;[app, page] = await startApp(path.join(defaultDocumentDir, "gh-issue23.md"))
         try {
             assert.isFalse(containsConsoleMessage("Failed to load resource"))
