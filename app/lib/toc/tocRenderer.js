@@ -66,12 +66,10 @@ class Section {
     addSubSection(section) {
         section.parent = this
         this.subSections.push(section)
-        return section
     }
 
     addSubsequentSection(section) {
         this.parent.addSubSection(section)
-        return section
     }
 
     toggleExpanded() {
@@ -280,16 +278,17 @@ exports.build = content => {
         const section = new Section(headerInfo.title, headerInfo.id)
 
         if (previousSectionLevel < 0 || sectionLevel > previousSectionLevel) {
-            currentSection = currentSection.addSubSection(section)
+            currentSection.addSubSection(section)
         } else if (sectionLevel === previousSectionLevel) {
-            currentSection = currentSection.addSubsequentSection(section)
+            currentSection.addSubsequentSection(section)
         } else {
             const sectionLevelDifference = previousSectionLevel - sectionLevel
             for (let i = 0; i < sectionLevelDifference; i++) {
                 currentSection = currentSection.parent
             }
-            currentSection = currentSection.addSubsequentSection(section)
+            currentSection.addSubsequentSection(section)
         }
+        currentSection = section
     }
     return _rootSection
 }
