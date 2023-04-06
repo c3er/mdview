@@ -7,6 +7,8 @@ const playwright = require("playwright")
 
 const mocking = require("./mocking")
 
+const toc = require("../app/lib/toc/tocMain")
+
 const electron = playwright._electron
 
 const defaultDocumentFile = "testfile_utf8.md"
@@ -231,6 +233,11 @@ describe("Integration tests with single app instance", () => {
 })
 
 describe("Integration tests with their own app instance each", () => {
+    async function restartApp() {
+        await app.close()
+        ;[app, page] = await startApp(defaultDocumentPath)
+    }
+
     beforeEach(async () => {
         await cleanup()
         ;[app, page] = await startApp(defaultDocumentPath)
@@ -298,8 +305,6 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Table of Content", () => {
-        const toc = require("../app/lib/toc/tocMain")
-
         async function assertTocIsVisible() {
             assert.exists(await page.waitForSelector(mocking.elements.toc.path))
             assert.exists(await page.waitForSelector(mocking.elements.separator.path))
@@ -314,8 +319,7 @@ describe("Integration tests with their own app instance each", () => {
             await assertMenuItemIsChecked(showTocMenuId, true)
             await assertTocIsVisible()
 
-            await app.close()
-            ;[app, page] = await startApp(defaultDocumentPath)
+            await restartApp()
 
             await assertTocIsVisible()
             await assertMenuItemIsChecked(showTocMenuId, true)
@@ -340,6 +344,54 @@ describe("Integration tests with their own app instance each", () => {
 
         it("remembers chosen visibility for this document", async () => {
             await assertTocSetting(toc.SHOW_FOR_THIS_DOC_MENU_ID)
+        })
+    })
+
+    describe("Separator", () => {
+        async function displaySeparator() {
+            await clickMenuItem(app, toc.SHOW_FOR_ALL_DOCS_MENU_ID)
+            const separatorElement = await page.waitForSelector(mocking.elements.separator.path)
+            assert.exists(separatorElement)
+            return separatorElement
+        }
+
+        async function determineMiddlePosition(element) {
+            const box = await element.boundingBox()
+            return [box.x + box.width / 2, box.y + box.height / 2]
+        }
+
+        async function drag(x, y, xDelta, yDelta) {
+            const mouse = page.mouse
+            await mouse.move(x, y)
+            await mouse.down()
+            await mouse.move(x + xDelta, y + yDelta)
+            await mouse.up()
+        }
+
+        it("can be moved", async () => {
+            const separatorElement = await displaySeparator()
+            const [origX, y] = await determineMiddlePosition(separatorElement)
+
+            await drag(origX, y, 50, 0)
+
+            separatorBox = await separatorElement.boundingBox()
+            assert.isAbove(separatorBox.x, origX)
+        })
+
+        it("remembers new position", async () => {
+            let separatorElement = await displaySeparator()
+            const [origX, y] = await determineMiddlePosition(separatorElement)
+
+            await drag(origX, y, 50, 0)
+            const { updatedX } = await separatorElement.boundingBox()
+
+            await restartApp()
+
+            separatorElement = await page.waitForSelector(mocking.elements.separator.path)
+            assert.exists(separatorElement)
+
+            const { rememberedX } = await separatorElement.boundingBox()
+            assert.equal(rememberedX, updatedX)
         })
     })
 })
