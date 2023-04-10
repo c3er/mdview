@@ -23,6 +23,7 @@ const JSON_INDENTATION = 2
 let _document
 let _headers = []
 let _rootSection
+let _lastId = 0
 const _info = {
     widthPx: shared.WIDTH_DEFAULT_PX,
     collapsedEntries: [],
@@ -38,7 +39,7 @@ class Section {
 
     constructor(header, id) {
         this.header = header ?? ""
-        this.id = id ?? ""
+        this.id = id ?? (_lastId++).toString()
     }
 
     get htmlId() {
@@ -63,6 +64,10 @@ class Section {
             ? EXPANDED_SYMBOL
             : COLLAPSED_SYMBOL
         this.#isExpanded = value
+    }
+
+    get isRoot() {
+        return !this.parent
     }
 
     addSubSection(section) {
@@ -156,7 +161,7 @@ class Section {
 
     flattenTree(flattened) {
         flattened ??= []
-        if (this.id) {
+        if (!this.isRoot) {
             flattened.push(this)
         }
         for (const subSection of this.subSections) {
