@@ -1,5 +1,6 @@
 const ipc = require("../ipc/ipcMain")
 const menu = require("../main/menu")
+const navigation = require("../navigation/navigationMain")
 const storage = require("../main/storage")
 
 const shared = require("./tocShared")
@@ -7,6 +8,8 @@ const shared = require("./tocShared")
 const SHOW_FOR_ALL_DOCS_MENU_ID = "show-for-all-docs"
 const SHOW_FOR_THIS_DOC_MENU_ID = "show-for-this-doc"
 const FORGET_DOCUMENT_OVERRIDE_MENU_ID = "forget-document-override"
+
+const UPDATE_TOC_NAV_ID = "update-toc"
 
 let _mainMenu
 let _applicationSettings
@@ -48,6 +51,13 @@ exports.init = (mainMenu, applicationSettings) => {
         collapsedEntries: documentSettings.collapsedTocEntries,
     }
     update(documentSettings)
+
+    navigation.register(UPDATE_TOC_NAV_ID, () => {
+        const documentSettings = storage.loadDocumentSettings()
+        _info.isVisible = determineTocVisibility(documentSettings)
+        _info.collapsedEntries = documentSettings.collapsedTocEntries
+        update(documentSettings)
+    })
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
         documentSettings.collapsedTocEntries = tocInfo.collapsedEntries
