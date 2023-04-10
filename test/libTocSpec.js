@@ -15,7 +15,12 @@ function trimLines(content) {
 function assertSections(content, rootSection) {
     content = trimLines(content)
     documentRendering.renderContent(content)
-    assert.isTrue(toc.build(content).equals(toc.Section.fromObject(rootSection)))
+    const actual = toc.build(content)
+    const expected = toc.fromObject(rootSection)
+    assert.isTrue(
+        actual.equals(expected),
+        `\nExpected:\n${expected.toJson()}\n\nActual:\n${actual.toJson()}`
+    )
 }
 
 describe('Library "TOC"', () => {

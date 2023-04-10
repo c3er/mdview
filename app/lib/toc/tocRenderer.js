@@ -18,6 +18,8 @@ const EXPANDED_SYMBOL = " ⯆ "
 const INDENTATION_WIDTH_PX = 15
 const INDENTATION_OFFSET_PX = 20
 
+const JSON_INDENTATION = 2
+
 let _document
 let _headers = []
 let _rootSection
@@ -112,6 +114,17 @@ class Section {
         return true
     }
 
+    toObject() {
+        return {
+            header: this.header,
+            subSections: this.subSections.map(section => section.toObject()),
+        }
+    }
+
+    toJson() {
+        return JSON.stringify(this.toObject(), null, JSON_INDENTATION)
+    }
+
     toHtml(level) {
         level ??= 0
         const subSectionsHtml = this.subSections
@@ -150,17 +163,6 @@ class Section {
             subSection.flattenTree(flattened)
         }
         return flattened
-    }
-
-    static fromObject(obj, parent) {
-        const section = new Section(obj.header)
-        if (parent) {
-            section.parent = parent
-        }
-        for (const subSection of obj.subSections ?? []) {
-            section.subSections.push(Section.fromObject(subSection, section))
-        }
-        return section
     }
 }
 
@@ -216,6 +218,14 @@ function setTocVisibility(isVisible) {
     const displayStyle = isVisible ? "block" : "none"
     _document.getElementById(TOC_HTML_ID).style.display = displayStyle
     _document.getElementById(SEPARATOR_HTML_ID).style.display = displayStyle
+}
+
+function fromObject(obj) {
+    const section = new Section(obj.header)
+    for (const subSection of obj.subSections ?? []) {
+        section.addSubSection(fromObject(subSection))
+    }
+    return section
 }
 
 exports.Section = Section
@@ -292,6 +302,8 @@ exports.build = content => {
     }
     return _rootSection
 }
+
+exports.fromObject = fromObject
 
 exports.handleExpandButtonClick = section => {
     section.toggleExpanded()
