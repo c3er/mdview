@@ -60,7 +60,8 @@ exports.init = (mainMenu, applicationSettings) => {
     })
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
-        documentSettings.collapsedTocEntries = tocInfo.collapsedEntries
+        storage.loadDocumentSettings().collapsedTocEntries = _info.collapsedEntries =
+            tocInfo.collapsedEntries
         _applicationSettings.tocWidth = tocInfo.widthPx
     })
 }

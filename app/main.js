@@ -613,6 +613,7 @@ setInterval(() => {
 
 navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {
     const time = _lastModificationTime
-    _lastModificationTime = lastModificationTime
+    _lastModificationTime =
+        lastModificationTime ?? fs.statSync(navigation.getCurrentLocation().filePath)
     return time
 })
