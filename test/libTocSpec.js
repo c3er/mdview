@@ -202,6 +202,33 @@ describe('Library "TOC"', () => {
             )
         })
 
+        it("handles empty headers as expected", () => {
+            assertSections(
+                `
+                    # Title
+                    ## Section
+                    ##
+                `,
+                {
+                    subSections: [
+                        {
+                            header: "Title",
+                            subSections: [
+                                {
+                                    header: "Section",
+                                    subSections: [],
+                                },
+                                {
+                                    header: "",
+                                    subSections: [],
+                                },
+                            ],
+                        },
+                    ],
+                }
+            )
+        })
+
         it("structures README as expected", () => {
             assertSections(
                 `
