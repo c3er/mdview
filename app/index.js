@@ -271,3 +271,16 @@ ipc.listen(ipc.messages.changeRenderingOptions, options => {
     documentRendering.reset(options)
     reload(false)
 })
+
+ipc.listen(ipc.messages.print, () => {
+    const tocIsVisible = toc.getVisibility()
+    if (tocIsVisible) {
+        toc.setVisibility(false)
+    }
+
+    window.print()
+
+    if (tocIsVisible) {
+        toc.setVisibility(true)
+    }
+})

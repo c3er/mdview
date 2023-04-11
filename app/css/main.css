@@ -1,0 +1,87 @@
+.markdown-body ol ol,
+.markdown-body ul ol {
+    list-style-type: decimal;
+}
+
+.markdown-body ul ul ol,
+.markdown-body ul ol ol,
+.markdown-body ol ul ol,
+.markdown-body ol ol ol {
+    list-style-type: decimal;
+}
+
+.md-raw {
+    white-space: pre-wrap;
+}
+
+#raw-text {
+    display: none;
+}
+
+div.info {
+    background-color: #a6dcef;
+}
+
+div.warning {
+    background-color: #f5fac8;
+}
+
+div.error {
+    background-color: #f7b3a7;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    div.info {
+        background-color: #726a95;
+    }
+
+    div.warning {
+        background-color: #ba6b57;
+    }
+
+    div.error {
+        background-color: #8f4068;
+    }
+
+    #raw-text {
+        color: #f8f8f2;
+    }
+
+    #status-bar {
+        background: #292a2d;
+        border-top: 1px solid black;
+        color: #f8f8f2;
+    }
+
+    #menu-border {
+        background-color: #292a2d;
+        border-bottom: 1px solid black;
+    }
+
+    #blocked-content-info {
+        background-color: #7a1f28;
+        border-color: black;
+        color: #f8f8f2;
+    }
+
+    #separator {
+        background-color: #555;
+    }
+
+    .toc-section a,
+    .toc-section * {
+        color: #f8f8f2;
+    }
+
+    .toc-section:hover {
+        background-color: #444;
+    }
+
+    .toc-expand-button:hover {
+        background-color: #777;
+    }
+}

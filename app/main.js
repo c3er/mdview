@@ -195,7 +195,7 @@ function createMainMenu() {
                     label: "&Print",
                     accelerator: "CmdOrCtrl+P",
                     click() {
-                        _mainWindow.webContents.print()
+                        ipc.send(ipc.messages.print)
                     },
                 },
                 { type: "separator" },

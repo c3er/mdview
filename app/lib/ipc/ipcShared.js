@@ -17,6 +17,7 @@ exports.messages = {
     openInternal: "open-internal",
     openInternalInNewWindow: "open-internal-in-new-window",
     prepareReload: "prepare-reload",
+    print: "print",
     reloadPrepared: "reload-prepared",
     resetContentBlocking: "reset-content-blocking",
     restorePosition: "restore-position",

@@ -21,6 +21,7 @@ const INDENTATION_OFFSET_PX = 20
 const JSON_INDENTATION = 2
 
 let _document
+let _isVisible = false
 let _headers = []
 let _rootSection
 let _lastId = 0
@@ -243,7 +244,8 @@ exports.init = (document, isTest) => {
     }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
-        setTocVisibility(tocInfo.isVisible)
+        _isVisible = tocInfo.isVisible
+        setTocVisibility(_isVisible)
         changeTocWidth(tocInfo.widthPx, TOC_HTML_ID)
         for (const entryId of tocInfo.collapsedEntries) {
             const section = _rootSection.findId(entryId)
@@ -318,3 +320,7 @@ exports.handleExpandButtonClick = section => {
         .map(section => section.id)
     ipc.send(ipc.messages.updateToc, _info)
 }
+
+exports.setVisibility = setTocVisibility
+
+exports.getVisibility = () => _isVisible
