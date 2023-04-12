@@ -17,7 +17,9 @@
 }
 
 p,
-pre {
+pre,
+ol,
+ul {
     page-break-inside: avoid;
 }
 
