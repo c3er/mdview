@@ -142,14 +142,11 @@ class Section {
             return subSectionsHtml
         }
 
-        let indentationWidth = level * INDENTATION_WIDTH_PX
-        if (!this.hasSubSections) {
-            indentationWidth += INDENTATION_OFFSET_PX
-        }
-
         return `
             <div class="${SECTION_HTML_CLASS}">
-                <nobr style="margin-left: ${indentationWidth}px">
+                <nobr style="margin-left: ${
+                    level * INDENTATION_WIDTH_PX + (this.hasSubSections ? 0 : INDENTATION_OFFSET_PX)
+                }px">
                     <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
                         ${EXPANDED_SYMBOL}
                     </span>

@@ -252,7 +252,7 @@ exports.loadApplicationSettings = () =>
     (_applicationSettings = new ApplicationSettings(_dataDir, APPLICATION_SETTINGS_FILE))
 
 exports.loadDocumentSettings = documentPath => {
-    documentPath = documentPath ?? navigation.getCurrentLocation().filePath
+    documentPath ??= navigation.getCurrentLocation().filePath
     return (
         _documentSettings[documentPath] ??
         (_documentSettings[documentPath] = new DocumentSettings(

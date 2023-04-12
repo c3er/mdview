@@ -37,12 +37,7 @@ describe('Library "TOC"', () => {
 
         it("recognizes a header", () => {
             assertSections("# Some header", {
-                subSections: [
-                    {
-                        header: "Some header",
-                        subSection: [],
-                    },
-                ],
+                subSections: [{ header: "Some header" }],
             })
         })
 
@@ -56,11 +51,9 @@ describe('Library "TOC"', () => {
                     subSections: [
                         {
                             header: "Header 1",
-                            subSection: [],
                         },
                         {
                             header: "Header 2",
-                            subSection: [],
                         },
                     ],
                 }
@@ -80,7 +73,6 @@ describe('Library "TOC"', () => {
                             subSections: [
                                 {
                                     header: "Sub section",
-                                    subSections: [],
                                 },
                             ],
                         },
@@ -103,13 +95,11 @@ describe('Library "TOC"', () => {
                             subSections: [
                                 {
                                     header: "Sub section",
-                                    subSections: [],
                                 },
                             ],
                         },
                         {
                             header: "Main section 2",
-                            subSections: [],
                         },
                     ],
                 }
@@ -131,17 +121,14 @@ describe('Library "TOC"', () => {
                             subSections: [
                                 {
                                     header: "Sub section 1",
-                                    subSections: [],
                                 },
                                 {
                                     header: "Sub section 2",
-                                    subSections: [],
                                 },
                             ],
                         },
                         {
                             header: "Main section 2",
-                            subSections: [],
                         },
                     ],
                 }
@@ -158,11 +145,9 @@ describe('Library "TOC"', () => {
                     subSections: [
                         {
                             header: "C#",
-                            subSections: [],
                         },
                         {
                             header: "# Header",
-                            subSections: [],
                         },
                     ],
                 }
@@ -187,7 +172,6 @@ describe('Library "TOC"', () => {
                                     subSections: [
                                         {
                                             header: "Test 1.1.1",
-                                            subSections: [],
                                         },
                                     ],
                                 },
@@ -195,7 +179,6 @@ describe('Library "TOC"', () => {
                         },
                         {
                             header: "Test 2",
-                            subSections: [],
                         },
                     ],
                 }
@@ -216,11 +199,9 @@ describe('Library "TOC"', () => {
                             subSections: [
                                 {
                                     header: "Section",
-                                    subSections: [],
                                 },
                                 {
                                     header: "",
-                                    subSections: [],
                                 },
                             ],
                         },
@@ -255,7 +236,6 @@ describe('Library "TOC"', () => {
                                     subSections: [
                                         {
                                             header: "Windows",
-                                            subSections: [],
                                         },
                                     ],
                                 },
@@ -264,15 +244,12 @@ describe('Library "TOC"', () => {
                                     subSections: [
                                         {
                                             header: "Windows installation and download security",
-                                            subSections: [],
                                         },
                                         {
                                             header: "Startup speed",
-                                            subSections: [],
                                         },
                                         {
                                             header: "Build error ERR_ELECTRON_BUILDER_CANNOT_EXECUTE (development)",
-                                            subSections: [],
                                         },
                                     ],
                                 },
@@ -281,21 +258,17 @@ describe('Library "TOC"', () => {
                                     subSections: [
                                         {
                                             header: "Debugging",
-                                            subSections: [],
                                         },
                                         {
                                             header: "Note for Windows",
-                                            subSections: [],
                                         },
                                     ],
                                 },
                                 {
                                     header: "Copyright and License",
-                                    subSections: [],
                                 },
                                 {
                                     header: "Further notes",
-                                    subSections: [],
                                 },
                             ],
                         },

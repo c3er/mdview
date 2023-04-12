@@ -7,17 +7,20 @@ let _markdown
 let _shallRenderAsMarkdown = false
 
 function generateCodeText(text, options = {}) {
-    const defaults = {
-        isHighlighted: false,
-        isMdRawText: false,
-    }
-    const actual = Object.assign({}, defaults, options)
+    options = Object.assign(
+        {},
+        {
+            isHighlighted: false,
+            isMdRawText: false,
+        },
+        options
+    )
 
-    const hljsClass = actual.isHighlighted ? "hljs" : ""
-    const mdRawClass = actual.isMdRawText ? "md-raw" : ""
+    const hljsClass = options.isHighlighted ? "hljs" : ""
+    const mdRawClass = options.isMdRawText ? "md-raw" : ""
 
     const preClass =
-        actual.isHighlighted || actual.isMdRawText
+        options.isHighlighted || options.isMdRawText
             ? `class="${[hljsClass, mdRawClass].join(" ").trim()}"`
             : ""
     return `<pre ${preClass}><code>${text}</code></pre>`
