@@ -273,6 +273,9 @@ ipc.listen(ipc.messages.changeRenderingOptions, options => {
 })
 
 ipc.listen(ipc.messages.print, () => {
+    const scrollPosition = renderer.contentElement().scrollTop
+    console.log("scrollPosition", scrollPosition)
+
     const tocIsVisible = toc.getVisibility()
     if (tocIsVisible) {
         toc.setVisibility(false)
@@ -283,4 +286,6 @@ ipc.listen(ipc.messages.print, () => {
     if (tocIsVisible) {
         toc.setVisibility(true)
     }
+
+    scrollTo(scrollPosition)
 })
