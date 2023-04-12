@@ -476,6 +476,8 @@ function createWindow() {
                 // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
                 event.preventDefault()
                 zoomIn()
+            } else if (isMacOS() && input.meta && input.key === "q") {
+                electron.app.quit()
             }
         }
     })
@@ -518,10 +520,6 @@ electron.app.whenReady().then(() => {
     rawText.init(_mainMenu)
 
     electron.app.on("activate", ensureWindowExists)
-
-    if (isMacOS()) {
-        electron.globalShortcut.register("Command+Q", () => electron.app.quit())
-    }
 })
 
 electron.app.on("window-all-closed", () => {
