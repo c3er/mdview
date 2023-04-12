@@ -14,6 +14,8 @@ const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
+const renderer = require("./lib/renderer/common")
+const toc = require("./lib/toc/tocRenderer")
 
 const TITLE = "Markdown Viewer"
 
@@ -63,18 +65,18 @@ function alterStyleURLs(documentDirectory, fileContent) {
     return lines.join("\n")
 }
 
-function fittingTarget(target, nodeName) {
+function fittingTarget(target, nodePattern) {
     if (!target) {
         return null
     }
-    if (target.nodeName === nodeName) {
+    if (target.nodeName.toLowerCase().match(nodePattern)) {
         return target
     }
-    return fittingTarget(target.parentNode, nodeName)
+    return fittingTarget(target.parentNode, nodePattern)
 }
 
 function scrollTo(position) {
-    document.documentElement.scrollTop = position
+    renderer.contentElement().scrollTop = position
 }
 
 function reload(isFileModification, encoding) {
@@ -82,7 +84,7 @@ function reload(isFileModification, encoding) {
         ipc.messages.reloadPrepared,
         isFileModification,
         encoding,
-        document.documentElement.scrollTop
+        renderer.contentElement().scrollTop
     )
 }
 
@@ -90,11 +92,26 @@ function isDataUrl(url) {
     return url.startsWith("data:")
 }
 
+function populateToc(content, tocElementId) {
+    const rootSection = toc.build(content)
+    document.getElementById(tocElementId).innerHTML = rootSection.toHtml()
+    for (const section of rootSection.flattenTree()) {
+        const expandButtonElement = document.getElementById(section.buttonHtmlId)
+        if (section.hasSubSections) {
+            expandButtonElement.onclick = () => toc.handleExpandButtonClick(section)
+        } else {
+            expandButtonElement.style.display = "none"
+        }
+    }
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
     ipc.init()
     log.init()
+    renderer.init(document)
+    toc.init(document, false)
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)
@@ -103,6 +120,9 @@ function handleDOMContentLoadedEvent() {
 }
 
 function handleContextMenuEvent(event) {
+    event.preventDefault()
+
+    const toClipboard = electron.clipboard.writeText
     const MenuItem = remote.MenuItem
     const menu = new remote.Menu()
 
@@ -115,13 +135,26 @@ function handleContextMenuEvent(event) {
         )
     }
 
-    const target = fittingTarget(event.target, "A")
-    if (target) {
+    const target = event.target
+    const headerElement = fittingTarget(target, /h\d/)
+    if (headerElement) {
+        menu.append(
+            new MenuItem({
+                label: "Copy header anchor",
+                click() {
+                    toClipboard(headerElement.getAttribute("id"))
+                },
+            })
+        )
+    }
+
+    const linkElement = fittingTarget(target, /a/)
+    if (linkElement) {
         menu.append(
             new MenuItem({
                 label: "Copy link text",
                 click() {
-                    electron.clipboard.writeText(target.innerText)
+                    toClipboard(linkElement.innerText)
                 },
             })
         )
@@ -129,7 +162,7 @@ function handleContextMenuEvent(event) {
             new MenuItem({
                 label: "Copy link target",
                 click() {
-                    electron.clipboard.writeText(target.getAttribute("href"))
+                    toClipboard(linkElement.getAttribute("href"))
                 },
             })
         )
@@ -147,6 +180,7 @@ document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 ipc.listen(ipc.messages.fileOpen, file => {
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
+    toc.reset()
 
     const filePath = file.path
     const buffer = fs.readFileSync(filePath)
@@ -175,8 +209,9 @@ ipc.listen(ipc.messages.fileOpen, file => {
     const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
-    document.getElementById("content").innerHTML = documentRendering.renderContent(content)
+    document.getElementById("content-body").innerHTML = documentRendering.renderContent(content)
     document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
+    populateToc(content, "toc")
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {
@@ -203,12 +238,14 @@ ipc.listen(ipc.messages.fileOpen, file => {
         scrollTo(scrollPosition)
     }
     if (internalTarget) {
-        const targetElement = document.getElementById(internalTarget.replace("#", "").split(".")[0])
+        const targetElement = document.getElementById(internalTarget.replace("#", ""))
         if (targetElement) {
             if (!scrollPosition) {
+                const containerElement = renderer.contentElement().children[0]
                 scrollTo(
                     targetElement.getBoundingClientRect().top -
-                        document.body.getBoundingClientRect().top
+                        (containerElement.getBoundingClientRect().top -
+                            Number(containerElement.style.paddingTop.replace("px", "")))
                 )
             }
             titlePrefix += internalTarget
@@ -233,4 +270,17 @@ ipc.listen(ipc.messages.changeZoom, zoomFactor => electron.webFrame.setZoomFacto
 ipc.listen(ipc.messages.changeRenderingOptions, options => {
     documentRendering.reset(options)
     reload(false)
+})
+
+ipc.listen(ipc.messages.print, () => {
+    const tocIsVisible = toc.getVisibility()
+    if (tocIsVisible) {
+        toc.setVisibility(false)
+    }
+
+    window.print()
+
+    if (tocIsVisible) {
+        toc.setVisibility(true)
+    }
 })

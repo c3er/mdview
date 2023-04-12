@@ -51,17 +51,22 @@ class ApplicationSettings extends StorageBase {
     #TYPOGRAPHY_KEY = "typography-enabled"
     #EMOJIS_KEY = "emojis-enabled"
     #MD_FILE_TYPES_KEY = "md-file-types"
-
-    ZOOM_DEFAULT = 1.0
+    #SHOW_TOC_KEY = "show-toc"
+    #TOC_WIDTH_KEY = "toc-width"
 
     SYSTEM_THEME = "system"
     LIGHT_THEME = "light"
     DARK_THEME = "dark"
 
+    ZOOM_DEFAULT = 1.0
+
     LINE_BREAKS_ENABLED_DEFAULT = false
     TYPOGRAPHY_ENABLED_DEFAULT = true
     EMOJIS_ENABLED_DEFAULT = true
     MD_FILE_TYPES_DEFAULT = common.FILE_EXTENSIONS
+
+    SHOW_TOC_DEFAULT = false
+    TOC_WIDTH_DEFAULT = null
 
     get theme() {
         return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
@@ -117,6 +122,22 @@ class ApplicationSettings extends StorageBase {
         this._storeValue(this.#MD_FILE_TYPES_KEY, value)
     }
 
+    get showToc() {
+        return this._loadValue(this.#SHOW_TOC_KEY, this.SHOW_TOC_DEFAULT)
+    }
+
+    set showToc(value) {
+        this._storeValue(this.#SHOW_TOC_KEY, value)
+    }
+
+    get tocWidth() {
+        return this._loadValue(this.#TOC_WIDTH_KEY, this.TOC_WIDTH_DEFAULT)
+    }
+
+    set tocWidth(value) {
+        this._storeValue(this.#TOC_WIDTH_KEY, value)
+    }
+
     _loadValue(key, defaultValue) {
         return this._data[key] ?? defaultValue
     }
@@ -131,11 +152,18 @@ class DocumentSettings extends StorageBase {
     #ENCODING_KEY = "encoding"
     #RENDER_AS_MD_KEY = "render-as-md"
     #WINDOW_POSITION_KEY = "window-position"
+    #SHOW_TOC_OVERRIDES_APP_SETTINGS_KEY = "show-toc-override"
+    #SHOW_TOC_KEY = "show-toc"
+    #COLLAPSED_TOC_ENTRIES_KEY = "collapsed-toc-entries"
 
     ENCODING_DEFAULT = null
     RENDER_AS_MD_DEFAULT = false
     WINDOW_WIDTH_DEFAULT = 1024
     WINDOW_HEIGHT_DEFAULT = 768
+
+    SHOW_TOC_OVERRIDES_APP_SETTINGS_DEFAULT = false
+    SHOW_TOC_DEFAULT = false
+    COLLAPSED_TOC_ENTRIES_DEFAULT = []
 
     _documentData
 
@@ -177,6 +205,33 @@ class DocumentSettings extends StorageBase {
         this._storeValue(this.#WINDOW_POSITION_KEY, value)
     }
 
+    get showTocOverridesAppSettings() {
+        return this._loadValue(
+            this.#SHOW_TOC_OVERRIDES_APP_SETTINGS_KEY,
+            this.SHOW_TOC_OVERRIDES_APP_SETTINGS_DEFAULT
+        )
+    }
+
+    set showTocOverridesAppSettings(value) {
+        this._storeValue(this.#SHOW_TOC_OVERRIDES_APP_SETTINGS_KEY, value)
+    }
+
+    get showToc() {
+        return this._loadValue(this.#SHOW_TOC_KEY, this.SHOW_TOC_DEFAULT)
+    }
+
+    set showToc(value) {
+        this._storeValue(this.#SHOW_TOC_KEY, value)
+    }
+
+    get collapsedTocEntries() {
+        return this._loadValue(this.#COLLAPSED_TOC_ENTRIES_KEY, this.COLLAPSED_TOC_ENTRIES_DEFAULT)
+    }
+
+    set collapsedTocEntries(value) {
+        this._storeValue(this.#COLLAPSED_TOC_ENTRIES_KEY, value)
+    }
+
     _loadValue(key, defaultValue) {
         return this._documentData[key] ?? defaultValue
     }
@@ -197,7 +252,7 @@ exports.loadApplicationSettings = () =>
     (_applicationSettings = new ApplicationSettings(_dataDir, APPLICATION_SETTINGS_FILE))
 
 exports.loadDocumentSettings = documentPath => {
-    documentPath = documentPath ?? navigation.getCurrentLocation().filePath
+    documentPath ??= navigation.getCurrentLocation().filePath
     return (
         _documentSettings[documentPath] ??
         (_documentSettings[documentPath] = new DocumentSettings(

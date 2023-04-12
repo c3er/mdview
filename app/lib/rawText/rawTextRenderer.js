@@ -5,7 +5,7 @@ let _document
 let _updateStatusBar
 
 function switchRawView(isRawView) {
-    _document.getElementById("content").style.display = isRawView ? "none" : "block"
+    _document.getElementById("content").style.display = isRawView ? "none" : "flex"
     _document.getElementById("raw-text").style.display = isRawView ? "block" : "none"
     _updateStatusBar(isRawView ? "Raw text (leve with Ctrl+U)" : "")
     contentBlocking.changeInfoElementVisiblity(!isRawView && contentBlocking.hasBlockedElements())

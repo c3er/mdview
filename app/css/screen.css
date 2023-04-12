@@ -1,0 +1,138 @@
+#status-bar {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    bottom: 0;
+    color: #555;
+    height: 20px;
+    left: 0;
+    position: fixed;
+    right: 0;
+}
+
+#status-text {
+    display: unset;
+    font-size: 9pt;
+    line-height: 0;
+    padding-left: 10px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#menu-border {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    height: 0px;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+#blocked-content-info {
+    background-color: #ffffe1;
+    border-bottom-style: solid;
+    border-top-style: solid;
+    border-color: #ddd;
+    border-width: 1px;
+    color: black;
+    cursor: pointer;
+    height: 30px;
+    left: 0;
+    line-height: 30px;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    text-align: left center;
+    top: 0;
+    z-index: 1000;
+}
+
+.blocked-content-info-text {
+    font-size: 10pt;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#blocked-content-info-text-container {
+    display: table-cell;
+    width: 100%;
+}
+
+#blocked-content-info-close-button {
+    display: table-cell;
+}
+
+#content {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#separator {
+    background-color: #ccc;
+    cursor: col-resize;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: -10px 10px -30px 0;
+    width: 3px;
+
+    /* Prevent the browser's built-in drag from interfering */
+    user-select: none;
+}
+
+#toc {
+    display: none;
+    margin: 0px 0px 20px 0px;
+    max-width: calc(100% - 400px);
+    min-width: 150px;
+    overflow: auto;
+    padding: 10px;
+    width: 20%;
+}
+
+#toc * {
+    cursor: default;
+    vertical-align: middle;
+}
+
+.toc-section {
+    margin: 0px -10px;
+    padding: 0;
+}
+
+.toc-section a {
+    color: black;
+    display: inline-block;
+    font-size: 11pt;
+    height: 100%;
+    padding: 5px 0px;
+    text-decoration: none;
+    width: 100%;
+}
+
+.toc-section:hover {
+    background-color: #ddd;
+}
+
+.toc-expand-button {
+    display: inline-block;
+    font-size: 2em;
+    text-align: center;
+    line-height: 0.8em;
+}
+
+.toc-expand-button:hover {
+    background-color: #aaa;
+}
+
+#content-body {
+    margin: 0px 0px 20px 0px;
+    overflow: auto;
+    padding: 10px 15px 10px 10px;
+    width: 100%;
+}

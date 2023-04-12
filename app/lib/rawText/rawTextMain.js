@@ -1,4 +1,5 @@
 const ipc = require("../ipc/ipcMain")
+const menu = require("../main/menu")
 
 const VIEW_RAW_TEXT_MENU_ID = "view-raw-text"
 
@@ -20,11 +21,11 @@ exports.init = mainMenu => {
 
     ipc.listen(ipc.messages.disableRawView, () => {
         enterRawTextView(false)
-        _mainMenu.getMenuItemById(VIEW_RAW_TEXT_MENU_ID).enabled = false
+        menu.setEnabled(_mainMenu, VIEW_RAW_TEXT_MENU_ID, false)
     })
     ipc.listen(ipc.messages.enableRawView, () => {
         enterRawTextView(false)
-        _mainMenu.getMenuItemById(VIEW_RAW_TEXT_MENU_ID).enabled = true
+        menu.setEnabled(_mainMenu, VIEW_RAW_TEXT_MENU_ID, true)
     })
 }
 

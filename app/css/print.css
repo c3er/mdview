@@ -1,0 +1,31 @@
+#status-bar,
+#blocked-content-info {
+    display: none;
+}
+
+.markdown-body pre,
+.markdown-body pre > code {
+    overflow: visible;
+    white-space: pre-wrap;
+}
+
+.markdown-body table {
+    overflow-wrap: anywhere;
+    page-break-inside: avoid;
+    table-layout: fixed;
+    width: 100%;
+}
+
+p,
+pre {
+    page-break-inside: avoid;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    break-after: avoid;
+}

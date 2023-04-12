@@ -209,6 +209,26 @@ exports.elements = {
                     label: "&View Raw Text",
                     isEnabled: true,
                 },
+                toc: {
+                    label: "Table Of &Content",
+                    isEnabled: true,
+                    sub: {
+                        tocApplication: {
+                            label: "Show For &All Documents",
+                            isEnabled: true,
+                            isChecked: false,
+                        },
+                        tocDocument: {
+                            label: "Show For &This Document",
+                            isEnabled: true,
+                            isChecked: false,
+                        },
+                        forgetDocumentToc: {
+                            label: "Forget Document Override",
+                            isEnabled: false,
+                        },
+                    },
+                },
                 zoom: {
                     label: "&Zoom",
                     isEnabled: true,
@@ -315,6 +335,12 @@ exports.elements = {
         closeButton: {
             path: "#blocked-content-info-close-button",
         },
+    },
+    toc: {
+        path: "#toc",
+    },
+    separator: {
+        path: "#separator",
     },
     rawText: {
         path: "#raw-text",

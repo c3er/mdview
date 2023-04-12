@@ -15,10 +15,14 @@ const documentRendering = require("./lib/documentRendering/documentRenderingMain
 const encodingLib = require("./lib/encoding/encodingMain")
 const ipc = require("./lib/ipc/ipcMain")
 const log = require("./lib/log/log")
+const menu = require("./lib/main/menu")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
+const toc = require("./lib/toc/tocMain")
 
+const MIN_WINDOW_WIDTH = 500 // Pixels
+const MIN_WINDOW_HEIGHT = 200 // Pixels
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 const ZOOM_STEP = 0.1
@@ -148,13 +152,15 @@ function resetZoom() {
 
 function changeTheme(theme) {
     _applicationSettings.theme = theme
-    _mainMenu.getMenuItemById(
+    menu.setChecked(
+        _mainMenu,
         {
             system: "system-theme",
             light: "light-theme",
             dark: "dark-theme",
-        }[theme]
-    ).checked = true
+        }[theme],
+        true
+    )
 }
 
 function createMainMenu() {
@@ -191,7 +197,7 @@ function createMainMenu() {
                     click() {
                         // Workaround for Electron issue, see
                         // https://github.com/electron/electron/issues/36897
-                        _mainWindow.webContents.executeJavaScript("window.print();")
+                        ipc.send(ipc.messages.print)
                     },
                 },
                 { type: "separator" },
@@ -250,6 +256,37 @@ function createMainMenu() {
                     click() {
                         rawText.switchRawView()
                     },
+                },
+                {
+                    label: "Table Of &Content",
+                    submenu: [
+                        {
+                            label: "Show For &All Documents",
+                            accelerator: "Alt+Shift+C",
+                            id: toc.SHOW_FOR_ALL_DOCS_MENU_ID,
+                            type: "checkbox",
+                            click() {
+                                toc.switchVisibilityForApplication()
+                            },
+                        },
+                        {
+                            label: "Show For &This Document",
+                            accelerator: "Alt+C",
+                            id: toc.SHOW_FOR_THIS_DOC_MENU_ID,
+                            type: "checkbox",
+                            click() {
+                                toc.switchVisibilityForDocument()
+                            },
+                        },
+                        { type: "separator" },
+                        {
+                            label: "Forget Document Override",
+                            id: toc.FORGET_DOCUMENT_OVERRIDE_MENU_ID,
+                            click() {
+                                toc.forgetDocumentOverride()
+                            },
+                        },
+                    ],
                 },
                 { type: "separator" },
                 {
@@ -413,6 +450,8 @@ function createWindow() {
         y: windowPosition.y,
         width: windowPosition.width,
         height: windowPosition.height,
+        minWidth: MIN_WINDOW_WIDTH,
+        minHeight: MIN_WINDOW_HEIGHT,
         backgroundColor: "#fff",
         webPreferences: {
             nodeIntegration: true,
@@ -515,6 +554,8 @@ ipc.listen(ipc.messages.finishLoad, () => {
     if (_finderFilePath) {
         _mainWindow.setBounds(loadDocumentSettings().windowPosition)
     }
+
+    toc.init(_mainMenu, _applicationSettings)
 })
 
 ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position) => {
@@ -530,6 +571,7 @@ ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position)
         _mainWindow.reload()
     }
 
+    toc.update()
     restoreScrollPosition()
 })
 
@@ -573,6 +615,7 @@ setInterval(() => {
 
 navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {
     const time = _lastModificationTime
-    _lastModificationTime = lastModificationTime
+    _lastModificationTime =
+        lastModificationTime ?? fs.statSync(navigation.getCurrentLocation().filePath)
     return time
 })

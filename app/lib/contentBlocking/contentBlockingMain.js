@@ -1,6 +1,7 @@
 const common = require("../common")
 const ipc = require("../ipc/ipcMain")
 const log = require("../log/log")
+const menu = require("../main/menu")
 const navigation = require("../navigation/navigationMain")
 
 const UNBLOCK_CONTENT_MENU_ID = "unblock-content"
@@ -20,7 +21,7 @@ function unblockURL(url) {
 }
 
 function allowUnblockContent(isAllowed) {
-    _mainMenu.getMenuItemById(UNBLOCK_CONTENT_MENU_ID).enabled = isAllowed
+    menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_MENU_ID, isAllowed)
 }
 
 exports.UNBLOCK_CONTENT_MENU_ID = UNBLOCK_CONTENT_MENU_ID

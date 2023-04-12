@@ -1,23 +1,26 @@
 const hljs = require("highlight.js")
 
-const log = require("../log/log")
+const toc = require("../toc/tocRenderer")
 
 let _markdown
 
 let _shallRenderAsMarkdown = false
 
 function generateCodeText(text, options = {}) {
-    const defaults = {
-        isHighlighted: false,
-        isMdRawText: false,
-    }
-    const actual = Object.assign({}, defaults, options)
+    options = Object.assign(
+        {},
+        {
+            isHighlighted: false,
+            isMdRawText: false,
+        },
+        options
+    )
 
-    const hljsClass = actual.isHighlighted ? "hljs" : ""
-    const mdRawClass = actual.isMdRawText ? "md-raw" : ""
+    const hljsClass = options.isHighlighted ? "hljs" : ""
+    const mdRawClass = options.isMdRawText ? "md-raw" : ""
 
     const preClass =
-        actual.isHighlighted || actual.isMdRawText
+        options.isHighlighted || options.isMdRawText
             ? `class="${[hljsClass, mdRawClass].join(" ").trim()}"`
             : ""
     return `<pre ${preClass}><code>${text}</code></pre>`
@@ -30,17 +33,13 @@ exports.reset = options => {
             // File extensions/markdown-language-features/src/markdownEngine.ts
             // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
             if (language && hljs.getLanguage(language)) {
-                try {
-                    return generateCodeText(
-                        hljs.highlight(text, {
-                            language: language,
-                            ignoreIllegals: true,
-                        }).value,
-                        { isHighlighted: true }
-                    )
-                } catch (err) {
-                    log.error(`Error at highlighting: ${err}`)
-                }
+                return generateCodeText(
+                    hljs.highlight(text, {
+                        language: language,
+                        ignoreIllegals: true,
+                    }).value,
+                    { isHighlighted: true }
+                )
             }
             return generateCodeText(_markdown.utils.escapeHtml(text), { isHighlighted: true })
         },
@@ -52,13 +51,9 @@ exports.reset = options => {
     })
 
     _markdown
-        .use(require("markdown-it-headinganchor"), {
-            slugify(text) {
-                return text
-                    .replace(/\[|\]|<.*>|\(.*\)|\.|`|\{|\}/g, "")
-                    .trim()
-                    .replace(/\s/g, "-")
-                    .toLowerCase()
+        .use(require("markdown-it-anchor"), {
+            callback(_, info) {
+                toc.addHeader(info.title, info.slug)
             },
         })
         .use(require("markdown-it-multimd-table"), {
