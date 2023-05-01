@@ -52,25 +52,25 @@
         "dmg"
       ],
       "category": "public.app-category.utilities",
-      "icon": "icon/md.icns"
+      "icon": "app/assets/icon/md.icns"
     },
     "win": {
       "target": [
         "nsis",
         "zip"
       ],
-      "icon": "icon/md.ico"
+      "icon": "app/assets/icon/md.ico"
     },
     "fileAssociations": [
       {
         "name": "Markdown file",
         "ext": ".md",
-        "icon": "icon/md.ico"
+        "icon": "app/assets/icon/md.ico"
       },
       {
         "name": "Markdown file",
         "ext": ".markdown",
-        "icon": "icon/md.ico"
+        "icon": "app/assets/icon/md.ico"
       }
     ]
   },
