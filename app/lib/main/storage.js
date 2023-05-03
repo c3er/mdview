@@ -54,9 +54,9 @@ class ApplicationSettings extends StorageBase {
     #SHOW_TOC_KEY = "show-toc"
     #TOC_WIDTH_KEY = "toc-width"
 
-    SYSTEM_THEME = "system"
-    LIGHT_THEME = "light"
-    DARK_THEME = "dark"
+    SYSTEM_THEME = common.SYSTEM_THEME
+    LIGHT_THEME = common.LIGHT_THEME
+    DARK_THEME = common.DARK_THEME
 
     ZOOM_DEFAULT = 1.0
 

@@ -122,9 +122,13 @@
 
 .toc-expand-button {
     display: inline-block;
-    font-size: 2em;
-    text-align: center;
-    line-height: 0.8em;
+    padding: 5px;
+}
+
+.toc-expand-button img {
+    height: 0.8em;
+    padding: 0.2em;
+    width: 0.8em;
 }
 
 .toc-expand-button:hover {

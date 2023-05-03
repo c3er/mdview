@@ -75,6 +75,20 @@ function fittingTarget(target, nodePattern) {
     return fittingTarget(target.parentNode, nodePattern)
 }
 
+function isInContainer(element, containerId) {
+    while (element) {
+        if (element.id === containerId) {
+            return true
+        }
+        element = element.parentNode
+    }
+    return false
+}
+
+function chooseTheme(isDark) {
+    return isDark ? common.DARK_THEME : common.LIGHT_THEME
+}
+
 function scrollTo(position) {
     renderer.contentElement().scrollTop = position
 }
@@ -115,6 +129,11 @@ function handleDOMContentLoadedEvent() {
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)
+
+    // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
+    const match = matchMedia("(prefers-color-scheme: dark)")
+    match.addEventListener("change", event => toc.updateTheme(chooseTheme(event.matches)))
+    toc.updateTheme(chooseTheme(match.matches))
 
     ipc.send(ipc.messages.finishLoad)
 }
@@ -223,7 +242,11 @@ ipc.listen(ipc.messages.fileOpen, file => {
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
-        if (!common.isWebURL(imageUrl) && !isDataUrl(imageUrl)) {
+        if (
+            !common.isWebURL(imageUrl) &&
+            !isDataUrl(imageUrl) &&
+            isInContainer(image, "content-body")
+        ) {
             image.src = path.join(documentDirectory, imageUrl).replace("#", "%23")
         }
         statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)

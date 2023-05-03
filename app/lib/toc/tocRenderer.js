@@ -12,11 +12,13 @@ const EXPAND_BUTTON_HTML_CLASS = "toc-expand-button"
 const ID_PREFIX = "toc-"
 const BUTTON_ID_PREFIX = "toc-button-"
 
-const COLLAPSED_SYMBOL = " ⯈ "
-const EXPANDED_SYMBOL = " ⯆ "
+const COLLAPSED_SYMBOL_LIGHT_PATH = "assets/toc/collapsed-light.svg"
+const EXPANDED_SYMBOL_LIGHT_PATH = "assets/toc/expanded-light.svg"
+const COLLAPSED_SYMBOL_DARK_PATH = "assets/toc/collapsed-dark.svg"
+const EXPANDED_SYMBOL_DARK_PATH = "assets/toc/expanded-dark.svg"
 
 const INDENTATION_WIDTH_PX = 15
-const INDENTATION_OFFSET_PX = 20
+const INDENTATION_OFFSET_PX = 30
 
 const JSON_INDENTATION = 2
 
@@ -29,6 +31,9 @@ const _info = {
     widthPx: shared.WIDTH_DEFAULT_PX,
     collapsedEntries: [],
 }
+
+let collapsedSymbolPath = COLLAPSED_SYMBOL_LIGHT_PATH
+let expandedSymbolPath = EXPANDED_SYMBOL_LIGHT_PATH
 
 class Section {
     #isExpanded = true
@@ -61,9 +66,7 @@ class Section {
 
     set isExpanded(value) {
         _document.getElementById(this.htmlId).style.display = value ? "block" : "none"
-        _document.getElementById(this.buttonHtmlId).innerText = value
-            ? EXPANDED_SYMBOL
-            : COLLAPSED_SYMBOL
+        this.changeButtonImage(value ? expandedSymbolPath : collapsedSymbolPath)
         this.#isExpanded = value
     }
 
@@ -95,6 +98,10 @@ class Section {
             }
         }
         return null
+    }
+
+    changeButtonImage(path) {
+        _document.getElementById(this.buttonHtmlId).innerHTML = _toButtonHtml(path)
     }
 
     equals(other) {
@@ -148,7 +155,7 @@ class Section {
                     level * INDENTATION_WIDTH_PX + (this.hasSubSections ? 0 : INDENTATION_OFFSET_PX)
                 }px">
                     <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
-                        ${EXPANDED_SYMBOL}
+                        ${_toButtonHtml(expandedSymbolPath)}
                     </span>
                     <a href="#${this.id}">${this.header}</a>
                 </nobr>
@@ -167,6 +174,10 @@ class Section {
         }
         return flattened
     }
+}
+
+function _toButtonHtml(imagePath) {
+    return `<img src="${imagePath}">`
 }
 
 function changeTocWidth(tocWidth, tocElementId, deltaX) {
@@ -321,3 +332,19 @@ exports.handleExpandButtonClick = section => {
 exports.setVisibility = setTocVisibility
 
 exports.getVisibility = () => _isVisible
+
+exports.updateTheme = theme => {
+    switch (theme) {
+        case common.DARK_THEME:
+            expandedSymbolPath = EXPANDED_SYMBOL_DARK_PATH
+            collapsedSymbolPath = COLLAPSED_SYMBOL_DARK_PATH
+            break
+        case common.LIGHT_THEME:
+            expandedSymbolPath = EXPANDED_SYMBOL_LIGHT_PATH
+            collapsedSymbolPath = COLLAPSED_SYMBOL_LIGHT_PATH
+            break
+    }
+    for (const section of _rootSection?.flattenTree() ?? []) {
+        section.changeButtonImage(section.isExpanded ? expandedSymbolPath : collapsedSymbolPath)
+    }
+}

@@ -1,5 +1,11 @@
 exports.FILE_EXTENSIONS = ["md", "markdown"]
 
+exports.SYSTEM_THEME = "system"
+
+exports.LIGHT_THEME = "light"
+
+exports.DARK_THEME = "dark"
+
 exports.isWebURL = url =>
     !url.startsWith("file://") && !url.startsWith("devtools://") && url.includes("://")
 
