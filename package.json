@@ -79,7 +79,7 @@
     "about-window": "1.15.2",
     "github-markdown-css": "5.2.0",
     "github-markdown-dracula-css": "4.0.3",
-    "highlight.js": "11.7.0",
+    "highlight.js": "11.8.0",
     "iconv-lite": "0.6.3",
     "jschardet": "3.0.0",
     "markdown-it": "13.0.1",
@@ -97,12 +97,12 @@
   },
   "devDependencies": {
     "chai": "4.3.7",
-    "electron": "24.1.0",
+    "electron": "24.2.0",
     "electron-builder": "23.6.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.2.0",
-    "playwright": "1.32.3",
-    "prettier": "2.8.7",
+    "playwright": "1.33.0",
+    "prettier": "2.8.8",
     "tslib": "2.5.0"
   }
 }
