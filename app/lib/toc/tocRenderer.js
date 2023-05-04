@@ -1,11 +1,10 @@
+const common = require("../common")
 const ipc = require("../ipc/ipcRenderer")
 
 const shared = require("./tocShared")
 
-const CONTAINER_HTML_ID = "content"
 const SEPARATOR_HTML_ID = "separator"
 const TOC_HTML_ID = "toc"
-const CONTENT_HTML_ID = "content-body"
 
 const SECTION_HTML_CLASS = "toc-section"
 const EXPAND_BUTTON_HTML_CLASS = "toc-expand-button"
@@ -101,7 +100,7 @@ class Section {
     }
 
     changeButtonImage(path) {
-        _document.getElementById(this.buttonHtmlId).innerHTML = _toButtonHtml(path)
+        _document.getElementById(this.buttonHtmlId).innerHTML = toButtonHtml(path)
     }
 
     equals(other) {
@@ -155,7 +154,7 @@ class Section {
                     level * INDENTATION_WIDTH_PX + (this.hasSubSections ? 0 : INDENTATION_OFFSET_PX)
                 }px">
                     <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
-                        ${_toButtonHtml(expandedSymbolPath)}
+                        ${toButtonHtml(expandedSymbolPath)}
                     </span>
                     <a href="#${this.id}">${this.header}</a>
                 </nobr>
@@ -176,7 +175,7 @@ class Section {
     }
 }
 
-function _toButtonHtml(imagePath) {
+function toButtonHtml(imagePath) {
     return `<img src="${imagePath}">`
 }
 
@@ -192,7 +191,7 @@ function changeTocWidth(tocWidth, tocElementId, deltaX) {
     return updatedWidth
 }
 
-function registerSeparator(containerElementId, separatorElementId, tocElementId, contentElementId) {
+function registerSeparator(separatorElementId, tocElementId) {
     _document.getElementById(separatorElementId).onmousedown = mouseDownEvent => {
         let updatedWidth = 0
         const tocWidth = parseFloat(getComputedStyle(_document.getElementById(tocElementId)).width)
@@ -248,7 +247,7 @@ exports.init = (document, isTest) => {
     _document = document
     reset()
     if (!isTest) {
-        registerSeparator(CONTAINER_HTML_ID, SEPARATOR_HTML_ID, TOC_HTML_ID, CONTENT_HTML_ID)
+        registerSeparator(SEPARATOR_HTML_ID, TOC_HTML_ID)
     }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
