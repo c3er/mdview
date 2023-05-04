@@ -10,7 +10,7 @@
 }
 
 .markdown-body table {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     page-break-inside: avoid;
     table-layout: fixed;
     width: 100%;
