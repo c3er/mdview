@@ -60,7 +60,7 @@ function showAboutDialog(parentWindow) {
         copyright: "Copyright © Christian Dreier",
         icon_path: path.join(
             __dirname,
-            "..",
+            "assets",
             "icon",
             isMacOS() ? "md-mac-icon.svg" : "md-icon.svg"
         ),
