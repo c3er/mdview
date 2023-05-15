@@ -142,6 +142,10 @@
     width: 100%;
 }
 
+#content-body:focus {
+    outline: none;
+}
+
 @media (prefers-color-scheme: dark) {
     div.info {
         background-color: #726a95;

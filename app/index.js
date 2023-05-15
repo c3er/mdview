@@ -282,6 +282,8 @@ ipc.listen(ipc.messages.fileOpen, file => {
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
     window.addEventListener("contextmenu", handleContextMenuEvent)
+
+    renderer.contentElement().focus()
 })
 
 ipc.listen(ipc.messages.prepareReload, reload)
