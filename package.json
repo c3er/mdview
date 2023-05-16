@@ -89,7 +89,7 @@
     "markdown-it-emoji": "2.0.2",
     "markdown-it-footnote": "3.0.3",
     "markdown-it-mark": "3.0.1",
-    "markdown-it-multimd-table": "4.2.1",
+    "markdown-it-multimd-table": "4.2.2",
     "markdown-it-new-katex": "2.0.3",
     "markdown-it-sub": "1.0.0",
     "markdown-it-sup": "1.0.0",
@@ -97,7 +97,7 @@
   },
   "devDependencies": {
     "chai": "4.3.7",
-    "electron": "24.2.0",
+    "electron": "24.3.0",
     "electron-builder": "23.6.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.2.0",
