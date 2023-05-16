@@ -394,6 +394,21 @@ describe("Integration tests with their own app instance each", () => {
             assert.equal(rememberedX, updatedX)
         })
     })
+
+    describe("Keyboard handling", () => {
+        it("has focus on content", async () => {
+            const contentElement = await page.waitForSelector(
+                `${mocking.elements.content.path} > p`
+            )
+
+            const orig = await contentElement.boundingBox()
+            await page.keyboard.press("PageDown", { delay: 100 })
+            const changed = await contentElement.boundingBox()
+
+            assert.strictEqual(changed.x, orig.x)
+            assert.notStrictEqual(changed.y, orig.y)
+        })
+    })
 })
 
 describe("Integration tests with special documents", () => {

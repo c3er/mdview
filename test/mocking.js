@@ -342,6 +342,9 @@ exports.elements = {
     separator: {
         path: "#separator",
     },
+    content: {
+        path: "#content-body",
+    },
     rawText: {
         path: "#raw-text",
     },
