@@ -228,7 +228,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
     const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
-    document.getElementById("content-body").innerHTML = documentRendering.renderContent(content)
+    renderer.contentElement().innerHTML = documentRendering.renderContent(content)
     document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
     populateToc(content, "toc")
 

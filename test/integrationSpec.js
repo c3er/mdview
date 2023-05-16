@@ -126,19 +126,19 @@ describe("Integration tests with single app instance", () => {
 
             describe("Theme", () => {
                 it("has a default theme", () => {
-                    assert.equal(applicationSettings.theme, mocking.DEFAULT_THEME)
+                    assert.strictEqual(applicationSettings.theme, mocking.DEFAULT_THEME)
                 })
 
                 it("remembers light theme", () => {
                     const theme = applicationSettings.LIGHT_THEME
                     applicationSettings.theme = theme
-                    assert.equal(applicationSettings.theme, theme)
+                    assert.strictEqual(applicationSettings.theme, theme)
                 })
 
                 it("remembers dark theme", () => {
                     const theme = applicationSettings.DARK_THEME
                     applicationSettings.theme = theme
-                    assert.equal(applicationSettings.theme, theme)
+                    assert.strictEqual(applicationSettings.theme, theme)
                 })
 
                 it("does not accept an unknown theme", () => {
@@ -153,12 +153,12 @@ describe("Integration tests with single app instance", () => {
                     const ENCODING = "ISO-8859-15"
                     const documentSettings = storage.loadDocumentSettings("test1")
                     documentSettings.encoding = ENCODING
-                    assert.equal(documentSettings.encoding, ENCODING)
+                    assert.strictEqual(documentSettings.encoding, ENCODING)
                 })
 
                 it("loads default encoding if path is not known", () => {
                     const documentSettings = storage.loadDocumentSettings("unknown-file")
-                    assert.equal(documentSettings.encoding, documentSettings.ENCODING_DEFAULT)
+                    assert.strictEqual(documentSettings.encoding, documentSettings.ENCODING_DEFAULT)
                 })
             })
         })
@@ -191,7 +191,7 @@ describe("Integration tests with single app instance", () => {
                     })
 
                     it(`is ${currentItem.isEnabled ? "enabled" : "disabled"}`, async () => {
-                        assert.equal(
+                        assert.strictEqual(
                             (await searchMenuItem(currentItemPath)).enabled,
                             currentItem.isEnabled
                         )
@@ -199,7 +199,10 @@ describe("Integration tests with single app instance", () => {
 
                     const isChecked = currentItem.isChecked ?? false
                     it(`is ${isChecked ? "checked" : "unchecked"}`, async () => {
-                        assert.equal((await searchMenuItem(currentItemPath)).checked, isChecked)
+                        assert.strictEqual(
+                            (await searchMenuItem(currentItemPath)).checked,
+                            isChecked
+                        )
                     })
 
                     const subMenu = currentItem.sub
@@ -311,7 +314,7 @@ describe("Integration tests with their own app instance each", () => {
         }
 
         async function assertMenuItemIsChecked(id, isChecked) {
-            assert.equal(await menuItemIsChecked(app, id), isChecked)
+            assert.strictEqual(await menuItemIsChecked(app, id), isChecked)
         }
 
         async function assertTocSetting(showTocMenuId) {
@@ -391,7 +394,7 @@ describe("Integration tests with their own app instance each", () => {
             assert.exists(separatorElement)
 
             const { rememberedX } = await separatorElement.boundingBox()
-            assert.equal(rememberedX, updatedX)
+            assert.strictEqual(rememberedX, updatedX)
         })
     })
 
