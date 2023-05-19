@@ -28,7 +28,7 @@ jobs:
           node-version: 20
 
       - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
+        uses: Yan-Jobs/action-electron-builder@v1.7.0
         with:
           skip_build: true
           max_attempts: 2
