@@ -11,32 +11,16 @@ on:
   pull_request:
 
 jobs:
-  build_on_linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
-        with:
-          node-version: 20
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run dist
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
-  build_on_mac:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
-        with:
-          node-version: 20
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run dist
+    runs-on: ${{ matrix.os }}
 
-  build_on_win:
-    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.github_token }}
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@master
@@ -45,4 +29,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: npm run dist
+        run: npm run dist-ci

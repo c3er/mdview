@@ -24,6 +24,7 @@
     "start": "electron .",
     "pack": "build --dir",
     "dist": "electron-builder",
+    "dist-ci": "electron-builder -p onTag",
     "test": "prettier --check . && mocha --timeout 20000",
     "format": "prettier --write ."
   },
