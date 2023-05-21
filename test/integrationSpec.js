@@ -1,10 +1,10 @@
-const fs = require("fs/promises")
 const path = require("path")
 
 const assert = require("chai").assert
 const electronPath = require("electron")
 const playwright = require("playwright")
 
+const lib = require("./testLib")
 const mocking = require("./mocking")
 
 const toc = require("../app/lib/toc/tocMain")
@@ -30,7 +30,7 @@ function addMessage(msg) {
 
 async function cleanup() {
     clearMessages()
-    await fs.rm(mocking.dataDir, { force: true, recursive: true })
+    await lib.removeDataDir()
 }
 
 async function startApp(documentPath) {

@@ -1,16 +1,23 @@
 const assert = require("chai").assert
 
+const lib = require("./testLib")
 const mocking = require("./mocking")
 
 describe("Encoding library", () => {
     describe("Main part", () => {
-        const ipc = require("../app/lib/ipc/ipcMain")
         const encodingLib = require("../app/lib/encoding/encodingMain")
+        const ipc = require("../app/lib/ipc/ipcMain")
+        const storage = require("../app/lib/main/storage")
 
         const encoding = "utf16le"
         const filename = "testfile"
 
-        beforeEach(() => encodingLib.init(mocking.mainMenu))
+        beforeEach(() => {
+            storage.init(mocking.dataDir, mocking.electron)
+            encodingLib.init(mocking.mainMenu)
+        })
+
+        afterEach(async () => await lib.removeDataDir())
 
         it("remembers the encoding", () => {
             encodingLib.change(filename, encoding)
