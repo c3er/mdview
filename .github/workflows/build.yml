@@ -1,6 +1,15 @@
 # Based on
 # https://dev.to/erikhofer/build-and-publish-a-multi-platform-electron-app-on-github-3lnd
 
+# Currently, the action can only work with Linux. Both, macOS and Windows fail, due to some hard to
+# isolate problems.
+# On Windows, it gets interrupted somehow; sometimes showing that a ^C signal came, sometimes via a
+# SIGINT. GitHub Runner issue #2468 (https://github.com/actions/runner/issues/2468) seems related to
+# this.
+# On macOS, it fails reproducable at copying the custom application icon file with an EEXIST error.
+# That seems to be electron-builder issue #6570
+# (https://github.com/electron-userland/electron-builder/issues/6570)
+
 name: Build
 
 on:
@@ -12,11 +21,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     env:
       GH_TOKEN: ${{ secrets.github_token }}
