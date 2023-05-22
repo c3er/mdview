@@ -59,6 +59,30 @@ Another link to Google: https://www.google.com/
 
 ![Image from the evil Internet](http://placekitten.com/1000/2000)
 
+## Multimedia
+
+### Audio
+
+Audio file downloaded from https://samplelib.com/
+
+<audio controls src="sample-6s.mp3"></audio>
+
+### Video
+
+Video files downloaded from https://samplelib.com/
+
+#### MP4
+
+<video controls width="500">
+    <source src="sample-5s.mp4" type="video/mp4">
+</video>
+
+#### WEBM
+
+<video controls width="500">
+    <source src="sample-5s.webm" type="video/webm">
+</video>
+
 ## Heading 1
 
 ### Sub heading 1

@@ -119,6 +119,14 @@ function populateToc(content, tocElementId) {
     }
 }
 
+function transformRelativePath(documentDirectory, filePath) {
+    return path.join(documentDirectory, filePath).replace("#", "%23")
+}
+
+function isLocalPath(url) {
+    return !common.isWebURL(url) && !isDataUrl(url)
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
@@ -242,16 +250,24 @@ ipc.listen(ipc.messages.fileOpen, file => {
     })
     alterTags("img", image => {
         const imageUrl = image.getAttribute("src")
-        if (
-            !common.isWebURL(imageUrl) &&
-            !isDataUrl(imageUrl) &&
-            isInContainer(image, "content-body")
-        ) {
-            image.src = path.join(documentDirectory, imageUrl).replace("#", "%23")
+        if (isLocalPath(imageUrl) && isInContainer(image, "content-body")) {
+            image.src = transformRelativePath(documentDirectory, imageUrl)
         }
         statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
 
         image.onerror = () => (image.style.backgroundColor = "#ffe6cc")
+    })
+    alterTags("audio", audioElement => {
+        const audioUrl = audioElement.getAttribute("src")
+        if (isLocalPath(audioUrl)) {
+            audioElement.src = transformRelativePath(documentDirectory, audioUrl)
+        }
+    })
+    alterTags("source", source => {
+        const url = source.getAttribute("src")
+        if (isLocalPath(url)) {
+            source.src = transformRelativePath(documentDirectory, url)
+        }
     })
 
     const scrollPosition = file.scrollPosition
