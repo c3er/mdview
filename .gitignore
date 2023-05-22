@@ -9,4 +9,8 @@ package-lock.json
 
 !.vscode/launch.json
 
+# Markdown Viewer's settings storage
+.storage/
+
+# For private notes
 tmp.md

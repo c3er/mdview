@@ -25,6 +25,10 @@ function extractFilePath(args, storageDirArgIndex) {
     )
 }
 
+function isDevelopment() {
+    return !!process.defaultApp
+}
+
 function parseTestArgs(args) {
     const testArgIndex = args.indexOf("--test")
     const isTest = testArgIndex >= 0
@@ -33,13 +37,13 @@ function parseTestArgs(args) {
     if (isTest && testArgIndex < args.length - 1) {
         storageDirArgIndex = testArgIndex + 1
     }
+    const storageDir = isDevelopment()
+        ? path.join(__dirname, "..", "..", "..", ".storage")
+        : path.join(electron.app.getPath("userData"), "storage")
 
     return {
         isTest: isTest,
-        storageDir:
-            storageDirArgIndex >= 0
-                ? args[storageDirArgIndex]
-                : path.join(electron.app.getPath("userData"), "storage"),
+        storageDir: storageDirArgIndex >= 0 ? args[storageDirArgIndex] : storageDir,
         storageDirArgIndex: storageDirArgIndex,
     }
 }

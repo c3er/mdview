@@ -1,4 +1,5 @@
 .vscode
+.storage
 dist
 test/data
 
