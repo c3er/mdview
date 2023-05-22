@@ -56,6 +56,16 @@ exports.reset = options => {
                 toc.addHeader(info.title, info.slug)
             },
         })
+        .use(require("markdown-it-html5-embed"), {
+            html5embed: {
+                attributes: {
+                    audio: "controls",
+                    video: 'width="500" controls',
+                },
+                useImageSyntax: true,
+                useLinkSyntax: true,
+            },
+        })
         .use(require("markdown-it-multimd-table"), {
             headerless: true,
             multiline: true,

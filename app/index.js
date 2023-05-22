@@ -259,7 +259,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
     })
     alterTags("audio", audioElement => {
         const audioUrl = audioElement.getAttribute("src")
-        if (isLocalPath(audioUrl)) {
+        if (audioUrl && isLocalPath(audioUrl)) {
             audioElement.src = transformRelativePath(documentDirectory, audioUrl)
         }
     })

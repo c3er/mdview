@@ -65,23 +65,41 @@ Another link to Google: https://www.google.com/
 
 Audio file downloaded from https://samplelib.com/
 
+#### HTML
+
 <audio controls src="sample-6s.mp3"></audio>
+
+#### Markdown
+
+[](sample-6s.mp3)
+
+![](sample-6s.mp3)
 
 ### Video
 
 Video files downloaded from https://samplelib.com/
 
-#### MP4
+#### HTML
+
+##### MP4
 
 <video controls width="500">
     <source src="sample-5s.mp4" type="video/mp4">
 </video>
 
-#### WEBM
+##### WEBM
 
 <video controls width="500">
     <source src="sample-5s.webm" type="video/webm">
 </video>
+
+#### Markdown
+
+See https://github.com/cmrd-senya/markdown-it-html5-embed
+
+[](sample-5s.mp4)
+
+![](sample-5s.webm)
 
 ## Heading 1
 
