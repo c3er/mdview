@@ -1,24 +1,12 @@
 # Markdown Viewer
 
-![Screenshot of the application in light mode](doc/images/screenshot-light.png)
+![Screenshot of the application in light mode](doc/assets/screenshot-light.png)
 
-![Screenshot of the application in dark mode](doc/images/screenshot-dark.png)
+![Screenshot of the application in dark mode](doc/assets/screenshot-dark.png)
 
 A standalone application that renders and displays Markdown files. It does nothing else! No direct editing nor any fancy note taking features. It is not distributed as a browser extension nor does it fire up a web server - so no web browser is needed to see the rendered Markdown file.
 
-It renders many additional features from [the `markdown-it` demo](https://markdown-it.github.io/).
-
-Following plugins are supported:
-
-- [`markdown-it-abbr`](https://github.com/markdown-it/markdown-it-abbr)
-- [`markdown-it-container`](https://github.com/markdown-it/markdown-it-container)
-- [`markdown-it-emoji`](https://github.com/markdown-it/markdown-it-emoji)
-- [`markdown-it-footnote`](https://github.com/markdown-it/markdown-it-footnote)
-- [`markdown-it-headinganchor`](https://github.com/adam-p/markdown-it-headinganchor)
-- [`markdown-it-mark`](https://github.com/markdown-it/markdown-it-mark)
-- [`markdown-it-katex`](https://github.com/waylonflinn/markdown-it-katex)
-- [`markdown-it-sub`](https://github.com/markdown-it/markdown-it-sub)
-- [`markdown-it-sup`](https://github.com/markdown-it/markdown-it-sup)
+See [the flavor documentation](doc/flavor.md) for Markdown features additional to [GitHub Flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/quickstart-for-writing-on-github).
 
 ## Installation and usage
 
