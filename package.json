@@ -32,6 +32,16 @@
   "build": {
     "productName": "Markdown Viewer",
     "artifactName": "${name}-${version}-${arch}.${ext}",
+    "files": [
+      "!**/node_modules/*.md",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!.storage/*",
+      "!.vscode/*",
+      "!test/*",
+      "!.prettier*",
+      "!tmp.md"
+    ],
     "nsis": {
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
@@ -100,11 +110,11 @@
   },
   "devDependencies": {
     "chai": "4.3.7",
-    "electron": "24.3.1",
+    "electron": "24.4.0",
     "electron-builder": "23.6.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.2.0",
-    "playwright": "1.34.0",
+    "playwright": "1.34.3",
     "prettier": "2.8.8",
     "tslib": "2.5.2",
     "xvfb-maybe": "0.2.1"
