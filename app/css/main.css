@@ -10,11 +10,6 @@
     list-style-type: decimal;
 }
 
-.markdown-body img {
-    min-height: 2rem;
-    min-width: 6rem;
-}
-
 .md-raw {
     white-space: pre-wrap;
 }

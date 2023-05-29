@@ -71,8 +71,6 @@ Audio file downloaded from https://samplelib.com/
 
 #### Markdown
 
-[](sample-6s.mp3)
-
 ![](sample-6s.mp3)
 
 ### Video
@@ -96,8 +94,6 @@ Video files downloaded from https://samplelib.com/
 #### Markdown
 
 See https://github.com/cmrd-senya/markdown-it-html5-embed
-
-[](sample-5s.mp4)
 
 ![](sample-5s.webm)
 

@@ -62,8 +62,6 @@ exports.reset = options => {
                     audio: "controls",
                     video: 'width="500" controls',
                 },
-                useImageSyntax: true,
-                useLinkSyntax: true,
             },
         })
         .use(require("markdown-it-multimd-table"), {

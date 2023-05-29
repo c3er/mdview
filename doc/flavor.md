@@ -109,12 +109,10 @@ Video:
 
 Audio and video files are from https://samplelib.com/
 
-In both cases, use the syntax for links or images.
+In both cases, use the syntax for images.
 
 ```
 ![](assets/sample-6s.mp3)
-
-[](assets/sample-6s.mp3)
 ```
 
 ## Marking text
