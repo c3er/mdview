@@ -30,7 +30,6 @@
     "format": "prettier --write ."
   },
   "build": {
-    "productName": "Markdown Viewer",
     "artifactName": "${name}-${version}-${arch}.${ext}",
     "files": [
       "!**/node_modules/*.md",
