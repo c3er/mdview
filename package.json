@@ -22,7 +22,6 @@
   "scripts": {
     "postinstall": "install-app-deps",
     "start": "electron .",
-    "pack": "build --dir",
     "dist": "electron-builder",
     "dist-ci": "electron-builder -p never",
     "test": "prettier --check . && mocha --timeout 20000",
