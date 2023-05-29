@@ -67,6 +67,7 @@ exports.reset = options => {
         .use(require("markdown-it-multimd-table"), {
             headerless: true,
             multiline: true,
+            rowspan: true,
         })
         .use(require("markdown-it-abbr"))
         .use(require("markdown-it-container"), "error")
