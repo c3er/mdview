@@ -40,7 +40,7 @@ describe("Encoding library", () => {
         const iso88592Encoding = "iso88592"
         const iso88592Buffer = Buffer.from(
             "\x4d\xfc\x6c\x6c\x65\x72\x20\x53\x74\x72\x61\xdf\x65",
-            "binary"
+            "binary",
         )
 
         it("detects ISO-8859-2 encoded bytes", () => {

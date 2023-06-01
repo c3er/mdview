@@ -19,7 +19,7 @@ function assertSections(content, rootSection) {
     const expected = toc.fromObject(rootSection)
     assert.isTrue(
         actual.equals(expected),
-        `\nExpected:\n${expected.toJson()}\n\nActual:\n${actual.toJson()}`
+        `\nExpected:\n${expected.toJson()}\n\nActual:\n${actual.toJson()}`,
     )
 }
 
@@ -56,7 +56,7 @@ describe('Library "TOC"', () => {
                             header: "Header 2",
                         },
                     ],
-                }
+                },
             )
         })
 
@@ -77,7 +77,7 @@ describe('Library "TOC"', () => {
                             ],
                         },
                     ],
-                }
+                },
             )
         })
 
@@ -102,7 +102,7 @@ describe('Library "TOC"', () => {
                             header: "Main section 2",
                         },
                     ],
-                }
+                },
             )
         })
 
@@ -131,7 +131,7 @@ describe('Library "TOC"', () => {
                             header: "Main section 2",
                         },
                     ],
-                }
+                },
             )
         })
 
@@ -150,7 +150,7 @@ describe('Library "TOC"', () => {
                             header: "# Header",
                         },
                     ],
-                }
+                },
             )
         })
 
@@ -181,7 +181,7 @@ describe('Library "TOC"', () => {
                             header: "Test 2",
                         },
                     ],
-                }
+                },
             )
         })
 
@@ -206,7 +206,7 @@ describe('Library "TOC"', () => {
                             ],
                         },
                     ],
-                }
+                },
             )
         })
 
@@ -273,7 +273,7 @@ describe('Library "TOC"', () => {
                             ],
                         },
                     ],
-                }
+                },
             )
         })
     })

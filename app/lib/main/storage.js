@@ -208,7 +208,7 @@ class DocumentSettings extends StorageBase {
     get showTocOverridesAppSettings() {
         return this._loadValue(
             this.#SHOW_TOC_OVERRIDES_APP_SETTINGS_KEY,
-            this.SHOW_TOC_OVERRIDES_APP_SETTINGS_DEFAULT
+            this.SHOW_TOC_OVERRIDES_APP_SETTINGS_DEFAULT,
         )
     }
 
@@ -258,7 +258,7 @@ exports.loadDocumentSettings = documentPath => {
         (_documentSettings[documentPath] = new DocumentSettings(
             _dataDir,
             DOCUMENT_SETTINGS_FILE,
-            documentPath
+            documentPath,
         ))
     )
 }

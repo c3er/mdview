@@ -17,7 +17,7 @@ describe("Document rendering", () => {
 
     it("renders a header", () => {
         assert.isTrue(
-            new RegExp(`<h1.*>${headerText}</h1>`).test(documentRendering.renderContent(mdHeader))
+            new RegExp(`<h1.*>${headerText}</h1>`).test(documentRendering.renderContent(mdHeader)),
         )
     })
 

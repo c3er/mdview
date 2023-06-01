@@ -62,7 +62,7 @@ function showAboutDialog(parentWindow) {
             __dirname,
             "assets",
             "icon",
-            isMacOS() ? "md-mac-icon.svg" : "md-icon.svg"
+            isMacOS() ? "md-mac-icon.svg" : "md-icon.svg",
         ),
         package_json_dir: path.join(__dirname, ".."),
         product_name: "Markdown Viewer",
@@ -120,7 +120,7 @@ function reload(isFileModification, encoding) {
     ipc.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding ?? encodingLib.load(navigation.getCurrentLocation().filePath)
+        encoding ?? encodingLib.load(navigation.getCurrentLocation().filePath),
     )
 }
 
@@ -159,7 +159,7 @@ function changeTheme(theme) {
             light: "light-theme",
             dark: "dark-theme",
         }[theme],
-        true
+        true,
     )
 }
 
@@ -576,7 +576,7 @@ ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position)
 ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
 
 ipc.listen(ipc.messages.openInternalInNewWindow, target =>
-    createChildWindow(navigation.getCurrentLocation().filePath, target)
+    createChildWindow(navigation.getCurrentLocation().filePath, target),
 )
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)

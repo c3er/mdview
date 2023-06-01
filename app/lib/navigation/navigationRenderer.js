@@ -22,7 +22,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
         ipc.send(
             shallOpenInNewWindow ? ipc.messages.openInternalInNewWindow : ipc.messages.openInternal,
             target,
-            scrollPosition
+            scrollPosition,
         )
     } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
         electron.shell.openPath(fullPath)
@@ -30,7 +30,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
         ipc.send(
             shallOpenInNewWindow ? ipc.messages.openFileInNewWindow : ipc.messages.openFile,
             fullPath,
-            scrollPosition
+            scrollPosition,
         )
     }
 }

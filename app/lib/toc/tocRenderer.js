@@ -200,7 +200,7 @@ function registerSeparator(separatorElementId, tocElementId) {
             updatedWidth = changeTocWidth(
                 tocWidth,
                 tocElementId,
-                event.clientX - mouseDownEvent.clientX
+                event.clientX - mouseDownEvent.clientX,
             )
         }
         _document.onmouseup = () => {

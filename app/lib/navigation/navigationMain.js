@@ -149,10 +149,10 @@ exports.init = mainMenu => {
     reset()
 
     ipc.listen(ipc.messages.openFile, (filePath, lastScrollPosition) =>
-        go(filePath, null, null, lastScrollPosition)
+        go(filePath, null, null, lastScrollPosition),
     )
     ipc.listen(ipc.messages.openInternal, (target, lastScrollPosition) =>
-        go(_locations.current.filePath, target, null, lastScrollPosition)
+        go(_locations.current.filePath, target, null, lastScrollPosition),
     )
 
     _isInitialized = true

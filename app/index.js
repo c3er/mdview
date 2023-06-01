@@ -58,7 +58,7 @@ function alterStyleURLs(documentDirectory, fileContent) {
             }
             lines[i] = line.replace(
                 pattern,
-                `url("${path.join(documentDirectory, url).replace(/\\/g, "/")}")`
+                `url("${path.join(documentDirectory, url).replace(/\\/g, "/")}")`,
             )
         }
     }
@@ -98,7 +98,7 @@ function reload(isFileModification, encoding) {
         ipc.messages.reloadPrepared,
         isFileModification,
         encoding,
-        renderer.contentElement().scrollTop
+        renderer.contentElement().scrollTop,
     )
 }
 
@@ -158,7 +158,7 @@ function handleContextMenuEvent(event) {
             new MenuItem({
                 label: "Copy selection",
                 role: "copy",
-            })
+            }),
         )
     }
 
@@ -171,7 +171,7 @@ function handleContextMenuEvent(event) {
                 click() {
                     toClipboard(headerElement.getAttribute("id"))
                 },
-            })
+            }),
         )
     }
 
@@ -183,7 +183,7 @@ function handleContextMenuEvent(event) {
                 click() {
                     toClipboard(linkElement.innerText)
                 },
-            })
+            }),
         )
         menu.append(
             new MenuItem({
@@ -191,7 +191,7 @@ function handleContextMenuEvent(event) {
                 click() {
                     toClipboard(linkElement.getAttribute("href"))
                 },
-            })
+            }),
         )
     }
 
@@ -284,7 +284,7 @@ ipc.listen(ipc.messages.fileOpen, file => {
                 scrollTo(
                     targetElement.getBoundingClientRect().top -
                         (containerElement.getBoundingClientRect().top -
-                            Number(containerElement.style.paddingTop.replace("px", "")))
+                            Number(containerElement.style.paddingTop.replace("px", ""))),
                 )
             }
             titlePrefix += internalTarget

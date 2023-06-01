@@ -32,7 +32,7 @@ describe("Content blocking", () => {
 
         it("unblocks always redirection URLs", () => {
             mocking.register.webRequest.onBeforeRedirect(details =>
-                assert.equal(details.redirectURL, expectedUrl)
+                assert.equal(details.redirectURL, expectedUrl),
             )
             mocking.send.webRequest.beforeRedirect({
                 redirectURL: expectedUrl,
@@ -47,8 +47,8 @@ describe("Content blocking", () => {
 
             beforeEach(() =>
                 mocking.register.webRequest.onBeforeRequest(details =>
-                    assert.equal(details.url, expectedUrl)
-                )
+                    assert.equal(details.url, expectedUrl),
+                ),
             )
 
             it("blocks a URL", () => {
@@ -57,7 +57,7 @@ describe("Content blocking", () => {
                     {
                         url: expectedUrl,
                     },
-                    buildRequestCallback(true)
+                    buildRequestCallback(true),
                 )
             })
 
@@ -67,7 +67,7 @@ describe("Content blocking", () => {
                     {
                         url: expectedUrl,
                     },
-                    buildRequestCallback(false)
+                    buildRequestCallback(false),
                 )
             })
         })

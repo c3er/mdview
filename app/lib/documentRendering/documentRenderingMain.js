@@ -53,7 +53,7 @@ function updateFileSpecificRendering() {
     menu.setChecked(
         _mainMenu,
         RENDER_FILE_AS_MD_MENU_ID,
-        storage.loadDocumentSettings().renderAsMarkdown
+        storage.loadDocumentSettings().renderAsMarkdown,
     )
     notifyOptionChanges()
 }
@@ -80,7 +80,7 @@ exports.init = (mainMenu, applicationSettings, filePath) => {
     menu.setChecked(
         _mainMenu,
         RENDER_FILE_AS_MD_MENU_ID,
-        storage.loadDocumentSettings(filePath).renderAsMarkdown
+        storage.loadDocumentSettings(filePath).renderAsMarkdown,
     )
 
     notifyOptionChanges(filePath)
@@ -91,8 +91,8 @@ exports.switchEnableLineBreaks = () =>
         () =>
             (_applicationSettings.lineBreaksEnabled = menu.getChecked(
                 _mainMenu,
-                ENABLE_LINE_BREAKS_MENU_ID
-            ))
+                ENABLE_LINE_BREAKS_MENU_ID,
+            )),
     )
 
 exports.switchEnableTypography = () =>
@@ -100,14 +100,17 @@ exports.switchEnableTypography = () =>
         () =>
             (_applicationSettings.typographyEnabled = menu.getChecked(
                 _mainMenu,
-                ENABLE_TYPOGRAPHY_MENU_ID
-            ))
+                ENABLE_TYPOGRAPHY_MENU_ID,
+            )),
     )
 
 exports.switchEnableEmojis = () =>
     changeOption(
         () =>
-            (_applicationSettings.emojisEnabled = menu.getChecked(_mainMenu, ENABLE_EMOJIS_MENU_ID))
+            (_applicationSettings.emojisEnabled = menu.getChecked(
+                _mainMenu,
+                ENABLE_EMOJIS_MENU_ID,
+            )),
     )
 
 exports.switchRenderFileAsMarkdown = filePath => {
@@ -115,8 +118,8 @@ exports.switchRenderFileAsMarkdown = filePath => {
         () =>
             (storage.loadDocumentSettings(filePath).renderAsMarkdown = menu.getChecked(
                 _mainMenu,
-                RENDER_FILE_AS_MD_MENU_ID
-            ))
+                RENDER_FILE_AS_MD_MENU_ID,
+            )),
     )
 }
 
@@ -124,6 +127,6 @@ exports.switchRenderFileTypeAsMarkdown = filePath =>
     changeOption(() =>
         setRenderFileTypeAsMarkdown(
             filePath,
-            menu.getChecked(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID)
-        )
+            menu.getChecked(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID),
+        ),
     )

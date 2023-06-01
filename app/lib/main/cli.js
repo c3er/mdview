@@ -20,7 +20,7 @@ function extractFilePath(args, storageDirArgIndex) {
                 arg !== "data:," &&
                 !arg.startsWith("-") &&
                 !arg.startsWith("#") &&
-                args.indexOf(arg) !== storageDirArgIndex
+                args.indexOf(arg) !== storageDirArgIndex,
         ) ?? DEFAULT_FILE
     )
 }

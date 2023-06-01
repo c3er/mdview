@@ -13,7 +13,7 @@ function generateCodeText(text, options = {}) {
             isHighlighted: false,
             isMdRawText: false,
         },
-        options
+        options,
     )
 
     const hljsClass = options.isHighlighted ? "hljs" : ""
@@ -38,7 +38,7 @@ exports.reset = options => {
                         language: language,
                         ignoreIllegals: true,
                     }).value,
-                    { isHighlighted: true }
+                    { isHighlighted: true },
                 )
             }
             return generateCodeText(_markdown.utils.escapeHtml(text), { isHighlighted: true })

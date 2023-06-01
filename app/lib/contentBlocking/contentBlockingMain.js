@@ -43,7 +43,7 @@ exports.init = (mainMenu, electronMock) => {
         log.info(
             `${isBlocked ? "Blocked" : "Loading"}: ${url} (${
                 currentTime - lastTime
-            } ms since last load)`
+            } ms since last load)`,
         )
         callback({ cancel: isBlocked })
         if (isBlocked) {

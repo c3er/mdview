@@ -33,7 +33,7 @@ describe('Library "common"', () => {
             assert.isFalse(
                 common.isEmptyObject({
                     foo: "bar",
-                })
+                }),
             )
         })
     })

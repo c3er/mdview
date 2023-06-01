@@ -52,21 +52,21 @@ async function startApp(documentPath) {
 async function clickMenuItem(app, id) {
     app.evaluate(
         ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).click(),
-        id
+        id,
     )
 }
 
 async function menuItemIsEnabled(app, id) {
     return await app.evaluate(
         ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).enabled,
-        id
+        id,
     )
 }
 
 async function menuItemIsChecked(app, id) {
     return await app.evaluate(
         ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).checked,
-        id
+        id,
     )
 }
 
@@ -193,7 +193,7 @@ describe("Integration tests with single app instance", () => {
                     it(`is ${currentItem.isEnabled ? "enabled" : "disabled"}`, async () => {
                         assert.strictEqual(
                             (await searchMenuItem(currentItemPath)).enabled,
-                            currentItem.isEnabled
+                            currentItem.isEnabled,
                         )
                     })
 
@@ -201,7 +201,7 @@ describe("Integration tests with single app instance", () => {
                     it(`is ${isChecked ? "checked" : "unchecked"}`, async () => {
                         assert.strictEqual(
                             (await searchMenuItem(currentItemPath)).checked,
-                            isChecked
+                            isChecked,
                         )
                     })
 
@@ -253,10 +253,10 @@ describe("Integration tests with their own app instance each", () => {
             it("disappears at click on X", async () => {
                 const blockedContentArea = mocking.elements.blockedContentArea
                 const blockedContentAreaElement = await page.waitForSelector(
-                    blockedContentArea.path
+                    blockedContentArea.path,
                 )
                 const blockedContentCloseButtonElement = await page.waitForSelector(
-                    blockedContentArea.closeButton.path
+                    blockedContentArea.closeButton.path,
                 )
 
                 await blockedContentCloseButtonElement.click()
@@ -266,10 +266,10 @@ describe("Integration tests with their own app instance each", () => {
             it("unblocks content", async () => {
                 const blockedContentArea = mocking.elements.blockedContentArea
                 const blockedContentAreaElement = await page.waitForSelector(
-                    blockedContentArea.path
+                    blockedContentArea.path,
                 )
                 const blockedContentTextContainerElement = await page.waitForSelector(
-                    blockedContentArea.textContainer.path
+                    blockedContentArea.textContainer.path,
                 )
 
                 await blockedContentTextContainerElement.click()
@@ -401,7 +401,7 @@ describe("Integration tests with their own app instance each", () => {
     describe("Keyboard handling", () => {
         it("has focus on content", async () => {
             const contentElement = await page.waitForSelector(
-                `${mocking.elements.content.path} > p`
+                `${mocking.elements.content.path} > p`,
             )
 
             const orig = await contentElement.boundingBox()

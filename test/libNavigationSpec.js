@@ -19,7 +19,7 @@ describe("Navigation", () => {
             mocking.clear()
             mocking.register.ipc.rendererOn(ipc.messages.resetContentBlocking)
             mocking.register.ipc.rendererOn(ipc.messages.fileOpen, (_, { path: filePath }) =>
-                assert.equal(filePath, expectedFilePath)
+                assert.equal(filePath, expectedFilePath),
             )
         }
 

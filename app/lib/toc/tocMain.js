@@ -22,7 +22,7 @@ function update(documentSettings) {
     menu.setChecked(
         _mainMenu,
         SHOW_FOR_THIS_DOC_MENU_ID,
-        showTocOverridesAppSettings && documentSettings.showToc
+        showTocOverridesAppSettings && documentSettings.showToc,
     )
     menu.setEnabled(_mainMenu, FORGET_DOCUMENT_OVERRIDE_MENU_ID, showTocOverridesAppSettings)
     ipc.send(ipc.messages.updateToc, _info)
