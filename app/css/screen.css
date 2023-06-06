@@ -89,8 +89,8 @@
 #toc {
     display: none;
     margin: 0px 0px 20px 0px;
-    max-width: calc(100% - 400px);
-    min-width: 150px;
+    max-width: calc(100% - 100px);
+    min-width: 20px;
     overflow: auto;
     padding: 10px;
     width: 20%;

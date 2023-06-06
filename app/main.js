@@ -21,8 +21,8 @@ const rawText = require("./lib/rawText/rawTextMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/toc/tocMain")
 
-const MIN_WINDOW_WIDTH = 500 // Pixels
-const MIN_WINDOW_HEIGHT = 200 // Pixels
+const MIN_WINDOW_WIDTH = 200 // Pixels
+const MIN_WINDOW_HEIGHT = 50 // Pixels
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 const ZOOM_STEP = 0.1
