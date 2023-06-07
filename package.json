@@ -85,7 +85,7 @@
     ]
   },
   "dependencies": {
-    "@electron/remote": "2.0.9",
+    "@electron/remote": "2.0.10",
     "about-window": "1.15.2",
     "github-markdown-css": "5.2.0",
     "github-markdown-dracula-css": "4.0.3",
@@ -108,13 +108,13 @@
   },
   "devDependencies": {
     "chai": "4.3.7",
-    "electron": "24.4.0",
+    "electron": "25.0.1",
     "electron-builder": "23.6.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.2.0",
     "playwright": "1.34.3",
     "prettier": "2.8.8",
-    "tslib": "2.5.2",
+    "tslib": "2.5.3",
     "xvfb-maybe": "0.2.1"
   }
 }
