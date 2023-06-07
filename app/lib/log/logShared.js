@@ -5,19 +5,19 @@ const _debugMessages = []
 const _infoMessages = []
 const _errorMessages = []
 
-function output(messages, outputFunc, args) {
+function output(storedMessages, outputFunc, args) {
     if (_isTest || !_isInitialized) {
-        messages.push(args)
+        storedMessages.push(args)
     } else {
         outputFunc(...args)
     }
 }
 
-function dumpPreInitMessages(messages, outputFunc) {
-    const messagesToOutput = messages.slice()
-    messages.length = 0
+function dumpPreInitMessages(storedMessages, outputFunc) {
+    const messagesToOutput = storedMessages.slice()
+    storedMessages.length = 0
     for (const msg of messagesToOutput) {
-        output(messages, outputFunc, msg)
+        output(storedMessages, outputFunc, msg)
     }
 }
 

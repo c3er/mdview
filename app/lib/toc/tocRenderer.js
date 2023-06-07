@@ -187,11 +187,16 @@ function toButtonHtml(imagePath) {
 function changeTocWidth(tocWidth, tocElementId, deltaX) {
     deltaX ??= 0
     const tocElement = _document.getElementById(tocElementId)
-    const tocMinWidth = parseFloat(getComputedStyle(tocElement).minWidth)
     let updatedWidth = tocWidth + deltaX
+
+    // If the user releases the mouse button too far left and ends the application after that, the
+    // separator will be restored to its default position and not at the left edge as the user
+    // might expect. The right side does not expose this problem.
+    const tocMinWidth = parseFloat(getComputedStyle(tocElement).minWidth)
     if (updatedWidth < tocMinWidth) {
         updatedWidth = tocMinWidth
     }
+
     tocElement.style.flex = `0 0 ${updatedWidth}px`
     return updatedWidth
 }

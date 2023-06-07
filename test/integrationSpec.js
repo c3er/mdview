@@ -29,6 +29,7 @@ function addMessage(msg) {
 }
 
 async function cleanup() {
+    app = page = null
     clearMessages()
     await lib.removeDataDir()
 }

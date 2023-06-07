@@ -1,9 +1,15 @@
+:root {
+    --status-bar-height: 20px;
+    --std-border-color: #ccc;
+    --std-border-width: 1px;
+}
+
 #status-bar {
     background-color: #fff;
-    border-top: 1px solid #ccc;
+    border-top: var(--std-border-width) solid var(--std-border-color);
     bottom: 0;
     color: #555;
-    height: 20px;
+    height: var(--status-bar-height);
     left: 0;
     position: fixed;
     right: 0;
@@ -20,7 +26,7 @@
 
 #menu-border {
     background-color: #fff;
-    border-bottom: 1px solid #ccc;
+    border-bottom: var(--std-border-width) solid var(--std-border-color);
     height: 0px;
     left: 0;
     position: fixed;
@@ -34,7 +40,7 @@
     border-bottom-style: solid;
     border-top-style: solid;
     border-color: #ddd;
-    border-width: 1px;
+    border-width: var(--std-border-width);
     color: black;
     cursor: pointer;
     height: 30px;
@@ -88,7 +94,7 @@
 
 #toc {
     display: none;
-    margin: 0px 0px 20px 0px;
+    margin: 0px 0px var(--status-bar-height) 0px;
     max-width: calc(100% - 100px);
     min-width: 20px;
     overflow: auto;
@@ -135,7 +141,7 @@
 }
 
 #content-body {
-    margin: 0px 0px 20px 0px;
+    margin: 0px 0px var(--status-bar-height) 0px;
     overflow: auto;
     padding: 10px 15px 10px 10px;
     width: 100%;
@@ -164,13 +170,13 @@
 
     #status-bar {
         background: #292a2d;
-        border-top: 1px solid black;
+        border-top: var(--std-border-width) solid black;
         color: #f8f8f2;
     }
 
     #menu-border {
         background-color: #292a2d;
-        border-bottom: 1px solid black;
+        border-bottom: var(--std-border-width) solid black;
     }
 
     #blocked-content-info {
