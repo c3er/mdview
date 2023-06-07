@@ -148,15 +148,20 @@ class Section {
             return subSectionsHtml
         }
 
+        const indentationWidth =
+            level * INDENTATION_WIDTH_PX + (this.hasSubSections ? 0 : INDENTATION_OFFSET_PX)
+        const buttonOffset = this.hasSubSections ? 2.5 : 0
         return `
             <div class="${SECTION_HTML_CLASS}">
-                <nobr style="margin-left: ${
-                    level * INDENTATION_WIDTH_PX + (this.hasSubSections ? 0 : INDENTATION_OFFSET_PX)
-                }px">
+                <nobr style="margin-left: ${indentationWidth}px">
                     <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
                         ${toButtonHtml(expandedSymbolPath)}
                     </span>
-                    <a href="#${this.id}">${this.header}</a>
+                    <a href="#${
+                        this.id
+                    }" style="width: calc(100% - ${indentationWidth}px - ${buttonOffset}em)">
+                        ${this.header}
+                    </a>
                 </nobr>
             </div>
             <div id="${this.htmlId}">${subSectionsHtml}</div>
