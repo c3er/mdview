@@ -51,7 +51,7 @@ async function startApp(documentPath) {
 }
 
 async function clickMenuItem(app, id) {
-    app.evaluate(
+    await app.evaluate(
         ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).click(),
         id,
     )
@@ -295,8 +295,10 @@ describe("Integration tests with their own app instance each", () => {
 
     describe("Theme switching", () => {
         it("can be done", async () => {
-            await clickMenuItem(app, "switch-theme")
-            assert.isFalse(containsConsoleMessage("error"))
+            for (const themeEntry of ["system-theme", "light-theme", "dark-theme"]) {
+                await clickMenuItem(app, themeEntry)
+                assert.isFalse(containsConsoleMessage("error"))
+            }
         })
     })
 
