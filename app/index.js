@@ -298,8 +298,9 @@ ipc.listen(ipc.messages.fileOpen, file => {
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
     window.addEventListener("contextmenu", handleContextMenuEvent)
-
+    mermaid.run()
     renderer.contentElement().focus()
+    document.getElementById("loading-indicator").innerHTML = '<div id="loaded"></div>'
 })
 
 ipc.listen(ipc.messages.prepareReload, reload)

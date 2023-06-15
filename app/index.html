@@ -19,6 +19,7 @@
             @import "css/screen.css" screen;
             @import "css/print.css" print;
         </style>
+        <script src="lib/documentRendering/mermaidLoader.mjs" type="module"></script>
         <script src="index.js"></script>
     </head>
     <body>
@@ -49,5 +50,11 @@
         <div id="status-bar">
             <p id="status-text"></p>
         </div>
+
+        <!--
+            Needed for testing.
+            After initialization, this element will contain another one with the ID "loaded".
+        -->
+        <div id="loading-indicator"></div>
     </body>
 </html>

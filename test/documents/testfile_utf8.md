@@ -250,6 +250,17 @@ Lorem ipsum dolor sit amet, consecteteur adipiscing elit. Barcu ve a a a id a a 
 
 ## Additional rendering features (via plugins)
 
+### Mermaid
+
+```mermaid
+graph TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[Car]
+```
+
 ### LaTeX math
 
 Examples taken from project page of KaTeX.

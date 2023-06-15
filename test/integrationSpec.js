@@ -45,7 +45,9 @@ async function startApp(documentPath) {
     page.on("crash", () => assert.fail("Crash happened"))
     page.on("pageerror", error => assert.fail(`Page error: ${error}`))
     page.setDefaultTimeout(2000)
-    await page.waitForSelector("div") // Wait until the window is actually loaded
+
+    // Wait until the window is actually loaded
+    await page.waitForSelector("#loading-indicator #loaded", { state: "attached", timeout: 3000 })
 
     return [app, page]
 }

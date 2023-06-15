@@ -251,3 +251,31 @@ Syntax:
 - [ ] Unchecked
 - [x] Checked
 ```
+
+## Mermaid diagrams
+
+Diagrams can be created with help of [Mermaid](https://mermaid.js.org/) like this:
+
+```mermaid
+graph TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[Car]
+```
+
+Syntax:
+
+````
+```mermaid
+graph TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[Car]
+```
+````
+
+See the [Mermaid documentation](https://mermaid.js.org/intro/) for the syntax and possibilities offered.

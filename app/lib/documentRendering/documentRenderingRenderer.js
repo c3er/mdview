@@ -29,6 +29,10 @@ function generateCodeText(text, options = {}) {
 exports.reset = options => {
     _markdown = require("markdown-it")({
         highlight(text, language) {
+            if (language.toLowerCase() === "mermaid") {
+                return `<pre class="mermaid">${text}</pre>`
+            }
+
             // Originated from VS Code
             // File extensions/markdown-language-features/src/markdownEngine.ts
             // Commit ID: 3fbfccad359e278a4fbde106328b2b8e2e2242a7
