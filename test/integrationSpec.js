@@ -44,10 +44,13 @@ async function startApp(documentPath) {
     page.on("console", msg => addMessage(msg.text()))
     page.on("crash", () => assert.fail("Crash happened"))
     page.on("pageerror", error => assert.fail(`Page error: ${error}`))
-    page.setDefaultTimeout(2000)
+
+    const defaultTimeout = 2000
+    page.setDefaultTimeout(defaultTimeout)
+    page.setDefaultNavigationTimeout(defaultTimeout)
 
     // Wait until the window is actually loaded
-    await page.waitForSelector("#loading-indicator #loaded", { state: "attached", timeout: 5000 })
+    await page.locator("#loading-indicator #loaded").waitFor({ state: "attached", timeout: 5000 })
 
     return [app, page]
 }
@@ -82,11 +85,9 @@ function hasUnblockedContentMessage() {
 }
 
 async function elementIsHidden(page, elementPath) {
-    return (
-        (await page.waitForSelector(elementPath, {
-            state: "hidden",
-        })) === null
-    )
+    const locator = await page.locator(elementPath)
+    await locator.waitFor({ state: "hidden" })
+    return locator.isHidden()
 }
 
 describe("Integration tests with single app instance", () => {
@@ -255,28 +256,24 @@ describe("Integration tests with their own app instance each", () => {
         describe("UI element", () => {
             it("disappears at click on X", async () => {
                 const blockedContentArea = mocking.elements.blockedContentArea
-                const blockedContentAreaElement = await page.waitForSelector(
-                    blockedContentArea.path,
-                )
-                const blockedContentCloseButtonElement = await page.waitForSelector(
+                const blockedContentAreaLocator = page.locator(blockedContentArea.path)
+                const blockedContentCloseButtonLocator = page.locator(
                     blockedContentArea.closeButton.path,
                 )
 
-                await blockedContentCloseButtonElement.click()
-                assert.isFalse(await blockedContentAreaElement.isVisible())
+                await blockedContentCloseButtonLocator.click()
+                assert.isFalse(await blockedContentAreaLocator.isVisible())
             })
 
             it("unblocks content", async () => {
                 const blockedContentArea = mocking.elements.blockedContentArea
-                const blockedContentAreaElement = await page.waitForSelector(
-                    blockedContentArea.path,
-                )
-                const blockedContentTextContainerElement = await page.waitForSelector(
+                const blockedContentAreaLocator = page.locator(blockedContentArea.path)
+                const blockedContentTextContainerLocator = page.locator(
                     blockedContentArea.textContainer.path,
                 )
 
-                await blockedContentTextContainerElement.click()
-                assert.isFalse(await blockedContentAreaElement.isVisible())
+                await blockedContentTextContainerLocator.click()
+                assert.isFalse(await blockedContentAreaLocator.isVisible())
                 assert.isTrue(hasUnblockedContentMessage())
             })
         })
@@ -306,16 +303,20 @@ describe("Integration tests with their own app instance each", () => {
 
     describe("Links in document", () => {
         it("changes title after click", async () => {
-            const internalLinkElement = await page.waitForSelector("#internal-test-link")
-            await internalLinkElement.click()
+            await page.locator("#internal-test-link").click()
             assert.include(await page.title(), "#some-javascript")
         })
     })
 
     describe("Table of Content", () => {
         async function assertTocIsVisible() {
-            assert.exists(await page.waitForSelector(mocking.elements.toc.path))
-            assert.exists(await page.waitForSelector(mocking.elements.separator.path))
+            const tocLocator = page.locator(mocking.elements.toc.path)
+            await tocLocator.waitFor()
+            assert.isTrue(await tocLocator.isVisible())
+
+            const separatorLocator = page.locator(mocking.elements.separator.path)
+            await separatorLocator.waitFor()
+            assert.isTrue(await separatorLocator.isVisible())
         }
 
         async function assertMenuItemIsChecked(id, isChecked) {
@@ -358,9 +359,9 @@ describe("Integration tests with their own app instance each", () => {
     describe("Separator", () => {
         async function displaySeparator() {
             await clickMenuItem(app, toc.SHOW_FOR_ALL_DOCS_MENU_ID)
-            const separatorElement = await page.waitForSelector(mocking.elements.separator.path)
-            assert.exists(separatorElement)
-            return separatorElement
+            const separatorLocator = page.locator(mocking.elements.separator.path)
+            assert.isTrue(await separatorLocator.isVisible())
+            return separatorLocator
         }
 
         async function determineMiddlePosition(element) {
@@ -377,41 +378,41 @@ describe("Integration tests with their own app instance each", () => {
         }
 
         it("can be moved", async () => {
-            const separatorElement = await displaySeparator()
-            const [origX, y] = await determineMiddlePosition(separatorElement)
+            const separatorLocator = await displaySeparator()
+            const [origX, y] = await determineMiddlePosition(separatorLocator)
 
             await drag(origX, y, 50, 0)
 
-            separatorBox = await separatorElement.boundingBox()
+            separatorBox = await separatorLocator.boundingBox()
             assert.isAbove(separatorBox.x, origX)
         })
 
         it("remembers new position", async () => {
-            let separatorElement = await displaySeparator()
-            const [origX, y] = await determineMiddlePosition(separatorElement)
+            let separatorLocator = await displaySeparator()
+            const [origX, y] = await determineMiddlePosition(separatorLocator)
 
             await drag(origX, y, 50, 0)
-            const { updatedX } = await separatorElement.boundingBox()
+            const { updatedX } = await separatorLocator.boundingBox()
 
             await restartApp()
 
-            separatorElement = await page.waitForSelector(mocking.elements.separator.path)
-            assert.exists(separatorElement)
+            separatorLocator = page.locator(mocking.elements.separator.path)
+            assert.isTrue(await separatorLocator.isVisible())
 
-            const { rememberedX } = await separatorElement.boundingBox()
+            const { rememberedX } = await separatorLocator.boundingBox()
             assert.strictEqual(rememberedX, updatedX)
         })
     })
 
     describe("Keyboard handling", () => {
         it("has focus on content", async () => {
-            const contentElement = await page.waitForSelector(
-                `${mocking.elements.content.path} > p`,
+            const contentLocator = page.locator(
+                `${mocking.elements.content.path} > p:first-of-type`,
             )
 
-            const orig = await contentElement.boundingBox()
+            const orig = await contentLocator.boundingBox()
             await page.keyboard.press("PageDown", { delay: 100 })
-            const changed = await contentElement.boundingBox()
+            const changed = await contentLocator.boundingBox()
 
             assert.strictEqual(changed.x, orig.x)
             assert.notStrictEqual(changed.y, orig.y)
