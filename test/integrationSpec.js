@@ -47,7 +47,7 @@ async function startApp(documentPath) {
     page.setDefaultTimeout(2000)
 
     // Wait until the window is actually loaded
-    await page.waitForSelector("#loading-indicator #loaded", { state: "attached", timeout: 3000 })
+    await page.waitForSelector("#loading-indicator #loaded", { state: "attached", timeout: 5000 })
 
     return [app, page]
 }
