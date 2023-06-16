@@ -18,6 +18,7 @@ const renderer = require("./lib/renderer/common")
 const toc = require("./lib/toc/tocRenderer")
 
 const TITLE = "Markdown Viewer"
+const MERMAID_MODULE_PATH = "../node_modules/mermaid/dist/mermaid.js"
 
 function alterTags(tagName, handler) {
     ;[...document.getElementsByTagName(tagName)].forEach(handler)
@@ -127,6 +128,10 @@ function isLocalPath(url) {
     return !common.isWebURL(url) && !isDataUrl(url)
 }
 
+function hasMermaid(content) {
+    return content.includes("```mermaid")
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
@@ -204,7 +209,7 @@ function handleContextMenuEvent(event) {
 
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
-ipc.listen(ipc.messages.fileOpen, file => {
+ipc.listen(ipc.messages.fileOpen, async file => {
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
     toc.reset()
@@ -236,6 +241,9 @@ ipc.listen(ipc.messages.fileOpen, file => {
     const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
+    if (hasMermaid(content)) {
+        await import(MERMAID_MODULE_PATH)
+    }
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
     document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
     populateToc(content, "toc")
@@ -298,8 +306,12 @@ ipc.listen(ipc.messages.fileOpen, file => {
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
     window.addEventListener("contextmenu", handleContextMenuEvent)
-    mermaid.run()
+    if (hasMermaid(content)) {
+        mermaid.run()
+    }
     renderer.contentElement().focus()
+
+    // Needed for testing
     document.getElementById("loading-indicator").innerHTML = '<div id="loaded"></div>'
 })
 

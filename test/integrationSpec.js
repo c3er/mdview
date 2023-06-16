@@ -11,7 +11,7 @@ const toc = require("../app/lib/toc/tocMain")
 
 const electron = playwright._electron
 
-const defaultDocumentFile = "testfile_utf8.md"
+const defaultDocumentFile = "testfile_without-mermaid.md"
 const defaultDocumentDir = path.join(__dirname, "documents")
 const defaultDocumentPath = path.join(defaultDocumentDir, defaultDocumentFile)
 
