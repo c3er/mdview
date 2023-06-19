@@ -22,6 +22,20 @@
         <script src="index.js"></script>
     </head>
     <body>
+        <!-- Based on https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog?retiredLocale=de -->
+        <dialog id="search-dialog">
+            <form>
+                <div class="dialog-input-field">
+                    <label for="search-input">Search:</label>
+                    <input id="search-input" type="text" />
+                </div>
+                <div class="dialog-buttons">
+                    <button id="search-ok-button" value="default">OK</button>
+                    <button value="cancel" formmethod="dialog">Cancel</button>
+                </div>
+            </form>
+        </dialog>
+
         <div id="menu-border"></div>
 
         <div id="blocked-content-info" hidden="true">

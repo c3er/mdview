@@ -22,6 +22,7 @@ exports.messages = {
     resetContentBlocking: "reset-content-blocking",
     restorePosition: "restore-position",
     updateToc: "update-toc",
+    search: "search",
     unblockAll: "unblock-all",
     unblockURL: "unblock-url",
     viewRawText: "view-raw-text",

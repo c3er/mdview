@@ -212,7 +212,16 @@ function createMainMenu() {
         },
         {
             label: "&Edit",
-            submenu: [{ role: "copy" }],
+            submenu: [
+                { role: "copy" },
+                {
+                    label: "Find...",
+                    accelerator: "CmdOrCtrl+F",
+                    click() {
+                        ipc.send(ipc.messages.search)
+                    },
+                },
+            ],
         },
         {
             label: "&View",

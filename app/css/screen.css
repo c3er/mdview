@@ -1,7 +1,9 @@
 :root {
+    --element-dark-bgcolor: #292a2d;
     --status-bar-height: 20px;
     --std-border-color: #ccc;
     --std-border-width: 1px;
+    --text-dark-color: #f8f8f2;
 }
 
 #status-bar {
@@ -69,6 +71,34 @@
 
 #blocked-content-info-close-button {
     display: table-cell;
+}
+
+.dialog-input-field {
+    margin: 1em 0;
+    width: 100%;
+}
+
+#search-input {
+    width: 100%;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.dialog-buttons button {
+    height: 2em;
+    min-width: 70px;
+}
+
+dialog {
+    width: 80%;
+}
+
+input {
+    box-sizing: border-box;
 }
 
 #content {
@@ -200,5 +230,10 @@
 
     .toc-expand-button:hover {
         background-color: #777;
+    }
+
+    dialog, input {
+        background-color: var(--element-dark-bgcolor);
+        color: var(--text-dark-color)
     }
 }

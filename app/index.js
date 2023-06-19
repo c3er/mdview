@@ -15,6 +15,7 @@ const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
 const renderer = require("./lib/renderer/common")
+const search = require("./lib/renderer/search")
 const toc = require("./lib/toc/tocRenderer")
 
 const TITLE = "Markdown Viewer"
@@ -142,6 +143,7 @@ function handleDOMContentLoadedEvent() {
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)
+    search.init(document, handleSearch)
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
@@ -149,6 +151,10 @@ function handleDOMContentLoadedEvent() {
     toc.updateTheme(chooseTheme(match.matches))
 
     ipc.send(ipc.messages.finishLoad)
+}
+
+function handleSearch(value) {
+    console.log(value)
 }
 
 function handleContextMenuEvent(event) {
@@ -343,3 +349,5 @@ ipc.listen(ipc.messages.print, () => {
 
     scrollTo(scrollPosition)
 })
+
+ipc.listen(ipc.messages.search, () => search.showDialog())
