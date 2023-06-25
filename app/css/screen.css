@@ -232,8 +232,9 @@ input {
         background-color: #777;
     }
 
-    dialog, input {
+    dialog,
+    input {
         background-color: var(--element-dark-bgcolor);
-        color: var(--text-dark-color)
+        color: var(--text-dark-color);
     }
 }
