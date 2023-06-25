@@ -2,6 +2,7 @@ const CANCEL_VALUE = "search-dialog-cancel"
 
 let _document
 let _searchDialog
+let _isActive = false
 
 exports.init = (document, callback) => {
     _document = document
@@ -12,6 +13,7 @@ exports.init = (document, callback) => {
         if (result && result !== CANCEL_VALUE) {
             callback(result)
         }
+        _isActive = false
     })
 
     const okButton = _document.getElementById("search-ok-button")
@@ -22,4 +24,9 @@ exports.init = (document, callback) => {
     })
 }
 
-exports.showDialog = () => _searchDialog.showModal()
+exports.showDialog = () => {
+    _searchDialog.showModal()
+    _isActive = true
+}
+
+exports.isActive = () => _isActive

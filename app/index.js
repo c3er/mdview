@@ -215,6 +215,12 @@ function handleContextMenuEvent(event) {
 
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
+onkeydown = event => {
+    if (event.key === "Escape" && !search.isActive()) {
+        ipc.send(ipc.messages.closeApplication)
+    }
+}
+
 ipc.listen(ipc.messages.fileOpen, async file => {
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()

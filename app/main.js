@@ -203,7 +203,6 @@ function createMainMenu() {
                 { type: "separator" },
                 {
                     label: "&Quit",
-                    accelerator: "Esc",
                     click() {
                         _mainWindow?.close()
                     },
@@ -587,6 +586,8 @@ ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
 ipc.listen(ipc.messages.openInternalInNewWindow, target =>
     createChildWindow(navigation.getCurrentLocation().filePath, target),
 )
+
+ipc.listen(ipc.messages.closeApplication, () => _mainWindow?.close())
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {

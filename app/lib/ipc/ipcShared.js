@@ -3,6 +3,7 @@ exports.messages = {
     changeEncoding: "change-encoding",
     changeRenderingOptions: "change-rendering-options",
     changeZoom: "change-zoom",
+    closeApplication: "cloase-application",
     contentBlocked: "content-blocked",
     disableRawView: "disable-raw-view",
     enableRawView: "enable-raw-view",
