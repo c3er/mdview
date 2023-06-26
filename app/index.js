@@ -15,7 +15,7 @@ const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
 const renderer = require("./lib/renderer/common")
-const search = require("./lib/renderer/search")
+const search = require("./lib/search/searchRenderer")
 const toc = require("./lib/toc/tocRenderer")
 
 const TITLE = "Markdown Viewer"
