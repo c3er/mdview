@@ -181,6 +181,14 @@ input {
     outline: none;
 }
 
+.search-result {
+    background-color: #cdcdff;
+}
+
+#selected-search-result {
+    background-color: #9494ff;
+}
+
 @media (prefers-color-scheme: dark) {
     div.info {
         background-color: #726a95;
@@ -230,6 +238,14 @@ input {
 
     .toc-expand-button:hover {
         background-color: #777;
+    }
+
+    .search-result {
+        background-color: #0000e2;
+    }
+
+    #selected-search-result {
+        background-color: #4f4fff;
     }
 
     dialog,

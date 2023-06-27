@@ -143,7 +143,7 @@ function handleDOMContentLoadedEvent() {
     contentBlocking.init(document, window)
     rawText.init(document, window, updateStatusBar)
     navigation.init(document)
-    search.init(document, handleSearch)
+    search.init(document, () => reload(false))
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
@@ -151,10 +151,6 @@ function handleDOMContentLoadedEvent() {
     toc.updateTheme(chooseTheme(match.matches))
 
     ipc.send(ipc.messages.finishLoad)
-}
-
-function handleSearch(value) {
-    console.log(value)
 }
 
 function handleContextMenuEvent(event) {
@@ -216,7 +212,12 @@ function handleContextMenuEvent(event) {
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
 onkeydown = event => {
-    if (event.key === "Escape" && !search.isActive()) {
+    if (event.key !== "Escape") {
+        return
+    }
+    if (search.isActive()) {
+        search.deactivate()
+    } else {
         ipc.send(ipc.messages.closeApplication)
     }
 }
@@ -257,7 +258,8 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         await import(MERMAID_MODULE_PATH)
     }
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
-    document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
+    renderer.rawTextElement().innerHTML = documentRendering.renderRawText(content)
+    search.highlightTerm()
     populateToc(content, "toc")
 
     // Alter local references to be relativ to the document
