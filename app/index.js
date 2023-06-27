@@ -160,7 +160,7 @@ function handleContextMenuEvent(event) {
     const MenuItem = remote.MenuItem
     const menu = new remote.Menu()
 
-    if (window.getSelection().toString()) {
+    if (getSelection().toString()) {
         menu.append(
             new MenuItem({
                 label: "Copy selection",
@@ -238,7 +238,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
 
     if (!documentRendering.shallRenderAsMarkdown()) {
         const pathParts = filePath.split(".")
-        const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
+        const language = pathParts.length > 1 ? pathParts.at(-1) : ""
 
         // If a Markdown file has to be rendered as source code, the code block enclosings
         // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
@@ -254,9 +254,6 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
-    if (hasMermaid(content)) {
-        await import(MERMAID_MODULE_PATH)
-    }
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
     renderer.rawTextElement().innerHTML = documentRendering.renderRawText(content)
     search.highlightTerm()
@@ -319,8 +316,9 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     }
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
-    window.addEventListener("contextmenu", handleContextMenuEvent)
+    addEventListener("contextmenu", handleContextMenuEvent)
     if (hasMermaid(content)) {
+        await import(MERMAID_MODULE_PATH)
         mermaid.run()
     }
     renderer.contentElement().focus()
@@ -342,14 +340,13 @@ ipc.listen(ipc.messages.changeRenderingOptions, options => {
 
 ipc.listen(ipc.messages.print, () => {
     const scrollPosition = renderer.contentElement().scrollTop
-    console.log("scrollPosition", scrollPosition)
 
     const tocIsVisible = toc.getVisibility()
     if (tocIsVisible) {
         toc.setVisibility(false)
     }
 
-    window.print()
+    print()
 
     if (tocIsVisible) {
         toc.setVisibility(true)
