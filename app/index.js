@@ -216,7 +216,7 @@ onkeydown = event => {
         return
     }
     if (search.isActive()) {
-        search.deactivate()
+        search.deactivate(() => reload(false))
     } else {
         ipc.send(ipc.messages.closeApplication)
     }

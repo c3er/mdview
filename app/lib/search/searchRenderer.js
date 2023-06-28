@@ -47,10 +47,14 @@ function replaceAll(text, pattern, replacement) {
     return output.reverse().join("")
 }
 
-function deactivate() {
+function deactivate(reloader) {
     _isActive = false
     _term = null
     _searchIndex = 0
+
+    if (reloader) {
+        reloader()
+    }
 }
 
 exports.init = (document, reloader) => {
