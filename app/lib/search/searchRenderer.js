@@ -15,6 +15,38 @@ let _isActive = false
 let _term = null
 let _searchIndex = 0
 
+// A String.prototype.replaceAll() alternative, that is case insensitive at the input
+// ("pattern parameter") but preserves the case during replacing.
+function replaceAll(text, pattern, replacement) {
+    const output = []
+    let lastIndex = text.length - 1
+
+    // Based on https://stackoverflow.com/a/1499916 (Remove HTML Tags in Javascript with Regex)
+    const tagMatches = [...text.matchAll(/(<([^>]+)>)/g)]
+
+    const matches = [...text.matchAll(pattern)]
+    for (const match of matches.toReversed()) {
+        const term = match[0]
+        if (
+            tagMatches.some(tagMatch => {
+                const tagMatchIndex = tagMatch.index
+                const matchIndex = match.index
+                return (
+                    tagMatchIndex < matchIndex &&
+                    tagMatchIndex + tagMatch[0].length > matchIndex + term.length
+                )
+            })
+        ) {
+            continue
+        }
+        output.push(text.substring(match.index + term.length, lastIndex))
+        output.push(replacement.replace(new RegExp(term, "i"), term))
+        lastIndex = match.index
+    }
+    output.push(text.substring(0, lastIndex))
+    return output.reverse().join("")
+}
+
 function deactivate() {
     _isActive = false
     _term = null
@@ -55,14 +87,16 @@ exports.highlightTerm = () => {
         return
     }
 
+    const termRegex = new RegExp(_term, "ig")
     const contentElement = renderer.contentElement()
-    if (!contentElement.innerText.includes(_term)) {
+    if (!contentElement.innerText.match(termRegex)) {
         deactivate()
         return
     }
 
-    contentElement.innerHTML = contentElement.innerHTML.replaceAll(
-        _term,
+    contentElement.innerHTML = replaceAll(
+        contentElement.innerHTML,
+        termRegex,
         RESULT_START_TAG + _term + END_TAG,
     )
     const searchResultElements = _document.getElementsByClassName(SEARCH_RESULT_CLASS)
