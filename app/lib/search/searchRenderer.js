@@ -1,3 +1,4 @@
+const ipc = require("../ipc/ipcRenderer")
 const renderer = require("../renderer/common")
 
 const SEARCH_RESULT_CLASS = "search-result"
@@ -10,10 +11,12 @@ const END_TAG = "</span>"
 let _document
 let _searchDialog
 let _searchInputElement
+let _reloader
 
 let _isActive = false
 let _term = null
 let _searchIndex = 0
+let _searchResultCount = 0
 
 // A String.prototype.replaceAll() alternative, that is case insensitive at the input
 // ("pattern parameter") but preserves the case during replacing.
@@ -47,18 +50,19 @@ function replaceAll(text, pattern, replacement) {
     return output.reverse().join("")
 }
 
-function deactivate(reloader) {
+function deactivate() {
     _isActive = false
     _term = null
     _searchIndex = 0
+    _searchResultCount = 0
 
-    if (reloader) {
-        reloader()
-    }
+    ipc.send(ipc.messages.searchIsActive, false)
+    _reloader()
 }
 
 exports.init = (document, reloader) => {
     _document = document
+    _reloader = reloader
 
     _searchInputElement = _document.getElementById("search-input")
     _searchDialog = _document.getElementById("search-dialog")
@@ -66,7 +70,7 @@ exports.init = (document, reloader) => {
         const result = _searchDialog.returnValue
         if (result && result !== CANCEL_VALUE) {
             _term = result
-            reloader()
+            _reloader()
         } else {
             deactivate()
         }
@@ -76,12 +80,24 @@ exports.init = (document, reloader) => {
         event.preventDefault()
         _searchDialog.close(_searchInputElement.value)
     })
-}
 
-exports.showDialog = () => {
-    _searchDialog.showModal()
-    _searchInputElement.setSelectionRange(0, _searchInputElement.value.length)
-    _isActive = true
+    ipc.listen(ipc.messages.search, () => {
+        _searchDialog.showModal()
+        _searchInputElement.setSelectionRange(0, _searchInputElement.value.length)
+        _isActive = true
+
+        ipc.send(ipc.messages.searchIsActive, true)
+    })
+
+    ipc.listen(ipc.messages.searchNext, () => {
+        _searchIndex = (_searchIndex + 1) % _searchResultCount
+        _reloader()
+    })
+
+    ipc.listen(ipc.messages.searchPrevious, () => {
+        _searchIndex = _searchIndex === 0 ? _searchResultCount - 1 : _searchIndex - 1
+        _reloader()
+    })
 }
 
 exports.isActive = () => _isActive
@@ -104,8 +120,8 @@ exports.highlightTerm = () => {
         RESULT_START_TAG + _term + END_TAG,
     )
     const searchResultElements = _document.getElementsByClassName(SEARCH_RESULT_CLASS)
-    const searchResultCount = searchResultElements.length
-    for (let i = 0; i < searchResultCount; i++) {
+    _searchResultCount = searchResultElements.length
+    for (let i = 0; i < _searchResultCount; i++) {
         const searchResult = searchResultElements[i]
         if (i === _searchIndex) {
             searchResult.setAttribute("id", SELECTED_SEARCH_RESULT_ID)

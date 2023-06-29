@@ -183,6 +183,18 @@ exports.elements = {
                     label: "Copy",
                     isEnabled: true,
                 },
+                find: {
+                    label: "&Find...",
+                    isEnabled: true,
+                },
+                findNext: {
+                    label: "Find &next",
+                    isEnabled: false,
+                },
+                findPrevious: {
+                    label: "Find &previous",
+                    isEnabled: false,
+                },
             },
         },
         view: {

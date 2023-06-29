@@ -18,6 +18,7 @@ const log = require("./lib/log/log")
 const menu = require("./lib/main/menu")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
+const search = require("./lib/search/searchMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/toc/tocMain")
 
@@ -213,11 +214,30 @@ function createMainMenu() {
             label: "&Edit",
             submenu: [
                 { role: "copy" },
+                { type: "separator" },
                 {
-                    label: "Find...",
+                    label: "&Find...",
                     accelerator: "CmdOrCtrl+F",
                     click() {
-                        ipc.send(ipc.messages.search)
+                        search.start()
+                    },
+                },
+                {
+                    label: "Find &next",
+                    accelerator: "F3",
+                    id: search.FIND_NEXT_MENU_ID,
+                    enabled: false,
+                    click() {
+                        search.next()
+                    },
+                },
+                {
+                    label: "Find &previous",
+                    accelerator: "Shift+F3",
+                    id: search.FIND_PREVIOUS_MENU_ID,
+                    enabled: false,
+                    click() {
+                        search.previous()
                     },
                 },
             ],
@@ -526,6 +546,7 @@ electron.app.whenReady().then(() => {
     encodingLib.init(_mainMenu)
     contentBlocking.init(_mainMenu)
     rawText.init(_mainMenu)
+    search.init(_mainMenu)
 
     electron.app.on("activate", ensureWindowExists)
 })

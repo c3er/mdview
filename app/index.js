@@ -216,7 +216,7 @@ onkeydown = event => {
         return
     }
     if (search.isActive()) {
-        search.deactivate(() => reload(false))
+        search.deactivate()
     } else {
         ipc.send(ipc.messages.closeApplication)
     }
@@ -354,5 +354,3 @@ ipc.listen(ipc.messages.print, () => {
 
     scrollTo(scrollPosition)
 })
-
-ipc.listen(ipc.messages.search, () => search.showDialog())
