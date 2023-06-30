@@ -19,7 +19,7 @@ let _searchIndex = 0
 let _searchResultCount = 0
 
 // A String.prototype.replaceAll() alternative, that is case insensitive at the input
-// ("pattern parameter") but preserves the case during replacing.
+// ("pattern parameter") but preserves the upper/lower case during replacing.
 function replaceAll(text, pattern, replacement) {
     const output = []
     let lastIndex = text.length - 1
@@ -27,8 +27,7 @@ function replaceAll(text, pattern, replacement) {
     // Based on https://stackoverflow.com/a/1499916 (Remove HTML Tags in Javascript with Regex)
     const tagMatches = [...text.matchAll(/(<([^>]+)>)/g)]
 
-    const matches = [...text.matchAll(pattern)]
-    for (const match of matches.toReversed()) {
+    for (const match of [...text.matchAll(pattern)].toReversed()) {
         const term = match[0]
         if (
             tagMatches.some(tagMatch => {
@@ -47,7 +46,7 @@ function replaceAll(text, pattern, replacement) {
         lastIndex = match.index
     }
     output.push(text.substring(0, lastIndex))
-    return output.reverse().join("")
+    return output.toReversed().join("")
 }
 
 function deactivate() {
@@ -128,6 +127,26 @@ exports.highlightTerm = () => {
         } else {
             searchResult.removeAttribute("id")
         }
+    }
+}
+
+exports.scrollToResult = () => {
+    if (!_isActive) {
+        return
+    }
+
+    const resultElement = _document.getElementById(SELECTED_SEARCH_RESULT_ID)
+    const resultElementPosition = renderer.elementYPosition(resultElement)
+
+    const contentElement = renderer.contentElement()
+    const scrollPosition = contentElement.scrollTop
+
+    if (
+        resultElementPosition < scrollPosition ||
+        resultElementPosition + resultElement.clientHeight >
+            scrollPosition + contentElement.clientHeight
+    ) {
+        renderer.scrollTo(resultElementPosition)
     }
 }
 

@@ -91,10 +91,6 @@ function chooseTheme(isDark) {
     return isDark ? common.DARK_THEME : common.LIGHT_THEME
 }
 
-function scrollTo(position) {
-    renderer.contentElement().scrollTop = position
-}
-
 function reload(isFileModification, encoding) {
     ipc.send(
         ipc.messages.reloadPrepared,
@@ -256,7 +252,6 @@ ipc.listen(ipc.messages.fileOpen, async file => {
 
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
     renderer.rawTextElement().innerHTML = documentRendering.renderRawText(content)
-    search.highlightTerm()
     populateToc(content, "toc")
 
     // Alter local references to be relativ to the document
@@ -289,30 +284,31 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         }
     })
 
+    search.highlightTerm()
+
     const scrollPosition = file.scrollPosition
     const internalTarget = file.internalTarget
     let titlePrefix = filePath
-    if (scrollPosition) {
-        scrollTo(scrollPosition)
-    }
-    if (internalTarget) {
-        const targetElement = document.getElementById(internalTarget.replace("#", ""))
-        if (targetElement) {
-            if (!scrollPosition) {
-                const containerElement = renderer.contentElement().children[0]
-                scrollTo(
-                    targetElement.getBoundingClientRect().top -
-                        (containerElement.getBoundingClientRect().top -
-                            Number(containerElement.style.paddingTop.replace("px", ""))),
-                )
-            }
-            titlePrefix += internalTarget
-        } else {
-            titlePrefix += ` ("${internalTarget}" not found)`
+    if (search.isActive()) {
+        search.scrollToResult()
+    } else {
+        if (scrollPosition) {
+            renderer.scrollTo(scrollPosition)
         }
-    }
-    if (!scrollPosition && !internalTarget) {
-        scrollTo(0)
+        if (internalTarget) {
+            const targetElement = document.getElementById(internalTarget.replace("#", ""))
+            if (targetElement) {
+                if (!scrollPosition) {
+                    renderer.scrollTo(renderer.elementYPosition(targetElement))
+                }
+                titlePrefix += internalTarget
+            } else {
+                titlePrefix += ` ("${internalTarget}" not found)`
+            }
+        }
+        if (!scrollPosition && !internalTarget) {
+            renderer.scrollTo(0)
+        }
     }
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
@@ -329,7 +325,11 @@ ipc.listen(ipc.messages.fileOpen, async file => {
 
 ipc.listen(ipc.messages.prepareReload, reload)
 
-ipc.listen(ipc.messages.restorePosition, scrollTo)
+ipc.listen(ipc.messages.restorePosition, position => {
+    if (!search.isActive()) {
+        renderer.scrollTo(position)
+    }
+})
 
 ipc.listen(ipc.messages.changeZoom, zoomFactor => electron.webFrame.setZoomFactor(zoomFactor))
 
@@ -352,5 +352,5 @@ ipc.listen(ipc.messages.print, () => {
         toc.setVisibility(true)
     }
 
-    scrollTo(scrollPosition)
+    renderer.scrollTo(scrollPosition)
 })
