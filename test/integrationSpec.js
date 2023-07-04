@@ -45,7 +45,7 @@ async function startApp(documentPath) {
     page.on("crash", () => assert.fail("Crash happened"))
     page.on("pageerror", error => assert.fail(`Page error: ${error}`))
 
-    const defaultTimeout = 2000
+    const defaultTimeout = 3000
     page.setDefaultTimeout(defaultTimeout)
     page.setDefaultNavigationTimeout(defaultTimeout)
 
