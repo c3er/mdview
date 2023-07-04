@@ -28,7 +28,7 @@ function replaceAll(text, pattern, replacement) {
     // Based on https://stackoverflow.com/a/1499916 (Remove HTML Tags in Javascript with Regex)
     const tagMatches = [...text.matchAll(/(<([^>]+)>)/g)]
 
-    for (const match of [...text.matchAll(pattern)].toReversed()) {
+    for (const match of [...text.matchAll(pattern)].reverse()) {
         const term = match[0]
         if (
             tagMatches.some(tagMatch => {
@@ -47,16 +47,19 @@ function replaceAll(text, pattern, replacement) {
         lastIndex = match.index
     }
     output.push(text.substring(0, lastIndex))
-    return output.toReversed().join("")
+    return output.reverse().join("")
 }
 
-function deactivate() {
+function reset() {
     _isActive = false
     _dialogIsOpen = false
     _term = null
     _searchIndex = 0
     _searchResultCount = 0
+}
 
+function deactivate() {
+    reset()
     ipc.send(ipc.messages.searchIsActive, false)
     _reloader()
 }
@@ -103,6 +106,8 @@ exports.init = (document, reloader) => {
         _reloader()
     })
 }
+
+exports.reset = reset
 
 exports.isActive = () => _isActive
 
@@ -158,3 +163,13 @@ exports.scrollToResult = () => {
 }
 
 exports.deactivate = deactivate
+
+// For testing
+
+exports.SELECTED_SEARCH_RESULT_ID = SELECTED_SEARCH_RESULT_ID
+
+exports.CANCEL_VALUE = CANCEL_VALUE
+
+exports.setIsActive = isActive => (_isActive = isActive)
+
+exports.term = () => _term

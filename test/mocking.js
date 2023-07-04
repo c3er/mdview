@@ -7,6 +7,35 @@ const DEFAULT_THEME = "system"
 
 const _electronIpcEvent = {}
 
+const _defaultHtmlElement = {
+    attributes: [],
+    hidden: false,
+    innerHTML: "",
+    innerText: "",
+    returnValue: null,
+    style: {
+        display: "invalid-value",
+    },
+    value: "",
+    addEventListener() {},
+    close() {},
+    onauxclick() {},
+    onclick() {},
+    removeAttribute() {},
+    setAttribute() {},
+    setSelectionRange() {},
+    showModal() {},
+}
+let _htmlElement = null
+
+class Event {
+    preventDefaultIsCalled = false
+
+    preventDefault() {
+        this.preventDefaultIsCalled = true
+    }
+}
+
 class WebRequestChannel {
     constructor() {
         this.clear()
@@ -135,16 +164,8 @@ const _electronDefault = {
     },
 }
 
-function createHtmlElement() {
-    return {
-        attributes: [],
-        hidden: false,
-        style: {
-            display: "invalid-value",
-        },
-        onclick() {},
-        onauxclick() {},
-    }
+function loadHtmlElement() {
+    return _htmlElement ?? lodashClonedeep(_defaultHtmlElement)
 }
 
 function resetElectron() {
@@ -389,10 +410,13 @@ exports.document = {
         scrollTop: 0,
     },
     getElementById() {
-        return createHtmlElement()
+        return loadHtmlElement()
+    },
+    getElementsByClassName() {
+        return [loadHtmlElement()]
     },
     getElementsByTagName() {
-        return [createHtmlElement()]
+        return [loadHtmlElement()]
     },
 }
 
@@ -404,15 +428,13 @@ exports.window = {
     },
 }
 
-exports.event = class {
-    preventDefaultIsCalled = false
+exports.createEvent = () => new Event()
 
-    preventDefault() {
-        this.preventDefaultIsCalled = true
-    }
-}
+exports.loadHtmlElement = loadHtmlElement
 
-exports.createHtmlElement = createHtmlElement
+exports.registerHtmlElement = element => (_htmlElement = element)
+
+exports.resetHtmlElement = () => (_htmlElement = null)
 
 exports.resetElectron = resetElectron
 
