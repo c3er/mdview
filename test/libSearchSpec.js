@@ -94,11 +94,13 @@ describe("Search", () => {
         describe("Function highlightTerm", () => {
             it("highlights the search term", () => {
                 const searchTerm = "expected search term"
+                let selectedCount = 0
 
                 const contentElement = mocking.loadHtmlElement()
                 contentElement.innerHTML =
                     contentElement.innerText = `some text containing ${searchTerm}`
                 contentElement.setAttribute = (attr, value) => {
+                    selectedCount++
                     assert.strictEqual(attr, "id")
                     assert.strictEqual(value, search.SELECTED_SEARCH_RESULT_ID)
                 }
@@ -110,6 +112,7 @@ describe("Search", () => {
                 search.highlightTerm()
                 const content = contentElement.innerHTML
                 assert.include(content, `class="${search.SEARCH_RESULT_CLASS}"`)
+                assert.strictEqual(selectedCount, 1)
             })
 
             it("doesn't change the content, if term was not found", () => {
