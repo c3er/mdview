@@ -5,7 +5,7 @@ const SEARCH_RESULT_CLASS = "search-result"
 const SELECTED_SEARCH_RESULT_ID = "selected-search-result"
 const CANCEL_VALUE = "search-dialog-cancel"
 
-const RESULT_START_TAG = '<span class="search-result">'
+const RESULT_START_TAG = `<span class="${SEARCH_RESULT_CLASS}">`
 const END_TAG = "</span>"
 
 let _document
@@ -166,10 +166,10 @@ exports.deactivate = deactivate
 
 // For testing
 
+exports.SEARCH_RESULT_CLASS = SEARCH_RESULT_CLASS
+
 exports.SELECTED_SEARCH_RESULT_ID = SELECTED_SEARCH_RESULT_ID
 
 exports.CANCEL_VALUE = CANCEL_VALUE
-
-exports.setIsActive = isActive => (_isActive = isActive)
 
 exports.term = () => _term

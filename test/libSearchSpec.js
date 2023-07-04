@@ -109,7 +109,7 @@ describe("Search", () => {
 
                 search.highlightTerm()
                 const content = contentElement.innerHTML
-                assert.include(content, 'class="search-result"')
+                assert.include(content, `class="${search.SEARCH_RESULT_CLASS}"`)
             })
 
             it("doesn't change the content, if term was not found", () => {
