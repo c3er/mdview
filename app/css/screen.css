@@ -1,8 +1,12 @@
 :root {
     --element-dark-bgcolor: #292a2d;
+    --highlight-dark-color: #444;
+    --highlight-light-color: #ddd;
     --status-bar-height: 20px;
     --std-border-color: #ccc;
     --std-border-width: 1px;
+    --strong-highlight-dark-color: #777;
+    --strong-highlight-light-color: #aaa;
     --text-dark-color: #f8f8f2;
 }
 
@@ -152,7 +156,7 @@ input {
 }
 
 .toc-section:hover {
-    background-color: #ddd;
+    background-color: var(--highlight-light-color);
 }
 
 .toc-expand-button {
@@ -167,7 +171,7 @@ input {
 }
 
 .toc-expand-button:hover {
-    background-color: #aaa;
+    background-color: var(--strong-highlight-light-color);
 }
 
 #content-body {
@@ -182,11 +186,11 @@ input {
 }
 
 .search-result {
-    background-color: #cdcdff;
+    background-color: var(--highlight-light-color);
 }
 
 #selected-search-result {
-    background-color: #9494ff;
+    background-color: var(--strong-highlight-light-color);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -233,19 +237,19 @@ input {
     }
 
     .toc-section:hover {
-        background-color: #444;
+        background-color: var(--highlight-dark-color);
     }
 
     .toc-expand-button:hover {
-        background-color: #777;
+        background-color: var(--strong-highlight-dark-color);
     }
 
     .search-result {
-        background-color: #0000e2;
+        background-color: var(--highlight-dark-color);
     }
 
     #selected-search-result {
-        background-color: #4f4fff;
+        background-color: var(--strong-highlight-dark-color);
     }
 
     dialog,
