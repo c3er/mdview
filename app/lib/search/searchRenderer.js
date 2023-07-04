@@ -23,7 +23,7 @@ let _searchResultCount = 0
 // ("pattern parameter") but preserves the upper/lower case during replacing.
 function replaceAll(text, pattern, replacement) {
     const output = []
-    let lastIndex = text.length - 1
+    let lastIndex = text.length
 
     // Based on https://stackoverflow.com/a/1499916 (Remove HTML Tags in Javascript with Regex)
     const tagMatches = [...text.matchAll(/(<([^>]+)>)/g)]
