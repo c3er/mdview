@@ -79,7 +79,7 @@ function canGoForward() {
 }
 
 function openFile(file) {
-    // log.debug(`Navigate to "${_locations.current}"`)
+    // console.debug(`Navigate to "${_locations.current}"`)
     ipc.send(ipc.messages.fileOpen, file)
 }
 
@@ -138,6 +138,10 @@ function go(filePath, internalTarget, encoding, lastScrollPosition) {
     handleCallbacks(oldLocation, destination)
 }
 
+function back() {
+    goStep(canGoBack, _locations.forward, _locations.back)
+}
+
 exports.BACK_MENU_ID = BACK_MENU_ID
 
 exports.FORWARD_MENU_ID = FORWARD_MENU_ID
@@ -154,11 +158,12 @@ exports.init = mainMenu => {
     ipc.listen(ipc.messages.openInternal, (target, lastScrollPosition) =>
         go(_locations.current.filePath, target, null, lastScrollPosition),
     )
+    ipc.listen(ipc.messages.navigateBack, back)
 
     _isInitialized = true
 }
 
-exports.back = () => goStep(canGoBack, _locations.forward, _locations.back)
+exports.back = back
 
 exports.forward = () => goStep(canGoForward, _locations.back, _locations.forward)
 

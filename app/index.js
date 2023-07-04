@@ -208,13 +208,20 @@ function handleContextMenuEvent(event) {
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
 onkeydown = event => {
-    if (event.key !== "Escape") {
-        return
-    }
-    if (search.isActive()) {
-        search.deactivate()
-    } else {
-        ipc.send(ipc.messages.closeApplication)
+    switch (event.key) {
+        case "Escape":
+            if (search.isActive()) {
+                search.deactivate()
+            } else {
+                ipc.send(ipc.messages.closeApplication)
+            }
+            return
+        case "Backspace":
+            if (!search.dialogIsOpen()) {
+                event.preventDefault()
+                navigation.back()
+            }
+            return
     }
 }
 

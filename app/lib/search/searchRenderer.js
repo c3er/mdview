@@ -14,6 +14,7 @@ let _searchInputElement
 let _reloader
 
 let _isActive = false
+let _dialogIsOpen = false
 let _term = null
 let _searchIndex = 0
 let _searchResultCount = 0
@@ -51,6 +52,7 @@ function replaceAll(text, pattern, replacement) {
 
 function deactivate() {
     _isActive = false
+    _dialogIsOpen = false
     _term = null
     _searchIndex = 0
     _searchResultCount = 0
@@ -66,6 +68,8 @@ exports.init = (document, reloader) => {
     _searchInputElement = _document.getElementById("search-input")
     _searchDialog = _document.getElementById("search-dialog")
     _searchDialog.addEventListener("close", () => {
+        _dialogIsOpen = false
+
         const result = _searchDialog.returnValue
         if (result && result !== CANCEL_VALUE) {
             _term = result
@@ -84,6 +88,7 @@ exports.init = (document, reloader) => {
         _searchDialog.showModal()
         _searchInputElement.setSelectionRange(0, _searchInputElement.value.length)
         _isActive = true
+        _dialogIsOpen = true
 
         ipc.send(ipc.messages.searchIsActive, true)
     })
@@ -100,6 +105,8 @@ exports.init = (document, reloader) => {
 }
 
 exports.isActive = () => _isActive
+
+exports.dialogIsOpen = () => _dialogIsOpen
 
 exports.highlightTerm = () => {
     if (!_isActive) {

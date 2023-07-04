@@ -497,10 +497,7 @@ function createWindow() {
     })
     mainWindow.webContents.on("before-input-event", (event, input) => {
         if (input.type === "keyDown") {
-            if (input.key === "Backspace") {
-                event.preventDefault()
-                navigation.back()
-            } else if (input.control && input.key === "+") {
+            if (input.control && input.key === "+") {
                 // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
                 event.preventDefault()
                 zoomIn()

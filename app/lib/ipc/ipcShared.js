@@ -13,6 +13,7 @@ exports.messages = {
     logToMainDebug: "log-to-main-debug",
     logToMainError: "log-to-main-error",
     logToMainInfo: "log-to-main-info",
+    navigateBack: "navigate-back",
     openFile: "open-file",
     openFileInNewWindow: "open-file-in-new-window",
     openInternal: "open-internal",
