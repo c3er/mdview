@@ -14,6 +14,7 @@ let _document
 let _window
 
 let _blockedElements = {}
+let _infoElementVisibilityIsPrevented = false
 
 function searchElementsWithAttributeValue(value) {
     // Based on https://stackoverflow.com/a/30840550 (JQuery selector using value, but unknown attribute)
@@ -33,6 +34,8 @@ function searchElementsWithAttributeValue(value) {
 }
 
 function changeInfoElementVisiblity(isVisible) {
+    isVisible = isVisible && !_infoElementVisibilityIsPrevented
+
     const infoElement = _document.getElementById("blocked-content-info")
     infoElement.hidden = !isVisible
 
@@ -113,5 +116,8 @@ exports.init = (document, window, shallForceInitialization) => {
 exports.hasBlockedElements = hasBlockedElements
 
 exports.changeInfoElementVisiblity = changeInfoElementVisiblity
+
+exports.preventInfoElementVisibility = isPrevented =>
+    (_infoElementVisibilityIsPrevented = isPrevented)
 
 exports.reset = reset

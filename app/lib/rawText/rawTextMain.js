@@ -5,7 +5,7 @@ const VIEW_RAW_TEXT_MENU_ID = "view-raw-text"
 
 let _mainMenu
 
-let _isInRawView
+let _isInRawView = false
 
 function enterRawTextView(shallEnterRawTextView) {
     _isInRawView = shallEnterRawTextView
@@ -24,7 +24,7 @@ exports.init = mainMenu => {
         menu.setEnabled(_mainMenu, VIEW_RAW_TEXT_MENU_ID, false)
     })
     ipc.listen(ipc.messages.enableRawView, () => {
-        enterRawTextView(false)
+        enterRawTextView(_isInRawView)
         menu.setEnabled(_mainMenu, VIEW_RAW_TEXT_MENU_ID, true)
     })
 }
