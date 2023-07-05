@@ -1,11 +1,11 @@
 const ipc = require("../ipc/ipcRenderer")
 const renderer = require("../renderer/common")
 
-const SEARCH_RESULT_CLASS = "search-result"
-const SELECTED_SEARCH_RESULT_ID = "selected-search-result"
+const shared = require("./searchShared")
+
 const CANCEL_VALUE = "search-dialog-cancel"
 
-const RESULT_START_TAG = `<span class="${SEARCH_RESULT_CLASS}">`
+const RESULT_START_TAG = `<span class="${shared.SEARCH_RESULT_CLASS}">`
 const END_TAG = "</span>"
 
 let _document
@@ -130,12 +130,12 @@ exports.highlightTerm = () => {
         termRegex,
         RESULT_START_TAG + _term + END_TAG,
     )
-    const searchResultElements = _document.getElementsByClassName(SEARCH_RESULT_CLASS)
+    const searchResultElements = _document.getElementsByClassName(shared.SEARCH_RESULT_CLASS)
     _searchResultCount = searchResultElements.length
     for (let i = 0; i < _searchResultCount; i++) {
         const searchResult = searchResultElements[i]
         if (i === _searchIndex) {
-            searchResult.setAttribute("id", SELECTED_SEARCH_RESULT_ID)
+            searchResult.setAttribute("id", shared.SELECTED_SEARCH_RESULT_ID)
         } else {
             searchResult.removeAttribute("id")
         }
@@ -147,7 +147,7 @@ exports.scrollToResult = () => {
         return
     }
 
-    const resultElement = _document.getElementById(SELECTED_SEARCH_RESULT_ID)
+    const resultElement = _document.getElementById(shared.SELECTED_SEARCH_RESULT_ID)
     const resultElementPosition = renderer.elementYPosition(resultElement)
 
     const contentElement = renderer.contentElement()
@@ -166,9 +166,9 @@ exports.deactivate = deactivate
 
 // For testing
 
-exports.SEARCH_RESULT_CLASS = SEARCH_RESULT_CLASS
+exports.SEARCH_RESULT_CLASS = shared.SEARCH_RESULT_CLASS
 
-exports.SELECTED_SEARCH_RESULT_ID = SELECTED_SEARCH_RESULT_ID
+exports.SELECTED_SEARCH_RESULT_ID = shared.SELECTED_SEARCH_RESULT_ID
 
 exports.CANCEL_VALUE = CANCEL_VALUE
 

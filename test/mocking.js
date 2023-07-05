@@ -381,6 +381,18 @@ exports.elements = {
     rawText: {
         path: "#raw-text",
     },
+    searchDialog: {
+        path: "#search-dialog",
+        inputField: {
+            path: "#search-input",
+        },
+        okButton: {
+            path: "#search-ok-button",
+        },
+        cancelButton: {
+            path: "#search-cancel-button",
+        },
+    },
 }
 
 exports.mainWindow = {

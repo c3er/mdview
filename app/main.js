@@ -218,6 +218,7 @@ function createMainMenu() {
                 {
                     label: "&Find...",
                     accelerator: "CmdOrCtrl+F",
+                    id: search.FIND_MENU_ID,
                     click() {
                         search.start()
                     },
