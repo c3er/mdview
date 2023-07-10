@@ -26,7 +26,7 @@ function alterTags(tagName, handler) {
 }
 
 function updateStatusBar(text) {
-    document.getElementById("status-text").innerHTML = text
+    document.getElementById("status-text").innerText = text
 }
 
 function clearStatusBar() {

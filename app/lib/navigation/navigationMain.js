@@ -37,7 +37,7 @@ class Location {
 
     // For debugging
     toString() {
-        let target = this.filePath
+        const target = this.filePath
         let targetString = this.internalTarget ? `${target}${this.internalTarget}` : target
         if (this.scrollPosition) {
             targetString += ` (${this.scrollPosition})`
