@@ -39,7 +39,9 @@
       "!.vscode/*",
       "!test/*",
       "!.prettier*",
-      "!tmp.md"
+      "!afterAllArtifactBuild.js",
+      "!tmp.md",
+      "!*.log"
     ],
     "nsis": {
       "allowElevation": true,
