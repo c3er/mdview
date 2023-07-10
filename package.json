@@ -29,6 +29,7 @@
     "format": "prettier --write ."
   },
   "build": {
+    "afterAllArtifactBuild": "afterAllArtifactBuild.js",
     "artifactName": "${name}-${version}-${arch}.${ext}",
     "files": [
       "!**/node_modules/*.md",
