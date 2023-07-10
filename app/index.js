@@ -266,7 +266,14 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     content = alterStyleURLs(documentDirectory, content)
 
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
-    populateToc(content, "toc")
+    if (!documentRendering.shallRenderAsMarkdown() || rawText.isInRawView()) {
+        console.log("!documentRendering.shallRenderAsMarkdown() || rawText.isInRawView()")
+        toc.overrideSettings(true)
+        toc.setVisibility(false)
+    } else {
+        toc.setVisibility(toc.getVisibility())
+        populateToc(content, "toc")
+    }
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {
@@ -355,6 +362,7 @@ ipc.listen(ipc.messages.changeRenderingOptions, options => {
 ipc.listen(ipc.messages.print, () => {
     const scrollPosition = renderer.contentElement().scrollTop
 
+    toc.overrideSettings(true)
     const tocIsVisible = toc.getVisibility()
     if (tocIsVisible) {
         toc.setVisibility(false)
@@ -365,6 +373,7 @@ ipc.listen(ipc.messages.print, () => {
     if (tocIsVisible) {
         toc.setVisibility(true)
     }
+    toc.overrideSettings(false)
 
     renderer.scrollTo(scrollPosition)
 })
