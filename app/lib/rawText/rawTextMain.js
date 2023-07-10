@@ -8,8 +8,10 @@ let _mainMenu
 let _isInRawView = false
 
 function enterRawTextView(shallEnterRawTextView) {
-    _isInRawView = shallEnterRawTextView
-    ipc.send(shallEnterRawTextView ? ipc.messages.viewRawText : ipc.messages.leaveRawText)
+    if (_isInRawView !== shallEnterRawTextView) {
+        _isInRawView = shallEnterRawTextView
+        ipc.send(shallEnterRawTextView ? ipc.messages.viewRawText : ipc.messages.leaveRawText)
+    }
 }
 
 exports.VIEW_RAW_TEXT_MENU_ID = VIEW_RAW_TEXT_MENU_ID

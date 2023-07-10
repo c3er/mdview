@@ -129,6 +129,16 @@ function hasMermaid(content) {
     return content.includes("```mermaid")
 }
 
+function toCodeView(filePath, content) {
+    const pathParts = filePath.split(".")
+    const language = pathParts.length > 1 ? pathParts.at(-1) : ""
+
+    // If a Markdown file has to be rendered as source code, the code block enclosings
+    // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
+    // fits this purpose.
+    return "```" + language + "\n" + content.replaceAll("```", "\u2063```") + "\n```"
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
@@ -137,7 +147,7 @@ function handleDOMContentLoadedEvent() {
     renderer.init(document)
     toc.init(document, false)
     contentBlocking.init(document, window)
-    rawText.init(document, window, updateStatusBar)
+    rawText.init(updateStatusBar, () => reload(false))
     navigation.init(document)
     search.init(document, () => reload(false))
 
@@ -240,17 +250,15 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     let content = encodingLib.decode(buffer, encoding)
 
     if (!documentRendering.shallRenderAsMarkdown()) {
-        const pathParts = filePath.split(".")
-        const language = pathParts.length > 1 ? pathParts.at(-1) : ""
-
-        // If a Markdown file has to be rendered as source code, the code block enclosings
-        // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
-        // fits this purpose.
-        content = "```" + language + "\n" + content.replaceAll("```", "\u2063```") + "\n```"
-
+        content = toCodeView(filePath, content)
         ipc.send(ipc.messages.disableRawView)
     } else {
         ipc.send(ipc.messages.enableRawView)
+    }
+
+    if (rawText.isInRawView()) {
+        content = toCodeView(filePath, content)
+        updateStatusBar(rawText.MESSAGE)
     }
 
     // URLs in cotaining style definitions have to be altered before rendering
@@ -258,7 +266,6 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     content = alterStyleURLs(documentDirectory, content)
 
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
-    renderer.rawTextElement().innerHTML = documentRendering.renderRawText(content)
     populateToc(content, "toc")
 
     // Alter local references to be relativ to the document

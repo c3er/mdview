@@ -21,20 +21,6 @@ describe("Document rendering", () => {
         )
     })
 
-    describe("Raw text", () => {
-        let actual
-
-        before(() => (actual = documentRendering.renderRawText(mdHeader)))
-
-        it("is inside a <pre>...</pre> statement", () => {
-            assert.isTrue(/<pre.*>.*<\/pre>/.test(actual))
-        })
-
-        it("does not change the input", () => {
-            assert.include(actual, mdHeader)
-        })
-    })
-
     describe("Render as Markdown", () => {
         it("is active after enabling the option", () => {
             assert.isTrue(documentRendering.shallRenderAsMarkdown())

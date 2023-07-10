@@ -11,18 +11,11 @@ function generateCodeText(text, options = {}) {
         {},
         {
             isHighlighted: false,
-            isMdRawText: false,
         },
         options,
     )
 
-    const hljsClass = options.isHighlighted ? "hljs" : ""
-    const mdRawClass = options.isMdRawText ? "md-raw" : ""
-
-    const preClass =
-        options.isHighlighted || options.isMdRawText
-            ? `class="${[hljsClass, mdRawClass].join(" ").trim()}"`
-            : ""
+    const preClass = options.isHighlighted ? `class="${options.isHighlighted ? "hljs" : ""}"` : ""
     return `<pre ${preClass}><code>${text}</code></pre>`
 }
 
@@ -92,8 +85,5 @@ exports.reset = options => {
 }
 
 exports.renderContent = content => _markdown.render(content)
-
-exports.renderRawText = content =>
-    generateCodeText(_markdown.utils.escapeHtml(content), { isMdRawText: true })
 
 exports.shallRenderAsMarkdown = () => _shallRenderAsMarkdown
