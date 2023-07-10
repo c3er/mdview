@@ -52,7 +52,7 @@ describe("Raw text", () => {
 
         beforeEach(() => {
             ipc.init(mocking.electron)
-            rawText.init(mocking.document, mocking.window, updateStatusBar, mocking.electron)
+            rawText.init(updateStatusBar, () => {})
         })
 
         afterEach(() => mocking.clear())

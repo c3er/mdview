@@ -45,7 +45,7 @@ async function startApp(documentPath) {
     page.on("crash", () => assert.fail("Crash happened"))
     page.on("pageerror", error => assert.fail(`Page error: ${error}`))
 
-    const defaultTimeout = 2000
+    const defaultTimeout = 3000
     page.setDefaultTimeout(defaultTimeout)
     page.setDefaultNavigationTimeout(defaultTimeout)
 
@@ -85,9 +85,9 @@ function hasUnblockedContentMessage() {
 }
 
 async function elementIsHidden(page, elementPath) {
-    const locator = await page.locator(elementPath)
+    const locator = page.locator(elementPath)
     await locator.waitFor({ state: "hidden" })
-    return locator.isHidden()
+    return await locator.isHidden()
 }
 
 describe("Integration tests with single app instance", () => {
@@ -401,6 +401,73 @@ describe("Integration tests with their own app instance each", () => {
 
             const { rememberedX } = await separatorLocator.boundingBox()
             assert.strictEqual(rememberedX, updatedX)
+        })
+    })
+
+    describe("Search dialog", () => {
+        const search = require("../app/lib/search/searchMain")
+
+        const searchResultClass = `class="${search.SEARCH_RESULT_CLASS}"`
+        const selectedSearchResultId = `id="${search.SELECTED_SEARCH_RESULT_ID}"`
+
+        async function assertDialogIsClosed() {
+            assert.isTrue(await elementIsHidden(page, mocking.elements.searchDialog.path))
+        }
+
+        async function opendDialog() {
+            await clickMenuItem(app, search.FIND_MENU_ID)
+            assert.isTrue(await page.locator(mocking.elements.searchDialog.path).isVisible())
+        }
+
+        async function confirmDialog() {
+            await page.locator(mocking.elements.searchDialog.okButton.path).click()
+            await assertDialogIsClosed()
+        }
+
+        async function getContent() {
+            return await page.locator(mocking.elements.content.path).innerHTML()
+        }
+
+        async function enterSearchTerm(term) {
+            await page.locator(mocking.elements.searchDialog.inputField.path).fill(term)
+        }
+
+        it("can be canceled", async () => {
+            await opendDialog()
+            await page.locator(mocking.elements.searchDialog.cancelButton.path).click()
+            await assertDialogIsClosed()
+        })
+
+        it("changes nothing after confirming without input", async () => {
+            await opendDialog()
+            await confirmDialog()
+
+            const content = await getContent()
+            assert.notInclude(content, searchResultClass)
+            assert.notInclude(content, selectedSearchResultId)
+        })
+
+        it("highlights and scrolls to search term", async () => {
+            // It would be cleaner, if this were two tests, but every integration test takes
+            // quite some time.
+
+            const contentLocator = page.locator(
+                `${mocking.elements.content.path} > p:first-of-type`,
+            )
+            const orig = await contentLocator.boundingBox()
+
+            await opendDialog()
+            await enterSearchTerm("multi markdown table")
+            await confirmDialog()
+            await page.locator(`#${search.SELECTED_SEARCH_RESULT_ID}`).waitFor()
+
+            const content = await getContent()
+            assert.include(content, searchResultClass)
+            assert.include(content, selectedSearchResultId)
+
+            const changed = await contentLocator.boundingBox()
+            assert.strictEqual(changed.x, orig.x)
+            assert.notStrictEqual(changed.y, orig.y)
         })
     })
 

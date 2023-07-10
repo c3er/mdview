@@ -15,6 +15,7 @@ const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
 const renderer = require("./lib/renderer/common")
+const search = require("./lib/search/searchRenderer")
 const toc = require("./lib/toc/tocRenderer")
 
 const TITLE = "Markdown Viewer"
@@ -25,7 +26,7 @@ function alterTags(tagName, handler) {
 }
 
 function updateStatusBar(text) {
-    document.getElementById("status-text").innerHTML = text
+    document.getElementById("status-text").innerText = text
 }
 
 function clearStatusBar() {
@@ -90,10 +91,6 @@ function chooseTheme(isDark) {
     return isDark ? common.DARK_THEME : common.LIGHT_THEME
 }
 
-function scrollTo(position) {
-    renderer.contentElement().scrollTop = position
-}
-
 function reload(isFileModification, encoding) {
     ipc.send(
         ipc.messages.reloadPrepared,
@@ -132,6 +129,16 @@ function hasMermaid(content) {
     return content.includes("```mermaid")
 }
 
+function toCodeView(filePath, content) {
+    const pathParts = filePath.split(".")
+    const language = pathParts.length > 1 ? pathParts.at(-1) : ""
+
+    // If a Markdown file has to be rendered as source code, the code block enclosings
+    // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
+    // fits this purpose.
+    return "```" + language + "\n" + content.replaceAll("```", "\u2063```") + "\n```"
+}
+
 function handleDOMContentLoadedEvent() {
     document.title = TITLE
 
@@ -140,8 +147,9 @@ function handleDOMContentLoadedEvent() {
     renderer.init(document)
     toc.init(document, false)
     contentBlocking.init(document, window)
-    rawText.init(document, window, updateStatusBar)
+    rawText.init(updateStatusBar, () => reload(false))
     navigation.init(document)
+    search.init(document, () => reload(false))
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
@@ -158,7 +166,7 @@ function handleContextMenuEvent(event) {
     const MenuItem = remote.MenuItem
     const menu = new remote.Menu()
 
-    if (window.getSelection().toString()) {
+    if (getSelection().toString()) {
         menu.append(
             new MenuItem({
                 label: "Copy selection",
@@ -209,6 +217,24 @@ function handleContextMenuEvent(event) {
 
 document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
 
+onkeydown = event => {
+    switch (event.key) {
+        case "Escape":
+            if (search.isActive()) {
+                search.deactivate()
+            } else {
+                ipc.send(ipc.messages.closeApplication)
+            }
+            return
+        case "Backspace":
+            if (!search.dialogIsOpen()) {
+                event.preventDefault()
+                navigation.back()
+            }
+            return
+    }
+}
+
 ipc.listen(ipc.messages.fileOpen, async file => {
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
@@ -224,29 +250,30 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     let content = encodingLib.decode(buffer, encoding)
 
     if (!documentRendering.shallRenderAsMarkdown()) {
-        const pathParts = filePath.split(".")
-        const language = pathParts.length > 1 ? pathParts[pathParts.length - 1] : ""
-
-        // If a Markdown file has to be rendered as source code, the code block enclosings
-        // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
-        // fits this purpose.
-        content = "```" + language + "\n" + content.replaceAll("```", "\u2063```") + "\n```"
-
+        content = toCodeView(filePath, content)
         ipc.send(ipc.messages.disableRawView)
     } else {
         ipc.send(ipc.messages.enableRawView)
+    }
+
+    if (rawText.isInRawView()) {
+        content = toCodeView(filePath, content)
+        updateStatusBar(rawText.MESSAGE)
     }
 
     // URLs in cotaining style definitions have to be altered before rendering
     const documentDirectory = path.resolve(path.dirname(filePath))
     content = alterStyleURLs(documentDirectory, content)
 
-    if (hasMermaid(content)) {
-        await import(MERMAID_MODULE_PATH)
-    }
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
-    document.getElementById("raw-text").innerHTML = documentRendering.renderRawText(content)
-    populateToc(content, "toc")
+    if (!documentRendering.shallRenderAsMarkdown() || rawText.isInRawView()) {
+        console.log("!documentRendering.shallRenderAsMarkdown() || rawText.isInRawView()")
+        toc.overrideSettings(true)
+        toc.setVisibility(false)
+    } else {
+        toc.setVisibility(toc.getVisibility())
+        populateToc(content, "toc")
+    }
 
     // Alter local references to be relativ to the document
     alterTags("a", link => {
@@ -278,35 +305,37 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         }
     })
 
+    search.highlightTerm()
+
     const scrollPosition = file.scrollPosition
     const internalTarget = file.internalTarget
     let titlePrefix = filePath
-    if (scrollPosition) {
-        scrollTo(scrollPosition)
-    }
-    if (internalTarget) {
-        const targetElement = document.getElementById(internalTarget.replace("#", ""))
-        if (targetElement) {
-            if (!scrollPosition) {
-                const containerElement = renderer.contentElement().children[0]
-                scrollTo(
-                    targetElement.getBoundingClientRect().top -
-                        (containerElement.getBoundingClientRect().top -
-                            Number(containerElement.style.paddingTop.replace("px", ""))),
-                )
-            }
-            titlePrefix += internalTarget
-        } else {
-            titlePrefix += ` ("${internalTarget}" not found)`
+    if (search.isActive()) {
+        search.scrollToResult()
+    } else {
+        if (scrollPosition) {
+            renderer.scrollTo(scrollPosition)
         }
-    }
-    if (!scrollPosition && !internalTarget) {
-        scrollTo(0)
+        if (internalTarget) {
+            const targetElement = document.getElementById(internalTarget.replace("#", ""))
+            if (targetElement) {
+                if (!scrollPosition) {
+                    renderer.scrollTo(renderer.elementYPosition(targetElement))
+                }
+                titlePrefix += internalTarget
+            } else {
+                titlePrefix += ` ("${internalTarget}" not found)`
+            }
+        }
+        if (!scrollPosition && !internalTarget) {
+            renderer.scrollTo(0)
+        }
     }
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
-    window.addEventListener("contextmenu", handleContextMenuEvent)
+    addEventListener("contextmenu", handleContextMenuEvent)
     if (hasMermaid(content)) {
+        await import(MERMAID_MODULE_PATH)
         mermaid.run()
     }
     renderer.contentElement().focus()
@@ -317,7 +346,11 @@ ipc.listen(ipc.messages.fileOpen, async file => {
 
 ipc.listen(ipc.messages.prepareReload, reload)
 
-ipc.listen(ipc.messages.restorePosition, scrollTo)
+ipc.listen(ipc.messages.restorePosition, position => {
+    if (!search.isActive()) {
+        renderer.scrollTo(position)
+    }
+})
 
 ipc.listen(ipc.messages.changeZoom, zoomFactor => electron.webFrame.setZoomFactor(zoomFactor))
 
@@ -328,18 +361,19 @@ ipc.listen(ipc.messages.changeRenderingOptions, options => {
 
 ipc.listen(ipc.messages.print, () => {
     const scrollPosition = renderer.contentElement().scrollTop
-    console.log("scrollPosition", scrollPosition)
 
+    toc.overrideSettings(true)
     const tocIsVisible = toc.getVisibility()
     if (tocIsVisible) {
         toc.setVisibility(false)
     }
 
-    window.print()
+    print()
 
     if (tocIsVisible) {
         toc.setVisibility(true)
     }
+    toc.overrideSettings(false)
 
-    scrollTo(scrollPosition)
+    renderer.scrollTo(scrollPosition)
 })

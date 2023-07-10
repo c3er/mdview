@@ -94,8 +94,9 @@ describe("Navigation", () => {
         let event
 
         beforeEach(() => {
-            htmlElement = mocking.createHtmlElement()
-            event = new mocking.event()
+            htmlElement = mocking.loadHtmlElement()
+            mocking.registerHtmlElement(htmlElement)
+            event = mocking.createEvent()
             navigation.init(mocking.document, mocking.electron)
         })
 

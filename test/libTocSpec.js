@@ -23,7 +23,7 @@ function assertSections(content, rootSection) {
     )
 }
 
-describe('Library "TOC"', () => {
+describe("Table of Contents", () => {
     describe("Renderer part", () => {
         beforeEach(() => {
             toc.init(mocking.document, true)

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
     <head>
         <meta charset="UTF-8" />
@@ -22,6 +22,26 @@
         <script src="index.js"></script>
     </head>
     <body>
+        <!-- Based on https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog?retiredLocale=de -->
+        <dialog id="search-dialog">
+            <form>
+                <div class="dialog-input-field">
+                    <label for="search-input">Search:</label>
+                    <input id="search-input" type="text" spellcheck="false" />
+                </div>
+                <div class="dialog-buttons">
+                    <button id="search-ok-button" value="search-dialog-default">OK</button>
+                    <button
+                        id="search-cancel-button"
+                        value="search-dialog-cancel"
+                        formmethod="dialog"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </dialog>
+
         <div id="menu-border"></div>
 
         <div id="blocked-content-info" hidden="true">
@@ -43,8 +63,6 @@
             <div id="separator"></div>
             <div class="markdown-body" id="content-body" tabindex="0"></div>
         </div>
-
-        <div id="raw-text"></div>
 
         <div id="status-bar">
             <p id="status-text"></p>

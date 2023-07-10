@@ -18,6 +18,7 @@ const log = require("./lib/log/log")
 const menu = require("./lib/main/menu")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
+const search = require("./lib/search/searchMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/toc/tocMain")
 
@@ -203,7 +204,6 @@ function createMainMenu() {
                 { type: "separator" },
                 {
                     label: "&Quit",
-                    accelerator: "Esc",
                     click() {
                         _mainWindow?.close()
                     },
@@ -212,7 +212,36 @@ function createMainMenu() {
         },
         {
             label: "&Edit",
-            submenu: [{ role: "copy" }],
+            submenu: [
+                { role: "copy" },
+                { type: "separator" },
+                {
+                    label: "&Find...",
+                    accelerator: "CmdOrCtrl+F",
+                    id: search.FIND_MENU_ID,
+                    click() {
+                        search.start()
+                    },
+                },
+                {
+                    label: "Find &next",
+                    accelerator: "F3",
+                    id: search.FIND_NEXT_MENU_ID,
+                    enabled: false,
+                    click() {
+                        search.next()
+                    },
+                },
+                {
+                    label: "Find &previous",
+                    accelerator: "Shift+F3",
+                    id: search.FIND_PREVIOUS_MENU_ID,
+                    enabled: false,
+                    click() {
+                        search.previous()
+                    },
+                },
+            ],
         },
         {
             label: "&View",
@@ -425,6 +454,12 @@ function createMainMenu() {
                                 throw new Error("An exception")
                             },
                         },
+                        {
+                            label: "Soft &reload",
+                            click() {
+                                navigation.reloadCurrent()
+                            },
+                        },
                     ],
                 },
             ],
@@ -469,10 +504,7 @@ function createWindow() {
     })
     mainWindow.webContents.on("before-input-event", (event, input) => {
         if (input.type === "keyDown") {
-            if (input.key === "Backspace") {
-                event.preventDefault()
-                navigation.back()
-            } else if (input.control && input.key === "+") {
+            if (input.control && input.key === "+") {
                 // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
                 event.preventDefault()
                 zoomIn()
@@ -518,6 +550,7 @@ electron.app.whenReady().then(() => {
     encodingLib.init(_mainMenu)
     contentBlocking.init(_mainMenu)
     rawText.init(_mainMenu)
+    search.init(_mainMenu)
 
     electron.app.on("activate", ensureWindowExists)
 })
@@ -578,6 +611,8 @@ ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
 ipc.listen(ipc.messages.openInternalInNewWindow, target =>
     createChildWindow(navigation.getCurrentLocation().filePath, target),
 )
+
+ipc.listen(ipc.messages.closeApplication, () => _mainWindow?.close())
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {

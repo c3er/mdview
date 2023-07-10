@@ -52,3 +52,5 @@ exports.openLink = (linkElement, target, documentDirectory) => {
         }
     }
 }
+
+exports.back = () => ipc.send(ipc.messages.navigateBack)

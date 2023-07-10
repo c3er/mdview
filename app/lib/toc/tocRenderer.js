@@ -23,6 +23,7 @@ const JSON_INDENTATION = 2
 
 let _document
 let _isVisible = false
+let _settingsAreOverriden = false
 let _headers = []
 let _rootSection
 let _lastId = 0
@@ -224,6 +225,7 @@ function registerSeparator(separatorElementId, tocElementId) {
 
 function reset() {
     _headers = []
+    _settingsAreOverriden = false
 }
 
 function calcSectionLevel(line) {
@@ -261,6 +263,11 @@ exports.init = (document, isTest) => {
     }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
+        console.log("ipc.messages.updateToc", "_settingsAreOverriden", _settingsAreOverriden)
+        if (_settingsAreOverriden) {
+            return
+        }
+
         _isVisible = tocInfo.isVisible
         setTocVisibility(_isVisible)
         changeTocWidth(tocInfo.widthPx, TOC_HTML_ID)
@@ -356,4 +363,9 @@ exports.updateTheme = theme => {
     for (const section of _rootSection?.flattenTree() ?? []) {
         section.changeButtonImage(section.isExpanded ? expandedSymbolPath : collapsedSymbolPath)
     }
+}
+
+exports.overrideSettings = isOverriden => {
+    console.log("isOverriden", isOverriden)
+    _settingsAreOverriden = isOverriden
 }

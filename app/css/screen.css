@@ -1,7 +1,13 @@
 :root {
+    --element-dark-bgcolor: #292a2d;
+    --highlight-dark-color: #444;
+    --highlight-light-color: #ddd;
     --status-bar-height: 20px;
     --std-border-color: #ccc;
     --std-border-width: 1px;
+    --strong-highlight-dark-color: #777;
+    --strong-highlight-light-color: #aaa;
+    --text-dark-color: #f8f8f2;
 }
 
 #status-bar {
@@ -71,6 +77,34 @@
     display: table-cell;
 }
 
+.dialog-input-field {
+    margin: 1em 0;
+    width: 100%;
+}
+
+#search-input {
+    width: 100%;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.dialog-buttons button {
+    height: 2em;
+    min-width: 70px;
+}
+
+dialog {
+    width: 80%;
+}
+
+input {
+    box-sizing: border-box;
+}
+
 #content {
     display: flex;
     position: fixed;
@@ -81,7 +115,7 @@
 }
 
 #separator {
-    background-color: #ccc;
+    background-color: var(--std-border-color);
     cursor: col-resize;
     flex-grow: 0;
     flex-shrink: 0;
@@ -122,7 +156,7 @@
 }
 
 .toc-section:hover {
-    background-color: #ddd;
+    background-color: var(--highlight-light-color);
 }
 
 .toc-expand-button {
@@ -137,7 +171,7 @@
 }
 
 .toc-expand-button:hover {
-    background-color: #aaa;
+    background-color: var(--strong-highlight-light-color);
 }
 
 #content-body {
@@ -149,6 +183,14 @@
 
 #content-body:focus {
     outline: none;
+}
+
+.search-result {
+    background-color: var(--highlight-light-color);
+}
+
+#selected-search-result {
+    background-color: var(--strong-highlight-light-color);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -165,24 +207,24 @@
     }
 
     #raw-text {
-        color: #f8f8f2;
+        color: var(--text-dark-color);
     }
 
     #status-bar {
-        background: #292a2d;
+        background: var(--element-dark-bgcolor);
         border-top: var(--std-border-width) solid black;
-        color: #f8f8f2;
+        color: var(--text-dark-color);
     }
 
     #menu-border {
-        background-color: #292a2d;
+        background-color: var(--element-dark-bgcolor);
         border-bottom: var(--std-border-width) solid black;
     }
 
     #blocked-content-info {
         background-color: #7a1f28;
         border-color: black;
-        color: #f8f8f2;
+        color: var(--text-dark-color);
     }
 
     #separator {
@@ -191,14 +233,28 @@
 
     .toc-section a,
     .toc-section * {
-        color: #f8f8f2;
+        color: var(--text-dark-color);
     }
 
     .toc-section:hover {
-        background-color: #444;
+        background-color: var(--highlight-dark-color);
     }
 
     .toc-expand-button:hover {
-        background-color: #777;
+        background-color: var(--strong-highlight-dark-color);
+    }
+
+    .search-result {
+        background-color: var(--highlight-dark-color);
+    }
+
+    #selected-search-result {
+        background-color: var(--strong-highlight-dark-color);
+    }
+
+    dialog,
+    input {
+        background-color: var(--element-dark-bgcolor);
+        color: var(--text-dark-color);
     }
 }

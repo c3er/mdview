@@ -1,21 +1,23 @@
-const contentBlocking = require("../contentBlocking/contentBlockingRenderer")
 const ipc = require("../ipc/ipcRenderer")
 
-let _document
-let _updateStatusBar
+let _statusBarUpdater
+let _reloader
+
+let _isInRawView = false
 
 function switchRawView(isRawView) {
-    _document.getElementById("content").style.display = isRawView ? "none" : "flex"
-    _document.getElementById("raw-text").style.display = isRawView ? "block" : "none"
-    _updateStatusBar(isRawView ? "Raw text (leve with Ctrl+U)" : "")
-    contentBlocking.changeInfoElementVisiblity(!isRawView && contentBlocking.hasBlockedElements())
+    _isInRawView = isRawView
+    _reloader()
 }
 
-exports.init = (document, window, updateStatusBar) => {
-    _document = document
-    _updateStatusBar = updateStatusBar
+exports.MESSAGE = "Raw text (leve with Ctrl+U)"
 
-    contentBlocking.init(document, window)
+exports.init = (statusBarUpdater, reloader) => {
+    _statusBarUpdater = statusBarUpdater
+    _reloader = reloader
+
     ipc.listen(ipc.messages.viewRawText, () => switchRawView(true))
     ipc.listen(ipc.messages.leaveRawText, () => switchRawView(false))
 }
+
+exports.isInRawView = () => _isInRawView
