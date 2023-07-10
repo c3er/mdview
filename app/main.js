@@ -454,6 +454,12 @@ function createMainMenu() {
                                 throw new Error("An exception")
                             },
                         },
+                        {
+                            label: "Soft &reload",
+                            click() {
+                                navigation.reloadCurrent()
+                            },
+                        },
                     ],
                 },
             ],
