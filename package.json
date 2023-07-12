@@ -29,6 +29,7 @@
     "format": "prettier --write ."
   },
   "build": {
+    "afterPack": "scripts/afterPack.js",
     "afterAllArtifactBuild": "scripts/afterAllArtifactBuild.js",
     "artifactName": "${name}-${version}-${arch}.${ext}",
     "files": [
