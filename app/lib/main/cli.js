@@ -26,7 +26,7 @@ function extractFilePath(args, storageDirArgIndex) {
 }
 
 function isDevelopment() {
-    return !!process.defaultApp
+    return Boolean(process.defaultApp)
 }
 
 function parseTestArgs(args) {

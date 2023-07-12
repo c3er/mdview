@@ -139,6 +139,8 @@ class Section {
     }
 
     toHtml(level) {
+        const BUTTON_OFFSET = 2.5 // em
+
         level ??= 0
         const subSectionsHtml = this.subSections
             .map(section => section.toHtml(level + 1))
@@ -151,7 +153,7 @@ class Section {
 
         const indentationWidth =
             level * INDENTATION_WIDTH_PX + (this.hasSubSections ? 0 : INDENTATION_OFFSET_PX)
-        const buttonOffset = this.hasSubSections ? 2.5 : 0
+        const buttonOffset = this.hasSubSections ? BUTTON_OFFSET : 0
         return `
             <div class="${SECTION_HTML_CLASS}">
                 <nobr style="margin-left: ${indentationWidth}px">
@@ -288,7 +290,7 @@ exports.build = content => {
     const lines = content
         .split(/\r?\n/)
         .map(line => line.trim())
-        .filter(line => !!line)
+        .filter(line => Boolean(line))
     let isInCode = false
     const sectionLevels = []
     for (const line of lines) {

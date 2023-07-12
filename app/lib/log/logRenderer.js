@@ -2,7 +2,7 @@ const ipc = require("../ipc/ipcRenderer")
 
 const shared = require("./logShared")
 
-exports.init = (isTest, electronMock) => {
+exports.init = isTest => {
     shared.init(isTest)
     shared.clearMessages()
 }

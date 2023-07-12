@@ -7,13 +7,10 @@ let _markdown
 let _shallRenderAsMarkdown = false
 
 function generateCodeText(text, options = {}) {
-    options = Object.assign(
-        {},
-        {
-            isHighlighted: false,
-        },
-        options,
-    )
+    options = {
+        isHighlighted: false,
+        ...options,
+    }
 
     const preClass = options.isHighlighted ? `class="${options.isHighlighted ? "hljs" : ""}"` : ""
     return `<pre ${preClass}><code>${text}</code></pre>`

@@ -184,7 +184,7 @@ exports.register = (id, callback) => (_callbacks[id] = callback)
 
 exports.getCurrentLocation = () => _locations.current
 
-exports.hasCurrentLocation = () => !!_locations.current
+exports.hasCurrentLocation = () => Boolean(_locations.current)
 
 exports.canGoBack = canGoBack
 

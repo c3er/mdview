@@ -77,7 +77,7 @@ async function menuItemIsChecked(app, id) {
 }
 
 function containsConsoleMessage(message) {
-    return !!consoleMessages.find(msg => msg.toLowerCase().includes(message.toLowerCase()))
+    return Boolean(consoleMessages.find(msg => msg.toLowerCase().includes(message.toLowerCase())))
 }
 
 function hasUnblockedContentMessage() {
@@ -186,7 +186,7 @@ describe("Integration tests with single app instance", () => {
         }
 
         function assertMenu(menu, itemPath) {
-            for (const [_, currentItem] of Object.entries(menu)) {
+            for (const [, currentItem] of Object.entries(menu)) {
                 const currentItemLabel = currentItem.label
                 const currentItemPath = [...itemPath, currentItemLabel]
                 describe(`Menu item "${currentItemLabel}"`, () => {
@@ -357,6 +357,8 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Separator", () => {
+        const DRAG_DISTANCE = 50
+
         async function displaySeparator() {
             await clickMenuItem(app, toc.SHOW_FOR_ALL_DOCS_MENU_ID)
             const separatorLocator = page.locator(mocking.elements.separator.path)
@@ -381,9 +383,9 @@ describe("Integration tests with their own app instance each", () => {
             const separatorLocator = await displaySeparator()
             const [origX, y] = await determineMiddlePosition(separatorLocator)
 
-            await drag(origX, y, 50, 0)
+            await drag(origX, y, DRAG_DISTANCE, 0)
 
-            separatorBox = await separatorLocator.boundingBox()
+            const separatorBox = await separatorLocator.boundingBox()
             assert.isAbove(separatorBox.x, origX)
         })
 
@@ -391,7 +393,7 @@ describe("Integration tests with their own app instance each", () => {
             let separatorLocator = await displaySeparator()
             const [origX, y] = await determineMiddlePosition(separatorLocator)
 
-            await drag(origX, y, 50, 0)
+            await drag(origX, y, DRAG_DISTANCE, 0)
             const { updatedX } = await separatorLocator.boundingBox()
 
             await restartApp()

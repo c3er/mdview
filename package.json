@@ -1,6 +1,6 @@
 {
   "name": "mdview",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "Standalone Markdown Viewer",
   "keywords": [
     "markdown",
@@ -24,8 +24,8 @@
     "start": "electron .",
     "dist": "electron-builder",
     "dist-ci": "electron-builder -p never",
-    "test": "prettier --check . && mocha --timeout 20000",
-    "test-ci": "prettier --check . && xvfb-maybe -- mocha --timeout 20000",
+    "test": "eslint . && prettier --check . && mocha --timeout 20000",
+    "test-ci": "eslint . && prettier --check . && xvfb-maybe -- mocha --timeout 20000",
     "format": "prettier --write ."
   },
   "build": {
@@ -114,6 +114,8 @@
     "chai": "4.3.7",
     "electron": "25.2.0",
     "electron-builder": "24.4.0",
+    "eslint": "8.44.0",
+    "eslint-config-prettier": "8.8.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.2.0",
     "playwright": "1.35.1",

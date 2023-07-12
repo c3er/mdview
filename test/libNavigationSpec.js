@@ -97,7 +97,7 @@ describe("Navigation", () => {
             htmlElement = mocking.loadHtmlElement()
             mocking.registerHtmlElement(htmlElement)
             event = mocking.createEvent()
-            navigation.init(mocking.document, mocking.electron)
+            navigation.init(mocking.electron)
         })
 
         it("gets events", () => {

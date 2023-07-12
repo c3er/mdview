@@ -23,9 +23,14 @@ function readBytesSync(filePath, filePosition, numBytesToRead) {
 }
 
 exports.isMarkdown = filePath =>
-    common.FILE_EXTENSIONS.map(ext => "." + ext).some(ext => filePath.toLowerCase().endsWith(ext))
+    common.FILE_EXTENSIONS.map(ext => `.${ext}`).some(ext => filePath.toLowerCase().endsWith(ext))
 
 exports.isText = filePath => {
+    const SPACE_CHAR = 32
+    const LF_CHAR = 10
+    const CR_CHAR = 13
+    const TAB_CHAR = 9
+
     const BYTECOUNT = 50000
     let data
     try {
@@ -39,8 +44,8 @@ exports.isText = filePath => {
     // Space character is the first printable ASCII character.
     // Line breaks (LF = 10, CR = 13) and tabs (TAB = 9) are common in text files.
     return data.buffer
-        .slice(0, data.bytesRead - 1)
-        .every(byte => byte >= 32 || [10, 13, 9].includes(byte))
+        .subarray(0, data.bytesRead - 1)
+        .every(byte => byte >= SPACE_CHAR || [LF_CHAR, CR_CHAR, TAB_CHAR].includes(byte))
 }
 
 exports.extractFileEnding = filePath => {

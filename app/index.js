@@ -136,7 +136,7 @@ function toCodeView(filePath, content) {
     // If a Markdown file has to be rendered as source code, the code block enclosings
     // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
     // fits this purpose.
-    return "```" + language + "\n" + content.replaceAll("```", "\u2063```") + "\n```"
+    return `\`\`\`${language}\n${content.replaceAll("```", "\u2063```")}\n\`\`\``
 }
 
 function handleDOMContentLoadedEvent() {
@@ -147,8 +147,8 @@ function handleDOMContentLoadedEvent() {
     renderer.init(document)
     toc.init(document, false)
     contentBlocking.init(document, window)
-    rawText.init(updateStatusBar, () => reload(false))
-    navigation.init(document)
+    rawText.init(() => reload(false))
+    navigation.init()
     search.init(document, () => reload(false))
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
@@ -336,6 +336,8 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     addEventListener("contextmenu", handleContextMenuEvent)
     if (hasMermaid(content)) {
         await import(MERMAID_MODULE_PATH)
+
+        // eslint-disable-next-line no-undef
         mermaid.run()
     }
     renderer.contentElement().focus()

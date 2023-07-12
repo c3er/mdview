@@ -56,7 +56,7 @@ exports.init = (mainMenu, electronMock) => {
     })
     webRequest.onBeforeRedirect(details => {
         const url = details.redirectURL
-        log.info("Redirecting: " + url)
+        log.info(`Redirecting: ${url}`)
         unblockURL(url)
     })
 

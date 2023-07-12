@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 "use strict"
 
 const fs = require("fs")
@@ -29,7 +30,6 @@ const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
 const ZOOM_STEP = 0.1
 
 let _cliArgs
-let _isTest = false
 let _finderFilePath
 
 let _mainWindow
@@ -617,7 +617,7 @@ ipc.listen(ipc.messages.closeApplication, () => _mainWindow?.close())
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {
     log.error(`Unhandled error: ${error.stack}`)
-    if (!_isTest && !process.argv[0].includes("electron")) {
+    if (!process.argv[0].includes("electron")) {
         electron.dialog.showMessageBoxSync({
             type: "error",
             title: "Unhandled error (fault of Markdown Viewer)",
@@ -637,7 +637,7 @@ setInterval(() => {
             log.error(`Updating file "${filePath}" was aborted with error ${err}`)
             return
         }
-        let mtime = stats.mtimeMs
+        const mtime = stats.mtimeMs
         if (_lastModificationTime && mtime !== _lastModificationTime) {
             log.debug("Reloading...")
             _lastModificationTime = mtime

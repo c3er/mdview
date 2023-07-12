@@ -15,7 +15,7 @@ const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 let _dataDir
 
 let _applicationSettings
-let _documentSettings = {}
+const _documentSettings = {}
 
 class StorageBase {
     _storagePath

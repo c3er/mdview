@@ -43,7 +43,7 @@ describe("Logging", () => {
             assert.deepInclude(messageArray, [testMessage])
         }
 
-        beforeEach(() => log.init(true, mocking.electron))
+        beforeEach(() => log.init(true))
 
         it("sends debug message to main process", () => {
             assertMessageToMain(ipc.messages.logToMainDebug, log.debug, log.debugMessages)

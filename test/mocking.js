@@ -106,7 +106,7 @@ class IpcChannelCollection {
     }
 
     send(message, event, ...args) {
-        if (!this._data.hasOwnProperty(message)) {
+        if (!Object.hasOwn(this._data, message)) {
             assert.fail(`Message "${message}" is not registered in channel "${this.name}"`)
         }
         this._data[message].send(event, ...args)
@@ -117,7 +117,7 @@ class IpcChannelCollection {
     }
 
     _addCallback(message, callback, addMethod) {
-        if (this._data.hasOwnProperty(message)) {
+        if (Object.hasOwn(this._data, message)) {
             addMethod(this._data[message], callback)
         } else {
             const channel = new IpcChannel()

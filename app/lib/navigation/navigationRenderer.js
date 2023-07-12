@@ -7,8 +7,6 @@ const renderer = require("../renderer/common")
 
 let electron
 
-let _document
-
 function isInternalLink(url) {
     return url.startsWith("#")
 }
@@ -35,10 +33,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     }
 }
 
-exports.init = (document, electronMock) => {
-    electron = electronMock ?? require("electron")
-    _document = document
-}
+exports.init = electronMock => (electron = electronMock ?? require("electron"))
 
 exports.openLink = (linkElement, target, documentDirectory) => {
     linkElement.onclick = event => {
