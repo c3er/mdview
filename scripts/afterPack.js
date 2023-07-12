@@ -23,6 +23,7 @@ exports.default = async context => {
             "vk_swiftshader_icd.json",
             "vulkan-1.dll",
         ],
+        linux: [], // XXX Propr Linux box needed
     }
 
     const outDir = context.appOutDir
