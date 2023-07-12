@@ -29,7 +29,7 @@
     "format": "prettier --write ."
   },
   "build": {
-    "afterAllArtifactBuild": "afterAllArtifactBuild.js",
+    "afterAllArtifactBuild": "scripts/afterAllArtifactBuild.js",
     "artifactName": "${name}-${version}-${arch}.${ext}",
     "files": [
       "!**/node_modules/*.md",
@@ -38,8 +38,8 @@
       "!.storage/*",
       "!.vscode/*",
       "!test/*",
+      "!scripts/*",
       "!.prettier*",
-      "!afterAllArtifactBuild.js",
       "!tmp.md",
       "!*.log"
     ],
