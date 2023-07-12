@@ -265,7 +265,6 @@ exports.init = (document, isTest) => {
     }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
-        console.log("ipc.messages.updateToc", "_settingsAreOverriden", _settingsAreOverriden)
         if (_settingsAreOverriden) {
             return
         }
@@ -367,7 +366,4 @@ exports.updateTheme = theme => {
     }
 }
 
-exports.overrideSettings = isOverriden => {
-    console.log("isOverriden", isOverriden)
-    _settingsAreOverriden = isOverriden
-}
+exports.overrideSettings = isOverriden => (_settingsAreOverriden = isOverriden)

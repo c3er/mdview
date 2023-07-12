@@ -8,8 +8,6 @@ exports.init = document => (_document = document)
 
 exports.contentElement = contentElement
 
-exports.rawTextElement = () => _document.getElementById("raw-text")
-
 exports.scrollTo = position => (contentElement().scrollTop = position)
 
 exports.elementYPosition = element => {
