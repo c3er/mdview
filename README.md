@@ -19,6 +19,14 @@ The Windows setup file supports following parameters:
 - `/S` runs the setup silently, i.e. in the background, without UI and without asking any questions.
 - `/D=C:\path\to\install` sets the installation directory. This parameter has to be the last one. The path must not contain quotes, even if the path contains whitespaces.
 
+#### winget
+
+The application can be installed via winget:
+
+```
+winget install c3er.mdview
+```
+
 ## Known issues
 
 ### Windows installation and download security
