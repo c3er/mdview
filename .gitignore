@@ -13,4 +13,5 @@ package-lock.json
 .storage/
 
 # For private notes
+tmp/
 tmp.md
