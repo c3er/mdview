@@ -1,0 +1,18 @@
+# Based on example from
+# https://github.com/vedantmgoyal2009/winget-releaser
+
+name: Publish to WinGet
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: c3er.mdview
+          installers-regex: '\.exe$'
+          token: ${{ secrets.WINGET_TOKEN }}
