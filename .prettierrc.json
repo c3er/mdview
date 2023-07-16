@@ -9,7 +9,7 @@
   "printWidth": 100,
   "overrides": [
     {
-      "files": ["*.json", "*.yml"],
+      "files": ["*.json", "*.yml", "*.yaml"],
       "options": {
         "tabWidth": 2
       }
