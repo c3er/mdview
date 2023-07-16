@@ -10,7 +10,13 @@ See [the flavor documentation](doc/flavor.md) for Markdown features additional t
 
 ## Installation and usage
 
-You find the latest binaries and setup file [at GitHub](https://github.com/c3er/mdview/releases/latest). For Windows, there is an installer package and a ZIP archive. For Linux, there is an AppImage package.
+You find the latest binaries and setup file [at GitHub](https://github.com/c3er/mdview/releases/latest). 
+
+Package formats:
+
+- **Windows:** Setup-exe, ZIP archive
+- **Linux:** AppImage package
+- **macOS:** DMG package
 
 ### Windows
 
@@ -60,7 +66,7 @@ After cloning the Git repository, type `npm install`. NPM may put some warnings 
 
 To start an instance while development, type `npm start`.
 
-Binaries can be built by typing `npm run dist`. Under Windows, a ZIP package and a Setup.exe will be built. Under Linux, an AppImage file will be generated - though it is not tested by the author yet. MacOS is not tested yet and there are properly some settings missing to build the proper packages. Pull requests are welcome!
+Binaries can be built by typing `npm run dist`. Under Windows, a ZIP package and a Setup.exe will be built. Under Linux, an AppImage file will be generated - though it is not tested by the author yet.
 
 The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMagick](https://www.imagemagick.org). While the application icon does not look too bad, a proper icon for Markdown *documents* is missing yet.
 
