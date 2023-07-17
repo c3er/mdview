@@ -36,10 +36,12 @@
       "!**/node_modules/*.md",
       "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
       "!**/node_modules/*.d.ts",
+      "!.data/*",
       "!.storage/*",
       "!.vscode/*",
       "!test/*",
       "!scripts/*",
+      "!tmp/*",
       "!.prettier*",
       "!tmp.md",
       "!*.log"

@@ -652,3 +652,18 @@ navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {
         lastModificationTime ?? fs.statSync(navigation.getCurrentLocation().filePath)
     return time
 })
+
+// Initialization before Electron's
+
+const args = process.argv
+if (cli.isDevelopment()) {
+    electron.app.setPath(
+        "userData",
+        path.join(path.resolve(args.slice(1).find(arg => !arg.startsWith("-"))), ".data"),
+    )
+} else if (process.platform === "win32") {
+    const startExePath = path.resolve(args[0])
+    if (!startExePath.startsWith(path.resolve(process.env.PROGRAMFILES))) {
+        electron.app.setPath("userData", path.join(path.dirname(startExePath), ".data"))
+    }
+}

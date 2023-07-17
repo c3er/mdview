@@ -62,3 +62,5 @@ exports.parse = args => {
     log.debug(parsedArgs)
     return parsedArgs
 }
+
+exports.isDevelopment = isDevelopment
