@@ -1,10 +1,12 @@
 const hljs = require("highlight.js")
 
+const metadata = require("../renderer/metadata")
 const toc = require("../toc/tocRenderer")
 
 let _markdown
 
 let _shallRenderAsMarkdown = false
+let _shallHideMetadata = false
 
 function generateCodeText(text, options = {}) {
     options = {
@@ -79,8 +81,10 @@ exports.reset = options => {
     }
 
     _shallRenderAsMarkdown = options.renderAsMarkdown
+    _shallHideMetadata = options.hideMetadata
 }
 
-exports.renderContent = content => _markdown.render(content)
+exports.renderContent = content =>
+    _markdown.render(_shallHideMetadata ? metadata.hide(content) : metadata.render(content))
 
 exports.shallRenderAsMarkdown = () => _shallRenderAsMarkdown

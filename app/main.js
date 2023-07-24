@@ -402,6 +402,14 @@ function createMainMenu() {
                                 documentRendering.switchEnableEmojis()
                             },
                         },
+                        {
+                            label: "Hide &Metatdata Header",
+                            type: "checkbox",
+                            id: documentRendering.HIDE_METADATA_MENU_ID,
+                            click() {
+                                documentRendering.hideMetadata()
+                            },
+                        },
                     ],
                 },
                 { type: "separator" },

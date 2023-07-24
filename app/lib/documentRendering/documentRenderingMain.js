@@ -9,6 +9,7 @@ const ENABLE_TYPOGRAPHY_MENU_ID = "enable-typographic-replacements"
 const ENABLE_EMOJIS_MENU_ID = "enable-emojis"
 const RENDER_FILE_AS_MD_MENU_ID = "render-file-as-markdown"
 const RENDER_FILE_TYPE_AS_MD_MENU_ID = "render-file-type-as-markdown"
+const HIDE_METADATA_MENU_ID = "hide-metadata"
 
 const UPDATE_FILE_SPECIFICA_NAV_ID = "update-file-specific-document-rendering"
 
@@ -41,6 +42,7 @@ function notifyOptionChanges(filePath) {
         typographyEnabled: _applicationSettings.typographyEnabled,
         emojisEnabled: _applicationSettings.emojisEnabled,
         renderAsMarkdown: documentSettings.renderAsMarkdown || isMarkdownFileType(filePath),
+        hideMetadata: _applicationSettings.hideMetadata,
     })
 }
 
@@ -67,6 +69,8 @@ exports.ENABLE_EMOJIS_MENU_ID = ENABLE_EMOJIS_MENU_ID
 exports.RENDER_FILE_AS_MD_MENU_ID = RENDER_FILE_AS_MD_MENU_ID
 
 exports.RENDER_FILE_TYPE_AS_MD_MENU_ID = RENDER_FILE_TYPE_AS_MD_MENU_ID
+
+exports.HIDE_METADATA_MENU_ID = HIDE_METADATA_MENU_ID
 
 exports.init = (mainMenu, applicationSettings, filePath) => {
     _mainMenu = mainMenu
@@ -129,4 +133,10 @@ exports.switchRenderFileTypeAsMarkdown = filePath =>
             filePath,
             menu.getChecked(_mainMenu, RENDER_FILE_TYPE_AS_MD_MENU_ID),
         ),
+    )
+
+exports.hideMetadata = () =>
+    changeOption(
+        () =>
+            (_applicationSettings.hideMetadata = menu.getChecked(_mainMenu, HIDE_METADATA_MENU_ID)),
     )

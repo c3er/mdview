@@ -53,6 +53,7 @@ class ApplicationSettings extends StorageBase {
     #MD_FILE_TYPES_KEY = "md-file-types"
     #SHOW_TOC_KEY = "show-toc"
     #TOC_WIDTH_KEY = "toc-width"
+    #HIDE_METADATA_KEY = "hide-metadata"
 
     SYSTEM_THEME = common.SYSTEM_THEME
     LIGHT_THEME = common.LIGHT_THEME
@@ -67,6 +68,8 @@ class ApplicationSettings extends StorageBase {
 
     SHOW_TOC_DEFAULT = false
     TOC_WIDTH_DEFAULT = null
+
+    HIDE_METADATA_DEFAULT = false
 
     get theme() {
         return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
@@ -136,6 +139,14 @@ class ApplicationSettings extends StorageBase {
 
     set tocWidth(value) {
         this._storeValue(this.#TOC_WIDTH_KEY, value)
+    }
+
+    get hideMetadata() {
+        return this._loadValue(this.#HIDE_METADATA_KEY, this.HIDE_METADATA_DEFAULT)
+    }
+
+    set hideMetadata(value) {
+        this._storeValue(this.#HIDE_METADATA_KEY, value)
     }
 
     _loadValue(key, defaultValue) {

@@ -1,5 +1,6 @@
 const common = require("../common")
 const ipc = require("../ipc/ipcRenderer")
+const metadata = require("../renderer/metadata")
 
 const shared = require("./tocShared")
 
@@ -286,7 +287,8 @@ exports.reset = reset
 exports.addHeader = (title, id) => _headers.push({ title, id })
 
 exports.build = content => {
-    const lines = content
+    const lines = metadata
+        .hide(content)
         .split(/\r?\n/)
         .map(line => line.trim())
         .filter(line => Boolean(line))
