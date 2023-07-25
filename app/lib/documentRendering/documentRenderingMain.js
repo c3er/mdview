@@ -86,6 +86,7 @@ exports.init = (mainMenu, applicationSettings, filePath) => {
         RENDER_FILE_AS_MD_MENU_ID,
         storage.loadDocumentSettings(filePath).renderAsMarkdown,
     )
+    menu.setChecked(_mainMenu, HIDE_METADATA_MENU_ID, applicationSettings.hideMetadata)
 
     notifyOptionChanges(filePath)
 }
