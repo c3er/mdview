@@ -21,7 +21,7 @@ jobs:
         run: npm install
       - name: Test
         run: npm run test-ci
----
+...
 
 # A file with metadata
 
