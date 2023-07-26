@@ -56,6 +56,11 @@ async function startApp(documentPath) {
     _page = page
 }
 
+async function restartApp(documentPath) {
+    await _app.close()
+    await startApp(documentPath ?? DEFAULT_DOCUMENT_PATH)
+}
+
 async function clickMenuItem(id) {
     await _app.evaluate(
         ({ Menu }, menuId) => Menu.getApplicationMenu().getMenuItemById(menuId).click(),
@@ -241,11 +246,6 @@ describe("Integration tests with single app instance", () => {
 })
 
 describe("Integration tests with their own app instance each", () => {
-    async function restartApp() {
-        await _app.close()
-        await startApp(DEFAULT_DOCUMENT_PATH)
-    }
-
     beforeEach(async () => {
         await cleanup()
         await startApp(DEFAULT_DOCUMENT_PATH)
@@ -491,13 +491,44 @@ describe("Integration tests with their own app instance each", () => {
 })
 
 describe("Integration tests with special documents", () => {
-    it("loads image encoded as data URL", async () => {
+    async function testWithDocument(documentPath, callback) {
         await cleanup()
-        await startApp(path.join(DEFAULT_DOCUMENT_DIR, "gh-issue23.md"))
+        await startApp(documentPath)
         try {
-            assert.isFalse(containsConsoleMessage("Failed to load resource"))
+            await callback()
         } finally {
             await _app?.close()
         }
+    }
+
+    it("loads image encoded as data URL", async () => {
+        await testWithDocument(path.join(DEFAULT_DOCUMENT_DIR, "gh-issue23.md"), () =>
+            assert.isFalse(containsConsoleMessage("Failed to load resource")),
+        )
+    })
+
+    describe("Metadata", () => {
+        const documentRendering = require("../app/lib/documentRendering/documentRenderingMain")
+
+        const documentPath = path.join(DEFAULT_DOCUMENT_DIR, "metadata.md")
+
+        it("renders by default", async () => {
+            await testWithDocument(documentPath, async () =>
+                assert.strictEqual(
+                    (await _page.locator("//*/p/strong").allInnerTexts())[0],
+                    "Metadata",
+                ),
+            )
+        })
+
+        it("can be hidden", async () => {
+            await testWithDocument(documentPath, async () => {
+                await clickMenuItem(documentRendering.HIDE_METADATA_MENU_ID)
+                await restartApp(documentPath)
+                assert.isFalse(
+                    (await _page.locator("//*/p/strong").allInnerTexts()).includes("Metadata"),
+                )
+            })
+        })
     })
 })

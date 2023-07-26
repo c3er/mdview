@@ -9,6 +9,7 @@ describe("Document rendering", () => {
         typographyEnabled: true,
         emojisEnabled: true,
         renderAsMarkdown: true,
+        hideMetadata: false,
     }
     const headerText = "This is a test"
     const mdHeader = `# ${headerText}`

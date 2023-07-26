@@ -1,19 +1,13 @@
 const assert = require("chai").assert
 
+const lib = require("./testLib")
 const mocking = require("./mocking")
 
 const documentRendering = require("../app/lib/documentRendering/documentRenderingRenderer")
 const toc = require("../app/lib/toc/tocRenderer")
 
-function trimLines(content) {
-    return content
-        .split("\n")
-        .map(line => line.trim())
-        .join("\n")
-}
-
 function assertSections(content, rootSection) {
-    content = trimLines(content)
+    content = lib.prepareMdContent(content)
     documentRendering.renderContent(content)
     const actual = toc.build(content)
     const expected = toc.fromObject(rootSection)

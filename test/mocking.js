@@ -320,6 +320,11 @@ exports.elements = {
                             isEnabled: true,
                             isChecked: true,
                         },
+                        {
+                            label: "Hide &Metatdata Header",
+                            isEnabled: true,
+                            isChecked: false,
+                        },
                     ],
                 },
                 renderFileAsMarkdown: {
