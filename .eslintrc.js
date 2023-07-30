@@ -55,7 +55,7 @@ module.exports = {
             },
         ],
         "lines-around-comment": [
-            "error",
+            "warn",
             {
                 allowBlockStart: true,
                 beforeLineComment: true,
