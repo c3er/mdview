@@ -287,4 +287,4 @@ graph TD
 ```
 ````
 
-See the [Mermaid documentation](https://mermaid.js.org/intro/) for the syntax and possibilities offered.
+There is an [examples document](mermaid-examples.md) showcasing different diagrams. See the [Mermaid documentation](https://mermaid.js.org/intro/) for more information.
