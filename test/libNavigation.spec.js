@@ -102,7 +102,7 @@ describe("Navigation", () => {
 
         it("gets events", () => {
             htmlElement.onclick = htmlElement.onauxclick = null
-            navigation.openLink(htmlElement, mdFilePath1, documentDirectory)
+            navigation.registerLink(htmlElement, mdFilePath1, documentDirectory)
 
             assert.isNotNull(event.onclick)
             assert.isNotNull(event.onauxclick)

@@ -291,7 +291,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     alterTags("a", link => {
         const target = link.getAttribute("href")
         if (target) {
-            navigation.openLink(link, target, documentDirectory)
+            navigation.registerLink(link, target, documentDirectory)
             statusOnMouseOver(link, target)
         }
     })

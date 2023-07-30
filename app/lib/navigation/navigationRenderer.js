@@ -35,7 +35,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
 
 exports.init = electronMock => (electron = electronMock ?? require("electron"))
 
-exports.openLink = (linkElement, target, documentDirectory) => {
+exports.registerLink = (linkElement, target, documentDirectory) => {
     linkElement.onclick = event => {
         event.preventDefault()
         dispatchLink(target, documentDirectory, false)
