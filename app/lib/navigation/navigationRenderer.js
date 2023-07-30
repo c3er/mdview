@@ -11,6 +11,14 @@ function isInternalLink(url) {
     return url.startsWith("#")
 }
 
+function openFile(fullPath, shallOpenInNewWindow, scrollPosition = 0) {
+    ipc.send(
+        shallOpenInNewWindow ? ipc.messages.openFileInNewWindow : ipc.messages.openFile,
+        fullPath,
+        scrollPosition,
+    )
+}
+
 function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     const fullPath = path.join(documentDirectory, target)
     const scrollPosition = renderer.contentElement().scrollTop
@@ -25,11 +33,7 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     } else if (!file.isMarkdown(fullPath) && !file.isText(fullPath)) {
         electron.shell.openPath(fullPath)
     } else {
-        ipc.send(
-            shallOpenInNewWindow ? ipc.messages.openFileInNewWindow : ipc.messages.openFile,
-            fullPath,
-            scrollPosition,
-        )
+        openFile(fullPath, shallOpenInNewWindow, scrollPosition)
     }
 }
 
@@ -49,3 +53,5 @@ exports.registerLink = (linkElement, target, documentDirectory) => {
 }
 
 exports.back = () => ipc.send(ipc.messages.navigateBack)
+
+exports.openFile = openFile

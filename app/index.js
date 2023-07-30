@@ -168,6 +168,15 @@ function domContentLoadedHandler() {
     })
     toc.updateTheme(chooseTheme(Boolean(match.matches)))
 
+    document.body.ondragover = event => {
+        event.preventDefault()
+        event.dataTransfer.dropEffect = "copy"
+    }
+    document.body.ondrop = event => {
+        event.preventDefault()
+        navigation.openFile(event.dataTransfer.files[0].path, false)
+    }
+
     ipc.send(ipc.messages.finishLoad)
 }
 
