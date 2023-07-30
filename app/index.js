@@ -21,6 +21,9 @@ const toc = require("./lib/toc/tocRenderer")
 const TITLE = "Markdown Viewer"
 const MERMAID_MODULE_PATH = "../node_modules/mermaid/dist/mermaid.js"
 
+// Needed for theme switching
+let _hasMermaid = false
+
 function alterTags(tagName, handler) {
     ;[...document.getElementsByTagName(tagName)].forEach(handler)
 }
@@ -126,7 +129,7 @@ function isLocalPath(url) {
 }
 
 function hasMermaid(content) {
-    return content.includes("```mermaid")
+    return (_hasMermaid = content.includes("```mermaid"))
 }
 
 function toCodeView(filePath, content) {
@@ -137,6 +140,10 @@ function toCodeView(filePath, content) {
     // ``` have to be escaped. Unicode has an invisible separator character U+2063 that
     // fits this purpose.
     return `\`\`\`${language}\n${content.replaceAll("```", "\u2063```")}\n\`\`\``
+}
+
+function isDarkMode() {
+    return Boolean(matchMedia("(prefers-color-scheme: dark)").matches)
 }
 
 function handleDOMContentLoadedEvent() {
@@ -153,8 +160,13 @@ function handleDOMContentLoadedEvent() {
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
-    match.addEventListener("change", event => toc.updateTheme(chooseTheme(event.matches)))
-    toc.updateTheme(chooseTheme(match.matches))
+    match.addEventListener("change", event => {
+        toc.updateTheme(chooseTheme(Boolean(event.matches)))
+        if (_hasMermaid) {
+            reload(false)
+        }
+    })
+    toc.updateTheme(chooseTheme(Boolean(match.matches)))
 
     ipc.send(ipc.messages.finishLoad)
 }
@@ -336,6 +348,9 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     addEventListener("contextmenu", handleContextMenuEvent)
     if (hasMermaid(content)) {
         await import(MERMAID_MODULE_PATH)
+
+        // eslint-disable-next-line no-undef
+        mermaid.initialize({ theme: isDarkMode() ? "dark" : "default" })
 
         // eslint-disable-next-line no-undef
         mermaid.run()
