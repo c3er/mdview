@@ -146,7 +146,7 @@ function isDarkMode() {
     return Boolean(matchMedia("(prefers-color-scheme: dark)").matches)
 }
 
-function handleDOMContentLoadedEvent() {
+function domContentLoadedHandler() {
     document.title = TITLE
 
     ipc.init()
@@ -171,7 +171,7 @@ function handleDOMContentLoadedEvent() {
     ipc.send(ipc.messages.finishLoad)
 }
 
-function handleContextMenuEvent(event) {
+function contextMenuHandler(event) {
     event.preventDefault()
 
     const toClipboard = electron.clipboard.writeText
@@ -227,7 +227,7 @@ function handleContextMenuEvent(event) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", handleDOMContentLoadedEvent)
+document.addEventListener("DOMContentLoaded", domContentLoadedHandler)
 
 onkeydown = event => {
     switch (event.key) {
@@ -345,7 +345,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     }
     document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
 
-    addEventListener("contextmenu", handleContextMenuEvent)
+    addEventListener("contextmenu", contextMenuHandler)
     if (hasMermaid(content)) {
         await import(MERMAID_MODULE_PATH)
 
