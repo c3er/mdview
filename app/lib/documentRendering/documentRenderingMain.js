@@ -16,6 +16,8 @@ const UPDATE_FILE_SPECIFICA_NAV_ID = "update-file-specific-document-rendering"
 let _mainMenu
 let _applicationSettings
 
+let _previousFilePath = ""
+
 function isMarkdownFileType(filePath) {
     return _applicationSettings.mdFileTypes.includes(fileLib.extractFileEnding(filePath))
 }
@@ -35,7 +37,6 @@ function setRenderFileTypeAsMarkdown(filePath, shallRenderAsMarkdown) {
 }
 
 function notifyOptionChanges(filePath) {
-    filePath = filePath ?? navigation.getCurrentLocation().filePath
     const documentSettings = storage.loadDocumentSettings(filePath)
     ipc.send(ipc.messages.changeRenderingOptions, {
         lineBreaksEnabled: _applicationSettings.lineBreaksEnabled,
@@ -51,13 +52,13 @@ function changeOption(setter) {
     notifyOptionChanges()
 }
 
-function updateFileSpecificRendering() {
+function updateFileSpecificRendering(filePath) {
     menu.setChecked(
         _mainMenu,
         RENDER_FILE_AS_MD_MENU_ID,
         storage.loadDocumentSettings().renderAsMarkdown,
     )
-    notifyOptionChanges()
+    notifyOptionChanges(filePath)
 }
 
 exports.ENABLE_LINE_BREAKS_MENU_ID = ENABLE_LINE_BREAKS_MENU_ID
@@ -75,7 +76,13 @@ exports.HIDE_METADATA_MENU_ID = HIDE_METADATA_MENU_ID
 exports.init = (mainMenu, applicationSettings, filePath) => {
     _mainMenu = mainMenu
     _applicationSettings = applicationSettings
-    navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, updateFileSpecificRendering)
+    navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, () => {
+        const filePath = navigation.getCurrentLocation().filePath
+        if (filePath !== _previousFilePath) {
+            updateFileSpecificRendering(filePath)
+        }
+        _previousFilePath = filePath
+    })
 
     menu.setChecked(_mainMenu, ENABLE_LINE_BREAKS_MENU_ID, applicationSettings.lineBreaksEnabled)
     menu.setChecked(_mainMenu, ENABLE_TYPOGRAPHY_MENU_ID, applicationSettings.typographyEnabled)
