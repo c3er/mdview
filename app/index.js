@@ -146,6 +146,11 @@ function isDarkMode() {
     return Boolean(matchMedia("(prefers-color-scheme: dark)").matches)
 }
 
+function dropHandler(event) {
+    event.preventDefault()
+    navigation.openFile(event.dataTransfer.files[0].path, false)
+}
+
 function domContentLoadedHandler() {
     document.title = TITLE
 
@@ -172,10 +177,7 @@ function domContentLoadedHandler() {
         event.preventDefault()
         event.dataTransfer.dropEffect = "copy"
     }
-    document.body.ondrop = event => {
-        event.preventDefault()
-        navigation.openFile(event.dataTransfer.files[0].path, false)
-    }
+    document.body.ondrop = dropHandler
 
     ipc.send(ipc.messages.finishLoad)
 }

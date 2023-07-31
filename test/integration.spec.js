@@ -488,6 +488,26 @@ describe("Integration tests with their own app instance each", () => {
             assert.notStrictEqual(changed.y, orig.y)
         })
     })
+
+    describe("Drag & drop", () => {
+        it("can be done", async () => {
+            const filePathToDrop = path.join(DEFAULT_DOCUMENT_DIR, "languages.md")
+
+            // The already defined event in the mocking module cannot be used here.
+            // The "evaluateHandle" function serializes the parameters and an object containing
+            // a function cannot be serialized.
+            await _page.evaluateHandle(filePath => {
+                // eslint-disable-next-line no-undef
+                dropHandler({
+                    preventDefault() {},
+                    dataTransfer: {
+                        files: [{ path: filePath }],
+                    },
+                })
+            }, filePathToDrop)
+            assert.include(await _page.title(), filePathToDrop)
+        })
+    })
 })
 
 describe("Integration tests with special documents", () => {
