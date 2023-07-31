@@ -298,7 +298,6 @@ ipc.listen(ipc.messages.fileOpen, async file => {
 
     renderer.contentElement().innerHTML = documentRendering.renderContent(content)
     if (!documentRendering.shallRenderAsMarkdown() || rawText.isInRawView()) {
-        console.log("!documentRendering.shallRenderAsMarkdown() || rawText.isInRawView()")
         toc.overrideSettings(true)
         toc.setVisibility(false)
     } else {
