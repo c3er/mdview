@@ -18,6 +18,10 @@ let _applicationSettings
 
 let _previousFilePath = ""
 
+function currentFilePath() {
+    return navigation.getCurrentLocation().filePath
+}
+
 function isMarkdownFileType(filePath) {
     return _applicationSettings.mdFileTypes.includes(fileLib.extractFileEnding(filePath))
 }
@@ -49,7 +53,7 @@ function notifyOptionChanges(filePath) {
 
 function changeOption(setter) {
     setter()
-    notifyOptionChanges()
+    notifyOptionChanges(currentFilePath())
 }
 
 function updateFileSpecificRendering(filePath) {
@@ -77,7 +81,7 @@ exports.init = (mainMenu, applicationSettings, filePath) => {
     _mainMenu = mainMenu
     _applicationSettings = applicationSettings
     navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, () => {
-        const filePath = navigation.getCurrentLocation().filePath
+        const filePath = currentFilePath()
         if (filePath !== _previousFilePath) {
             updateFileSpecificRendering(filePath)
         }
