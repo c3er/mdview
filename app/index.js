@@ -1,6 +1,6 @@
 "use strict"
 
-const fs = require("fs")
+const fs = require("fs/promises")
 const path = require("path")
 
 const electron = require("electron")
@@ -146,9 +146,13 @@ function isDarkMode() {
     return Boolean(matchMedia("(prefers-color-scheme: dark)").matches)
 }
 
-function dropHandler(event) {
+async function dropHandler(event) {
     event.preventDefault()
-    navigation.openFile(event.dataTransfer.files[0].path, false)
+    const filePath = event.dataTransfer.files[0].path
+    if (!(await fs.stat(filePath)).isFile()) {
+        return
+    }
+    navigation.openFile(filePath, false)
 }
 
 function domContentLoadedHandler() {
@@ -259,12 +263,15 @@ onkeydown = event => {
 }
 
 ipc.listen(ipc.messages.fileOpen, async file => {
+    // Needed for testing
+    document.getElementById("loading-indicator").innerHTML = ""
+
     contentBlocking.changeInfoElementVisiblity(false)
     clearStatusBar()
     toc.reset()
 
     const filePath = file.path
-    const buffer = fs.readFileSync(filePath)
+    const buffer = await fs.readFile(filePath)
     let encoding = file.encoding
     if (!encoding) {
         encoding = encodingLib.detect(buffer)

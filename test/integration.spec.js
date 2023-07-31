@@ -34,26 +34,26 @@ async function cleanup() {
     await lib.removeDataDir()
 }
 
+async function waitForWindowLoaded() {
+    await _page.locator("#loading-indicator #loaded").waitFor({ state: "attached", timeout: 5000 })
+}
+
 async function startApp(documentPath) {
-    const app = await electron.launch({
+    _app = await electron.launch({
         args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
         executablePath: electronPath,
     })
 
-    const page = await app.firstWindow()
-    page.on("console", msg => addMessage(msg.text()))
-    page.on("crash", () => assert.fail("Crash happened"))
-    page.on("pageerror", error => assert.fail(`Page error: ${error}`))
+    _page = await _app.firstWindow()
+    _page.on("console", msg => addMessage(msg.text()))
+    _page.on("crash", () => assert.fail("Crash happened"))
+    _page.on("pageerror", error => assert.fail(`Page error: ${error}`))
 
     const defaultTimeout = 3000
-    page.setDefaultTimeout(defaultTimeout)
-    page.setDefaultNavigationTimeout(defaultTimeout)
+    _page.setDefaultTimeout(defaultTimeout)
+    _page.setDefaultNavigationTimeout(defaultTimeout)
 
-    // Wait until the window is actually loaded
-    await page.locator("#loading-indicator #loaded").waitFor({ state: "attached", timeout: 5000 })
-
-    _app = app
-    _page = page
+    await waitForWindowLoaded()
 }
 
 async function restartApp(documentPath) {
@@ -305,6 +305,7 @@ describe("Integration tests with their own app instance each", () => {
     describe("Links in document", () => {
         it("changes title after click", async () => {
             await _page.locator("#internal-test-link").click()
+            waitForWindowLoaded()
             assert.include(await _page.title(), "#some-javascript")
         })
     })
@@ -490,22 +491,30 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Drag & drop", () => {
-        it("can be done", async () => {
-            const filePathToDrop = path.join(DEFAULT_DOCUMENT_DIR, "languages.md")
-
+        async function drop(filePath) {
             // The already defined event in the mocking module cannot be used here.
             // The "evaluateHandle" function serializes the parameters and an object containing
             // a function cannot be serialized.
-            await _page.evaluateHandle(filePath => {
+            await _page.evaluateHandle(async filePath => {
                 // eslint-disable-next-line no-undef
-                dropHandler({
+                await dropHandler({
                     preventDefault() {},
                     dataTransfer: {
                         files: [{ path: filePath }],
                     },
                 })
-            }, filePathToDrop)
+            }, filePath)
+        }
+
+        it("can be done", async () => {
+            const filePathToDrop = path.join(DEFAULT_DOCUMENT_DIR, "languages.md")
+            await drop(filePathToDrop)
+            await waitForWindowLoaded()
             assert.include(await _page.title(), filePathToDrop)
+        })
+
+        it("does not crash after dropping a directory", async () => {
+            await drop(DEFAULT_DOCUMENT_DIR)
         })
     })
 })
