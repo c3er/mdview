@@ -1,6 +1,6 @@
 "use strict"
 
-const fs = require("fs/promises")
+const fs = require("fs")
 const path = require("path")
 
 const electron = require("electron")
@@ -147,10 +147,10 @@ function isDarkMode() {
     return Boolean(matchMedia("(prefers-color-scheme: dark)").matches)
 }
 
-async function dropHandler(event) {
+function dropHandler(event) {
     event.preventDefault()
     const filePath = event.dataTransfer.files[0].path
-    if (!(await fs.stat(filePath)).isFile() || !file.isText(filePath)) {
+    if (!fs.statSync(filePath).isFile() || !file.isText(filePath)) {
         return
     }
     navigation.openFile(filePath, false)
@@ -272,7 +272,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     toc.reset()
 
     const filePath = file.path
-    const buffer = await fs.readFile(filePath)
+    const buffer = fs.readFileSync(filePath)
     let encoding = file.encoding
     if (!encoding) {
         encoding = encodingLib.detect(buffer)
