@@ -10,6 +10,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/documentRendering/documentRenderingRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
+const file = require("./lib/file")
 const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
@@ -149,7 +150,7 @@ function isDarkMode() {
 async function dropHandler(event) {
     event.preventDefault()
     const filePath = event.dataTransfer.files[0].path
-    if (!(await fs.stat(filePath)).isFile()) {
+    if (!(await fs.stat(filePath)).isFile() || !file.isText(filePath)) {
         return
     }
     navigation.openFile(filePath, false)

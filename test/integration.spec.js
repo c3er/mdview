@@ -504,17 +504,24 @@ describe("Integration tests with their own app instance each", () => {
                     },
                 })
             }, filePath)
+
+            await waitForWindowLoaded()
         }
 
         it("can be done", async () => {
             const filePathToDrop = path.join(DEFAULT_DOCUMENT_DIR, "languages.md")
             await drop(filePathToDrop)
-            await waitForWindowLoaded()
             assert.include(await _page.title(), filePathToDrop)
         })
 
-        it("does not crash after dropping a directory", async () => {
+        it("doesn't crash after dropping a directory", async () => {
             await drop(DEFAULT_DOCUMENT_DIR)
+        })
+
+        it("doesn't try to load a binary file", async () => {
+            const imageFilePath = path.join(DEFAULT_DOCUMENT_DIR, "images", "image.png")
+            await drop(imageFilePath)
+            assert.notInclude(await _page.title(), imageFilePath)
         })
     })
 })
