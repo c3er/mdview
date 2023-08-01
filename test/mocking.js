@@ -36,6 +36,16 @@ class Event {
     }
 }
 
+class Process {
+    exitCalled = false
+    exitCode = 0
+
+    exit(code) {
+        this.exitCalled = true
+        this.exitCode = code
+    }
+}
+
 class WebRequestChannel {
     constructor() {
         this.clear()
@@ -161,6 +171,9 @@ const _electronDefault = {
                 },
             },
         },
+    },
+    dialog: {
+        showErrorBox() {},
     },
 }
 
@@ -398,6 +411,12 @@ exports.elements = {
             path: "#search-cancel-button",
         },
     },
+    errorDialog: {
+        path: "#error-dialog",
+        okButton: {
+            path: "#error-ok-button",
+        },
+    },
 }
 
 exports.mainWindow = {
@@ -446,6 +465,8 @@ exports.window = {
 }
 
 exports.createEvent = () => new Event()
+
+exports.createProcess = () => new Process()
 
 exports.loadHtmlElement = loadHtmlElement
 

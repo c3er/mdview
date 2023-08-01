@@ -14,6 +14,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const documentRendering = require("./lib/documentRendering/documentRenderingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
+const error = require("./lib/error/errorMain")
 const ipc = require("./lib/ipc/ipcMain")
 const log = require("./lib/log/log")
 const menu = require("./lib/main/menu")
@@ -41,12 +42,6 @@ let _isReloading = false
 let _scrollPosition = 0
 
 let _applicationSettings
-
-function error(msg) {
-    log.error("Error:", msg)
-    electron.dialog.showErrorBox("Error", `${msg}. Exiting.`)
-    process.exit(1)
-}
 
 function isMacOS() {
     return process.platform === "darwin"
@@ -89,9 +84,9 @@ function showAboutDialog(parentWindow) {
 
 function openFile(filePath, internalTarget, encoding) {
     if (!fs.existsSync(filePath)) {
-        error(`Unknown file: "${filePath}"`)
+        error.show(`Unknown file: "${filePath}"`)
     } else if (!fs.lstatSync(filePath).isFile()) {
-        error("Given path does not lead to a file")
+        error.show("Given path does not lead to a file")
     } else {
         navigation.go(filePath, internalTarget, encoding)
         _lastModificationTime = fs.statSync(filePath).mtimeMs
@@ -188,7 +183,7 @@ function createMainMenu() {
                                 openFile(filePath, null, encodingLib.load(filePath))
                             }
                         } catch (e) {
-                            error(`Problem at opening file:\n ${e}`)
+                            error.show(`Problem at opening file:\n ${e}`)
                         }
                     },
                 },
@@ -457,9 +452,16 @@ function createMainMenu() {
                     label: "De&bug",
                     submenu: [
                         {
-                            label: "Throw &exception",
+                            label: "Throw e&xception",
                             click() {
                                 throw new Error("An exception")
+                            },
+                        },
+                        {
+                            label: "Show &error dialog",
+                            id: error.SHOW_ERROR_MENU_ID,
+                            click() {
+                                ipc.send(ipc.messages.showErrorDialog, "An error")
                             },
                         },
                         {
@@ -540,6 +542,7 @@ electron.app.whenReady().then(() => {
     _cliArgs = cli.parse(process.argv)
 
     log.init(_cliArgs.isTest)
+    error.init(process)
     storage.init(_cliArgs.storageDir)
     _applicationSettings = storage.loadApplicationSettings()
 

@@ -22,6 +22,16 @@
         <script src="index.js"></script>
     </head>
     <body>
+        <dialog id="error-dialog">
+            <form>
+                <p>Error</p>
+                <div class="dialog-content" id="error-dialog-content"></div>
+                <div class="dialog-buttons">
+                    <button id="error-ok-button" value="error-dialog-default">OK</button>
+                </div>
+            </form>
+        </dialog>
+
         <!-- Based on https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog?retiredLocale=de -->
         <dialog id="search-dialog">
             <form>

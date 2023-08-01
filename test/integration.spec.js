@@ -475,6 +475,20 @@ describe("Integration tests with their own app instance each", () => {
         })
     })
 
+    describe("Error dialog", () => {
+        const error = require("../app/lib/error/errorMain")
+
+        it("is displayed and can be closed", async () => {
+            const errorDialogLocator = _page.locator(mocking.elements.errorDialog.path)
+
+            await clickMenuItem(error.SHOW_ERROR_MENU_ID)
+            assert.isTrue(await errorDialogLocator.isVisible())
+
+            await _page.locator(mocking.elements.errorDialog.okButton.path).click()
+            assert.isTrue(await elementIsHidden(mocking.elements.errorDialog.path))
+        })
+    })
+
     describe("Keyboard handling", () => {
         it("has focus on content", async () => {
             const contentLocator = _page.locator(

@@ -77,6 +77,10 @@
     display: table-cell;
 }
 
+.dialog-content {
+    font-size: 11pt;
+}
+
 .dialog-input-field {
     margin: 1em 0;
     width: 100%;

@@ -10,6 +10,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/documentRendering/documentRenderingRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
+const error = require("./lib/error/errorRenderer")
 const file = require("./lib/file")
 const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
@@ -167,6 +168,7 @@ function domContentLoadedHandler() {
     rawText.init(() => reload(false))
     navigation.init()
     search.init(document, () => reload(false))
+    error.init(document)
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
@@ -250,6 +252,8 @@ onkeydown = event => {
         case "Escape":
             if (search.isActive()) {
                 search.deactivate()
+            } else if (error.isOpen()) {
+                error.close()
             } else {
                 ipc.send(ipc.messages.closeApplication)
             }
@@ -412,3 +416,5 @@ ipc.listen(ipc.messages.print, () => {
 
     renderer.scrollTo(scrollPosition)
 })
+
+ipc.listen(ipc.messages.showErrorDialog, error.show)

@@ -36,3 +36,5 @@ exports.debugMessages = shared.debugMessages
 exports.infoMessages = shared.infoMessages
 
 exports.errorMessages = shared.errorMessages
+
+exports.reset = shared.clearMessages
