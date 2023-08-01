@@ -365,6 +365,24 @@ exports.elements = {
                     label: "&Developer Tools",
                     isEnabled: true,
                 },
+                debug: {
+                    label: "De&bug",
+                    isEnabled: true,
+                    sub: {
+                        throwException: {
+                            label: "Throw e&xception",
+                            isEnabled: true,
+                        },
+                        showError: {
+                            label: "Show &error dialog",
+                            isEnabled: true,
+                        },
+                        softReload: {
+                            label: "Soft &reload",
+                            isEnabled: true,
+                        },
+                    },
+                },
             },
         },
         help: {
