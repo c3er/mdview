@@ -495,9 +495,9 @@ describe("Integration tests with their own app instance each", () => {
             // The already defined event in the mocking module cannot be used here.
             // The "evaluateHandle" function serializes the parameters and an object containing
             // a function cannot be serialized.
-            await _page.evaluateHandle(async filePath => {
+            await _page.evaluateHandle(filePath => {
                 // eslint-disable-next-line no-undef
-                await dropHandler({
+                dropHandler({
                     preventDefault() {},
                     dataTransfer: {
                         files: [{ path: filePath }],
