@@ -32,6 +32,8 @@ For things like exception messages, application crashes or non working menu poin
 
 If you like to add some feature or fix an apparent bug, it is recommended to open an issue explaining the change first. This makes it possible to discuss the feature or bug fix first and makes sure that you don't put to much work in the case that the author does not want that particular change to his tool.
 
+Though, in some cases, like fixing a typo, it may be easier to just open a pull request directly. Opening an issue first is just a recommendation.
+
 Use GitHub's [pull request mechanism](https://github.com/c3er/mdview/compare) to propose your contribution.
 
 Please ensure following points:
