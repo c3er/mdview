@@ -246,6 +246,13 @@ describe("Integration tests with single app instance", () => {
 })
 
 describe("Integration tests with their own app instance each", () => {
+    async function assertErrorDialog() {
+        assert.isTrue(await _page.locator(mocking.elements.errorDialog.path).isVisible())
+
+        await _page.locator(mocking.elements.errorDialog.okButton.path).click()
+        assert.isTrue(await elementIsHidden(mocking.elements.errorDialog.path))
+    }
+
     beforeEach(async () => {
         await cleanup()
         await startApp(DEFAULT_DOCUMENT_PATH)
@@ -479,13 +486,8 @@ describe("Integration tests with their own app instance each", () => {
         const error = require("../app/lib/error/errorMain")
 
         it("is displayed and can be closed", async () => {
-            const errorDialogLocator = _page.locator(mocking.elements.errorDialog.path)
-
             await clickMenuItem(error.SHOW_ERROR_MENU_ID)
-            assert.isTrue(await errorDialogLocator.isVisible())
-
-            await _page.locator(mocking.elements.errorDialog.okButton.path).click()
-            assert.isTrue(await elementIsHidden(mocking.elements.errorDialog.path))
+            await assertErrorDialog()
         })
     })
 
@@ -530,11 +532,13 @@ describe("Integration tests with their own app instance each", () => {
 
         it("doesn't crash after dropping a directory", async () => {
             await drop(DEFAULT_DOCUMENT_DIR)
+            await assertErrorDialog()
         })
 
         it("doesn't try to load a binary file", async () => {
             const imageFilePath = path.join(DEFAULT_DOCUMENT_DIR, "images", "image.png")
             await drop(imageFilePath)
+            await assertErrorDialog()
             assert.notInclude(await _page.title(), imageFilePath)
         })
     })

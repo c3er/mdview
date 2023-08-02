@@ -150,11 +150,20 @@ function isDarkMode() {
 
 function dropHandler(event) {
     event.preventDefault()
+
     const filePath = event.dataTransfer.files[0].path
-    if (!fs.statSync(filePath).isFile() || !file.isText(filePath)) {
+    const fileStat = fs.statSync(filePath)
+
+    if (fileStat.isDirectory()) {
+        error.show(`Cannot display: "${filePath}" is a directory`)
+    } else if (!fileStat.isFile()) {
+        error.show(`Cannot display: "${filePath}" is not a valid file`)
         return
+    } else if (!file.isText(filePath)) {
+        error.show(`Cannot display: "${filePath}" is not a text file`)
+    } else {
+        navigation.openFile(filePath, false)
     }
-    navigation.openFile(filePath, false)
 }
 
 function domContentLoadedHandler() {
