@@ -264,24 +264,16 @@ describe("Integration tests with their own app instance each", () => {
         describe("UI element", () => {
             it("disappears at click on X", async () => {
                 const blockedContentArea = mocking.elements.blockedContentArea
-                const blockedContentAreaLocator = _page.locator(blockedContentArea.path)
-                const blockedContentCloseButtonLocator = _page.locator(
-                    blockedContentArea.closeButton.path,
-                )
 
-                await blockedContentCloseButtonLocator.click()
-                assert.isFalse(await blockedContentAreaLocator.isVisible())
+                await _page.locator(blockedContentArea.closeButton.path).click()
+                assert.isTrue(await elementIsHidden(blockedContentArea.path))
             })
 
             it("unblocks content", async () => {
                 const blockedContentArea = mocking.elements.blockedContentArea
-                const blockedContentAreaLocator = _page.locator(blockedContentArea.path)
-                const blockedContentTextContainerLocator = _page.locator(
-                    blockedContentArea.textContainer.path,
-                )
 
-                await blockedContentTextContainerLocator.click()
-                assert.isFalse(await blockedContentAreaLocator.isVisible())
+                await _page.locator(blockedContentArea.textContainer.path).click()
+                assert.isTrue(await elementIsHidden(blockedContentArea.path))
                 assert.isTrue(hasUnblockedContentMessage())
             })
         })
