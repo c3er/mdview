@@ -398,7 +398,7 @@ function createMainMenu() {
                             },
                         },
                         {
-                            label: "Hide &Metatdata Header",
+                            label: "Hide &Metadata Header",
                             type: "checkbox",
                             id: documentRendering.HIDE_METADATA_MENU_ID,
                             click() {

@@ -334,7 +334,7 @@ exports.elements = {
                             isChecked: true,
                         },
                         {
-                            label: "Hide &Metatdata Header",
+                            label: "Hide &Metadata Header",
                             isEnabled: true,
                             isChecked: false,
                         },
