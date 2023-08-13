@@ -106,24 +106,24 @@
     "markdown-it-footnote": "3.0.3",
     "markdown-it-html5-embed": "1.0.0",
     "markdown-it-mark": "3.0.1",
-    "markdown-it-multimd-table": "4.2.2",
+    "markdown-it-multimd-table": "4.2.3",
     "markdown-it-new-katex": "2.0.3",
     "markdown-it-sub": "1.0.0",
     "markdown-it-sup": "1.0.0",
     "markdown-it-task-checkbox": "1.0.6",
-    "mermaid": "10.2.4"
+    "mermaid": "10.3.1"
   },
   "devDependencies": {
     "chai": "4.3.7",
-    "electron": "25.2.0",
-    "electron-builder": "24.4.0",
-    "eslint": "8.44.0",
-    "eslint-config-prettier": "8.8.0",
+    "electron": "25.5.0",
+    "electron-builder": "24.6.3",
+    "eslint": "8.47.0",
+    "eslint-config-prettier": "9.0.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.2.0",
-    "playwright": "1.35.1",
-    "prettier": "3.0.0",
-    "tslib": "2.6.0",
+    "playwright": "1.37.0",
+    "prettier": "3.0.1",
+    "tslib": "2.6.1",
     "xvfb-maybe": "0.2.1"
   }
 }
