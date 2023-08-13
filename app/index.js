@@ -158,7 +158,6 @@ function dropHandler(event) {
         error.show(`Cannot display: "${filePath}" is a directory`)
     } else if (!fileStat.isFile()) {
         error.show(`Cannot display: "${filePath}" is not a valid file`)
-        return
     } else if (!file.isText(filePath)) {
         error.show(`Cannot display: "${filePath}" is not a text file`)
     } else {

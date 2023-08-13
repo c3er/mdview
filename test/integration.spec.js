@@ -247,10 +247,12 @@ describe("Integration tests with single app instance", () => {
 
 describe("Integration tests with their own app instance each", () => {
     async function assertErrorDialog() {
-        assert.isTrue(await _page.locator(mocking.elements.errorDialog.path).isVisible())
+        const errorDialog = mocking.elements.errorDialog
 
-        await _page.locator(mocking.elements.errorDialog.okButton.path).click()
-        assert.isTrue(await elementIsHidden(mocking.elements.errorDialog.path))
+        assert.isTrue(await _page.locator(errorDialog.path).isVisible())
+
+        await _page.locator(errorDialog.okButton.path).click()
+        assert.isTrue(await elementIsHidden(errorDialog.path))
     }
 
     beforeEach(async () => {
