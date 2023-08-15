@@ -249,7 +249,9 @@ describe("Integration tests with their own app instance each", () => {
     async function assertErrorDialog() {
         const errorDialog = mocking.elements.errorDialog
 
-        assert.isTrue(await _page.locator(errorDialog.path).isVisible())
+        const errorDialogLocator = _page.locator(errorDialog.path)
+        await errorDialogLocator.waitFor()
+        assert.isTrue(await errorDialogLocator.isVisible())
 
         await _page.locator(errorDialog.okButton.path).click()
         assert.isTrue(await elementIsHidden(errorDialog.path))
