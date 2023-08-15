@@ -21,6 +21,7 @@ const menu = require("./lib/main/menu")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const search = require("./lib/search/searchMain")
+const settings = require("./lib/settings/settingsMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/toc/tocMain")
 
@@ -234,6 +235,15 @@ function createMainMenu() {
                     enabled: false,
                     click() {
                         search.previous()
+                    },
+                },
+                { type: "separator" },
+                {
+                    label: "&Settings...",
+                    accelerator: "CmdOrCtrl+,",
+                    id: settings.SETTINGS_MENU_ID,
+                    click() {
+                        settings.open()
                     },
                 },
             ],
@@ -561,6 +571,7 @@ electron.app.whenReady().then(() => {
     encodingLib.init(_mainMenu)
     contentBlocking.init(_mainMenu)
     rawText.init(_mainMenu)
+    settings.init(_mainMenu)
     search.init(_mainMenu)
 
     electron.app.on("activate", ensureWindowExists)

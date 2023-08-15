@@ -27,6 +27,8 @@ exports.messages = {
     searchIsActive: "search-is-active",
     searchNext: "search-next",
     searchPrevious: "search-previous",
+    settings: "settings",
+    settingsDialogIsOpen: "settings-dialog-is-open",
     showErrorDialog: "show-error-dialog",
     unblockAll: "unblock-all",
     unblockURL: "unblock-url",

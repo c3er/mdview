@@ -18,6 +18,7 @@ const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
 const renderer = require("./lib/renderer/common")
 const search = require("./lib/search/searchRenderer")
+const settings = require("./lib/settings/settingsRenderer")
 const toc = require("./lib/toc/tocRenderer")
 
 const TITLE = "Markdown Viewer"
@@ -176,6 +177,7 @@ function domContentLoadedHandler() {
     rawText.init(() => reload(false))
     navigation.init()
     search.init(document, () => reload(false))
+    settings.init(document)
     error.init(document)
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
@@ -260,6 +262,8 @@ onkeydown = event => {
         case "Escape":
             if (search.isActive()) {
                 search.deactivate()
+            } else if (settings.isOpen()) {
+                settings.close()
             } else if (error.isOpen()) {
                 error.close()
             } else {

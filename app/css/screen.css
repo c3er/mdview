@@ -1,10 +1,11 @@
 :root {
+    --border-color: #ccc;
+    --border-width: 1px;
+    --dark-border-color: #555;
     --element-dark-bgcolor: #292a2d;
     --highlight-dark-color: #444;
     --highlight-light-color: #ddd;
     --status-bar-height: 20px;
-    --std-border-color: #ccc;
-    --std-border-width: 1px;
     --strong-highlight-dark-color: #777;
     --strong-highlight-light-color: #aaa;
     --text-dark-color: #f8f8f2;
@@ -12,7 +13,7 @@
 
 #status-bar {
     background-color: #fff;
-    border-top: var(--std-border-width) solid var(--std-border-color);
+    border-top: var(--border-width) solid var(--border-color);
     bottom: 0;
     color: #555;
     height: var(--status-bar-height);
@@ -32,7 +33,7 @@
 
 #menu-border {
     background-color: #fff;
-    border-bottom: var(--std-border-width) solid var(--std-border-color);
+    border-bottom: var(--border-width) solid var(--border-color);
     height: 0px;
     left: 0;
     position: fixed;
@@ -46,7 +47,7 @@
     border-bottom-style: solid;
     border-top-style: solid;
     border-color: #ddd;
-    border-width: var(--std-border-width);
+    border-width: var(--border-width);
     color: black;
     cursor: pointer;
     height: 30px;
@@ -119,7 +120,7 @@ input {
 }
 
 #separator {
-    background-color: var(--std-border-color);
+    background-color: var(--border-color);
     cursor: col-resize;
     flex-grow: 0;
     flex-shrink: 0;
@@ -197,6 +198,20 @@ input {
     background-color: var(--strong-highlight-light-color);
 }
 
+.dialog-tab-container {
+    align-items: stretch;
+    display: flex;
+}
+
+.dialog-tab {
+    border-color: var(--border-color);
+    border-style: solid;
+    border-width: var(--border-width);
+    flex-grow: 1;
+    margin: 0px;
+    padding: 5px;
+}
+
 @media (prefers-color-scheme: dark) {
     div.info {
         background-color: #726a95;
@@ -216,13 +231,13 @@ input {
 
     #status-bar {
         background: var(--element-dark-bgcolor);
-        border-top: var(--std-border-width) solid black;
+        border-top: var(--border-width) solid var(--dark-border-color);
         color: var(--text-dark-color);
     }
 
     #menu-border {
         background-color: var(--element-dark-bgcolor);
-        border-bottom: var(--std-border-width) solid black;
+        border-bottom: var(--border-width) solid var(--dark-border-color);
     }
 
     #blocked-content-info {
@@ -232,7 +247,7 @@ input {
     }
 
     #separator {
-        background-color: #555;
+        background-color: var(--dark-border-color);
     }
 
     .toc-section a,
@@ -260,5 +275,9 @@ input {
     input {
         background-color: var(--element-dark-bgcolor);
         color: var(--text-dark-color);
+    }
+
+    .dialog-tab {
+        border-color: var(--dark-border-color);
     }
 }

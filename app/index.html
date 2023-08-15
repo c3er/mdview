@@ -32,6 +32,35 @@
             </form>
         </dialog>
 
+        <dialog id="settings-dialog">
+            <form>
+                <p>Settings</p>
+                <div class="dialog-content">
+                    <div class="dialog-tab-container">
+                        <div class="dialog-tab" id="application-settings-tab">Application wide</div>
+                        <div class="dialog-tab" id="document-settings-tab">This document</div>
+                    </div>
+                    <div class="dialog-tab-content" id="application-settings-tab-content">
+                        Application wide settings
+                    </div>
+                    <div class="dialog-tab-content" id="document-settings-tab-content">
+                        Document specific settings
+                    </div>
+                </div>
+                <div class="dialog-buttons">
+                    <button id="settings-ok-button" value="settings-dialog-default">OK</button>
+                    <button
+                        id="settings-cancel-button"
+                        value="settings-dialog-cancel"
+                        formmethod="dialog"
+                    >
+                        Cancel
+                    </button>
+                    <button id="settings-apply-button" value="settings-dialog-apply">Apply</button>
+                </div>
+            </form>
+        </dialog>
+
         <!-- Based on https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog?retiredLocale=de -->
         <dialog id="search-dialog">
             <form>

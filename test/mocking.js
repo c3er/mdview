@@ -229,6 +229,10 @@ exports.elements = {
                     label: "Find &previous",
                     isEnabled: false,
                 },
+                settings: {
+                    label: "&Settings...",
+                    isEnabled: true,
+                },
             },
         },
         view: {
