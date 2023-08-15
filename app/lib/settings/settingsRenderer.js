@@ -11,12 +11,22 @@ let _dialogIsOpen = false
 let _tabElements
 let _tabContentElements
 
+function applySettings() {
+    console.log("Apply settings...")
+}
+
 function changeTab(tabIndex) {
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
         _tabElements[i].style.borderBottomStyle = i === tabIndex ? "none" : "solid"
         _tabContentElements[i].style.display = i === tabIndex ? "block" : "none"
     }
+}
+
+function handleConfirm(event) {
+    event.preventDefault()
+    applySettings()
+    _dialogElement.close()
 }
 
 exports.init = document => {
@@ -38,21 +48,25 @@ exports.init = document => {
     }
     changeTab(0)
 
+    _dialogElement.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            handleConfirm(event)
+        }
+    })
     _dialogElement.addEventListener("close", () => {
         _dialogIsOpen = false
         ipc.send(ipc.messages.settingsDialogIsOpen, false)
     })
 
-    _document.getElementById("settings-ok-button").addEventListener("click", event => {
-        event.preventDefault()
-        _dialogElement.close()
-    })
+    _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
         event.preventDefault()
+        applySettings()
     })
 
     ipc.listen(ipc.messages.settings, () => {
         _dialogElement.showModal()
+        _document.getElementById("settings-ok-button").focus()
         _dialogIsOpen = true
         ipc.send(ipc.messages.settingsDialogIsOpen, true)
     })
