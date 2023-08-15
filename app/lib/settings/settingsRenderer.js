@@ -12,8 +12,10 @@ let _tabElements
 let _tabContentElements
 
 function changeTab(tabIndex) {
-    for (const [i, tabContentElement] of _tabContentElements.entries()) {
-        tabContentElement.style.display = i === tabIndex ? "block" : "none"
+    const tabCount = _tabElements.length
+    for (let i = 0; i < tabCount; i++) {
+        _tabElements[i].style.borderBottomStyle = i === tabIndex ? "none" : "solid"
+        _tabContentElements[i].style.display = i === tabIndex ? "block" : "none"
     }
 }
 

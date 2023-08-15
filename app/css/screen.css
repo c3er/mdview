@@ -95,6 +95,7 @@
     display: flex;
     gap: 10px;
     justify-content: flex-end;
+    margin-top: 10px;
 }
 
 .dialog-buttons button {
@@ -207,8 +208,17 @@ input {
     border-color: var(--border-color);
     border-style: solid;
     border-width: var(--border-width);
+    cursor: default;
     flex-grow: 1;
     margin: 0px;
+    padding: 5px;
+}
+
+.dialog-tab-content {
+    border-color: var(--border-color);
+    border-style: solid;
+    border-width: var(--border-width);
+    border-top-style: none; /* Needs to be after other border definitions */
     padding: 5px;
 }
 
@@ -278,6 +288,10 @@ input {
     }
 
     .dialog-tab {
+        border-color: var(--dark-border-color);
+    }
+
+    .dialog-tab-content {
         border-color: var(--dark-border-color);
     }
 }
