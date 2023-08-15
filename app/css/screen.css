@@ -223,7 +223,11 @@ input[type="number"]::-webkit-outer-spin-button {
     cursor: default;
     flex-grow: 1;
     margin: 0px;
-    padding: 5px;
+    padding: 10px;
+}
+
+.dialog-tab:hover {
+    background-color: var(--highlight-light-color);
 }
 
 .dialog-tab-content {
@@ -305,6 +309,10 @@ input[type="number"]::-webkit-outer-spin-button {
 
     .dialog-tab {
         border-color: var(--dark-border-color);
+    }
+
+    .dialog-tab:hover {
+        background-color: var(--highlight-dark-color);
     }
 
     .dialog-tab-content {

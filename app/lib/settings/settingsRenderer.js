@@ -21,15 +21,23 @@ function changeTab(tabIndex) {
 
 exports.init = document => {
     _document = document
+    _dialogElement = _document.getElementById("settings-dialog")
 
     _tabElements = [..._document.getElementsByClassName(DIALOG_TAB_CLASS)]
     _tabContentElements = [..._document.getElementsByClassName(DIALOG_TAB_CONSTENT_CLASS)]
-    for (const [i, tabElement] of _tabElements.entries()) {
-        tabElement.addEventListener("click", () => changeTab(i))
+
+    // Tabs should have the same height. To determine the maximum height, the dialog has to be visible.
+    _dialogElement.show()
+    const maxTabHeight = Math.max(..._tabContentElements.map(element => element.clientHeight))
+    _dialogElement.close()
+
+    const tabCount = _tabElements.length
+    for (let i = 0; i < tabCount; i++) {
+        _tabElements[i].addEventListener("click", () => changeTab(i))
+        _tabContentElements[i].style.minHeight = `${maxTabHeight}px`
     }
     changeTab(0)
 
-    _dialogElement = _document.getElementById("settings-dialog")
     _dialogElement.addEventListener("close", () => {
         _dialogIsOpen = false
         ipc.send(ipc.messages.settingsDialogIsOpen, false)
