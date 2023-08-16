@@ -6,6 +6,8 @@ exports.LIGHT_THEME = "light"
 
 exports.DARK_THEME = "dark"
 
+exports.ZOOM_DEFAULT = 1.0
+
 exports.isWebURL = url =>
     !url.startsWith("file://") && !url.startsWith("devtools://") && url.includes("://")
 

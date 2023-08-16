@@ -288,6 +288,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     toc.reset()
 
     const filePath = file.path
+    settings.setFilePath(filePath)
     const buffer = fs.readFileSync(filePath)
     let encoding = file.encoding
     if (!encoding) {
