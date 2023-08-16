@@ -35,6 +35,15 @@ class StorageBase {
         }
     }
 
+    toJSON() {
+        const getters = common.listGettersWithSetters(this)
+        const obj = {}
+        for (const getter of getters) {
+            obj[getter] = this[getter]
+        }
+        return obj
+    }
+
     static _initStorageDir(storageDir) {
         fs.mkdirSync(storageDir ?? _dataDir, { recursive: true })
     }

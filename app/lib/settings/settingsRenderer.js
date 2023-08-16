@@ -11,8 +11,11 @@ let _dialogIsOpen = false
 let _tabElements
 let _tabContentElements
 
+let _applicationSettings
+let _documentSettings
+
 function applySettings() {
-    console.log("Apply settings...")
+    ipc.send(ipc.messages.applySettings, _applicationSettings, _documentSettings)
 }
 
 function changeTab(tabIndex) {
@@ -64,7 +67,13 @@ exports.init = document => {
         applySettings()
     })
 
-    ipc.listen(ipc.messages.settings, () => {
+    ipc.listen(ipc.messages.settings, (applicationSettings, documentSettings) => {
+        console.log("applicationSettings", applicationSettings)
+        console.log("documentSettings", documentSettings)
+
+        _applicationSettings = applicationSettings
+        _documentSettings = documentSettings
+
         _dialogElement.showModal()
         _document.getElementById("settings-ok-button").focus()
         _dialogIsOpen = true
