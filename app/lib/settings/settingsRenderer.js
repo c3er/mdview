@@ -9,6 +9,9 @@ let _dialogIsOpen = false
 let _tabElements
 let _tabContentElements
 
+let _systemThemeRadioButton
+let _lightThemeRadioButton
+let _darkThemeRadioButton
 let _zoomInput
 let _singleLineBreakCheckbox
 let _typographyEnabledCheckbox
@@ -28,15 +31,27 @@ function updateTocForDocumentCheckbox() {
         _documentSettings.showTocOverridesAppSettings && _documentSettings.showToc
 }
 
+function updateMdFileTypeSetting() {
+    const mdFileTypes = _applicationSettings.mdFileTypes
+    const currentFileType = _filePath.split(".").at(-1)
+    const renderFileTypeAsMarkdown = mdFileTypes.some(fileType => _filePath.endsWith(fileType))
+    if (_renderFileTypeAsMarkdownCheckbox.checked) {
+        if (!renderFileTypeAsMarkdown) {
+            mdFileTypes.push(currentFileType)
+        }
+    } else if (renderFileTypeAsMarkdown) {
+        _applicationSettings.mdFileTypes = mdFileTypes.filter(
+            fileType => fileType !== currentFileType,
+        )
+    }
+}
+
 function populateDialog() {
-    // Application settings
-    _document.getElementById(
-        {
-            system: "system-theme",
-            light: "light-theme",
-            dark: "dark-theme",
-        }[_applicationSettings.theme],
-    ).checked = true
+    ;({
+        system: _systemThemeRadioButton,
+        light: _lightThemeRadioButton,
+        dark: _darkThemeRadioButton,
+    })[_applicationSettings.theme].checked = true
     _zoomInput.value = _applicationSettings.zoom
     _singleLineBreakCheckbox.checked = _applicationSettings.lineBreaksEnabled
     _typographyEnabledCheckbox.checked = _applicationSettings.typographyEnabled
@@ -53,6 +68,26 @@ function populateDialog() {
 }
 
 function applySettings() {
+    // Application settings
+    _applicationSettings.theme = Object.entries({
+        system: _systemThemeRadioButton,
+        light: _lightThemeRadioButton,
+        dark: _darkThemeRadioButton,
+    })
+        .filter(([, element]) => element.checked)
+        .map(([theme]) => theme)[0]
+    _applicationSettings.zoom = _zoomInput.value
+    _applicationSettings.lineBreaksEnabled = _singleLineBreakCheckbox.checked
+    _applicationSettings.typographyEnabled = _typographyEnabledCheckbox.checked
+    _applicationSettings.emojisEnabled = _enableEmojisCheckbox.checked
+    _applicationSettings.hideMetadata = _hideMetadataCheckbox.checked
+    updateMdFileTypeSetting()
+    _applicationSettings.showToc = _showTocCheckbox.checked
+
+    // Document settings
+    _documentSettings.showToc = _showTocForDocumentCheckbox.checked
+    _documentSettings.renderAsMarkdown = _renderDocumentAsMarkdownCheckbox.checked
+
     ipc.send(ipc.messages.applySettings, _applicationSettings, _documentSettings)
 }
 
@@ -74,6 +109,9 @@ exports.init = document => {
     _document = document
     _dialogElement = _document.getElementById("settings-dialog")
 
+    _systemThemeRadioButton = _document.getElementById("system-theme")
+    _lightThemeRadioButton = _document.getElementById("light-theme")
+    _darkThemeRadioButton = _document.getElementById("dark-theme")
     _zoomInput = _document.getElementById("zoom")
     _singleLineBreakCheckbox = _document.getElementById("single-line-break")
     _typographyEnabledCheckbox = _document.getElementById("typographic-replacements")
@@ -118,6 +156,10 @@ exports.init = document => {
         _documentSettings.showTocOverridesAppSettings = false
         updateTocForDocumentCheckbox()
     })
+    _showTocForDocumentCheckbox.addEventListener(
+        "click",
+        () => (_documentSettings.showTocOverridesAppSettings = true),
+    )
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
