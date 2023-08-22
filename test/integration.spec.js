@@ -7,6 +7,7 @@ const playwright = require("playwright")
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
+const settings = require("../app/lib/settings/settingsMain")
 const toc = require("../app/lib/toc/tocMain")
 
 const electron = playwright._electron
@@ -298,8 +299,19 @@ describe("Integration tests with their own app instance each", () => {
 
     describe("Theme switching", () => {
         it("can be done", async () => {
-            for (const themeEntry of ["system-theme", "light-theme", "dark-theme"]) {
-                await clickMenuItem(themeEntry)
+            const settingsDialogMock = mocking.elements.settingsDialog
+            const applicationSettingsMock = settingsDialogMock.applicationSettings
+            const applyButtonLocator = _page.locator(settingsDialogMock.applyButton.path)
+
+            await clickMenuItem(settings.SETTINGS_MENU_ID)
+
+            for (const themeRadioButtonId of [
+                applicationSettingsMock.systemThemeRadioButton.path,
+                applicationSettingsMock.lightThemeRadioButton.path,
+                applicationSettingsMock.darkThemeRadioButton.path,
+            ]) {
+                await _page.locator(themeRadioButtonId).click()
+                await applyButtonLocator.click()
                 assert.isFalse(containsConsoleMessage("error"))
             }
         })
@@ -570,8 +582,15 @@ describe("Integration tests with special documents", () => {
         })
 
         it("can be hidden", async () => {
-            // Currently broken
             await testWithDocument(documentPath, async () => {
+                const settingsDialogMock = mocking.elements.settingsDialog
+
+                await clickMenuItem(settings.SETTINGS_MENU_ID)
+                await _page
+                    .locator(settingsDialogMock.applicationSettings.hideMetadataCheckbox.path)
+                    .click()
+                await _page.locator(settingsDialogMock.okButton.path).click()
+
                 await restartApp(documentPath)
                 assert.isFalse(
                     (await _page.locator("//*/p/strong").allInnerTexts()).includes("Metadata"),

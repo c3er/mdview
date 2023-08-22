@@ -297,63 +297,6 @@ exports.elements = {
                         },
                     },
                 },
-                theme: {
-                    label: "&Theme",
-                    isEnabled: true,
-                    sub: [
-                        {
-                            label: "&System Default",
-                            isEnabled: true,
-                            isChecked: true,
-                        },
-                        {
-                            label: "&Light",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                        {
-                            label: "&Dark",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                    ],
-                },
-                markdownRendering: {
-                    label: "Markdown Render &Options",
-                    isEnabled: true,
-                    sub: [
-                        {
-                            label: "Respect Single &Line Breaks",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                        {
-                            label: "Enable &Typographic Replacements",
-                            isEnabled: true,
-                            isChecked: true,
-                        },
-                        {
-                            label: "Convert &Emoticons To Emojis",
-                            isEnabled: true,
-                            isChecked: true,
-                        },
-                        {
-                            label: "Hide &Metadata Header",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                    ],
-                },
-                renderFileAsMarkdown: {
-                    label: "Render this file as Markdown",
-                    isEnabled: true,
-                    isChecked: false,
-                },
-                renderFileTypeAsMarkdown: {
-                    label: "Render all files of this type as Markdown",
-                    isEnabled: true,
-                    isChecked: true,
-                },
             },
         },
         encoding: {
@@ -420,6 +363,30 @@ exports.elements = {
     },
     rawText: {
         path: "#raw-text",
+    },
+    settingsDialog: {
+        path: "#settings-dialog",
+        applicationSettings: {
+            path: "#application-settings-tab-content",
+            systemThemeRadioButton: {
+                path: "#system-theme",
+            },
+            lightThemeRadioButton: {
+                path: "#system-theme",
+            },
+            darkThemeRadioButton: {
+                path: "#dark-theme",
+            },
+            hideMetadataCheckbox: {
+                path: "#hide-metadata",
+            },
+        },
+        okButton: {
+            path: "#settings-ok-button",
+        },
+        applyButton: {
+            path: "#settings-apply-button",
+        },
     },
     searchDialog: {
         path: "#search-dialog",
