@@ -3,7 +3,7 @@ const assert = require("chai").assert
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
-const documentRendering = require("../app/lib/documentRendering/documentRenderingRenderer")
+const documentRendering = require("../app/lib/renderer/documentRendering")
 const toc = require("../app/lib/toc/tocRenderer")
 
 function assertSections(content, rootSection) {

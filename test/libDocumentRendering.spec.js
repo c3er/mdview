@@ -1,7 +1,7 @@
 const assert = require("chai").assert
 const lodashClonedeep = require("lodash.clonedeep")
 
-const documentRendering = require("../app/lib/documentRendering/documentRenderingRenderer")
+const documentRendering = require("../app/lib/renderer/documentRendering")
 
 describe("Document rendering", () => {
     const defaultOptions = {
