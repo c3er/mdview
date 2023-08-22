@@ -1,4 +1,5 @@
 const common = require("../common")
+const fileLib = require("../file")
 const ipc = require("../ipc/ipcRenderer")
 
 let _document
@@ -31,18 +32,17 @@ function updateTocForDocumentCheckbox() {
         _documentSettings.showTocOverridesAppSettings && _documentSettings.showToc
 }
 
-function updateMdFileTypeSetting() {
+function updateMdFileTypeSetting(shallRenderAsMarkdown) {
     const mdFileTypes = _applicationSettings.mdFileTypes
-    const currentFileType = _filePath.split(".").at(-1)
-    const renderFileTypeAsMarkdown = mdFileTypes.some(fileType => _filePath.endsWith(fileType))
-    if (_renderFileTypeAsMarkdownCheckbox.checked) {
-        if (!renderFileTypeAsMarkdown) {
-            mdFileTypes.push(currentFileType)
+    const ending = fileLib.extractFileEnding(_filePath)
+    if (shallRenderAsMarkdown) {
+        if (mdFileTypes.find(fileType => fileType === ending)) {
+            return
         }
-    } else if (renderFileTypeAsMarkdown) {
-        _applicationSettings.mdFileTypes = mdFileTypes.filter(
-            fileType => fileType !== currentFileType,
-        )
+        mdFileTypes.push(ending)
+        _applicationSettings.mdFileTypes = mdFileTypes
+    } else {
+        _applicationSettings.mdFileTypes = mdFileTypes.filter(fileType => fileType !== ending)
     }
 }
 
@@ -76,12 +76,12 @@ function applySettings() {
     })
         .filter(([, element]) => element.checked)
         .map(([theme]) => theme)[0]
-    _applicationSettings.zoom = _zoomInput.value
+    _applicationSettings.zoom = Number(_zoomInput.value)
     _applicationSettings.lineBreaksEnabled = _singleLineBreakCheckbox.checked
     _applicationSettings.typographyEnabled = _typographyEnabledCheckbox.checked
     _applicationSettings.emojisEnabled = _enableEmojisCheckbox.checked
     _applicationSettings.hideMetadata = _hideMetadataCheckbox.checked
-    updateMdFileTypeSetting()
+    updateMdFileTypeSetting(_renderFileTypeAsMarkdownCheckbox.checked)
     _applicationSettings.showToc = _showTocCheckbox.checked
 
     // Document settings

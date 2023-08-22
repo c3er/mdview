@@ -66,17 +66,17 @@ exports.init = (mainMenu, applicationSettings) => {
     })
 }
 
-exports.switchVisibilityForApplication = () => {
+exports.setVisibilityForApplication = isVisible => {
     const documentSettings = storage.loadDocumentSettings()
-    _applicationSettings.showToc = menu.getChecked(_mainMenu, SHOW_FOR_ALL_DOCS_MENU_ID)
+    _applicationSettings.showToc = isVisible
     _info.isVisible = determineTocVisibility(documentSettings)
     update(documentSettings)
 }
 
-exports.switchVisibilityForDocument = () => {
+exports.setVisibilityForDocument = isVisible => {
     const documentSettings = storage.loadDocumentSettings()
     documentSettings.showTocOverridesAppSettings = true
-    documentSettings.showToc = menu.getChecked(_mainMenu, SHOW_FOR_THIS_DOC_MENU_ID)
+    documentSettings.showToc = isVisible
     _info.isVisible = determineTocVisibility(documentSettings)
     update(documentSettings)
 }

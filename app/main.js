@@ -125,13 +125,8 @@ function restoreScrollPosition() {
     ipc.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
-function setZoom(zoomFactor) {
-    _applicationSettings.zoom = zoomFactor
-    ipc.send(ipc.messages.changeZoom, _applicationSettings.zoom)
-}
-
 function zoomIn() {
-    setZoom(_applicationSettings.zoom + ZOOM_STEP)
+    settings.setZoom(_applicationSettings, _applicationSettings.zoom + ZOOM_STEP)
 }
 
 function zoomOut() {
@@ -140,11 +135,11 @@ function zoomOut() {
     if (zoom < minZoom) {
         zoom = minZoom
     }
-    setZoom(zoom)
+    settings.setZoom(_applicationSettings, zoom)
 }
 
 function resetZoom() {
-    setZoom(_applicationSettings.ZOOM_DEFAULT)
+    settings.setZoom(_applicationSettings, _applicationSettings.ZOOM_DEFAULT)
 }
 
 function changeTheme(theme) {
@@ -300,7 +295,9 @@ function createMainMenu() {
                             id: toc.SHOW_FOR_ALL_DOCS_MENU_ID,
                             type: "checkbox",
                             click() {
-                                toc.switchVisibilityForApplication()
+                                toc.setVisibilityForApplication(
+                                    menu.getChecked(_mainMenu, toc.SHOW_FOR_ALL_DOCS_MENU_ID),
+                                )
                             },
                         },
                         {
@@ -309,7 +306,9 @@ function createMainMenu() {
                             id: toc.SHOW_FOR_THIS_DOC_MENU_ID,
                             type: "checkbox",
                             click() {
-                                toc.switchVisibilityForDocument()
+                                toc.setVisibilityForDocument(
+                                    menu.getChecked(_mainMenu, toc.SHOW_FOR_THIS_DOC_MENU_ID),
+                                )
                             },
                         },
                         { type: "separator" },
@@ -599,7 +598,7 @@ electron.app.on("open-file", (event, path) => {
 
 ipc.listen(ipc.messages.finishLoad, () => {
     documentRendering.init(_mainMenu, _applicationSettings, determineCurrentFilePath())
-    setZoom(_applicationSettings.zoom)
+    settings.setZoom(_applicationSettings, _applicationSettings.zoom)
 
     const filePath = _finderFilePath ?? _cliArgs.filePath
     openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
