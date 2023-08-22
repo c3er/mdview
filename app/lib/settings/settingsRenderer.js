@@ -4,6 +4,7 @@ const ipc = require("../ipc/ipcRenderer")
 
 let _document
 let _dialogElement
+let _dialogForm
 
 let _dialogIsOpen = false
 
@@ -100,14 +101,17 @@ function changeTab(tabIndex) {
 }
 
 function handleConfirm(event) {
-    event.preventDefault()
-    applySettings()
-    _dialogElement.close()
+    if (_dialogForm.reportValidity()) {
+        event.preventDefault()
+        applySettings()
+        _dialogElement.close()
+    }
 }
 
 exports.init = document => {
     _document = document
     _dialogElement = _document.getElementById("settings-dialog")
+    _dialogForm = _document.getElementById("settings-dialog-form")
 
     _systemThemeRadioButton = _document.getElementById("system-theme")
     _lightThemeRadioButton = _document.getElementById("light-theme")
@@ -147,9 +151,14 @@ exports.init = document => {
         ipc.send(ipc.messages.settingsDialogIsOpen, false)
     })
 
+    _zoomInput.onkeydown = event => {
+        if (event.key === "Enter") {
+            handleConfirm(event)
+        }
+    }
     _document.getElementById("reset-zoom-button").addEventListener("click", event => {
         event.preventDefault()
-        _document.getElementById("zoom").value = _applicationSettings.zoom = common.ZOOM_DEFAULT
+        _zoomInput.value = _applicationSettings.zoom = common.ZOOM_DEFAULT
     })
     _document.getElementById("forget-toc-override-button").addEventListener("click", event => {
         event.preventDefault()
@@ -167,8 +176,10 @@ exports.init = document => {
         _dialogElement.close()
     })
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
-        event.preventDefault()
-        applySettings()
+        if (_dialogForm.reportValidity()) {
+            event.preventDefault()
+            applySettings()
+        }
     })
 
     ipc.listen(ipc.messages.settings, (applicationSettings, documentSettings) => {
