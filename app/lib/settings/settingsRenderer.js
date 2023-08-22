@@ -162,6 +162,10 @@ exports.init = document => {
     )
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
+    _document.getElementById("settings-cancel-button").addEventListener("click", event => {
+        event.preventDefault()
+        _dialogElement.close()
+    })
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
         event.preventDefault()
         applySettings()
