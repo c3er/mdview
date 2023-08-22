@@ -271,7 +271,7 @@ onkeydown = event => {
             }
             return
         case "Backspace":
-            if (!search.dialogIsOpen()) {
+            if (!search.dialogIsOpen() && !settings.isOpen()) {
                 event.preventDefault()
                 navigation.back()
             }
