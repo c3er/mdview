@@ -12,10 +12,6 @@ const toc = require("../app/lib/toc/tocMain")
 
 const electron = playwright._electron
 
-const DEFAULT_DOCUMENT_FILE = "testfile_without-mermaid.md"
-const DEFAULT_DOCUMENT_DIR = path.join(__dirname, "documents")
-const DEFAULT_DOCUMENT_PATH = path.join(DEFAULT_DOCUMENT_DIR, DEFAULT_DOCUMENT_FILE)
-
 let _app
 let _page
 
@@ -59,7 +55,7 @@ async function startApp(documentPath) {
 
 async function restartApp(documentPath) {
     await _app.close()
-    await startApp(documentPath ?? DEFAULT_DOCUMENT_PATH)
+    await startApp(documentPath ?? lib.DEFAULT_DOCUMENT_PATH)
 }
 
 async function clickMenuItem(id) {
@@ -100,7 +96,7 @@ async function elementIsHidden(elementPath) {
 describe("Integration tests with single app instance", () => {
     before(async () => {
         await cleanup()
-        await startApp(DEFAULT_DOCUMENT_PATH)
+        await startApp(lib.DEFAULT_DOCUMENT_PATH)
     })
 
     after(async () => await _app.close())
@@ -110,7 +106,7 @@ describe("Integration tests with single app instance", () => {
     })
 
     it("has file name in title bar", async () => {
-        assert.include(await _page.title(), DEFAULT_DOCUMENT_FILE)
+        assert.include(await _page.title(), lib.DEFAULT_DOCUMENT_FILE)
     })
 
     it("displays blocked content banner", async () => {
@@ -260,7 +256,7 @@ describe("Integration tests with their own app instance each", () => {
 
     beforeEach(async () => {
         await cleanup()
-        await startApp(DEFAULT_DOCUMENT_PATH)
+        await startApp(lib.DEFAULT_DOCUMENT_PATH)
     })
 
     afterEach(async () => await _app.close())
@@ -533,18 +529,18 @@ describe("Integration tests with their own app instance each", () => {
         }
 
         it("can be done", async () => {
-            const filePathToDrop = path.join(DEFAULT_DOCUMENT_DIR, "languages.md")
+            const filePathToDrop = path.join(lib.DEFAULT_DOCUMENT_DIR, "languages.md")
             await drop(filePathToDrop)
             assert.include(await _page.title(), filePathToDrop)
         })
 
         it("doesn't crash after dropping a directory", async () => {
-            await drop(DEFAULT_DOCUMENT_DIR)
+            await drop(lib.DEFAULT_DOCUMENT_DIR)
             await assertErrorDialog()
         })
 
         it("doesn't try to load a binary file", async () => {
-            const imageFilePath = path.join(DEFAULT_DOCUMENT_DIR, "images", "image.png")
+            const imageFilePath = path.join(lib.DEFAULT_DOCUMENT_DIR, "images", "image.png")
             await drop(imageFilePath)
             await assertErrorDialog()
             assert.notInclude(await _page.title(), imageFilePath)
@@ -564,13 +560,13 @@ describe("Integration tests with special documents", () => {
     }
 
     it("loads image encoded as data URL", async () => {
-        await testWithDocument(path.join(DEFAULT_DOCUMENT_DIR, "gh-issue23.md"), () =>
+        await testWithDocument(path.join(lib.DEFAULT_DOCUMENT_DIR, "gh-issue23.md"), () =>
             assert.isFalse(containsConsoleMessage("Failed to load resource")),
         )
     })
 
     describe("Metadata", () => {
-        const documentPath = path.join(DEFAULT_DOCUMENT_DIR, "metadata.md")
+        const documentPath = path.join(lib.DEFAULT_DOCUMENT_DIR, "metadata.md")
 
         it("renders by default", async () => {
             await testWithDocument(documentPath, async () =>

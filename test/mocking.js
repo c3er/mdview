@@ -175,6 +175,16 @@ const _electronDefault = {
     dialog: {
         showErrorBox() {},
     },
+    screen: {
+        getPrimaryDisplay() {
+            return {
+                size: {
+                    width: 1000,
+                    height: 1000,
+                },
+            }
+        },
+    },
 }
 
 function loadHtmlElement() {
