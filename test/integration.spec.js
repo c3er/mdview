@@ -182,7 +182,7 @@ describe("Integration tests with single app instance", () => {
                 }
                 return {
                     label: item.label, // For debugging
-                    enabled: item.enabled,
+                    enabled: item.enabled ?? true,
                     checked: item.checked,
                 }
             }, menuItemPath)
@@ -197,10 +197,11 @@ describe("Integration tests with single app instance", () => {
                         assert.exists(await searchMenuItem(currentItemPath))
                     })
 
-                    it(`is ${currentItem.isEnabled ? "enabled" : "disabled"}`, async () => {
+                    const isEnabled = currentItem.isEnabled ?? true
+                    it(`is ${isEnabled ? "enabled" : "disabled"}`, async () => {
                         assert.strictEqual(
                             (await searchMenuItem(currentItemPath)).enabled,
-                            currentItem.isEnabled,
+                            isEnabled,
                         )
                     })
 
