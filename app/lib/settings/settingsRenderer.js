@@ -100,11 +100,17 @@ function changeTab(tabIndex) {
     }
 }
 
+function closeDialog() {
+    _dialogElement.close()
+    _dialogIsOpen = false
+    ipc.send(ipc.messages.settingsDialogIsOpen, false)
+}
+
 function handleConfirm(event) {
     if (_dialogForm.reportValidity()) {
         event.preventDefault()
         applySettings()
-        _dialogElement.close()
+        closeDialog()
     }
 }
 
@@ -132,7 +138,7 @@ exports.init = document => {
     // Tabs should have the same height. To determine the maximum height, the dialog has to be visible.
     _dialogElement.show()
     const maxTabHeight = Math.max(..._tabContentElements.map(element => element.clientHeight))
-    _dialogElement.close()
+    _dialogElement.close() // closeDialog() not needed here
 
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
@@ -145,10 +151,6 @@ exports.init = document => {
         if (event.key === "Enter") {
             handleConfirm(event)
         }
-    })
-    _dialogElement.addEventListener("close", () => {
-        _dialogIsOpen = false
-        ipc.send(ipc.messages.settingsDialogIsOpen, false)
     })
 
     _zoomInput.onkeydown = event => {
@@ -173,7 +175,7 @@ exports.init = document => {
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
     _document.getElementById("settings-cancel-button").addEventListener("click", event => {
         event.preventDefault()
-        _dialogElement.close()
+        closeDialog()
     })
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
         if (_dialogForm.reportValidity()) {
@@ -194,8 +196,14 @@ exports.init = document => {
     })
 }
 
-exports.close = () => _dialogElement.close()
+exports.close = closeDialog
 
 exports.isOpen = () => _dialogIsOpen
 
 exports.setFilePath = filePath => (_filePath = filePath)
+
+// For testing
+
+exports.setIsOpen = isOpen => (_dialogIsOpen = isOpen)
+
+exports.getFilePath = () => _filePath

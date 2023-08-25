@@ -9,6 +9,7 @@ const _electronIpcEvent = {}
 
 const _defaultHtmlElement = {
     attributes: [],
+    checked: false,
     hidden: false,
     innerHTML: "",
     innerText: "",
@@ -19,11 +20,13 @@ const _defaultHtmlElement = {
     value: "",
     addEventListener() {},
     close() {},
+    focus() {},
     onauxclick() {},
     onclick() {},
     removeAttribute() {},
     setAttribute() {},
     setSelectionRange() {},
+    show() {},
     showModal() {},
 }
 let _htmlElement = null
