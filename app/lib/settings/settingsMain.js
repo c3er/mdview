@@ -9,23 +9,10 @@ const SETTINGS_MENU_ID = "settings"
 
 const UPDATE_FILE_SPECIFICA_NAV_ID = "update-file-specific-document-rendering"
 
-const _excludedApplicationSettings = ["tocWidth"]
-const _excludedDocumentSettings = ["encoding", "windowPosition", "collapsedTocEntries"]
-
 let _mainMenu
 let _applicationSettings
 
 let _previousFilePath = ""
-
-function filterSettings(settings, excluded) {
-    const filtered = {}
-    for (const [name, value] of Object.entries(settings)) {
-        if (!excluded.includes(name)) {
-            filtered[name] = value
-        }
-    }
-    return filtered
-}
 
 function isMarkdownFileType(filePath) {
     return _applicationSettings.mdFileTypes.includes(fileLib.extractFileEnding(filePath))
@@ -88,8 +75,8 @@ exports.init = (mainMenu, filePath) => {
 exports.open = () =>
     ipc.send(
         ipc.messages.settings,
-        filterSettings(_applicationSettings.toJSON(), _excludedApplicationSettings),
-        filterSettings(storage.loadDocumentSettings().toJSON(), _excludedDocumentSettings),
+        _applicationSettings.toJSON(),
+        storage.loadDocumentSettings().toJSON(),
     )
 
 exports.setZoom = setZoom
