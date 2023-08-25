@@ -183,9 +183,6 @@ exports.init = document => {
     })
 
     ipc.listen(ipc.messages.settings, (applicationSettings, documentSettings) => {
-        console.log("applicationSettings", applicationSettings)
-        console.log("documentSettings", documentSettings)
-
         _applicationSettings = applicationSettings
         _documentSettings = documentSettings
         populateDialog()
