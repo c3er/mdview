@@ -317,7 +317,7 @@ describe("Integration tests with their own app instance each", () => {
     describe("Links in document", () => {
         it("changes title after click", async () => {
             await _page.locator("#internal-test-link").click()
-            waitForWindowLoaded()
+            await waitForWindowLoaded()
             assert.include(await _page.title(), "#some-javascript")
         })
     })
