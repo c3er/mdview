@@ -2,6 +2,8 @@ const common = require("../common")
 const fileLib = require("../file")
 const ipc = require("../ipc/ipcRenderer")
 
+const UNSELECTED_TAB_CLASS = "unselected-tab"
+
 let _document
 let _dialogElement
 let _dialogForm
@@ -95,8 +97,17 @@ function applySettings() {
 function changeTab(tabIndex) {
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
-        _tabElements[i].style.borderBottomStyle = i === tabIndex ? "none" : "solid"
-        _tabContentElements[i].style.display = i === tabIndex ? "block" : "none"
+        const tabElement = _tabElements[i]
+        const tabContentElement = _tabContentElements[i]
+        if (i === tabIndex) {
+            tabElement.style.borderBottomStyle = "none"
+            tabElement.classList.remove(UNSELECTED_TAB_CLASS)
+            tabContentElement.style.display = "block"
+        } else {
+            tabElement.style.borderBottomStyle = "solid"
+            tabElement.classList.add(UNSELECTED_TAB_CLASS)
+            tabContentElement.style.display = "none"
+        }
     }
 }
 

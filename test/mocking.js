@@ -10,6 +10,10 @@ const _electronIpcEvent = {}
 const _defaultHtmlElement = {
     attributes: [],
     checked: false,
+    classList: {
+        add() {},
+        remove() {},
+    },
     hidden: false,
     innerHTML: "",
     innerText: "",

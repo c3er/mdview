@@ -107,14 +107,24 @@ dialog {
     width: 80%;
 }
 
+dialog * {
+    cursor: default;
+}
+
 dialog h1 {
     border-bottom: 1px solid var(--border-color);
     font-size: 13pt;
     margin-top: 20px;
 }
 
-input {
+input[type="text"],
+input[type="number"] {
     box-sizing: border-box;
+    cursor: text;
+}
+
+#error-dialog-content {
+    cursor: text;
 }
 
 /* Based on https://stackoverflow.com/a/25210414 (Is it possible to always show up/down arrows for input "number"?) */
@@ -226,7 +236,7 @@ input[type="number"]::-webkit-outer-spin-button {
     padding: 10px;
 }
 
-.dialog-tab:hover {
+.unselected-tab:hover {
     background-color: var(--highlight-light-color);
 }
 
@@ -311,7 +321,7 @@ input[type="number"]::-webkit-outer-spin-button {
         border-color: var(--dark-border-color);
     }
 
-    .dialog-tab:hover {
+    .unselected-tab:hover {
         background-color: var(--highlight-dark-color);
     }
 
