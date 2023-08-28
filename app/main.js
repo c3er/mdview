@@ -12,7 +12,6 @@ const remote = require("@electron/remote/main")
 const cli = require("./lib/main/cli")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
-const documentRendering = require("./lib/documentRendering/documentRenderingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
 const error = require("./lib/error/errorMain")
 const ipc = require("./lib/ipc/ipcMain")
@@ -21,6 +20,7 @@ const menu = require("./lib/main/menu")
 const navigation = require("./lib/navigation/navigationMain")
 const rawText = require("./lib/rawText/rawTextMain")
 const search = require("./lib/search/searchMain")
+const settings = require("./lib/settings/settingsMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/toc/tocMain")
 
@@ -124,13 +124,8 @@ function restoreScrollPosition() {
     ipc.send(ipc.messages.restorePosition, _scrollPosition)
 }
 
-function setZoom(zoomFactor) {
-    _applicationSettings.zoom = zoomFactor
-    ipc.send(ipc.messages.changeZoom, _applicationSettings.zoom)
-}
-
 function zoomIn() {
-    setZoom(_applicationSettings.zoom + ZOOM_STEP)
+    settings.setZoom(_applicationSettings.zoom + ZOOM_STEP)
 }
 
 function zoomOut() {
@@ -139,24 +134,11 @@ function zoomOut() {
     if (zoom < minZoom) {
         zoom = minZoom
     }
-    setZoom(zoom)
+    settings.setZoom(zoom)
 }
 
 function resetZoom() {
-    setZoom(_applicationSettings.ZOOM_DEFAULT)
-}
-
-function changeTheme(theme) {
-    _applicationSettings.theme = theme
-    menu.setChecked(
-        _mainMenu,
-        {
-            system: "system-theme",
-            light: "light-theme",
-            dark: "dark-theme",
-        }[theme],
-        true,
-    )
+    settings.setZoom(_applicationSettings.ZOOM_DEFAULT)
 }
 
 function createMainMenu() {
@@ -236,6 +218,15 @@ function createMainMenu() {
                         search.previous()
                     },
                 },
+                { type: "separator" },
+                {
+                    label: "&Settings...",
+                    accelerator: "CmdOrCtrl+,",
+                    id: settings.SETTINGS_MENU_ID,
+                    click() {
+                        settings.open()
+                    },
+                },
             ],
         },
         {
@@ -290,7 +281,9 @@ function createMainMenu() {
                             id: toc.SHOW_FOR_ALL_DOCS_MENU_ID,
                             type: "checkbox",
                             click() {
-                                toc.switchVisibilityForApplication()
+                                toc.setVisibilityForApplication(
+                                    menu.getChecked(_mainMenu, toc.SHOW_FOR_ALL_DOCS_MENU_ID),
+                                )
                             },
                         },
                         {
@@ -299,7 +292,9 @@ function createMainMenu() {
                             id: toc.SHOW_FOR_THIS_DOC_MENU_ID,
                             type: "checkbox",
                             click() {
-                                toc.switchVisibilityForDocument()
+                                toc.setVisibilityForDocument(
+                                    menu.getChecked(_mainMenu, toc.SHOW_FOR_THIS_DOC_MENU_ID),
+                                )
                             },
                         },
                         { type: "separator" },
@@ -339,90 +334,6 @@ function createMainMenu() {
                             },
                         },
                     ],
-                },
-                {
-                    label: "&Theme",
-                    submenu: [
-                        {
-                            label: "&System Default",
-                            type: "radio",
-                            id: "system-theme",
-                            click() {
-                                changeTheme(_applicationSettings.SYSTEM_THEME)
-                            },
-                        },
-                        {
-                            label: "&Light",
-                            type: "radio",
-                            id: "light-theme",
-                            click() {
-                                changeTheme(_applicationSettings.LIGHT_THEME)
-                            },
-                        },
-                        {
-                            label: "&Dark",
-                            type: "radio",
-                            id: "dark-theme",
-                            click() {
-                                changeTheme(_applicationSettings.DARK_THEME)
-                            },
-                        },
-                    ],
-                },
-                { type: "separator" },
-                {
-                    label: "Markdown Render &Options",
-                    submenu: [
-                        {
-                            label: "Respect Single &Line Breaks",
-                            type: "checkbox",
-                            id: documentRendering.ENABLE_LINE_BREAKS_MENU_ID,
-                            click() {
-                                documentRendering.switchEnableLineBreaks()
-                            },
-                        },
-                        {
-                            label: "Enable &Typographic Replacements",
-                            type: "checkbox",
-                            id: documentRendering.ENABLE_TYPOGRAPHY_MENU_ID,
-                            click() {
-                                documentRendering.switchEnableTypography()
-                            },
-                        },
-                        {
-                            label: "Convert &Emoticons To Emojis",
-                            type: "checkbox",
-                            id: documentRendering.ENABLE_EMOJIS_MENU_ID,
-                            click() {
-                                documentRendering.switchEnableEmojis()
-                            },
-                        },
-                        {
-                            label: "Hide &Metadata Header",
-                            type: "checkbox",
-                            id: documentRendering.HIDE_METADATA_MENU_ID,
-                            click() {
-                                documentRendering.hideMetadata()
-                            },
-                        },
-                    ],
-                },
-                { type: "separator" },
-                {
-                    label: "Render this file as Markdown",
-                    type: "checkbox",
-                    id: documentRendering.RENDER_FILE_AS_MD_MENU_ID,
-                    click() {
-                        documentRendering.switchRenderFileAsMarkdown(determineCurrentFilePath())
-                    },
-                },
-                {
-                    label: "Render all files of this type as Markdown",
-                    type: "checkbox",
-                    id: documentRendering.RENDER_FILE_TYPE_AS_MD_MENU_ID,
-                    click() {
-                        documentRendering.switchRenderFileTypeAsMarkdown(determineCurrentFilePath())
-                    },
                 },
             ],
         },
@@ -554,8 +465,6 @@ electron.app.whenReady().then(() => {
 
     _mainWindow = createWindow()
 
-    changeTheme(_applicationSettings.theme)
-
     ipc.init(_mainWindow)
     navigation.init(_mainMenu)
     encodingLib.init(_mainMenu)
@@ -587,8 +496,8 @@ electron.app.on("open-file", (event, path) => {
 })
 
 ipc.listen(ipc.messages.finishLoad, () => {
-    documentRendering.init(_mainMenu, _applicationSettings, determineCurrentFilePath())
-    setZoom(_applicationSettings.zoom)
+    settings.init(_mainMenu, determineCurrentFilePath())
+    settings.setZoom(_applicationSettings.zoom)
 
     const filePath = _finderFilePath ?? _cliArgs.filePath
     openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))

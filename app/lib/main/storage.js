@@ -35,6 +35,15 @@ class StorageBase {
         }
     }
 
+    toJSON() {
+        const getters = common.listGettersWithSetters(this)
+        const obj = {}
+        for (const getter of getters) {
+            obj[getter] = this[getter]
+        }
+        return obj
+    }
+
     static _initStorageDir(storageDir) {
         fs.mkdirSync(storageDir ?? _dataDir, { recursive: true })
     }
@@ -59,7 +68,7 @@ class ApplicationSettings extends StorageBase {
     LIGHT_THEME = common.LIGHT_THEME
     DARK_THEME = common.DARK_THEME
 
-    ZOOM_DEFAULT = 1.0
+    ZOOM_DEFAULT = common.ZOOM_DEFAULT
 
     LINE_BREAKS_ENABLED_DEFAULT = false
     TYPOGRAPHY_ENABLED_DEFAULT = true

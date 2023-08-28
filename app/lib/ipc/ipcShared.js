@@ -1,5 +1,6 @@
 exports.messages = {
     allContentUnblocked: "all-content-unblocked",
+    applySettings: "apply-settings",
     changeEncoding: "change-encoding",
     changeRenderingOptions: "change-rendering-options",
     changeZoom: "change-zoom",
@@ -27,6 +28,8 @@ exports.messages = {
     searchIsActive: "search-is-active",
     searchNext: "search-next",
     searchPrevious: "search-previous",
+    settings: "settings",
+    settingsDialogIsOpen: "settings-dialog-is-open",
     showErrorDialog: "show-error-dialog",
     unblockAll: "unblock-all",
     unblockURL: "unblock-url",

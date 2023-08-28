@@ -7,13 +7,10 @@ const playwright = require("playwright")
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
+const settings = require("../app/lib/settings/settingsMain")
 const toc = require("../app/lib/toc/tocMain")
 
 const electron = playwright._electron
-
-const DEFAULT_DOCUMENT_FILE = "testfile_without-mermaid.md"
-const DEFAULT_DOCUMENT_DIR = path.join(__dirname, "documents")
-const DEFAULT_DOCUMENT_PATH = path.join(DEFAULT_DOCUMENT_DIR, DEFAULT_DOCUMENT_FILE)
 
 let _app
 let _page
@@ -39,17 +36,19 @@ async function waitForWindowLoaded() {
 }
 
 async function startApp(documentPath) {
+    const defaultTimeout = 3000
+
     _app = await electron.launch({
         args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
         executablePath: electronPath,
     })
+    _app.context().setDefaultTimeout(defaultTimeout)
 
     _page = await _app.firstWindow()
     _page.on("console", msg => addMessage(msg.text()))
     _page.on("crash", () => assert.fail("Crash happened"))
     _page.on("pageerror", error => assert.fail(`Page error: ${error}`))
 
-    const defaultTimeout = 3000
     _page.setDefaultTimeout(defaultTimeout)
     _page.setDefaultNavigationTimeout(defaultTimeout)
 
@@ -58,7 +57,7 @@ async function startApp(documentPath) {
 
 async function restartApp(documentPath) {
     await _app.close()
-    await startApp(documentPath ?? DEFAULT_DOCUMENT_PATH)
+    await startApp(documentPath ?? lib.DEFAULT_DOCUMENT_PATH)
 }
 
 async function clickMenuItem(id) {
@@ -99,7 +98,7 @@ async function elementIsHidden(elementPath) {
 describe("Integration tests with single app instance", () => {
     before(async () => {
         await cleanup()
-        await startApp(DEFAULT_DOCUMENT_PATH)
+        await startApp(lib.DEFAULT_DOCUMENT_PATH)
     })
 
     after(async () => await _app.close())
@@ -109,7 +108,7 @@ describe("Integration tests with single app instance", () => {
     })
 
     it("has file name in title bar", async () => {
-        assert.include(await _page.title(), DEFAULT_DOCUMENT_FILE)
+        assert.include(await _page.title(), lib.DEFAULT_DOCUMENT_FILE)
     })
 
     it("displays blocked content banner", async () => {
@@ -185,7 +184,7 @@ describe("Integration tests with single app instance", () => {
                 }
                 return {
                     label: item.label, // For debugging
-                    enabled: item.enabled,
+                    enabled: item.enabled ?? true,
                     checked: item.checked,
                 }
             }, menuItemPath)
@@ -200,10 +199,11 @@ describe("Integration tests with single app instance", () => {
                         assert.exists(await searchMenuItem(currentItemPath))
                     })
 
-                    it(`is ${currentItem.isEnabled ? "enabled" : "disabled"}`, async () => {
+                    const isEnabled = currentItem.isEnabled ?? true
+                    it(`is ${isEnabled ? "enabled" : "disabled"}`, async () => {
                         assert.strictEqual(
                             (await searchMenuItem(currentItemPath)).enabled,
-                            currentItem.isEnabled,
+                            isEnabled,
                         )
                     })
 
@@ -259,7 +259,7 @@ describe("Integration tests with their own app instance each", () => {
 
     beforeEach(async () => {
         await cleanup()
-        await startApp(DEFAULT_DOCUMENT_PATH)
+        await startApp(lib.DEFAULT_DOCUMENT_PATH)
     })
 
     afterEach(async () => await _app.close())
@@ -296,19 +296,10 @@ describe("Integration tests with their own app instance each", () => {
         })
     })
 
-    describe("Theme switching", () => {
-        it("can be done", async () => {
-            for (const themeEntry of ["system-theme", "light-theme", "dark-theme"]) {
-                await clickMenuItem(themeEntry)
-                assert.isFalse(containsConsoleMessage("error"))
-            }
-        })
-    })
-
     describe("Links in document", () => {
         it("changes title after click", async () => {
             await _page.locator("#internal-test-link").click()
-            waitForWindowLoaded()
+            await waitForWindowLoaded()
             assert.include(await _page.title(), "#some-javascript")
         })
     })
@@ -478,6 +469,99 @@ describe("Integration tests with their own app instance each", () => {
         })
     })
 
+    describe("Settings dialog", () => {
+        const settings = require("../app/lib/settings/settingsMain")
+
+        async function opendDialog() {
+            await clickMenuItem(settings.SETTINGS_MENU_ID)
+            assert.isTrue(await _page.locator(mocking.elements.settingsDialog.path).isVisible())
+            assert.isFalse(await menuItemIsEnabled(settings.SETTINGS_MENU_ID))
+        }
+
+        async function assertDialogIsClosed() {
+            assert.isTrue(await elementIsHidden(mocking.elements.settingsDialog.path))
+            assert.isTrue(await menuItemIsEnabled(settings.SETTINGS_MENU_ID))
+        }
+
+        async function confirmDialog() {
+            await _page.locator(mocking.elements.settingsDialog.okButton.path).click()
+            await assertDialogIsClosed()
+        }
+
+        async function changeToDocumentSettings() {
+            const settingsDialogMock = mocking.elements.settingsDialog
+            await _page.locator(settingsDialogMock.documentSettingsTab.path).click()
+            assert.isTrue(
+                await _page.locator(settingsDialogMock.applicationSettings.path).isHidden(),
+            )
+            assert.isTrue(await _page.locator(settingsDialogMock.documentSettings.path).isVisible())
+        }
+
+        it("can be opened", async () => {
+            await opendDialog()
+            await confirmDialog()
+        })
+
+        it("has one selected tab", async () => {
+            await opendDialog()
+            const tabLocators = await _page.locator(".dialog-tab").all()
+            let unselectedTabCount = 0
+            for (const tabLocator of tabLocators) {
+                unselectedTabCount += await tabLocator.evaluate(tabElement =>
+                    tabElement.classList.contains("unselected-tab") ? 1 : 0,
+                )
+            }
+            assert.strictEqual(tabLocators.length - unselectedTabCount, 1)
+        })
+
+        it("remembers a changed setting", async () => {
+            const settingsDialogMock = mocking.elements.settingsDialog
+
+            await opendDialog()
+            await changeToDocumentSettings()
+
+            const renderFileAsMarkdownCheckboxLocator = _page.locator(
+                settingsDialogMock.documentSettings.renderFileAsMarkdownCheckbox.path,
+            )
+            const rendersFileAsMarkdown = await renderFileAsMarkdownCheckboxLocator.isChecked()
+            await renderFileAsMarkdownCheckboxLocator.click()
+            assert.notStrictEqual(
+                await renderFileAsMarkdownCheckboxLocator.isChecked(),
+                rendersFileAsMarkdown,
+            )
+
+            await confirmDialog()
+            await restartApp()
+            await opendDialog()
+            await changeToDocumentSettings()
+
+            assert.notStrictEqual(
+                await _page
+                    .locator(settingsDialogMock.documentSettings.renderFileAsMarkdownCheckbox.path)
+                    .isChecked(),
+                rendersFileAsMarkdown,
+            )
+        })
+
+        it("switches theme", async () => {
+            const settingsDialogMock = mocking.elements.settingsDialog
+            const applicationSettingsMock = settingsDialogMock.applicationSettings
+            const applyButtonLocator = _page.locator(settingsDialogMock.applyButton.path)
+
+            await clickMenuItem(settings.SETTINGS_MENU_ID)
+
+            for (const themeRadioButtonId of [
+                applicationSettingsMock.systemThemeRadioButton.path,
+                applicationSettingsMock.lightThemeRadioButton.path,
+                applicationSettingsMock.darkThemeRadioButton.path,
+            ]) {
+                await _page.locator(themeRadioButtonId).click()
+                await applyButtonLocator.click()
+                assert.isFalse(containsConsoleMessage("error"))
+            }
+        })
+    })
+
     describe("Error dialog", () => {
         const error = require("../app/lib/error/errorMain")
 
@@ -521,18 +605,18 @@ describe("Integration tests with their own app instance each", () => {
         }
 
         it("can be done", async () => {
-            const filePathToDrop = path.join(DEFAULT_DOCUMENT_DIR, "languages.md")
+            const filePathToDrop = path.join(lib.DEFAULT_DOCUMENT_DIR, "languages.md")
             await drop(filePathToDrop)
             assert.include(await _page.title(), filePathToDrop)
         })
 
         it("doesn't crash after dropping a directory", async () => {
-            await drop(DEFAULT_DOCUMENT_DIR)
+            await drop(lib.DEFAULT_DOCUMENT_DIR)
             await assertErrorDialog()
         })
 
         it("doesn't try to load a binary file", async () => {
-            const imageFilePath = path.join(DEFAULT_DOCUMENT_DIR, "images", "image.png")
+            const imageFilePath = path.join(lib.DEFAULT_DOCUMENT_DIR, "images", "image.png")
             await drop(imageFilePath)
             await assertErrorDialog()
             assert.notInclude(await _page.title(), imageFilePath)
@@ -552,15 +636,13 @@ describe("Integration tests with special documents", () => {
     }
 
     it("loads image encoded as data URL", async () => {
-        await testWithDocument(path.join(DEFAULT_DOCUMENT_DIR, "gh-issue23.md"), () =>
+        await testWithDocument(path.join(lib.DEFAULT_DOCUMENT_DIR, "gh-issue23.md"), () =>
             assert.isFalse(containsConsoleMessage("Failed to load resource")),
         )
     })
 
     describe("Metadata", () => {
-        const documentRendering = require("../app/lib/documentRendering/documentRenderingMain")
-
-        const documentPath = path.join(DEFAULT_DOCUMENT_DIR, "metadata.md")
+        const documentPath = path.join(lib.DEFAULT_DOCUMENT_DIR, "metadata.md")
 
         it("renders by default", async () => {
             await testWithDocument(documentPath, async () =>
@@ -573,7 +655,14 @@ describe("Integration tests with special documents", () => {
 
         it("can be hidden", async () => {
             await testWithDocument(documentPath, async () => {
-                await clickMenuItem(documentRendering.HIDE_METADATA_MENU_ID)
+                const settingsDialogMock = mocking.elements.settingsDialog
+
+                await clickMenuItem(settings.SETTINGS_MENU_ID)
+                await _page
+                    .locator(settingsDialogMock.applicationSettings.hideMetadataCheckbox.path)
+                    .click()
+                await _page.locator(settingsDialogMock.okButton.path).click()
+
                 await restartApp(documentPath)
                 assert.isFalse(
                     (await _page.locator("//*/p/strong").allInnerTexts()).includes("Metadata"),

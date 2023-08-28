@@ -9,6 +9,11 @@ const _electronIpcEvent = {}
 
 const _defaultHtmlElement = {
     attributes: [],
+    checked: false,
+    classList: {
+        add() {},
+        remove() {},
+    },
     hidden: false,
     innerHTML: "",
     innerText: "",
@@ -19,11 +24,13 @@ const _defaultHtmlElement = {
     value: "",
     addEventListener() {},
     close() {},
+    focus() {},
     onauxclick() {},
     onclick() {},
     removeAttribute() {},
     setAttribute() {},
     setSelectionRange() {},
+    show() {},
     showModal() {},
 }
 let _htmlElement = null
@@ -175,6 +182,16 @@ const _electronDefault = {
     dialog: {
         showErrorBox() {},
     },
+    screen: {
+        getPrimaryDisplay() {
+            return {
+                size: {
+                    width: 1000,
+                    height: 1000,
+                },
+            }
+        },
+    },
 }
 
 function loadHtmlElement() {
@@ -193,33 +210,26 @@ exports.elements = {
     mainMenu: {
         file: {
             label: "&File",
-            isEnabled: true,
             sub: {
                 open: {
                     label: "&Open",
-                    isEnabled: true,
                 },
                 print: {
                     label: "&Print",
-                    isEnabled: true,
                 },
                 quit: {
                     label: "&Quit",
-                    isEnabled: true,
                 },
             },
         },
         edit: {
             label: "&Edit",
-            isEnabled: true,
             sub: {
                 copy: {
                     label: "Copy",
-                    isEnabled: true,
                 },
                 find: {
                     label: "&Find...",
-                    isEnabled: true,
                 },
                 findNext: {
                     label: "Find &next",
@@ -229,11 +239,13 @@ exports.elements = {
                     label: "Find &previous",
                     isEnabled: false,
                 },
+                settings: {
+                    label: "&Settings...",
+                },
             },
         },
         view: {
             label: "&View",
-            isEnabled: true,
             sub: {
                 back: {
                     label: "&Back",
@@ -245,28 +257,22 @@ exports.elements = {
                 },
                 refresh: {
                     label: "&Refresh",
-                    isEnabled: true,
                 },
                 unblock: {
                     label: "&Unblock All External Content",
-                    isEnabled: true,
                 },
                 rawText: {
                     label: "&View Raw Text",
-                    isEnabled: true,
                 },
                 toc: {
                     label: "Table Of &Content",
-                    isEnabled: true,
                     sub: {
                         tocApplication: {
                             label: "Show For &All Documents",
-                            isEnabled: true,
                             isChecked: false,
                         },
                         tocDocument: {
                             label: "Show For &This Document",
-                            isEnabled: true,
                             isChecked: false,
                         },
                         forgetDocumentToc: {
@@ -277,109 +283,41 @@ exports.elements = {
                 },
                 zoom: {
                     label: "&Zoom",
-                    isEnabled: true,
                     sub: {
                         zoomIn: {
                             label: "Zoom &In",
-                            isEnabled: true,
                         },
                         zoomOut: {
                             label: "Zoom &Out",
-                            isEnabled: true,
                         },
                         resetZoom: {
                             label: "&Reset Zoom",
-                            isEnabled: true,
                         },
                     },
-                },
-                theme: {
-                    label: "&Theme",
-                    isEnabled: true,
-                    sub: [
-                        {
-                            label: "&System Default",
-                            isEnabled: true,
-                            isChecked: true,
-                        },
-                        {
-                            label: "&Light",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                        {
-                            label: "&Dark",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                    ],
-                },
-                markdownRendering: {
-                    label: "Markdown Render &Options",
-                    isEnabled: true,
-                    sub: [
-                        {
-                            label: "Respect Single &Line Breaks",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                        {
-                            label: "Enable &Typographic Replacements",
-                            isEnabled: true,
-                            isChecked: true,
-                        },
-                        {
-                            label: "Convert &Emoticons To Emojis",
-                            isEnabled: true,
-                            isChecked: true,
-                        },
-                        {
-                            label: "Hide &Metadata Header",
-                            isEnabled: true,
-                            isChecked: false,
-                        },
-                    ],
-                },
-                renderFileAsMarkdown: {
-                    label: "Render this file as Markdown",
-                    isEnabled: true,
-                    isChecked: false,
-                },
-                renderFileTypeAsMarkdown: {
-                    label: "Render all files of this type as Markdown",
-                    isEnabled: true,
-                    isChecked: true,
                 },
             },
         },
         encoding: {
             label: "En&coding",
-            isEnabled: true,
             sub: {},
         },
         tools: {
             label: "&Tools",
-            isEnabled: true,
             sub: {
                 developer: {
                     label: "&Developer Tools",
-                    isEnabled: true,
                 },
                 debug: {
                     label: "De&bug",
-                    isEnabled: true,
                     sub: {
                         throwException: {
                             label: "Throw e&xception",
-                            isEnabled: true,
                         },
                         showError: {
                             label: "Show &error dialog",
-                            isEnabled: true,
                         },
                         softReload: {
                             label: "Soft &reload",
-                            isEnabled: true,
                         },
                     },
                 },
@@ -387,11 +325,9 @@ exports.elements = {
         },
         help: {
             label: "&Help",
-            isEnabled: true,
             sub: {
                 about: {
                     label: "&About",
-                    isEnabled: true,
                 },
             },
         },
@@ -416,6 +352,42 @@ exports.elements = {
     },
     rawText: {
         path: "#raw-text",
+    },
+    settingsDialog: {
+        path: "#settings-dialog",
+        applicationSettingsTab: {
+            path: "#application-settings-tab",
+        },
+        documentSettingsTab: {
+            path: "#document-settings-tab",
+        },
+        applicationSettings: {
+            path: "#application-settings-tab-content",
+            systemThemeRadioButton: {
+                path: "#system-theme",
+            },
+            lightThemeRadioButton: {
+                path: "#system-theme",
+            },
+            darkThemeRadioButton: {
+                path: "#dark-theme",
+            },
+            hideMetadataCheckbox: {
+                path: "#hide-metadata",
+            },
+        },
+        documentSettings: {
+            path: "#document-settings-tab-content",
+            renderFileAsMarkdownCheckbox: {
+                path: "#render-doc-as-markdown",
+            },
+        },
+        okButton: {
+            path: "#settings-ok-button",
+        },
+        applyButton: {
+            path: "#settings-apply-button",
+        },
     },
     searchDialog: {
         path: "#search-dialog",

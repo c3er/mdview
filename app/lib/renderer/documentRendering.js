@@ -1,6 +1,6 @@
 const hljs = require("highlight.js")
 
-const metadata = require("../renderer/metadata")
+const metadata = require("./metadata")
 const toc = require("../toc/tocRenderer")
 
 let _markdown

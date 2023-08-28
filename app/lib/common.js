@@ -6,6 +6,8 @@ exports.LIGHT_THEME = "light"
 
 exports.DARK_THEME = "dark"
 
+exports.ZOOM_DEFAULT = 1.0
+
 exports.isWebURL = url =>
     !url.startsWith("file://") && !url.startsWith("devtools://") && url.includes("://")
 
@@ -13,3 +15,14 @@ exports.isWebURL = url =>
 exports.isEmptyObject = obj => Object.keys(obj).length === 0 && obj.constructor === Object
 
 exports.isRendererProcess = process && process.type === "renderer"
+
+// Based on https://stackoverflow.com/a/70250484 (how to enumerate/discover getters and setters in javascript?)
+exports.listGettersWithSetters = instance =>
+    Object.entries(Object.getOwnPropertyDescriptors(Reflect.getPrototypeOf(instance)))
+        .filter(
+            ([name, descriptor]) =>
+                typeof descriptor.get === "function" &&
+                typeof descriptor.set === "function" &&
+                name !== "__proto__",
+        )
+        .map(([name]) => name)

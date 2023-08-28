@@ -25,9 +25,106 @@
         <dialog id="error-dialog">
             <form>
                 <p>Error</p>
-                <div class="dialog-content" id="error-dialog-content"></div>
+                <div>
+                    <span class="dialog-content" id="error-dialog-content"></span>
+                </div>
                 <div class="dialog-buttons">
                     <button id="error-ok-button" value="error-dialog-default">OK</button>
+                </div>
+            </form>
+        </dialog>
+
+        <dialog id="settings-dialog">
+            <form id="settings-dialog-form">
+                <p>Settings</p>
+                <div class="dialog-content">
+                    <div class="dialog-tab-container">
+                        <div class="dialog-tab" id="application-settings-tab">Application wide</div>
+                        <div class="dialog-tab" id="document-settings-tab">This document</div>
+                    </div>
+                    <div class="dialog-tab-content" id="application-settings-tab-content">
+                        <h1>Theme</h1>
+                        <div>
+                            <input type="radio" id="system-theme" name="theme-setting" />
+                            <label for="system-theme">System default</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="light-theme" name="theme-setting" />
+                            <label for="light-theme">Light</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="dark-theme" name="theme-setting" />
+                            <label for="dark-theme">Dark</label>
+                        </div>
+
+                        <h1>Zoom</h1>
+                        <p>
+                            <label for="zoom">Value</label>
+                            <input type="number" id="zoom" min="0.1" step="0.1" />
+                        </p>
+                        <p>
+                            <button id="reset-zoom-button">Reset zoom</button>
+                        </p>
+
+                        <h1>Mardown rendering options</h1>
+                        <div>
+                            <input type="checkbox" id="single-line-break" />
+                            <label for="single-line-break">Respect single line breaks</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="typographic-replacements" />
+                            <label for="typographic-replacements"
+                                >Enable typographic replacements</label
+                            >
+                        </div>
+                        <div>
+                            <input type="checkbox" id="emoticons-to-emojis" />
+                            <label for="emoticons-to-emojis">Convert emoticons to emojis</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="hide-metadata" />
+                            <label for="hide-metadata">Hide metadata header</label>
+                        </div>
+
+                        <h1>Miscellaneous</h1>
+                        <div>
+                            <input type="checkbox" id="render-filetype-as-markdown" />
+                            <label for="render-filetype-as-markdown"
+                                >Render files of this type as Markdown</label
+                            >
+                        </div>
+                        <div>
+                            <input type="checkbox" id="show-toc" />
+                            <label for="show-toc">Show table of content</label>
+                        </div>
+                    </div>
+                    <div class="dialog-tab-content" id="document-settings-tab-content">
+                        <h1>Table of content</h1>
+                        <p>
+                            <input type="checkbox" id="show-toc-for-doc" />
+                            <label for="show-toc-for-doc">Show for this document</label>
+                        </p>
+                        <p>
+                            <button id="forget-toc-override-button">
+                                Forget document override
+                            </button>
+                        </p>
+
+                        <h1>Miscellaneous</h1>
+                        <div>
+                            <input type="checkbox" id="render-doc-as-markdown" />
+                            <label for="render-doc-as-markdown"
+                                >Render this document as Markdown</label
+                            >
+                        </div>
+                    </div>
+                </div>
+                <div class="dialog-buttons">
+                    <button id="settings-ok-button" value="settings-dialog-default">OK</button>
+                    <button id="settings-cancel-button" value="settings-dialog-cancel">
+                        Cancel
+                    </button>
+                    <button id="settings-apply-button" value="settings-dialog-apply">Apply</button>
                 </div>
             </form>
         </dialog>

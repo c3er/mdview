@@ -8,7 +8,7 @@ const remote = require("@electron/remote")
 
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
-const documentRendering = require("./lib/documentRendering/documentRenderingRenderer")
+const documentRendering = require("./lib/renderer/documentRendering")
 const encodingLib = require("./lib/encoding/encodingRenderer")
 const error = require("./lib/error/errorRenderer")
 const file = require("./lib/file")
@@ -18,6 +18,7 @@ const navigation = require("./lib/navigation/navigationRenderer")
 const rawText = require("./lib/rawText/rawTextRenderer")
 const renderer = require("./lib/renderer/common")
 const search = require("./lib/search/searchRenderer")
+const settings = require("./lib/settings/settingsRenderer")
 const toc = require("./lib/toc/tocRenderer")
 
 const TITLE = "Markdown Viewer"
@@ -176,6 +177,7 @@ function domContentLoadedHandler() {
     rawText.init(() => reload(false))
     navigation.init()
     search.init(document, () => reload(false))
+    settings.init(document)
     error.init(document)
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
@@ -260,6 +262,8 @@ onkeydown = event => {
         case "Escape":
             if (search.isActive()) {
                 search.deactivate()
+            } else if (settings.isOpen()) {
+                settings.close()
             } else if (error.isOpen()) {
                 error.close()
             } else {
@@ -267,7 +271,7 @@ onkeydown = event => {
             }
             return
         case "Backspace":
-            if (!search.dialogIsOpen()) {
+            if (!search.dialogIsOpen() && !settings.isOpen()) {
                 event.preventDefault()
                 navigation.back()
             }
@@ -284,6 +288,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     toc.reset()
 
     const filePath = file.path
+    settings.setFilePath(filePath)
     const buffer = fs.readFileSync(filePath)
     let encoding = file.encoding
     if (!encoding) {
