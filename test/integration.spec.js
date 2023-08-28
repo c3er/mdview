@@ -294,26 +294,6 @@ describe("Integration tests with their own app instance each", () => {
         })
     })
 
-    describe("Theme switching", () => {
-        it("can be done", async () => {
-            const settingsDialogMock = mocking.elements.settingsDialog
-            const applicationSettingsMock = settingsDialogMock.applicationSettings
-            const applyButtonLocator = _page.locator(settingsDialogMock.applyButton.path)
-
-            await clickMenuItem(settings.SETTINGS_MENU_ID)
-
-            for (const themeRadioButtonId of [
-                applicationSettingsMock.systemThemeRadioButton.path,
-                applicationSettingsMock.lightThemeRadioButton.path,
-                applicationSettingsMock.darkThemeRadioButton.path,
-            ]) {
-                await _page.locator(themeRadioButtonId).click()
-                await applyButtonLocator.click()
-                assert.isFalse(containsConsoleMessage("error"))
-            }
-        })
-    })
-
     describe("Links in document", () => {
         it("changes title after click", async () => {
             await _page.locator("#internal-test-link").click()
@@ -484,6 +464,99 @@ describe("Integration tests with their own app instance each", () => {
             const changed = await contentLocator.boundingBox()
             assert.strictEqual(changed.x, orig.x)
             assert.notStrictEqual(changed.y, orig.y)
+        })
+    })
+
+    describe("Settings dialog", () => {
+        const settings = require("../app/lib/settings/settingsMain")
+
+        async function opendDialog() {
+            await clickMenuItem(settings.SETTINGS_MENU_ID)
+            assert.isTrue(await _page.locator(mocking.elements.settingsDialog.path).isVisible())
+            assert.isFalse(await menuItemIsEnabled(settings.SETTINGS_MENU_ID))
+        }
+
+        async function assertDialogIsClosed() {
+            assert.isTrue(await elementIsHidden(mocking.elements.settingsDialog.path))
+            assert.isTrue(await menuItemIsEnabled(settings.SETTINGS_MENU_ID))
+        }
+
+        async function confirmDialog() {
+            await _page.locator(mocking.elements.settingsDialog.okButton.path).click()
+            await assertDialogIsClosed()
+        }
+
+        async function changeToDocumentSettings() {
+            const settingsDialogMock = mocking.elements.settingsDialog
+            await _page.locator(settingsDialogMock.documentSettingsTab.path).click()
+            assert.isTrue(
+                await _page.locator(settingsDialogMock.applicationSettings.path).isHidden(),
+            )
+            assert.isTrue(await _page.locator(settingsDialogMock.documentSettings.path).isVisible())
+        }
+
+        it("can be opened", async () => {
+            await opendDialog()
+            await confirmDialog()
+        })
+
+        it("has one selected tab", async () => {
+            await opendDialog()
+            const tabLocators = await _page.locator(".dialog-tab").all()
+            let unselectedTabCount = 0
+            for (const tabLocator of tabLocators) {
+                unselectedTabCount += await tabLocator.evaluate(tabElement =>
+                    tabElement.classList.contains("unselected-tab") ? 1 : 0,
+                )
+            }
+            assert.strictEqual(tabLocators.length - unselectedTabCount, 1)
+        })
+
+        it("remembers a changed setting", async () => {
+            const settingsDialogMock = mocking.elements.settingsDialog
+
+            await opendDialog()
+            await changeToDocumentSettings()
+
+            const renderFileAsMarkdownCheckboxLocator = _page.locator(
+                settingsDialogMock.documentSettings.renderFileAsMarkdownCheckbox.path,
+            )
+            const rendersFileAsMarkdown = await renderFileAsMarkdownCheckboxLocator.isChecked()
+            await renderFileAsMarkdownCheckboxLocator.click()
+            assert.notStrictEqual(
+                await renderFileAsMarkdownCheckboxLocator.isChecked(),
+                rendersFileAsMarkdown,
+            )
+
+            await confirmDialog()
+            await restartApp()
+            await opendDialog()
+            await changeToDocumentSettings()
+
+            assert.notStrictEqual(
+                await _page
+                    .locator(settingsDialogMock.documentSettings.renderFileAsMarkdownCheckbox.path)
+                    .isChecked(),
+                rendersFileAsMarkdown,
+            )
+        })
+
+        it("switches theme", async () => {
+            const settingsDialogMock = mocking.elements.settingsDialog
+            const applicationSettingsMock = settingsDialogMock.applicationSettings
+            const applyButtonLocator = _page.locator(settingsDialogMock.applyButton.path)
+
+            await clickMenuItem(settings.SETTINGS_MENU_ID)
+
+            for (const themeRadioButtonId of [
+                applicationSettingsMock.systemThemeRadioButton.path,
+                applicationSettingsMock.lightThemeRadioButton.path,
+                applicationSettingsMock.darkThemeRadioButton.path,
+            ]) {
+                await _page.locator(themeRadioButtonId).click()
+                await applyButtonLocator.click()
+                assert.isFalse(containsConsoleMessage("error"))
+            }
         })
     })
 

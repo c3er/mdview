@@ -355,6 +355,12 @@ exports.elements = {
     },
     settingsDialog: {
         path: "#settings-dialog",
+        applicationSettingsTab: {
+            path: "#application-settings-tab",
+        },
+        documentSettingsTab: {
+            path: "#document-settings-tab",
+        },
         applicationSettings: {
             path: "#application-settings-tab-content",
             systemThemeRadioButton: {
@@ -368,6 +374,12 @@ exports.elements = {
             },
             hideMetadataCheckbox: {
                 path: "#hide-metadata",
+            },
+        },
+        documentSettings: {
+            path: "#document-settings-tab-content",
+            renderFileAsMarkdownCheckbox: {
+                path: "#render-doc-as-markdown",
             },
         },
         okButton: {
