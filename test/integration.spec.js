@@ -36,17 +36,19 @@ async function waitForWindowLoaded() {
 }
 
 async function startApp(documentPath) {
+    const defaultTimeout = 3000
+
     _app = await electron.launch({
         args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
         executablePath: electronPath,
     })
+    _app.context().setDefaultTimeout(defaultTimeout)
 
     _page = await _app.firstWindow()
     _page.on("console", msg => addMessage(msg.text()))
     _page.on("crash", () => assert.fail("Crash happened"))
     _page.on("pageerror", error => assert.fail(`Page error: ${error}`))
 
-    const defaultTimeout = 3000
     _page.setDefaultTimeout(defaultTimeout)
     _page.setDefaultNavigationTimeout(defaultTimeout)
 
