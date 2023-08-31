@@ -1,3 +1,4 @@
+const dialog = require("../renderer/dialog")
 const ipc = require("../ipc/ipcRenderer")
 const renderer = require("../renderer/common")
 
@@ -82,10 +83,9 @@ exports.init = (document, reloader) => {
         }
     })
 
-    _document.getElementById("search-ok-button").addEventListener("click", event => {
-        event.preventDefault()
-        _searchDialog.close(_searchInputElement.value)
-    })
+    dialog.addStdButtonHandler(_document.getElementById("search-ok-button"), () =>
+        _searchDialog.close(_searchInputElement.value),
+    )
 
     ipc.listen(ipc.messages.search, () => {
         _searchDialog.showModal()

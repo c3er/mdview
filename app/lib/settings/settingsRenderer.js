@@ -1,4 +1,5 @@
 const common = require("../common")
+const dialog = require("../renderer/dialog")
 const fileLib = require("../file")
 const ipc = require("../ipc/ipcRenderer")
 
@@ -169,12 +170,11 @@ exports.init = document => {
             handleConfirm(event)
         }
     }
-    _document.getElementById("reset-zoom-button").addEventListener("click", event => {
-        event.preventDefault()
-        _zoomInput.value = _applicationSettings.zoom = common.ZOOM_DEFAULT
-    })
-    _document.getElementById("forget-toc-override-button").addEventListener("click", event => {
-        event.preventDefault()
+    dialog.addStdButtonHandler(
+        _document.getElementById("reset-zoom-button"),
+        () => (_zoomInput.value = _applicationSettings.zoom = common.ZOOM_DEFAULT),
+    )
+    dialog.addStdButtonHandler(_document.getElementById("forget-toc-override-button"), () => {
         _documentSettings.showTocOverridesAppSettings = false
         updateTocForDocumentCheckbox()
     })
@@ -184,10 +184,7 @@ exports.init = document => {
     )
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
-    _document.getElementById("settings-cancel-button").addEventListener("click", event => {
-        event.preventDefault()
-        closeDialog()
-    })
+    dialog.addStdButtonHandler(_document.getElementById("settings-cancel-button"), closeDialog)
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
         if (_dialogForm.reportValidity()) {
             event.preventDefault()

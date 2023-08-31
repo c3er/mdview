@@ -1,3 +1,5 @@
+const dialog = require("../renderer/dialog")
+
 let _document
 
 let _dialogElement
@@ -14,10 +16,7 @@ exports.init = document => {
     _dialogElement = document.getElementById("error-dialog")
     _dialogIsOpen = false
 
-    _document.getElementById("error-ok-button").addEventListener("click", event => {
-        event.preventDefault()
-        closeDialog()
-    })
+    dialog.addStdButtonHandler(_document.getElementById("error-ok-button"), closeDialog)
 }
 
 exports.show = msg => {
