@@ -592,8 +592,10 @@ describe("Integration tests with their own app instance each", () => {
             // The "evaluateHandle" function serializes the parameters and an object containing
             // a function cannot be serialized.
             await _page.evaluateHandle(filePath => {
+                const dragDrop = require("./lib/renderer/dragDrop")
+
                 // eslint-disable-next-line no-undef
-                dropHandler({
+                dragDrop.dropHandler({
                     preventDefault() {},
                     dataTransfer: {
                         files: [{ path: filePath }],
@@ -607,6 +609,9 @@ describe("Integration tests with their own app instance each", () => {
         it("can be done", async () => {
             const filePathToDrop = path.join(lib.DEFAULT_DOCUMENT_DIR, "languages.md")
             await drop(filePathToDrop)
+            await _page
+                .locator(mocking.elements.dragDropDialog.openInCurrentWindowButton.path)
+                .click()
             assert.include(await _page.title(), filePathToDrop)
         })
 

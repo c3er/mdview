@@ -401,6 +401,12 @@ exports.elements = {
             path: "#search-cancel-button",
         },
     },
+    dragDropDialog: {
+        path: "#drag-drop-dialog",
+        openInCurrentWindowButton: {
+            path: "#drag-drop-open-in-current-window",
+        },
+    },
     errorDialog: {
         path: "#error-dialog",
         okButton: {
