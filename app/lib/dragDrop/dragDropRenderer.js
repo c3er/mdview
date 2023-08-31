@@ -3,14 +3,19 @@ const fs = require("fs")
 const dialog = require("../renderer/dialog")
 const error = require("../error/errorRenderer")
 const file = require("../file")
+const ipc = require("../ipc/ipcRenderer")
 const navigation = require("../navigation/navigationRenderer")
+
+const shared = require("./dragDropShared")
 
 let _document
 
 let _dialogElement
+let _rememberChoiceCheckbox
 
 let _dialogIsOpen = false
 let _filePath = ""
+let _behavior = shared.behavior.ask
 
 function openDialog() {
     _dialogElement.showModal()
@@ -24,6 +29,12 @@ function closeDialog() {
 
 function openFile(shallOpenInNewWindow) {
     closeDialog()
+    if (_rememberChoiceCheckbox.checked) {
+        ipc.send(
+            ipc.messages.dragDropBehavior,
+            shallOpenInNewWindow ? shared.behavior.newWindow : shared.behavior.currentWindow,
+        )
+    }
     navigation.openFile(_filePath, shallOpenInNewWindow)
 }
 
@@ -41,14 +52,27 @@ function dropHandler(event) {
         error.show(`Cannot display: "${filePath}" is not a text file`)
     } else {
         _filePath = filePath
-        openDialog()
+        switch (_behavior) {
+            case shared.behavior.ask:
+                openDialog()
+                break
+            case shared.behavior.currentWindow:
+                openFile(false)
+                break
+            case shared.behavior.newWindow:
+                openFile(true)
+                break
+        }
     }
 }
+
+exports.behavior = shared.behavior
 
 exports.init = document => {
     _document = document
 
     _dialogElement = _document.getElementById("drag-drop-dialog")
+    _rememberChoiceCheckbox = _document.getElementById("drag-drop-remember")
 
     _document.body.ondragover = event => {
         event.preventDefault()
@@ -68,6 +92,8 @@ exports.init = document => {
 exports.closeDialog = closeDialog
 
 exports.dialogIsOpen = () => _dialogIsOpen
+
+exports.setBehavior = value => (_behavior = value)
 
 // For testing
 

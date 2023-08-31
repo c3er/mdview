@@ -2,6 +2,7 @@ const fs = require("fs")
 const path = require("path")
 
 const common = require("../common")
+const dragDrop = require("../dragDrop/dragDropShared")
 const log = require("../log/log")
 const navigation = require("../navigation/navigationMain")
 
@@ -63,6 +64,7 @@ class ApplicationSettings extends StorageBase {
     #SHOW_TOC_KEY = "show-toc"
     #TOC_WIDTH_KEY = "toc-width"
     #HIDE_METADATA_KEY = "hide-metadata"
+    #DRAG_DROP_BEHAVIOR_KEY = "drag-drop-behavior"
 
     SYSTEM_THEME = common.SYSTEM_THEME
     LIGHT_THEME = common.LIGHT_THEME
@@ -79,6 +81,7 @@ class ApplicationSettings extends StorageBase {
     TOC_WIDTH_DEFAULT = null
 
     HIDE_METADATA_DEFAULT = false
+    DRAG_DROP_BEHAVIOR_DEFAULT = dragDrop.behavior.ask
 
     get theme() {
         return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
@@ -156,6 +159,14 @@ class ApplicationSettings extends StorageBase {
 
     set hideMetadata(value) {
         this._storeValue(this.#HIDE_METADATA_KEY, value)
+    }
+
+    get dragDropBehavior() {
+        return this._loadValue(this.#DRAG_DROP_BEHAVIOR_KEY, this.DRAG_DROP_BEHAVIOR_DEFAULT)
+    }
+
+    set dragDropBehavior(value) {
+        this._storeValue(this.#DRAG_DROP_BEHAVIOR_KEY, value)
     }
 
     _loadValue(key, defaultValue) {

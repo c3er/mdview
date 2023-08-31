@@ -9,7 +9,7 @@ const remote = require("@electron/remote")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/renderer/documentRendering")
-const dragDrop = require("./lib/renderer/dragDrop")
+const dragDrop = require("./lib/dragDrop/dragDropRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
 const error = require("./lib/error/errorRenderer")
 const ipc = require("./lib/ipc/ipcRenderer")
@@ -386,9 +386,10 @@ ipc.listen(ipc.messages.restorePosition, position => {
 
 ipc.listen(ipc.messages.changeZoom, zoomFactor => electron.webFrame.setZoomFactor(zoomFactor))
 
-ipc.listen(ipc.messages.changeRenderingOptions, options => {
+ipc.listen(ipc.messages.updateSettings, options => {
     documentRendering.reset(options)
     reload(false)
+    dragDrop.setBehavior(options.dragDropBehavior)
 })
 
 ipc.listen(ipc.messages.print, () => {

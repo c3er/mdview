@@ -534,6 +534,11 @@ ipc.listen(ipc.messages.openInternalInNewWindow, target =>
 
 ipc.listen(ipc.messages.closeApplication, () => _mainWindow?.close())
 
+ipc.listen(
+    ipc.messages.dragDropBehavior,
+    behavior => (_applicationSettings.dragDropBehavior = behavior),
+)
+
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {
     log.error(`Unhandled error: ${error.stack}`)

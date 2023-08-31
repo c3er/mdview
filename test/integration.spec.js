@@ -592,7 +592,7 @@ describe("Integration tests with their own app instance each", () => {
             // The "evaluateHandle" function serializes the parameters and an object containing
             // a function cannot be serialized.
             await _page.evaluateHandle(filePath => {
-                const dragDrop = require("./lib/renderer/dragDrop")
+                const dragDrop = require("./lib/dragDrop/dragDropRenderer")
 
                 // eslint-disable-next-line no-undef
                 dragDrop.dropHandler({
