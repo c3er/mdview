@@ -534,10 +534,10 @@ ipc.listen(ipc.messages.openInternalInNewWindow, target =>
 
 ipc.listen(ipc.messages.closeApplication, () => _mainWindow?.close())
 
-ipc.listen(
-    ipc.messages.dragDropBehavior,
-    behavior => (_applicationSettings.dragDropBehavior = behavior),
-)
+ipc.listen(ipc.messages.dragDropBehavior, behavior => {
+    _applicationSettings.dragDropBehavior = behavior
+    settings.notifySettingsChanges(navigation.getCurrentLocation().filePath)
+})
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
 process.on("uncaughtException", error => {

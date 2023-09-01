@@ -81,3 +81,5 @@ exports.open = () =>
     )
 
 exports.setZoom = setZoom
+
+exports.notifySettingsChanges = notifySettingsChanges

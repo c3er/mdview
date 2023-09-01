@@ -19,6 +19,7 @@ let _behavior = shared.behavior.ask
 
 function openDialog() {
     _dialogElement.showModal()
+    _rememberChoiceCheckbox.checked = false
     _dialogIsOpen = true
 }
 
