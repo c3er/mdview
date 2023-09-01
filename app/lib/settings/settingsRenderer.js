@@ -22,6 +22,9 @@ let _singleLineBreakCheckbox
 let _typographyEnabledCheckbox
 let _enableEmojisCheckbox
 let _hideMetadataCheckbox
+let _dragDropAskRadioButton
+let _dragDropCurrentWindowRadioButton
+let _dragDropNewWindowRadioButton
 let _renderFileTypeAsMarkdownCheckbox
 let _showTocCheckbox
 let _showTocForDocumentCheckbox
@@ -30,6 +33,12 @@ let _renderDocumentAsMarkdownCheckbox
 let _applicationSettings
 let _documentSettings
 let _filePath
+
+function parseRadioButtons(radioButtonMapping) {
+    return Object.entries(radioButtonMapping)
+        .filter(([, radioButton]) => radioButton.checked)
+        .map(([value]) => value)[0]
+}
 
 function updateTocForDocumentCheckbox() {
     _showTocForDocumentCheckbox.checked =
@@ -61,6 +70,11 @@ function populateDialog() {
     _typographyEnabledCheckbox.checked = _applicationSettings.typographyEnabled
     _enableEmojisCheckbox.checked = _applicationSettings.emojisEnabled
     _hideMetadataCheckbox.checked = _applicationSettings.hideMetadata
+    ;({
+        ask: _dragDropAskRadioButton,
+        "current-window": _dragDropCurrentWindowRadioButton,
+        "new-window": _dragDropNewWindowRadioButton,
+    })[_applicationSettings.dragDropBehavior].checked = true
     _renderFileTypeAsMarkdownCheckbox.checked = _applicationSettings.mdFileTypes.some(fileType =>
         _filePath.endsWith(fileType),
     )
@@ -73,18 +87,21 @@ function populateDialog() {
 
 function applySettings() {
     // Application settings
-    _applicationSettings.theme = Object.entries({
+    _applicationSettings.theme = parseRadioButtons({
         system: _systemThemeRadioButton,
         light: _lightThemeRadioButton,
         dark: _darkThemeRadioButton,
     })
-        .filter(([, element]) => element.checked)
-        .map(([theme]) => theme)[0]
     _applicationSettings.zoom = Number(_zoomInput.value)
     _applicationSettings.lineBreaksEnabled = _singleLineBreakCheckbox.checked
     _applicationSettings.typographyEnabled = _typographyEnabledCheckbox.checked
     _applicationSettings.emojisEnabled = _enableEmojisCheckbox.checked
     _applicationSettings.hideMetadata = _hideMetadataCheckbox.checked
+    _applicationSettings.dragDropBehavior = parseRadioButtons({
+        ask: _dragDropAskRadioButton,
+        "current-window": _dragDropCurrentWindowRadioButton,
+        "new-window": _dragDropNewWindowRadioButton,
+    })
     updateMdFileTypeSetting(_renderFileTypeAsMarkdownCheckbox.checked)
     _applicationSettings.showToc = _showTocCheckbox.checked
 
@@ -139,6 +156,9 @@ exports.init = document => {
     _typographyEnabledCheckbox = _document.getElementById("typographic-replacements")
     _enableEmojisCheckbox = _document.getElementById("emoticons-to-emojis")
     _hideMetadataCheckbox = _document.getElementById("hide-metadata")
+    _dragDropAskRadioButton = _document.getElementById("drag-drop-ask")
+    _dragDropCurrentWindowRadioButton = _document.getElementById("drag-drop-current-window")
+    _dragDropNewWindowRadioButton = _document.getElementById("drag-drop-new-window")
     _renderFileTypeAsMarkdownCheckbox = _document.getElementById("render-filetype-as-markdown")
     _showTocCheckbox = _document.getElementById("show-toc")
     _showTocForDocumentCheckbox = _document.getElementById("show-toc-for-doc")
