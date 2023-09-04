@@ -587,6 +587,8 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Drag & drop", () => {
+        const filePathToDrop = path.join(lib.DEFAULT_DOCUMENT_DIR, "languages.md")
+
         async function drop(filePath) {
             // The already defined event in the mocking module cannot be used here.
             // The "evaluateHandle" function serializes the parameters and an object containing
@@ -606,12 +608,15 @@ describe("Integration tests with their own app instance each", () => {
             await waitForWindowLoaded()
         }
 
-        it("can be done", async () => {
-            const filePathToDrop = path.join(lib.DEFAULT_DOCUMENT_DIR, "languages.md")
-            await drop(filePathToDrop)
+        async function clickCurrentWindowButton() {
             await _page
                 .locator(mocking.elements.dragDropDialog.openInCurrentWindowButton.path)
                 .click()
+        }
+
+        it("can be done", async () => {
+            await drop(filePathToDrop)
+            await clickCurrentWindowButton()
             assert.include(await _page.title(), filePathToDrop)
         })
 
@@ -625,6 +630,18 @@ describe("Integration tests with their own app instance each", () => {
             await drop(imageFilePath)
             await assertErrorDialog()
             assert.notInclude(await _page.title(), imageFilePath)
+        })
+
+        it('rmembers choice after click on "Don\'t ask again" button', async () => {
+            await drop(filePathToDrop)
+            await _page.locator(mocking.elements.dragDropDialog.dontAskAgainCheckbox.path).click()
+            await clickCurrentWindowButton()
+            assert.include(await _page.title(), filePathToDrop)
+
+            await restartApp()
+
+            await drop(filePathToDrop)
+            assert.include(await _page.title(), filePathToDrop)
         })
     })
 })

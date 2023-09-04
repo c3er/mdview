@@ -406,6 +406,9 @@ exports.elements = {
         openInCurrentWindowButton: {
             path: "#drag-drop-open-in-current-window",
         },
+        dontAskAgainCheckbox: {
+            path: "#drag-drop-remember",
+        },
     },
     errorDialog: {
         path: "#error-dialog",
