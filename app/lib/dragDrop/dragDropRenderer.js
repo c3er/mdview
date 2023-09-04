@@ -99,3 +99,9 @@ exports.setBehavior = value => (_behavior = value)
 // For testing
 
 exports.dropHandler = dropHandler
+
+exports.reset = () => {
+    _dialogIsOpen = false
+    _filePath = ""
+    _behavior = shared.behavior.ask
+}

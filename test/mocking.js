@@ -37,9 +37,18 @@ let _htmlElement = null
 
 class Event {
     preventDefaultIsCalled = false
+    dataTransfer = {
+        files: [],
+    }
 
     preventDefault() {
         this.preventDefaultIsCalled = true
+    }
+
+    static withFile(filePath) {
+        const event = new Event()
+        event.dataTransfer.files.push({ path: filePath })
+        return event
     }
 }
 
@@ -464,6 +473,8 @@ exports.window = {
 }
 
 exports.createEvent = () => new Event()
+
+exports.createEventWithFile = Event.withFile
 
 exports.createProcess = () => new Process()
 
