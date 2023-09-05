@@ -86,6 +86,31 @@
                             <label for="hide-metadata">Hide metadata header</label>
                         </div>
 
+                        <h1>Drag & Drop</h1>
+                        <p>What to do when a file is dropped into the window</p>
+                        <div>
+                            <input type="radio" id="drag-drop-ask" name="drag-drop-setting" />
+                            <label for="drag-drop-ask">Always ask</label>
+                        </div>
+                        <div>
+                            <input
+                                type="radio"
+                                id="drag-drop-current-window"
+                                name="drag-drop-setting"
+                            />
+                            <label for="drag-drop-current-window"
+                                >Open file in current window</label
+                            >
+                        </div>
+                        <div>
+                            <input
+                                type="radio"
+                                id="drag-drop-new-window"
+                                name="drag-drop-setting"
+                            />
+                            <label for="drag-drop-new-window">Open file in new window</label>
+                        </div>
+
                         <h1>Miscellaneous</h1>
                         <div>
                             <input type="checkbox" id="render-filetype-as-markdown" />
@@ -145,6 +170,33 @@
                     >
                         Cancel
                     </button>
+                </div>
+            </form>
+        </dialog>
+
+        <dialog id="drag-drop-dialog">
+            <form>
+                <div class="dialog-content">
+                    <p>
+                        <button
+                            id="drag-drop-open-in-current-window"
+                            value="open-in-current-window"
+                        >
+                            Open in this window
+                        </button>
+                    </p>
+                    <p>
+                        <button id="drag-drop-open-in-new-window" value="open-in-new-window">
+                            Open in new window
+                        </button>
+                    </p>
+                    <p>
+                        <button id="drag-drop-cancel" value="cancel">Cancel</button>
+                    </p>
+                    <p>
+                        <input type="checkbox" id="drag-drop-remember" />
+                        <label for="drag-drop-remember">Don't ask again</label>
+                    </p>
                 </div>
             </form>
         </dialog>

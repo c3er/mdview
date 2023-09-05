@@ -9,9 +9,9 @@ const remote = require("@electron/remote")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const documentRendering = require("./lib/renderer/documentRendering")
+const dragDrop = require("./lib/dragDrop/dragDropRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
 const error = require("./lib/error/errorRenderer")
-const file = require("./lib/file")
 const ipc = require("./lib/ipc/ipcRenderer")
 const log = require("./lib/log/log")
 const navigation = require("./lib/navigation/navigationRenderer")
@@ -149,23 +149,6 @@ function isDarkMode() {
     return Boolean(matchMedia("(prefers-color-scheme: dark)").matches)
 }
 
-function dropHandler(event) {
-    event.preventDefault()
-
-    const filePath = event.dataTransfer.files[0].path
-    const fileStat = fs.statSync(filePath)
-
-    if (fileStat.isDirectory()) {
-        error.show(`Cannot display: "${filePath}" is a directory`)
-    } else if (!fileStat.isFile()) {
-        error.show(`Cannot display: "${filePath}" is not a valid file`)
-    } else if (!file.isText(filePath)) {
-        error.show(`Cannot display: "${filePath}" is not a text file`)
-    } else {
-        navigation.openFile(filePath, false)
-    }
-}
-
 function domContentLoadedHandler() {
     document.title = TITLE
 
@@ -179,6 +162,7 @@ function domContentLoadedHandler() {
     search.init(document, () => reload(false))
     settings.init(document)
     error.init(document)
+    dragDrop.init(document)
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
@@ -189,12 +173,6 @@ function domContentLoadedHandler() {
         }
     })
     toc.updateTheme(chooseTheme(Boolean(match.matches)))
-
-    document.body.ondragover = event => {
-        event.preventDefault()
-        event.dataTransfer.dropEffect = "copy"
-    }
-    document.body.ondrop = dropHandler
 
     ipc.send(ipc.messages.finishLoad)
 }
@@ -266,12 +244,14 @@ onkeydown = event => {
                 settings.close()
             } else if (error.isOpen()) {
                 error.close()
+            } else if (dragDrop.dialogIsOpen()) {
+                dragDrop.closeDialog()
             } else {
                 ipc.send(ipc.messages.closeApplication)
             }
             return
         case "Backspace":
-            if (!search.dialogIsOpen() && !settings.isOpen()) {
+            if (!search.dialogIsOpen() && !settings.isOpen() && !dragDrop.dialogIsOpen()) {
                 event.preventDefault()
                 navigation.back()
             }
@@ -406,9 +386,10 @@ ipc.listen(ipc.messages.restorePosition, position => {
 
 ipc.listen(ipc.messages.changeZoom, zoomFactor => electron.webFrame.setZoomFactor(zoomFactor))
 
-ipc.listen(ipc.messages.changeRenderingOptions, options => {
+ipc.listen(ipc.messages.updateSettings, options => {
     documentRendering.reset(options)
     reload(false)
+    dragDrop.setBehavior(options.dragDropBehavior)
 })
 
 ipc.listen(ipc.messages.print, () => {

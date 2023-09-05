@@ -23,14 +23,15 @@ function setZoom(zoomFactor) {
     ipc.send(ipc.messages.changeZoom, zoomFactor)
 }
 
-function notifyRenderingOptionChanges(filePath) {
+function notifySettingsChanges(filePath) {
     const documentSettings = storage.loadDocumentSettings(filePath)
-    ipc.send(ipc.messages.changeRenderingOptions, {
+    ipc.send(ipc.messages.updateSettings, {
         lineBreaksEnabled: _applicationSettings.lineBreaksEnabled,
         typographyEnabled: _applicationSettings.typographyEnabled,
         emojisEnabled: _applicationSettings.emojisEnabled,
         renderAsMarkdown: documentSettings.renderAsMarkdown || isMarkdownFileType(filePath),
         hideMetadata: _applicationSettings.hideMetadata,
+        dragDropBehavior: _applicationSettings.dragDropBehavior,
     })
 }
 
@@ -45,7 +46,7 @@ function applySettings(applicationSettingsData, documentSettingsData) {
     }
 
     setZoom(applicationSettingsData.zoom)
-    notifyRenderingOptionChanges(navigation.getCurrentLocation().filePath)
+    notifySettingsChanges(navigation.getCurrentLocation().filePath)
     toc.setVisibilityForApplication(_applicationSettings.showToc)
     if (documentSettings.showTocOverridesAppSettings) {
         toc.setVisibilityForDocument(documentSettings.showToc)
@@ -57,12 +58,12 @@ exports.SETTINGS_MENU_ID = SETTINGS_MENU_ID
 exports.init = (mainMenu, filePath) => {
     _mainMenu = mainMenu
     _applicationSettings = storage.loadApplicationSettings()
-    notifyRenderingOptionChanges(filePath)
+    notifySettingsChanges(filePath)
 
     navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, () => {
         const filePath = navigation.getCurrentLocation().filePath
         if (filePath !== _previousFilePath) {
-            notifyRenderingOptionChanges(filePath)
+            notifySettingsChanges(filePath)
         }
         _previousFilePath = filePath
     })
@@ -80,3 +81,5 @@ exports.open = () =>
     )
 
 exports.setZoom = setZoom
+
+exports.notifySettingsChanges = notifySettingsChanges

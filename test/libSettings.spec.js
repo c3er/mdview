@@ -25,12 +25,13 @@ describe("Settings", () => {
         beforeEach(() => {
             mocking.register.ipc.rendererOn(ipc.messages.resetContentBlocking)
             mocking.register.ipc.rendererOn(ipc.messages.fileOpen)
-            mocking.register.ipc.rendererOn(ipc.messages.changeRenderingOptions, (_, options) => {
+            mocking.register.ipc.rendererOn(ipc.messages.updateSettings, (_, options) => {
                 assert.exists(options.lineBreaksEnabled)
                 assert.exists(options.typographyEnabled)
                 assert.exists(options.emojisEnabled)
                 assert.exists(options.renderAsMarkdown)
                 assert.exists(options.hideMetadata)
+                assert.exists(options.dragDropBehavior)
             })
 
             ipc.init(mocking.mainWindow, mocking.electron)

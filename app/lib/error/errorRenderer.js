@@ -2,6 +2,8 @@ const dialog = require("../renderer/dialog")
 
 let _document
 
+let _lastErrorMessage = ""
+
 let _dialogElement
 let _dialogIsOpen = false
 
@@ -23,8 +25,19 @@ exports.show = msg => {
     _document.getElementById("error-dialog-content").innerText = msg
     _dialogElement.showModal()
     _dialogIsOpen = true
+
+    _lastErrorMessage = msg
 }
 
 exports.close = closeDialog
 
 exports.isOpen = () => _dialogIsOpen
+
+// For testing
+
+exports.lastErrorMessage = () => _lastErrorMessage
+
+exports.reset = () => {
+    _lastErrorMessage = ""
+    _dialogIsOpen = false
+}

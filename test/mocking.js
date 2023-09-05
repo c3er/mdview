@@ -37,9 +37,18 @@ let _htmlElement = null
 
 class Event {
     preventDefaultIsCalled = false
+    dataTransfer = {
+        files: [],
+    }
 
     preventDefault() {
         this.preventDefaultIsCalled = true
+    }
+
+    static withFile(filePath) {
+        const event = new Event()
+        event.dataTransfer.files.push({ path: filePath })
+        return event
     }
 }
 
@@ -401,6 +410,15 @@ exports.elements = {
             path: "#search-cancel-button",
         },
     },
+    dragDropDialog: {
+        path: "#drag-drop-dialog",
+        openInCurrentWindowButton: {
+            path: "#drag-drop-open-in-current-window",
+        },
+        dontAskAgainCheckbox: {
+            path: "#drag-drop-remember",
+        },
+    },
     errorDialog: {
         path: "#error-dialog",
         okButton: {
@@ -455,6 +473,8 @@ exports.window = {
 }
 
 exports.createEvent = () => new Event()
+
+exports.createEventWithFile = Event.withFile
 
 exports.createProcess = () => new Process()
 
