@@ -186,7 +186,7 @@ function createMainMenu() {
                     submenu: [],
                 },
                 {
-                    label: "Remove Recent Files",
+                    label: "Clear Recent Files List",
                     id: fileHistory.REMOVE_RECENT_FILES_MENU_ID,
                     enabled: false,
                     click() {
