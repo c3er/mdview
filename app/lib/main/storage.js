@@ -12,11 +12,13 @@ const JSON_INDENTATION = 4
 
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
+const FILE_HISTORY_FILE = "file-history.json"
 
 let _dataDir
 
 let _applicationSettings
-const _documentSettings = {}
+let _fileHistory
+let _documentSettings = {}
 
 class StorageBase {
     _storagePath
@@ -65,6 +67,7 @@ class ApplicationSettings extends StorageBase {
     #TOC_WIDTH_KEY = "toc-width"
     #HIDE_METADATA_KEY = "hide-metadata"
     #DRAG_DROP_BEHAVIOR_KEY = "drag-drop-behavior"
+    #FILE_HISTORY_SIZE_KEY = "file-history-size"
 
     SYSTEM_THEME = common.SYSTEM_THEME
     LIGHT_THEME = common.LIGHT_THEME
@@ -82,6 +85,7 @@ class ApplicationSettings extends StorageBase {
 
     HIDE_METADATA_DEFAULT = false
     DRAG_DROP_BEHAVIOR_DEFAULT = dragDrop.behavior.ask
+    FILE_HISTORY_SIZE_DEFAULT = 5
 
     get theme() {
         return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
@@ -167,6 +171,14 @@ class ApplicationSettings extends StorageBase {
 
     set dragDropBehavior(value) {
         this._storeValue(this.#DRAG_DROP_BEHAVIOR_KEY, value)
+    }
+
+    get fileHistorySize() {
+        return this._loadValue(this.#FILE_HISTORY_SIZE_KEY, this.FILE_HISTORY_SIZE_DEFAULT)
+    }
+
+    set fileHistorySize(value) {
+        this._storeValue(this.#FILE_HISTORY_SIZE_KEY, value)
     }
 
     _loadValue(key, defaultValue) {
@@ -273,14 +285,65 @@ class DocumentSettings extends StorageBase {
     }
 }
 
+class FileHistory extends StorageBase {
+    constructor(storageDir, storageFile) {
+        super(storageDir, storageFile)
+        if (!this._data.files) {
+            this._data.files = []
+        }
+    }
+
+    get filePaths() {
+        return this._data.files
+    }
+
+    hasFiles() {
+        return this.filePaths.length > 0
+    }
+
+    add(filePath) {
+        const filePathIndex = this.filePaths.indexOf(filePath)
+        if (filePathIndex > -1) {
+            this.filePaths.splice(filePathIndex, 1)
+        }
+
+        this.filePaths.unshift(filePath)
+        if (this.filePaths.length > loadApplicationSettings().fileHistorySize) {
+            this.filePaths.pop()
+        }
+        this._save()
+    }
+
+    clear() {
+        this.filePaths.length = 0
+        this.add(navigation.getCurrentLocation().filePath)
+        this._save()
+    }
+
+    updateSize() {
+        const oldSize = this.filePaths.length
+        const sizeDifference = oldSize - loadApplicationSettings().fileHistorySize
+        if (sizeDifference <= 0) {
+            return
+        }
+        this.filePaths.splice(oldSize - sizeDifference, sizeDifference)
+        this._save()
+    }
+}
+
+function loadApplicationSettings() {
+    return (
+        _applicationSettings ??
+        (_applicationSettings = new ApplicationSettings(_dataDir, APPLICATION_SETTINGS_FILE))
+    )
+}
+
 exports.init = (dataDir, electronMock) => {
     electron = electronMock ?? require("electron")
     exports.dataDir = _dataDir = dataDir
 }
 
-exports.loadApplicationSettings = () =>
-    _applicationSettings ??
-    (_applicationSettings = new ApplicationSettings(_dataDir, APPLICATION_SETTINGS_FILE))
+exports.loadApplicationSettings = loadApplicationSettings
 
 exports.loadDocumentSettings = documentPath => {
     documentPath ??= navigation.getCurrentLocation().filePath
@@ -292,4 +355,12 @@ exports.loadDocumentSettings = documentPath => {
             documentPath,
         ))
     )
+}
+
+exports.loadFileHistory = () =>
+    _fileHistory ?? (_fileHistory = new FileHistory(_dataDir, FILE_HISTORY_FILE))
+
+exports.reset = () => {
+    _applicationSettings = _fileHistory = null
+    _documentSettings = {}
 }

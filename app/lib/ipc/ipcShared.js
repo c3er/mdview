@@ -3,6 +3,7 @@ exports.messages = {
     applySettings: "apply-settings",
     changeEncoding: "change-encoding",
     changeZoom: "change-zoom",
+    clearFileHistory: "clear-file-history",
     closeApplication: "cloase-application",
     contentBlocked: "content-blocked",
     disableRawView: "disable-raw-view",

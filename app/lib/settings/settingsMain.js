@@ -1,3 +1,4 @@
+const fileHistory = require("../main/fileHistory")
 const fileLib = require("../file")
 const ipc = require("../ipc/ipcMain")
 const menu = require("../main/menu")
@@ -51,6 +52,9 @@ function applySettings(applicationSettingsData, documentSettingsData) {
     if (documentSettings.showTocOverridesAppSettings) {
         toc.setVisibilityForDocument(documentSettings.showToc)
     }
+
+    storage.loadFileHistory().updateSize()
+    fileHistory.updateMenu()
 }
 
 exports.SETTINGS_MENU_ID = SETTINGS_MENU_ID

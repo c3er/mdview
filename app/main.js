@@ -14,6 +14,7 @@ const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
 const encodingLib = require("./lib/encoding/encodingMain")
 const error = require("./lib/error/errorMain")
+const fileHistory = require("./lib/main/fileHistory")
 const ipc = require("./lib/ipc/ipcMain")
 const log = require("./lib/log/log")
 const menu = require("./lib/main/menu")
@@ -176,6 +177,20 @@ function createMainMenu() {
                         // Workaround for Electron issue, see
                         // https://github.com/electron/electron/issues/36897
                         ipc.send(ipc.messages.print)
+                    },
+                },
+                { type: "separator" },
+                {
+                    label: "Recent Files",
+                    id: fileHistory.RECENT_FILES_MENU_ID,
+                    submenu: [],
+                },
+                {
+                    label: "Clear Recent Files List",
+                    id: fileHistory.REMOVE_RECENT_FILES_MENU_ID,
+                    enabled: false,
+                    click() {
+                        fileHistory.clear()
                     },
                 },
                 { type: "separator" },
@@ -471,6 +486,7 @@ electron.app.whenReady().then(() => {
     contentBlocking.init(_mainMenu)
     rawText.init(_mainMenu)
     search.init(_mainMenu)
+    fileHistory.init(_mainMenu, determineCurrentFilePath())
 
     electron.app.on("activate", ensureWindowExists)
 })
