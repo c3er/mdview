@@ -318,6 +318,16 @@ class FileHistory extends StorageBase {
         this.filePaths.length = 0
         this._save()
     }
+
+    updateSize() {
+        const oldSize = this.filePaths.length
+        const sizeDifference = oldSize - loadApplicationSettings().fileHistorySize
+        if (sizeDifference <= 0) {
+            return
+        }
+        this.filePaths.splice(oldSize - sizeDifference, sizeDifference)
+        this._save()
+    }
 }
 
 function loadApplicationSettings() {

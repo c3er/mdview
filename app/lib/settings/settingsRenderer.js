@@ -26,6 +26,7 @@ let _dragDropAskRadioButton
 let _dragDropCurrentWindowRadioButton
 let _dragDropNewWindowRadioButton
 let _renderFileTypeAsMarkdownCheckbox
+let _fileHistorySizeInput
 let _showTocCheckbox
 let _showTocForDocumentCheckbox
 let _renderDocumentAsMarkdownCheckbox
@@ -78,6 +79,7 @@ function populateDialog() {
     _renderFileTypeAsMarkdownCheckbox.checked = _applicationSettings.mdFileTypes.some(fileType =>
         _filePath.endsWith(fileType),
     )
+    _fileHistorySizeInput.value = _applicationSettings.fileHistorySize
     _showTocCheckbox.checked = _applicationSettings.showToc
 
     // Document settings
@@ -103,6 +105,7 @@ function applySettings() {
         "new-window": _dragDropNewWindowRadioButton,
     })
     updateMdFileTypeSetting(_renderFileTypeAsMarkdownCheckbox.checked)
+    _applicationSettings.fileHistorySize = Number(_fileHistorySizeInput.value)
     _applicationSettings.showToc = _showTocCheckbox.checked
 
     // Document settings
@@ -143,6 +146,12 @@ function handleConfirm(event) {
     }
 }
 
+function handleKeyboardConfirm(event) {
+    if (event.key === "Enter") {
+        handleConfirm(event)
+    }
+}
+
 exports.init = document => {
     _document = document
     _dialogElement = _document.getElementById("settings-dialog")
@@ -160,6 +169,7 @@ exports.init = document => {
     _dragDropCurrentWindowRadioButton = _document.getElementById("drag-drop-current-window")
     _dragDropNewWindowRadioButton = _document.getElementById("drag-drop-new-window")
     _renderFileTypeAsMarkdownCheckbox = _document.getElementById("render-filetype-as-markdown")
+    _fileHistorySizeInput = _document.getElementById("file-history-size")
     _showTocCheckbox = _document.getElementById("show-toc")
     _showTocForDocumentCheckbox = _document.getElementById("show-toc-for-doc")
     _renderDocumentAsMarkdownCheckbox = _document.getElementById("render-doc-as-markdown")
@@ -179,20 +189,15 @@ exports.init = document => {
     }
     changeTab(0)
 
-    _dialogElement.addEventListener("keydown", event => {
-        if (event.key === "Enter") {
-            handleConfirm(event)
-        }
-    })
-
-    _zoomInput.onkeydown = event => {
-        if (event.key === "Enter") {
-            handleConfirm(event)
-        }
-    }
+    _dialogElement.addEventListener("keydown", handleKeyboardConfirm)
+    _zoomInput.onkeydown = handleKeyboardConfirm
+    _fileHistorySizeInput.onkeydown = handleKeyboardConfirm
     dialog.addStdButtonHandler(
         _document.getElementById("reset-zoom-button"),
         () => (_zoomInput.value = _applicationSettings.zoom = common.ZOOM_DEFAULT),
+    )
+    dialog.addStdButtonHandler(_document.getElementById("clear-file-history-button"), () =>
+        ipc.send(ipc.messages.clearFileHistory),
     )
     dialog.addStdButtonHandler(_document.getElementById("forget-toc-override-button"), () => {
         _documentSettings.showTocOverridesAppSettings = false

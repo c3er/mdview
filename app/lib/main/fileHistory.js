@@ -1,3 +1,4 @@
+const ipc = require("../ipc/ipcMain")
 const menu = require("./menu")
 const navigation = require("../navigation/navigationMain")
 const storage = require("./storage")
@@ -38,6 +39,11 @@ function addFile(filePath) {
     updateMenu()
 }
 
+function clear() {
+    storage.loadFileHistory().clear()
+    updateMenu()
+}
+
 exports.RECENT_FILES_MENU_ID = RECENT_FILES_MENU_ID
 
 exports.REMOVE_RECENT_FILES_MENU_ID = REMOVE_RECENT_FILES_MENU_ID
@@ -51,9 +57,9 @@ exports.init = (mainMenu, initialFilePath, electronMock) => {
     navigation.register(ADD_TO_FILE_HISTORY_NAV_ID, () =>
         addFile(navigation.getCurrentLocation().filePath),
     )
+    ipc.listen(ipc.messages.clearFileHistory, clear)
 }
 
-exports.clear = () => {
-    storage.loadFileHistory().clear()
-    updateMenu()
-}
+exports.clear = clear
+
+exports.updateMenu = updateMenu
