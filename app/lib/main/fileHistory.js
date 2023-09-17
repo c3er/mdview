@@ -11,10 +11,14 @@ const ADD_TO_FILE_HISTORY_NAV_ID = "add-to-file-history"
 let _mainMenu
 
 function updateMenu() {
-    // XXX Not working currently
     const fileHistory = storage.loadFileHistory()
     const subMenu = _mainMenu.getMenuItemById(RECENT_FILES_MENU_ID).submenu
-    subMenu.items.length = 0
+
+    // Workaround: it is not easily possible to remove existing menu items.
+    // Instead, make all menu items invisible and add the updated file history list to the menu.
+    for (const menuItem of subMenu.items) {
+        menuItem.visible = false
+    }
     for (const filePath of fileHistory.filePaths) {
         subMenu.append(
             new electron.MenuItem({
@@ -25,6 +29,7 @@ function updateMenu() {
             }),
         )
     }
+
     menu.setEnabled(_mainMenu, REMOVE_RECENT_FILES_MENU_ID, fileHistory.hasFiles())
 }
 
