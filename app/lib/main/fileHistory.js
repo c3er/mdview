@@ -32,6 +32,9 @@ function updateMenu() {
     }
 
     menu.setEnabled(_mainMenu, REMOVE_RECENT_FILES_MENU_ID, fileHistory.hasFiles())
+
+    // Additional workaround for macOS
+    electron.Menu.setApplicationMenu(_mainMenu)
 }
 
 function addFile(filePath) {
