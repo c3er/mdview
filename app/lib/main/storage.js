@@ -18,7 +18,7 @@ let _dataDir
 
 let _applicationSettings
 let _fileHistory
-const _documentSettings = {}
+let _documentSettings = {}
 
 class StorageBase {
     _storagePath
@@ -359,3 +359,8 @@ exports.loadDocumentSettings = documentPath => {
 
 exports.loadFileHistory = () =>
     _fileHistory ?? (_fileHistory = new FileHistory(_dataDir, FILE_HISTORY_FILE))
+
+exports.reset = () => {
+    _applicationSettings = _fileHistory = null
+    _documentSettings = {}
+}

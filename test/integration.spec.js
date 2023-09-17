@@ -644,6 +644,44 @@ describe("Integration tests with their own app instance each", () => {
             assert.include(await _page.title(), filePathToDrop)
         })
     })
+
+    describe("Recent files list", () => {
+        const fileHistory = require("../app/lib/main/fileHistory")
+
+        async function subMenuItems(id) {
+            return await _app.evaluate(
+                ({ Menu }, id) =>
+                    Menu.getApplicationMenu()
+                        .getMenuItemById(id)
+                        .submenu.items.filter(item => item.visible)
+                        .map(item => item.label),
+                id,
+            )
+        }
+
+        it("contains the currently opened document after cearing the list", async () => {
+            await clickMenuItem(fileHistory.REMOVE_RECENT_FILES_MENU_ID)
+            assert.deepEqual(await subMenuItems(fileHistory.RECENT_FILES_MENU_ID), [
+                lib.DEFAULT_DOCUMENT_PATH,
+            ])
+        })
+
+        it("contains multiple entries", async () => {
+            const filePaths = [
+                "metadata.md",
+                "languages.md",
+                "many-headers1.md",
+                "many-headers2.md",
+            ].map(file => path.join(lib.DEFAULT_DOCUMENT_DIR, file))
+            for (const filePath of filePaths) {
+                await restartApp(filePath)
+            }
+            assert.deepEqual(
+                await subMenuItems(fileHistory.RECENT_FILES_MENU_ID),
+                filePaths.reverse().concat([lib.DEFAULT_DOCUMENT_PATH]),
+            )
+        })
+    })
 })
 
 describe("Integration tests with special documents", () => {

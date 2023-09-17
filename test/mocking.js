@@ -226,6 +226,12 @@ exports.elements = {
                 print: {
                     label: "&Print",
                 },
+                recentFiles: {
+                    label: "Recent Files",
+                },
+                clearRecentFiles: {
+                    label: "Clear Recent Files List",
+                },
                 quit: {
                     label: "&Quit",
                 },
