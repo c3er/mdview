@@ -309,7 +309,7 @@ class FileHistory extends StorageBase {
 
         this.filePaths.unshift(filePath)
         if (this.filePaths.length > loadApplicationSettings().fileHistorySize) {
-            this.filePaths.shift()
+            this.filePaths.pop()
         }
         this._save()
     }
