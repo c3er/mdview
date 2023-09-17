@@ -316,6 +316,7 @@ class FileHistory extends StorageBase {
 
     clear() {
         this.filePaths.length = 0
+        this.add(navigation.getCurrentLocation().filePath)
         this._save()
     }
 
