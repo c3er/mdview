@@ -8,7 +8,7 @@ async function removeFiles(dir, files) {
             console.log(`Removing "${filePath}"...`)
             await fs.rm(filePath, { recursive: true })
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 }
@@ -70,7 +70,7 @@ exports.default = async context => {
 
     const fileInfos = FILES_TO_REMOVE[platform]
     if (fileInfos === undefined) {
-        console.log(`Warning: platform "${platform}" not supported`)
+        console.error(`Error: platform "${platform}" not supported`)
         return
     }
     for (const info of fileInfos) {
