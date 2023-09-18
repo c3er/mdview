@@ -316,7 +316,7 @@ class FileHistory extends StorageBase {
 
     clear() {
         this.filePaths.length = 0
-        this.add(navigation.getCurrentLocation().filePath)
+        this.add(navigation.currentFilePath())
         this._save()
     }
 
@@ -346,7 +346,7 @@ exports.init = (dataDir, electronMock) => {
 exports.loadApplicationSettings = loadApplicationSettings
 
 exports.loadDocumentSettings = documentPath => {
-    documentPath ??= navigation.getCurrentLocation().filePath
+    documentPath ??= navigation.currentFilePath()
     return (
         _documentSettings[documentPath] ??
         (_documentSettings[documentPath] = new DocumentSettings(

@@ -100,7 +100,7 @@ function loadDocumentSettings() {
 
 function determineCurrentFilePath() {
     return navigation.hasCurrentLocation()
-        ? navigation.getCurrentLocation().filePath
+        ? navigation.currentFilePath()
         : _cliArgs.filePath ?? _finderFilePath
 }
 
@@ -117,7 +117,7 @@ function reload(isFileModification, encoding) {
     ipc.send(
         ipc.messages.prepareReload,
         isFileModification,
-        encoding ?? encodingLib.load(navigation.getCurrentLocation().filePath),
+        encoding ?? encodingLib.load(navigation.currentFilePath()),
     )
 }
 
@@ -359,7 +359,7 @@ function createMainMenu() {
                 type: "radio",
                 id: encodingLib.toId(encoding),
                 click() {
-                    encodingLib.change(navigation.getCurrentLocation().filePath, encoding)
+                    encodingLib.change(navigation.currentFilePath(), encoding)
                     reload(true, encoding)
                 },
             })),
@@ -529,12 +529,10 @@ ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position)
     _scrollPosition = position
     _isReloading = true
 
-    const currentLocation = navigation.getCurrentLocation()
-    const filePath = currentLocation.filePath
     if (isFileModification || !encoding) {
         navigation.reloadCurrent(position)
     } else {
-        encodingLib.change(filePath, encoding)
+        encodingLib.change(navigation.currentFilePath(), encoding)
         _mainWindow.reload()
     }
 
@@ -545,14 +543,14 @@ ipc.listen(ipc.messages.reloadPrepared, (isFileModification, encoding, position)
 ipc.listen(ipc.messages.openFileInNewWindow, createChildWindow)
 
 ipc.listen(ipc.messages.openInternalInNewWindow, target =>
-    createChildWindow(navigation.getCurrentLocation().filePath, target),
+    createChildWindow(navigation.currentFilePath(), target),
 )
 
 ipc.listen(ipc.messages.closeApplication, () => _mainWindow?.close())
 
 ipc.listen(ipc.messages.dragDropBehavior, behavior => {
     _applicationSettings.dragDropBehavior = behavior
-    settings.notifySettingsChanges(navigation.getCurrentLocation().filePath)
+    settings.notifySettingsChanges(navigation.currentFilePath())
 })
 
 // Based on https://stackoverflow.com/a/50703424/13949398 (custom error window/handling in Electron)
@@ -572,7 +570,7 @@ setInterval(() => {
     if (!navigation.hasCurrentLocation()) {
         return
     }
-    const filePath = navigation.getCurrentLocation().filePath
+    const filePath = navigation.currentFilePath()
     fs.stat(filePath, (err, stats) => {
         if (err) {
             log.error(`Updating file "${filePath}" was aborted with error ${err}`)
@@ -589,8 +587,7 @@ setInterval(() => {
 
 navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {
     const time = _lastModificationTime
-    _lastModificationTime =
-        lastModificationTime ?? fs.statSync(navigation.getCurrentLocation().filePath)
+    _lastModificationTime = lastModificationTime ?? fs.statSync(navigation.currentFilePath())
     return time
 })
 

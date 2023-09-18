@@ -57,9 +57,7 @@ exports.init = (mainMenu, initialFilePath, electronMock) => {
 
     addFile(initialFilePath)
 
-    navigation.register(ADD_TO_FILE_HISTORY_NAV_ID, () =>
-        addFile(navigation.getCurrentLocation().filePath),
-    )
+    navigation.register(ADD_TO_FILE_HISTORY_NAV_ID, () => addFile(navigation.currentFilePath()))
     ipc.listen(ipc.messages.clearFileHistory, clear)
 }
 

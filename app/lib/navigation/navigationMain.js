@@ -182,7 +182,7 @@ exports.reloadCurrent = scrollPosition => {
 
 exports.register = (id, callback) => (_callbacks[id] = callback)
 
-exports.getCurrentLocation = () => _locations.current
+exports.currentFilePath = () => _locations.current.filePath
 
 exports.hasCurrentLocation = () => Boolean(_locations.current)
 

@@ -47,7 +47,7 @@ function applySettings(applicationSettingsData, documentSettingsData) {
     }
 
     setZoom(applicationSettingsData.zoom)
-    notifySettingsChanges(navigation.getCurrentLocation().filePath)
+    notifySettingsChanges(navigation.currentFilePath())
     toc.setVisibilityForApplication(_applicationSettings.showToc)
     if (documentSettings.showTocOverridesAppSettings) {
         toc.setVisibilityForDocument(documentSettings.showToc)
@@ -65,7 +65,7 @@ exports.init = (mainMenu, filePath) => {
     notifySettingsChanges(filePath)
 
     navigation.register(UPDATE_FILE_SPECIFICA_NAV_ID, () => {
-        const filePath = navigation.getCurrentLocation().filePath
+        const filePath = navigation.currentFilePath()
         if (filePath !== _previousFilePath) {
             notifySettingsChanges(filePath)
         }
