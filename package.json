@@ -50,6 +50,7 @@
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": false,
+      "include": "scripts/installer.nsh",
       "license": "LICENSE",
       "oneClick": false,
       "perMachine": false,
@@ -75,7 +76,13 @@
         "nsis",
         "zip"
       ],
-      "icon": "app/assets/icon/md.ico"
+      "icon": "app/assets/icon/md.ico",
+      "extraFiles": [
+        {
+          "from": "scripts/.datadir",
+          "to": ".datadir"
+        }
+      ]
     },
     "fileAssociations": [
       {

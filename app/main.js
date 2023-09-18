@@ -25,6 +25,9 @@ const settings = require("./lib/settings/settingsMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/toc/tocMain")
 
+const DATA_DIR_FILE = ".datadir"
+const USER_DATA_PLACEHOLDER = "MDVIEW_USER_DATA"
+
 const MIN_WINDOW_WIDTH = 200 // Pixels
 const MIN_WINDOW_HEIGHT = 50 // Pixels
 const UPDATE_INTERVAL = 1000 // ms
@@ -489,6 +492,8 @@ electron.app.whenReady().then(() => {
     fileHistory.init(_mainMenu, determineCurrentFilePath())
 
     electron.app.on("activate", ensureWindowExists)
+
+    log.debug("User data directory:", electron.app.getPath("userData"))
 })
 
 electron.app.on("window-all-closed", () => {
@@ -600,8 +605,12 @@ if (cli.isDevelopment()) {
         path.join(path.resolve(args.slice(1).find(arg => !arg.startsWith("-"))), ".data"),
     )
 } else if (process.platform === "win32") {
-    const startExePath = path.resolve(args[0])
-    if (!startExePath.startsWith(path.resolve(process.env.PROGRAMFILES))) {
-        electron.app.setPath("userData", path.join(path.dirname(startExePath), ".data"))
+    const appDir = path.dirname(path.resolve(args[0]))
+    const dataPath = fs.readFileSync(path.join(appDir, DATA_DIR_FILE), { encoding: "utf-8" }).trim()
+    if (dataPath !== USER_DATA_PLACEHOLDER) {
+        electron.app.setPath(
+            "userData",
+            path.isAbsolute(dataPath) ? dataPath : path.join(appDir, ".data"),
+        )
     }
 }
