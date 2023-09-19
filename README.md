@@ -27,10 +27,18 @@ The Windows setup file supports following parameters:
 
 #### winget
 
-The application can be installed via winget:
+The application can be installed via [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/):
 
 ```
 winget install c3er.mdview
+```
+
+#### Scoop
+
+The application can be installed via [Scoop](https://scoop.sh/):
+
+```
+scoop install https://github.com/c3er/mdview/releases/latest/download/mdview.json
 ```
 
 ## Known issues
