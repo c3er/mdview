@@ -47,7 +47,7 @@ async function startApp(documentPath) {
     _page = await _app.firstWindow()
     _page.on("console", msg => addMessage(msg.text()))
     _page.on("crash", () => assert.fail("Crash happened"))
-    _page.on("pageerror", error => assert.fail(`Page error: ${error}`))
+    _page.on("pageerror", error => assert.fail(`Page error: ${error.stack}`))
 
     _page.setDefaultTimeout(defaultTimeout)
     _page.setDefaultNavigationTimeout(defaultTimeout)
