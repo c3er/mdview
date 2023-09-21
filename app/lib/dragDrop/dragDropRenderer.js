@@ -8,28 +8,28 @@ const navigation = require("../navigation/navigationRenderer")
 
 const shared = require("./dragDropShared")
 
+const DIALOG_ID = "drag-drop"
+
 let _document
 
 let _dialogElement
 let _rememberChoiceCheckbox
 
-let _dialogIsOpen = false
 let _filePath = ""
 let _behavior = shared.behavior.ask
 
 function openDialog() {
-    _dialogElement.showModal()
-    _rememberChoiceCheckbox.checked = false
-    _dialogIsOpen = true
-}
-
-function closeDialog() {
-    _dialogElement.close()
-    _dialogIsOpen = false
+    dialog.open(
+        DIALOG_ID,
+        () => {
+            _dialogElement.showModal()
+            _rememberChoiceCheckbox.checked = false
+        },
+        () => _dialogElement.close(),
+    )
 }
 
 function openFile(shallOpenInNewWindow) {
-    closeDialog()
     if (_rememberChoiceCheckbox.checked) {
         ipc.send(
             ipc.messages.dragDropBehavior,
@@ -67,6 +67,8 @@ function dropHandler(event) {
     }
 }
 
+exports.DIALOG_ID = DIALOG_ID
+
 exports.behavior = shared.behavior
 
 exports.init = document => {
@@ -81,18 +83,16 @@ exports.init = document => {
     }
     _document.body.ondrop = dropHandler
 
-    dialog.addStdButtonHandler(_document.getElementById("drag-drop-open-in-current-window"), () =>
-        openFile(false),
-    )
-    dialog.addStdButtonHandler(_document.getElementById("drag-drop-open-in-new-window"), () =>
-        openFile(true),
-    )
-    dialog.addStdButtonHandler(_document.getElementById("drag-drop-cancel"), closeDialog)
+    dialog.addStdButtonHandler(_document.getElementById("drag-drop-open-in-current-window"), () => {
+        dialog.close()
+        openFile(false)
+    })
+    dialog.addStdButtonHandler(_document.getElementById("drag-drop-open-in-new-window"), () => {
+        dialog.close()
+        openFile(true)
+    })
+    dialog.addStdButtonHandler(_document.getElementById("drag-drop-cancel"), dialog.close)
 }
-
-exports.closeDialog = closeDialog
-
-exports.dialogIsOpen = () => _dialogIsOpen
 
 exports.setBehavior = value => (_behavior = value)
 
@@ -101,7 +101,6 @@ exports.setBehavior = value => (_behavior = value)
 exports.dropHandler = dropHandler
 
 exports.reset = () => {
-    _dialogIsOpen = false
     _filePath = ""
     _behavior = shared.behavior.ask
 }

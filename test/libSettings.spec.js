@@ -65,14 +65,15 @@ describe("Settings", () => {
     })
 
     describe("Renderer part", () => {
+        const dialog = require("../app/lib/renderer/dialog")
         const ipc = require("../app/lib/ipc/ipcRenderer")
         const settings = require("../app/lib/settings/settingsRenderer")
 
         beforeEach(() => {
+            dialog.reset()
             ipc.init(mocking.electron)
             settings.init(mocking.document)
             settings.setFilePath(lib.DEFAULT_DOCUMENT_PATH)
-            settings.setIsOpen(false)
         })
 
         afterEach(async () => {
@@ -105,9 +106,14 @@ describe("Settings", () => {
             mocking.register.ipc.mainOn(ipc.messages.settingsDialogIsOpen, (_, dialogIsOpen) =>
                 assert.isFalse(dialogIsOpen),
             )
-            settings.setIsOpen(true)
-            settings.close()
-            assert.isFalse(settings.isOpen())
+
+            settings.open()
+            assert.isTrue(dialog.isOpen())
+            assert.strictEqual(dialog.current().id, settings.DIALOG_ID)
+
+            dialog.close()
+            assert.isFalse(dialog.isOpen())
+            assert.isNull(dialog.current())
         })
     })
 })

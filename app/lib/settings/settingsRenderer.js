@@ -3,13 +3,12 @@ const dialog = require("../renderer/dialog")
 const fileLib = require("../file")
 const ipc = require("../ipc/ipcRenderer")
 
+const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"
 
 let _document
 let _dialogElement
 let _dialogForm
-
-let _dialogIsOpen = false
 
 let _tabElements
 let _tabContentElements
@@ -134,7 +133,6 @@ function changeTab(tabIndex) {
 
 function closeDialog() {
     _dialogElement.close()
-    _dialogIsOpen = false
     ipc.send(ipc.messages.settingsDialogIsOpen, false)
 }
 
@@ -142,7 +140,7 @@ function handleConfirm(event) {
     if (_dialogForm.reportValidity()) {
         event.preventDefault()
         applySettings()
-        closeDialog()
+        dialog.close()
     }
 }
 
@@ -151,6 +149,8 @@ function handleKeyboardConfirm(event) {
         handleConfirm(event)
     }
 }
+
+exports.DIALOG_ID = DIALOG_ID
 
 exports.init = document => {
     _document = document
@@ -209,7 +209,7 @@ exports.init = document => {
     )
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
-    dialog.addStdButtonHandler(_document.getElementById("settings-cancel-button"), closeDialog)
+    dialog.addStdButtonHandler(_document.getElementById("settings-cancel-button"), dialog.close)
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
         if (_dialogForm.reportValidity()) {
             event.preventDefault()
@@ -217,26 +217,27 @@ exports.init = document => {
         }
     })
 
-    ipc.listen(ipc.messages.settings, (applicationSettings, documentSettings) => {
-        _applicationSettings = applicationSettings
-        _documentSettings = documentSettings
-        populateDialog()
+    ipc.listen(ipc.messages.settings, (applicationSettings, documentSettings) =>
+        dialog.open(
+            DIALOG_ID,
+            () => {
+                _applicationSettings = applicationSettings
+                _documentSettings = documentSettings
+                populateDialog()
 
-        _dialogElement.showModal()
-        _document.getElementById("settings-ok-button").focus()
-        _dialogIsOpen = true
-        ipc.send(ipc.messages.settingsDialogIsOpen, true)
-    })
+                _dialogElement.showModal()
+                _document.getElementById("settings-ok-button").focus()
+                ipc.send(ipc.messages.settingsDialogIsOpen, true)
+            },
+            closeDialog,
+        ),
+    )
 }
-
-exports.close = closeDialog
-
-exports.isOpen = () => _dialogIsOpen
 
 exports.setFilePath = filePath => (_filePath = filePath)
 
 // For testing
 
-exports.setIsOpen = isOpen => (_dialogIsOpen = isOpen)
+exports.open = () => dialog.open(DIALOG_ID, () => {}, closeDialog)
 
 exports.getFilePath = () => _filePath

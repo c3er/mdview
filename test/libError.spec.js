@@ -33,24 +33,33 @@ describe("Error dialog", () => {
     })
 
     describe("Renderer part", () => {
+        const dialog = require("../app/lib/renderer/dialog")
         const error = require("../app/lib/error/errorRenderer")
 
-        beforeEach(() => error.init(mocking.document))
+        beforeEach(() => {
+            dialog.reset()
+            error.init(mocking.document)
+        })
 
         it("is closed by default", () => {
-            assert.isFalse(error.isOpen())
+            assert.isFalse(dialog.isOpen())
+            assert.isNull(dialog.current())
         })
 
         it('is open after "show" call', () => {
             error.show("Some message")
-            assert.isTrue(error.isOpen())
+            assert.isTrue(dialog.isOpen())
+            assert.strictEqual(dialog.current().id, error.DIALOG_ID)
         })
 
         it("is closed after opening and closing", () => {
             error.show("Some message")
-            error.close()
+            assert.isTrue(dialog.isOpen())
+            assert.strictEqual(dialog.current().id, error.DIALOG_ID)
 
-            assert.isFalse(error.isOpen())
+            dialog.close()
+            assert.isFalse(dialog.isOpen())
+            assert.isNull(dialog.current())
         })
     })
 })

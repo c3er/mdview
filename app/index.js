@@ -8,6 +8,7 @@ const remote = require("@electron/remote")
 
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
+const dialog = require("./lib/renderer/dialog")
 const documentRendering = require("./lib/renderer/documentRendering")
 const dragDrop = require("./lib/dragDrop/dragDropRenderer")
 const encodingLib = require("./lib/encoding/encodingRenderer")
@@ -238,20 +239,14 @@ document.addEventListener("DOMContentLoaded", domContentLoadedHandler)
 onkeydown = event => {
     switch (event.key) {
         case "Escape":
-            if (search.isActive()) {
-                search.deactivate()
-            } else if (settings.isOpen()) {
-                settings.close()
-            } else if (error.isOpen()) {
-                error.close()
-            } else if (dragDrop.dialogIsOpen()) {
-                dragDrop.closeDialog()
+            if (dialog.isOpen()) {
+                dialog.close()
             } else {
                 ipc.send(ipc.messages.closeApplication)
             }
             return
         case "Backspace":
-            if (!search.dialogIsOpen() && !settings.isOpen() && !dragDrop.dialogIsOpen()) {
+            if (!dialog.isOpen()) {
                 event.preventDefault()
                 navigation.back()
             }

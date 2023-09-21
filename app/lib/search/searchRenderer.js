@@ -4,6 +4,8 @@ const renderer = require("../renderer/common")
 
 const shared = require("./searchShared")
 
+const DIALOG_ID = "search"
+
 const CANCEL_VALUE = "search-dialog-cancel"
 
 const RESULT_START_TAG = `<span class="${shared.SEARCH_RESULT_CLASS}">`
@@ -65,6 +67,8 @@ function deactivate() {
     _reloader()
 }
 
+exports.DIALOG_ID = DIALOG_ID
+
 exports.init = (document, reloader) => {
     _document = document
     _reloader = reloader
@@ -79,7 +83,7 @@ exports.init = (document, reloader) => {
             _term = result
             _reloader()
         } else {
-            deactivate()
+            dialog.close()
         }
     })
 
@@ -87,14 +91,20 @@ exports.init = (document, reloader) => {
         _searchDialog.close(_searchInputElement.value),
     )
 
-    ipc.listen(ipc.messages.search, () => {
-        _searchDialog.showModal()
-        _searchInputElement.setSelectionRange(0, _searchInputElement.value.length)
-        _isActive = true
-        _dialogIsOpen = true
+    ipc.listen(ipc.messages.search, () =>
+        dialog.open(
+            DIALOG_ID,
+            () => {
+                _searchDialog.showModal()
+                _searchInputElement.setSelectionRange(0, _searchInputElement.value.length)
+                _isActive = true
+                _dialogIsOpen = true
 
-        ipc.send(ipc.messages.searchIsActive, true)
-    })
+                ipc.send(ipc.messages.searchIsActive, true)
+            },
+            deactivate,
+        ),
+    )
 
     ipc.listen(ipc.messages.searchNext, () => {
         _searchIndex = (_searchIndex + 1) % _searchResultCount
@@ -121,7 +131,7 @@ exports.highlightTerm = () => {
     const termRegex = new RegExp(_term, "ig")
     const contentElement = renderer.contentElement()
     if (!contentElement.innerText.match(termRegex)) {
-        deactivate()
+        dialog.close()
         return
     }
 
@@ -161,8 +171,6 @@ exports.scrollToResult = () => {
         renderer.scrollTo(resultElementPosition)
     }
 }
-
-exports.deactivate = deactivate
 
 // For testing
 

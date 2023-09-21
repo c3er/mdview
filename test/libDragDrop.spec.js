@@ -6,6 +6,7 @@ const mocking = require("./mocking")
 describe("Drag & drop", () => {
     describe("Renderer part", () => {
         const error = require("../app/lib/error/errorRenderer")
+        const dialog = require("../app/lib/renderer/dialog")
         const dragDrop = require("../app/lib/dragDrop/dragDropRenderer")
         const ipc = require("../app/lib/ipc/ipcRenderer")
 
@@ -17,6 +18,7 @@ describe("Drag & drop", () => {
 
         beforeEach(() => {
             error.reset()
+            dialog.reset()
             dragDrop.reset()
             mocking.clear()
 
@@ -27,14 +29,17 @@ describe("Drag & drop", () => {
 
         it("opens a dialog after drop", () => {
             drop(filePathToDrop)
-            assert.isTrue(dragDrop.dialogIsOpen())
+            assert.isTrue(dialog.isOpen())
+            assert.strictEqual(dialog.current().id, dragDrop.DIALOG_ID)
         })
 
         it("diaplays an error after trying to drop a directory", () => {
             const invalidFile = lib.DEFAULT_DOCUMENT_DIR
 
             drop(invalidFile)
-            assert.isTrue(error.isOpen())
+
+            assert.isTrue(dialog.isOpen())
+            assert.strictEqual(dialog.current().id, error.DIALOG_ID)
 
             const errorMessage = error.lastErrorMessage()
             assert.include(errorMessage, "directory")
@@ -43,8 +48,11 @@ describe("Drag & drop", () => {
 
         it("can close the dialog", () => {
             drop(filePathToDrop)
-            dragDrop.closeDialog()
-            assert.isFalse(dragDrop.dialogIsOpen())
+            assert.strictEqual(dialog.current().id, dragDrop.DIALOG_ID)
+
+            dialog.close()
+            assert.isFalse(dialog.isOpen())
+            assert.isNull(dialog.current())
         })
 
         it("can open the file without dialog", () => {
@@ -55,7 +63,8 @@ describe("Drag & drop", () => {
             dragDrop.setBehavior(dragDrop.behavior.currentWindow)
             drop(filePathToDrop)
 
-            assert.isFalse(dragDrop.dialogIsOpen())
+            assert.isFalse(dialog.isOpen())
+            assert.isNull(dialog.current())
         })
 
         it("can open the file in a new window without dialog", () => {
@@ -66,7 +75,8 @@ describe("Drag & drop", () => {
             dragDrop.setBehavior(dragDrop.behavior.newWindow)
             drop(filePathToDrop)
 
-            assert.isFalse(dragDrop.dialogIsOpen())
+            assert.isFalse(dialog.isOpen())
+            assert.isNull(dialog.current())
         })
     })
 })

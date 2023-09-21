@@ -1,43 +1,33 @@
 const dialog = require("../renderer/dialog")
 
+const DIALOG_ID = "error"
+
 let _document
-
 let _lastErrorMessage = ""
-
 let _dialogElement
-let _dialogIsOpen = false
 
-function closeDialog() {
-    _dialogElement.close()
-    _dialogIsOpen = false
-}
+exports.DIALOG_ID = DIALOG_ID
 
 exports.init = document => {
     _document = document
-
     _dialogElement = document.getElementById("error-dialog")
-    _dialogIsOpen = false
-
-    dialog.addStdButtonHandler(_document.getElementById("error-ok-button"), closeDialog)
+    dialog.addStdButtonHandler(_document.getElementById("error-ok-button"), dialog.close)
 }
 
-exports.show = msg => {
-    _document.getElementById("error-dialog-content").innerText = msg
-    _dialogElement.showModal()
-    _dialogIsOpen = true
+exports.show = msg =>
+    dialog.open(
+        DIALOG_ID,
+        () => {
+            _document.getElementById("error-dialog-content").innerText = msg
+            _dialogElement.showModal()
 
-    _lastErrorMessage = msg
-}
-
-exports.close = closeDialog
-
-exports.isOpen = () => _dialogIsOpen
+            _lastErrorMessage = msg
+        },
+        () => _dialogElement.close(),
+    )
 
 // For testing
 
 exports.lastErrorMessage = () => _lastErrorMessage
 
-exports.reset = () => {
-    _lastErrorMessage = ""
-    _dialogIsOpen = false
-}
+exports.reset = () => (_lastErrorMessage = "")
