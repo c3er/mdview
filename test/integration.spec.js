@@ -90,9 +90,15 @@ function hasUnblockedContentMessage() {
 }
 
 async function elementIsHidden(elementPath) {
+    const attempts = 3
     const locator = _page.locator(elementPath)
-    await locator.waitFor({ state: "hidden" })
-    return await locator.isHidden()
+    for (let i = 0; i < attempts; i++) {
+        await locator.waitFor({ state: "hidden" })
+        if (await locator.isHidden()) {
+            return true
+        }
+    }
+    return false
 }
 
 describe("Integration tests with single app instance", () => {
