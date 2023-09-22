@@ -91,8 +91,8 @@ function hasUnblockedContentMessage() {
 
 async function elementIsHidden(elementPath) {
     const attempts = 3
-    const locator = _page.locator(elementPath)
     for (let i = 0; i < attempts; i++) {
+        const locator = _page.locator(elementPath)
         await locator.waitFor({ state: "hidden" })
         if (await locator.isHidden()) {
             return true
