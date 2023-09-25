@@ -100,7 +100,6 @@
   },
   "dependencies": {
     "@electron/remote": "2.0.11",
-    "about-window": "1.15.2",
     "github-markdown-css": "5.2.0",
     "github-markdown-dracula-css": "4.0.3",
     "highlight.js": "11.8.0",

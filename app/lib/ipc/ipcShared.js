@@ -1,4 +1,6 @@
 exports.messages = {
+    about: "about",
+    aboutDialogIsOpen: "about-dialog-is-open",
     allContentUnblocked: "all-content-unblocked",
     applySettings: "apply-settings",
     changeEncoding: "change-encoding",

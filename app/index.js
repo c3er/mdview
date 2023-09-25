@@ -6,6 +6,7 @@ const path = require("path")
 const electron = require("electron")
 const remote = require("@electron/remote")
 
+const about = require("./lib/about/aboutRenderer")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingRenderer")
 const dialog = require("./lib/renderer/dialog")
@@ -22,7 +23,6 @@ const search = require("./lib/search/searchRenderer")
 const settings = require("./lib/settings/settingsRenderer")
 const toc = require("./lib/toc/tocRenderer")
 
-const TITLE = "Markdown Viewer"
 const MERMAID_MODULE_PATH = "../node_modules/mermaid/dist/mermaid.js"
 
 // Needed for theme switching
@@ -151,7 +151,7 @@ function isDarkMode() {
 }
 
 function domContentLoadedHandler() {
-    document.title = TITLE
+    document.title = common.APPLICATION_NAME
 
     ipc.init()
     log.init()
@@ -164,6 +164,7 @@ function domContentLoadedHandler() {
     settings.init(document)
     error.init(document)
     dragDrop.init(document)
+    about.init(document)
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
@@ -306,7 +307,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         }
     })
     alterTags("img", image => {
-        const imageUrl = image.getAttribute("src")
+        const imageUrl = image.getAttribute("src") ?? ""
         if (isLocalPath(imageUrl) && isInContainer(image, "content-body")) {
             image.src = transformRelativePath(documentDirectory, imageUrl)
         }
@@ -353,7 +354,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
             renderer.scrollTo(0)
         }
     }
-    document.title = `${titlePrefix} - ${TITLE} ${remote.app.getVersion()}`
+    document.title = `${titlePrefix} - ${common.APPLICATION_NAME} ${remote.app.getVersion()}`
 
     addEventListener("contextmenu", contextMenuHandler)
     if (hasMermaid(content)) {

@@ -1,3 +1,5 @@
+exports.APPLICATION_NAME = "Markdown Viewer"
+
 exports.FILE_EXTENSIONS = ["md", "markdown"]
 
 exports.SYSTEM_THEME = "system"
@@ -26,3 +28,5 @@ exports.listGettersWithSetters = instance =>
                 name !== "__proto__",
         )
         .map(([name]) => name)
+
+exports.isMacOS = () => process.platform === "darwin"
