@@ -7,7 +7,7 @@ const DIALOG_ID = "about"
 
 let _document
 let _dialogElement
-let _okButton
+let _aboutInfo = {}
 
 function populateDialog(aboutInfo) {
     _document.getElementById("application-icon").setAttribute("src", aboutInfo.applicationIconPath)
@@ -26,7 +26,6 @@ exports.init = (document, electronMock) => {
     electron = electronMock ?? require("electron")
     _document = document
     _dialogElement = _document.getElementById("about-dialog")
-    _okButton = _document.getElementById("about-ok-button")
 
     for (const link of _document.getElementsByClassName("dialog-link")) {
         link.onclick = event => {
@@ -35,14 +34,29 @@ exports.init = (document, electronMock) => {
         }
     }
 
-    dialog.addStdButtonHandler(_okButton, () => dialog.close())
+    const okButton = _document.getElementById("about-ok-button")
+    dialog.addStdButtonHandler(okButton, () => dialog.close())
+
+    dialog.addStdButtonHandler(_document.getElementById("copy-about-info-button"), () => {
+        const aboutInfo = structuredClone(_aboutInfo)
+        const indentation = 4
+        const filterList = ["applicationIconPath"]
+        for (const filtered of filterList) {
+            delete aboutInfo[filtered]
+        }
+        electron.clipboard.writeText(JSON.stringify(aboutInfo, null, indentation))
+
+        okButton.focus()
+    })
+
     ipc.listen(ipc.messages.about, aboutInfo =>
         dialog.open(
             DIALOG_ID,
             () => {
+                _aboutInfo = aboutInfo
                 populateDialog(aboutInfo)
                 _dialogElement.showModal()
-                _okButton.focus()
+                okButton.focus()
                 ipc.send(ipc.messages.aboutDialogIsOpen, true)
             },
             () => {
