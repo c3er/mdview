@@ -425,6 +425,15 @@ exports.elements = {
             path: "#drag-drop-remember",
         },
     },
+    aboutDialog: {
+        path: "#about-dialog",
+        copyInfoButton: {
+            path: "#copy-about-info-button",
+        },
+        okButton: {
+            path: "#about-ok-button",
+        },
+    },
     errorDialog: {
         path: "#error-dialog",
         okButton: {

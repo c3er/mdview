@@ -9,6 +9,11 @@ let _document
 let _dialogElement
 let _aboutInfo = {}
 
+function closeDialog() {
+    _dialogElement.close()
+    ipc.send(ipc.messages.aboutDialogIsOpen, false)
+}
+
 function populateDialog(aboutInfo) {
     _document.getElementById("application-icon").setAttribute("src", aboutInfo.applicationIconPath)
     _document.getElementById("hompage").setAttribute("href", aboutInfo.homepage)
@@ -21,6 +26,8 @@ function populateDialog(aboutInfo) {
         .join("\n")
     _document.getElementById("issue-link").setAttribute("href", aboutInfo.issueLink)
 }
+
+exports.DIALOG_ID = DIALOG_ID
 
 exports.init = (document, electronMock) => {
     electron = electronMock ?? require("electron")
@@ -59,10 +66,11 @@ exports.init = (document, electronMock) => {
                 okButton.focus()
                 ipc.send(ipc.messages.aboutDialogIsOpen, true)
             },
-            () => {
-                _dialogElement.close()
-                ipc.send(ipc.messages.aboutDialogIsOpen, false)
-            },
+            closeDialog,
         ),
     )
 }
+
+// For testing
+
+exports.open = () => dialog.open(DIALOG_ID, () => {}, closeDialog)
