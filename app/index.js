@@ -311,7 +311,8 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         if (isLocalPath(imageUrl) && isInContainer(image, "content-body")) {
             image.src = transformRelativePath(documentDirectory, imageUrl)
         }
-        statusOnMouseOver(image, `${image.getAttribute("alt")} (${imageUrl})`)
+        const altText = image.getAttribute("alt")
+        statusOnMouseOver(image, imageUrl ? `${altText} (${imageUrl})` : altText)
 
         image.onerror = () => (image.style.backgroundColor = "#ffe6cc")
     })
