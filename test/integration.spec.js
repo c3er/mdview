@@ -568,6 +568,35 @@ describe("Integration tests with their own app instance each", () => {
         })
     })
 
+    describe("About dialog", () => {
+        const about = require("../app/lib/about/aboutMain")
+
+        it("is displayed, copies info to clipboard and can be cosed", async () => {
+            await clickMenuItem(about.ABOUT_DIALOG_MENU_ID)
+
+            const aboutDialog = mocking.elements.aboutDialog
+            const aboutDialogLocator = _page.locator(aboutDialog.path)
+            await aboutDialogLocator.waitFor()
+            assert.isTrue(await aboutDialogLocator.isVisible())
+
+            const clipboard = (await import("clipboardy")).default
+            await clipboard.write("")
+            await _page.locator(aboutDialog.copyInfoButton.path).click()
+
+            const aboutInfo = JSON.parse(await clipboard.read())
+            assert.notExists(aboutInfo.applicationIconPath)
+            assert.exists(aboutInfo.applicationName)
+            assert.exists(aboutInfo.applicationDescription)
+            assert.exists(aboutInfo.applicationVersion)
+            assert.exists(aboutInfo.homepage)
+            assert.exists(aboutInfo.issueLink)
+            assert.exists(aboutInfo.frameworkVersions)
+
+            await _page.locator(aboutDialog.okButton.path).click()
+            assert.isTrue(await elementIsHidden(aboutDialog.path))
+        })
+    })
+
     describe("Error dialog", () => {
         const error = require("../app/lib/error/errorMain")
 

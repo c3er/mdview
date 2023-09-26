@@ -1,14 +1,13 @@
-/* eslint-disable camelcase */
 "use strict"
 
 const fs = require("fs")
 const path = require("path")
 
-const aboutWindow = require("about-window")
 const childProcess = require("child_process")
 const electron = require("electron")
 const remote = require("@electron/remote/main")
 
+const about = require("./lib/about/aboutMain")
 const cli = require("./lib/main/cli")
 const common = require("./lib/common")
 const contentBlocking = require("./lib/contentBlocking/contentBlockingMain")
@@ -46,45 +45,6 @@ let _isReloading = false
 let _scrollPosition = 0
 
 let _applicationSettings
-
-function isMacOS() {
-    return process.platform === "darwin"
-}
-
-function showAboutDialog(parentWindow) {
-    const POSITION_OFFSET = 20
-    const parentPosition = parentWindow.getBounds()
-
-    const aboutDialog = aboutWindow.default({
-        adjust_window_size: true,
-        copyright: "Copyright © Christian Dreier",
-        icon_path: path.join(
-            __dirname,
-            "assets",
-            "icon",
-            isMacOS() ? "md-mac-icon.svg" : "md-icon.svg",
-        ),
-        package_json_dir: path.join(__dirname, ".."),
-        product_name: "Markdown Viewer",
-        win_options: {
-            maximizable: false,
-            minimizable: false,
-            modal: true,
-            parent: parentWindow,
-            resizable: false,
-            skipTaskbar: true,
-            title: "About Markdown Viewer",
-            x: parentPosition.x + POSITION_OFFSET,
-            y: parentPosition.y + POSITION_OFFSET,
-        },
-    })
-    aboutDialog.webContents.on("before-input-event", (event, input) => {
-        if (input.key === "Escape") {
-            aboutDialog.close()
-            event.preventDefault()
-        }
-    })
-}
 
 function openFile(filePath, internalTarget, encoding) {
     if (!fs.existsSync(filePath)) {
@@ -408,8 +368,9 @@ function createMainMenu() {
             submenu: [
                 {
                     label: "&About",
+                    id: about.ABOUT_DIALOG_MENU_ID,
                     click() {
-                        showAboutDialog(_mainWindow)
+                        about.open()
                     },
                 },
             ],
@@ -447,7 +408,7 @@ function createWindow() {
                 // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
                 event.preventDefault()
                 zoomIn()
-            } else if (isMacOS() && input.meta && input.key === "q") {
+            } else if (common.isMacOS() && input.meta && input.key === "q") {
                 electron.app.quit()
             }
         }
@@ -490,6 +451,7 @@ electron.app.whenReady().then(() => {
     rawText.init(_mainMenu)
     search.init(_mainMenu)
     fileHistory.init(_mainMenu, determineCurrentFilePath())
+    about.init(_mainMenu)
 
     electron.app.on("activate", ensureWindowExists)
 
@@ -500,7 +462,7 @@ electron.app.on("window-all-closed", () => {
     // Quit when all windows are closed, except on macOS. There, it's common
     // for applications and their menu bar to stay active until the user quits
     // explicitly with Cmd + Q.
-    if (!isMacOS()) {
+    if (!common.isMacOS()) {
         electron.app.quit()
     }
 })

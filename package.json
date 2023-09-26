@@ -100,7 +100,6 @@
   },
   "dependencies": {
     "@electron/remote": "2.0.11",
-    "about-window": "1.15.2",
     "github-markdown-css": "5.2.0",
     "github-markdown-dracula-css": "4.0.3",
     "highlight.js": "11.8.0",
@@ -123,6 +122,7 @@
   },
   "devDependencies": {
     "chai": "4.3.8",
+    "clipboardy": "3.0.0",
     "electron": "26.2.1",
     "electron-builder": "24.6.4",
     "eslint": "8.49.0",
