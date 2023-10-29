@@ -252,12 +252,16 @@ describe("Integration tests with single app instance", () => {
 })
 
 describe("Integration tests with their own app instance each", () => {
-    async function assertErrorDialog() {
+    async function assertErrorDialog(text) {
         const errorDialog = mocking.elements.errorDialog
 
         const errorDialogLocator = _page.locator(errorDialog.path)
         await errorDialogLocator.waitFor()
         assert.isTrue(await errorDialogLocator.isVisible())
+
+        if (text) {
+            assert.include(await _page.locator(errorDialog.content.path).innerText(), text)
+        }
 
         await _page.locator(errorDialog.okButton.path).click()
         assert.isTrue(await elementIsHidden(errorDialog.path))
@@ -307,6 +311,11 @@ describe("Integration tests with their own app instance each", () => {
             await _page.locator("#internal-test-link").click()
             await waitForWindowLoaded()
             assert.include(await _page.title(), "#some-javascript")
+        })
+
+        it("shows error message after click to non existing file", async () => {
+            await _page.getByText("Broken external link", { exact: true }).click()
+            await assertErrorDialog("does not exist")
         })
     })
 

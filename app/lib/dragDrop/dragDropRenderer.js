@@ -1,8 +1,4 @@
-const fs = require("fs")
-
 const dialog = require("../renderer/dialog")
-const error = require("../error/errorRenderer")
-const file = require("../file")
 const ipc = require("../ipc/ipcRenderer")
 const navigation = require("../navigation/navigationRenderer")
 
@@ -43,27 +39,21 @@ function dropHandler(event) {
     event.preventDefault()
 
     const filePath = event.dataTransfer.files[0].path
-    const fileStat = fs.statSync(filePath)
+    if (!navigation.checkFile(filePath)) {
+        return
+    }
 
-    if (fileStat.isDirectory()) {
-        error.show(`Cannot display: "${filePath}" is a directory`)
-    } else if (!fileStat.isFile()) {
-        error.show(`Cannot display: "${filePath}" is not a valid file`)
-    } else if (!file.isText(filePath)) {
-        error.show(`Cannot display: "${filePath}" is not a text file`)
-    } else {
-        _filePath = filePath
-        switch (_behavior) {
-            case shared.behavior.ask:
-                openDialog()
-                break
-            case shared.behavior.currentWindow:
-                openFile(false)
-                break
-            case shared.behavior.newWindow:
-                openFile(true)
-                break
-        }
+    _filePath = filePath
+    switch (_behavior) {
+        case shared.behavior.ask:
+            openDialog()
+            break
+        case shared.behavior.currentWindow:
+            openFile(false)
+            break
+        case shared.behavior.newWindow:
+            openFile(true)
+            break
     }
 }
 

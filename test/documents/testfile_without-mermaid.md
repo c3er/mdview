@@ -29,6 +29,8 @@ Another link to Google: https://www.google.com/
 
 [Broken internal link](#broken-link)
 
+[Broken external link](./non-existing-file.md)
+
 [Link to font file](font1/Daedric.ttf)
 
 <a name="found-this-weird-construct-in-a-Markdown-file"></a>

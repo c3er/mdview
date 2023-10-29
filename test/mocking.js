@@ -436,6 +436,9 @@ exports.elements = {
     },
     errorDialog: {
         path: "#error-dialog",
+        content: {
+            path: "#error-dialog-content",
+        },
         okButton: {
             path: "#error-ok-button",
         },
