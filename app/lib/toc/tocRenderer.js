@@ -33,8 +33,8 @@ const _info = {
     collapsedEntries: [],
 }
 
-let collapsedSymbolPath = COLLAPSED_SYMBOL_LIGHT_PATH
-let expandedSymbolPath = EXPANDED_SYMBOL_LIGHT_PATH
+let _collapsedSymbolPath = COLLAPSED_SYMBOL_LIGHT_PATH
+let _expandedSymbolPath = EXPANDED_SYMBOL_LIGHT_PATH
 
 class Section {
     #isExpanded = true
@@ -67,7 +67,7 @@ class Section {
 
     set isExpanded(value) {
         _document.getElementById(this.htmlId).style.display = value ? "block" : "none"
-        this.changeButtonImage(value ? expandedSymbolPath : collapsedSymbolPath)
+        this.changeButtonImage(value ? _expandedSymbolPath : _collapsedSymbolPath)
         this.#isExpanded = value
     }
 
@@ -159,7 +159,7 @@ class Section {
             <div class="${SECTION_HTML_CLASS}">
                 <nobr style="margin-left: ${indentationWidth}px">
                     <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
-                        ${toButtonHtml(expandedSymbolPath)}
+                        ${toButtonHtml(_expandedSymbolPath)}
                     </span>
                     <a href="#${
                         this.id
@@ -301,7 +301,6 @@ exports.build = content => {
         if (isInCode || !line.startsWith("#")) {
             continue
         }
-
         sectionLevels.push(calcSectionLevel(line))
     }
 
@@ -355,16 +354,16 @@ exports.getVisibility = () => _isVisible
 exports.updateTheme = theme => {
     switch (theme) {
         case common.DARK_THEME:
-            expandedSymbolPath = EXPANDED_SYMBOL_DARK_PATH
-            collapsedSymbolPath = COLLAPSED_SYMBOL_DARK_PATH
+            _expandedSymbolPath = EXPANDED_SYMBOL_DARK_PATH
+            _collapsedSymbolPath = COLLAPSED_SYMBOL_DARK_PATH
             break
         case common.LIGHT_THEME:
-            expandedSymbolPath = EXPANDED_SYMBOL_LIGHT_PATH
-            collapsedSymbolPath = COLLAPSED_SYMBOL_LIGHT_PATH
+            _expandedSymbolPath = EXPANDED_SYMBOL_LIGHT_PATH
+            _collapsedSymbolPath = COLLAPSED_SYMBOL_LIGHT_PATH
             break
     }
     for (const section of _rootSection?.flattenTree() ?? []) {
-        section.changeButtonImage(section.isExpanded ? expandedSymbolPath : collapsedSymbolPath)
+        section.changeButtonImage(section.isExpanded ? _expandedSymbolPath : _collapsedSymbolPath)
     }
 }
 

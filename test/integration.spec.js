@@ -259,9 +259,7 @@ describe("Integration tests with their own app instance each", () => {
         await errorDialogLocator.waitFor()
         assert.isTrue(await errorDialogLocator.isVisible())
 
-        if (text) {
-            assert.include(await _page.locator(errorDialog.content.path).innerText(), text)
-        }
+        assert.include(await _page.locator(errorDialog.content.path).innerText(), text)
 
         await _page.locator(errorDialog.okButton.path).click()
         assert.isTrue(await elementIsHidden(errorDialog.path))
@@ -611,7 +609,7 @@ describe("Integration tests with their own app instance each", () => {
 
         it("is displayed and can be closed", async () => {
             await clickMenuItem(error.SHOW_ERROR_MENU_ID)
-            await assertErrorDialog()
+            await assertErrorDialog("error")
         })
     })
 
@@ -666,13 +664,13 @@ describe("Integration tests with their own app instance each", () => {
 
         it("doesn't crash after dropping a directory", async () => {
             await drop(lib.DEFAULT_DOCUMENT_DIR)
-            await assertErrorDialog()
+            await assertErrorDialog("directory")
         })
 
         it("doesn't try to load a binary file", async () => {
             const imageFilePath = path.join(lib.DEFAULT_DOCUMENT_DIR, "images", "image.png")
             await drop(imageFilePath)
-            await assertErrorDialog()
+            await assertErrorDialog("not a text file")
             assert.notInclude(await _page.title(), imageFilePath)
         })
 
