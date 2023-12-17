@@ -77,7 +77,7 @@ exports.reset = options => {
         .use(require("markdown-it-task-checkbox"), { disabled: false })
 
     if (options.emojisEnabled) {
-        _markdown.use(require("markdown-it-emoji"))
+        _markdown.use(require("../../../node_modules/markdown-it-emoji/dist/markdown-it-emoji.js"))
     }
 
     _shallRenderAsMarkdown = options.renderAsMarkdown

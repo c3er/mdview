@@ -17,9 +17,8 @@ function closeDialog() {
 function populateDialog(aboutInfo) {
     _document.getElementById("application-icon").setAttribute("src", aboutInfo.applicationIconPath)
     _document.getElementById("hompage").setAttribute("href", aboutInfo.homepage)
-    _document.getElementById(
-        "application-name",
-    ).innerText = `${aboutInfo.applicationName} ${aboutInfo.applicationVersion}`
+    _document.getElementById("application-name").innerText =
+        `${aboutInfo.applicationName} ${aboutInfo.applicationVersion}`
     _document.getElementById("application-description").innerText = aboutInfo.applicationDescription
     _document.getElementById("framework-versions").innerHTML = aboutInfo.frameworkVersions
         .map(([framework, version]) => `<tr><th>${framework}</th><td>${version}</td></tr>`)
