@@ -52,7 +52,14 @@ class StorageBase {
     }
 
     static _initData(storagePath) {
-        return fs.existsSync(storagePath) ? JSON.parse(fs.readFileSync(storagePath, "utf8")) : {}
+        try {
+            return fs.existsSync(storagePath)
+                ? JSON.parse(fs.readFileSync(storagePath, "utf8"))
+                : {}
+        } catch (err) {
+            log.error(`Could not read settings in ${storagePath}: ${err}`)
+            return {}
+        }
     }
 }
 
