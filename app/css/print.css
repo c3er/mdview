@@ -1,5 +1,5 @@
-#status-bar,
-#blocked-content-info {
+div#status-bar,
+div#blocked-content-info {
     display: none;
 }
 

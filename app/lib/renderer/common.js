@@ -1,7 +1,7 @@
 let _document
 
 function contentElement() {
-    return _document.getElementById("content-body")
+    return _document.querySelector("article#content-body")
 }
 
 exports.init = document => (_document = document)

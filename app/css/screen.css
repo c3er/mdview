@@ -11,7 +11,7 @@
     --text-dark-color: #f8f8f2;
 }
 
-#status-bar {
+div#status-bar {
     background-color: #fff;
     border-top: var(--border-width) solid var(--border-color);
     bottom: 0;
@@ -22,7 +22,7 @@
     right: 0;
 }
 
-#status-text {
+p#status-text {
     display: unset;
     font-size: 9pt;
     line-height: 0;
@@ -31,7 +31,7 @@
     white-space: nowrap;
 }
 
-#menu-border {
+div#menu-border {
     background-color: #fff;
     border-bottom: var(--border-width) solid var(--border-color);
     height: 0px;
@@ -42,7 +42,7 @@
     z-index: 1000;
 }
 
-#blocked-content-info {
+div#blocked-content-info {
     background-color: #ffffe1;
     border-bottom-style: solid;
     border-top-style: solid;
@@ -61,7 +61,7 @@
     z-index: 1000;
 }
 
-.blocked-content-info-text {
+p.blocked-content-info-text {
     font-size: 10pt;
     margin-bottom: 0px;
     margin-top: 0px;
@@ -69,25 +69,25 @@
     padding-right: 10px;
 }
 
-#blocked-content-info-text-container {
+span#blocked-content-info-text-container {
     display: table-cell;
     width: 100%;
 }
 
-#blocked-content-info-close-button {
+span#blocked-content-info-close-button {
     display: table-cell;
 }
 
-.dialog-content {
+div.dialog-content {
     font-size: 11pt;
 }
 
-.dialog-input-field {
+div.dialog-input-field {
     margin: 1em 0;
     width: 100%;
 }
 
-#search-input {
+input#search-input {
     width: 100%;
 }
 
@@ -128,7 +128,7 @@ input[type="number"] {
     cursor: text;
 }
 
-#error-dialog-content {
+span#error-dialog-content {
     cursor: text;
 }
 
@@ -138,7 +138,7 @@ input[type="number"]::-webkit-outer-spin-button {
     opacity: 1;
 }
 
-#content {
+main#content {
     display: flex;
     position: fixed;
     top: 0;
@@ -147,7 +147,7 @@ input[type="number"]::-webkit-outer-spin-button {
     right: 0;
 }
 
-#separator {
+div#separator {
     background-color: var(--border-color);
     cursor: col-resize;
     flex-grow: 0;
@@ -159,7 +159,7 @@ input[type="number"]::-webkit-outer-spin-button {
     user-select: none;
 }
 
-#toc {
+nav#toc {
     display: none;
     margin: 0px 0px var(--status-bar-height) 0px;
     max-width: calc(100% - 100px);
@@ -169,17 +169,17 @@ input[type="number"]::-webkit-outer-spin-button {
     width: 20%;
 }
 
-#toc * {
+nav#toc * {
     cursor: default;
     vertical-align: middle;
 }
 
-.toc-section {
+div.toc-section {
     margin: 0px -10px;
     padding: 0;
 }
 
-.toc-section a {
+div.toc-section a {
     color: black;
     display: inline-block;
     font-size: 11pt;
@@ -188,50 +188,50 @@ input[type="number"]::-webkit-outer-spin-button {
     text-decoration: none;
 }
 
-.toc-section:hover {
+div.toc-section:hover {
     background-color: var(--highlight-light-color);
 }
 
-.toc-expand-button {
+span.toc-expand-button {
     display: inline-block;
     padding: 5px;
 }
 
-.toc-expand-button img {
+span.toc-expand-button img {
     height: 0.8em;
     padding: 0.2em;
     width: 0.8em;
 }
 
-.toc-expand-button:hover {
+span.toc-expand-button:hover {
     background-color: var(--strong-highlight-light-color);
 }
 
-#content-body {
+article#content-body {
     margin: 0px 0px var(--status-bar-height) 0px;
     overflow: auto;
     padding: 10px 15px 10px 10px;
     width: 100%;
 }
 
-#content-body:focus {
+article#content-body:focus {
     outline: none;
 }
 
-.search-result {
+span.search-result {
     background-color: var(--highlight-light-color);
 }
 
-#selected-search-result {
+span#selected-search-result {
     background-color: var(--strong-highlight-light-color);
 }
 
-.dialog-tab-container {
+div.dialog-tab-container {
     align-items: stretch;
     display: flex;
 }
 
-.dialog-tab {
+div.dialog-tab {
     border-color: var(--border-color);
     border-style: solid;
     border-width: var(--border-width);
@@ -241,11 +241,11 @@ input[type="number"]::-webkit-outer-spin-button {
     padding: 10px;
 }
 
-.unselected-tab:hover {
+div.unselected-tab:hover {
     background-color: var(--highlight-light-color);
 }
 
-.dialog-tab-content {
+div.dialog-tab-content {
     border-color: var(--border-color);
     border-style: solid;
     border-width: var(--border-width);
@@ -264,11 +264,11 @@ input[type="number"]::-webkit-outer-spin-button {
     text-align: center;
 }
 
-#application-icon {
+img#application-icon {
     height: 15rem;
 }
 
-#issue-link-paragraph {
+p#issue-link-paragraph {
     text-align: right !important;
 }
 
@@ -299,45 +299,45 @@ input[type="number"]::-webkit-outer-spin-button {
         color: var(--text-dark-color);
     }
 
-    #status-bar {
+    div#status-bar {
         background: var(--element-dark-bgcolor);
         border-top: var(--border-width) solid var(--dark-border-color);
         color: var(--text-dark-color);
     }
 
-    #menu-border {
+    div#menu-border {
         background-color: var(--element-dark-bgcolor);
         border-bottom: var(--border-width) solid var(--dark-border-color);
     }
 
-    #blocked-content-info {
+    div#blocked-content-info {
         background-color: #7a1f28;
         border-color: black;
         color: var(--text-dark-color);
     }
 
-    #separator {
+    div#separator {
         background-color: var(--dark-border-color);
     }
 
-    .toc-section a,
-    .toc-section * {
+    div.toc-section a,
+    div.toc-section * {
         color: var(--text-dark-color);
     }
 
-    .toc-section:hover {
+    div.toc-section:hover {
         background-color: var(--highlight-dark-color);
     }
 
-    .toc-expand-button:hover {
+    span.toc-expand-button:hover {
         background-color: var(--strong-highlight-dark-color);
     }
 
-    .search-result {
+    span.search-result {
         background-color: var(--highlight-dark-color);
     }
 
-    #selected-search-result {
+    span#selected-search-result {
         background-color: var(--strong-highlight-dark-color);
     }
 
@@ -351,15 +351,15 @@ input[type="number"]::-webkit-outer-spin-button {
         border-bottom-color: var(--dark-border-color);
     }
 
-    .dialog-tab {
+    div.dialog-tab {
         border-color: var(--dark-border-color);
     }
 
-    .unselected-tab:hover {
+    div.unselected-tab:hover {
         background-color: var(--highlight-dark-color);
     }
 
-    .dialog-tab-content {
+    div.dialog-tab-content {
         border-color: var(--dark-border-color);
     }
 }

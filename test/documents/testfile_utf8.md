@@ -15,6 +15,14 @@
 
 <p style="font-family:MyFont">This is some text using some special font.</p>
 
+## Special headers
+
+### Content
+
+### TOC
+
+### Content body
+
 ## Links
 
 [External link to Google](http://www.google.com)

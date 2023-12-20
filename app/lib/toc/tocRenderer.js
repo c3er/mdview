@@ -5,7 +5,6 @@ const metadata = require("../renderer/metadata")
 const shared = require("./tocShared")
 
 const SEPARATOR_HTML_ID = "separator"
-const TOC_HTML_ID = "toc"
 
 const SECTION_HTML_CLASS = "toc-section"
 const EXPAND_BUTTON_HTML_CLASS = "toc-expand-button"
@@ -188,9 +187,9 @@ function toButtonHtml(imagePath) {
     return `<img src="${imagePath}">`
 }
 
-function changeTocWidth(tocWidth, tocElementId, deltaX) {
+function changeTocWidth(tocWidth, deltaX) {
     deltaX ??= 0
-    const tocElement = _document.getElementById(tocElementId)
+    const tocElement = getTocElement()
     let updatedWidth = tocWidth + deltaX
 
     // If the user releases the mouse button too far left and ends the application after that, the
@@ -205,17 +204,13 @@ function changeTocWidth(tocWidth, tocElementId, deltaX) {
     return updatedWidth
 }
 
-function registerSeparator(separatorElementId, tocElementId) {
+function registerSeparator(separatorElementId) {
     _document.getElementById(separatorElementId).onmousedown = mouseDownEvent => {
         let updatedWidth = 0
-        const tocWidth = parseFloat(getComputedStyle(_document.getElementById(tocElementId)).width)
+        const tocWidth = parseFloat(getComputedStyle(getTocElement()).width)
         _document.onmousemove = event => {
             event.preventDefault()
-            updatedWidth = changeTocWidth(
-                tocWidth,
-                tocElementId,
-                event.clientX - mouseDownEvent.clientX,
-            )
+            updatedWidth = changeTocWidth(tocWidth, event.clientX - mouseDownEvent.clientX)
         }
         _document.onmouseup = () => {
             _document.onmousemove = _document.onmouseup = null
@@ -224,6 +219,10 @@ function registerSeparator(separatorElementId, tocElementId) {
             ipc.send(ipc.messages.updateToc, _info)
         }
     }
+}
+
+function getTocElement() {
+    return _document.querySelector("nav#toc")
 }
 
 function reset() {
@@ -244,7 +243,7 @@ function calcSectionLevel(line) {
 
 function setTocVisibility(isVisible) {
     const displayStyle = isVisible ? "block" : "none"
-    _document.getElementById(TOC_HTML_ID).style.display = displayStyle
+    getTocElement().style.display = displayStyle
     _document.getElementById(SEPARATOR_HTML_ID).style.display = displayStyle
 }
 
@@ -262,7 +261,7 @@ exports.init = (document, isTest) => {
     _document = document
     reset()
     if (!isTest) {
-        registerSeparator(SEPARATOR_HTML_ID, TOC_HTML_ID)
+        registerSeparator(SEPARATOR_HTML_ID)
     }
 
     ipc.listen(ipc.messages.updateToc, tocInfo => {
@@ -272,7 +271,7 @@ exports.init = (document, isTest) => {
 
         _isVisible = tocInfo.isVisible
         setTocVisibility(_isVisible)
-        changeTocWidth(tocInfo.widthPx, TOC_HTML_ID)
+        changeTocWidth(tocInfo.widthPx)
         for (const entryId of tocInfo.collapsedEntries) {
             const section = _rootSection.findId(entryId)
             if (section) {

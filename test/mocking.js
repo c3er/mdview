@@ -357,13 +357,13 @@ exports.elements = {
         },
     },
     toc: {
-        path: "#toc",
+        path: "nav#toc",
     },
     separator: {
         path: "#separator",
     },
     content: {
-        path: "#content-body",
+        path: "article#content-body",
     },
     rawText: {
         path: "#raw-text",
@@ -479,6 +479,9 @@ exports.document = {
     },
     getElementsByTagName() {
         return [loadHtmlElement()]
+    },
+    querySelector() {
+        return loadHtmlElement()
     },
 }
 
