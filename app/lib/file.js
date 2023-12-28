@@ -1,7 +1,7 @@
 const fs = require("fs")
 
 const common = require("./common")
-const log = require("./log/log")
+const log = require("./log")
 
 function readBytesSync(filePath, filePosition, numBytesToRead) {
     // Based on https://stackoverflow.com/a/51033457 (Reading data a block at a time, synchronously)

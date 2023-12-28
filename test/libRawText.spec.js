@@ -4,8 +4,8 @@ const mocking = require("./mocking")
 
 describe("Raw text", () => {
     describe("Main part", () => {
-        const ipc = require("../app/lib/ipc/ipcMain")
-        const rawText = require("../app/lib/rawText/rawTextMain")
+        const ipc = require("../app/lib/ipcMain")
+        const rawText = require("../app/lib/rawTextMain")
 
         beforeEach(() => rawText.init(mocking.mainWindow, mocking.mainMenu, mocking.electron))
 
@@ -47,8 +47,8 @@ describe("Raw text", () => {
     })
 
     describe("Renderer part", () => {
-        const ipc = require("../app/lib/ipc/ipcRenderer")
-        const rawText = require("../app/lib/rawText/rawTextRenderer")
+        const ipc = require("../app/lib/ipcRenderer")
+        const rawText = require("../app/lib/rawTextRenderer")
 
         let reloaderIsCalled = false
 

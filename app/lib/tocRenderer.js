@@ -1,6 +1,6 @@
-const common = require("../common")
-const ipc = require("../ipc/ipcRenderer")
-const metadata = require("../renderer/metadata")
+const common = require("./common")
+const ipc = require("./ipcRenderer")
+const metadata = require("./renderer/metadata")
 
 const shared = require("./tocShared")
 

@@ -1,4 +1,4 @@
-const log = require("../log/log")
+const log = require("./log")
 
 const SHOW_ERROR_MENU_ID = "show-error"
 

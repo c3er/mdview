@@ -4,8 +4,8 @@ const mocking = require("./mocking")
 
 describe("About dialog", () => {
     describe("Main part", () => {
-        const about = require("../app/lib/about/aboutMain")
-        const ipc = require("../app/lib/ipc/ipcMain")
+        const about = require("../app/lib/aboutMain")
+        const ipc = require("../app/lib/ipcMain")
 
         beforeEach(() => {
             ipc.init(mocking.mainWindow, mocking.electron)
@@ -29,9 +29,9 @@ describe("About dialog", () => {
     })
 
     describe("Renderer part", () => {
-        const about = require("../app/lib/about/aboutRenderer")
+        const about = require("../app/lib/aboutRenderer")
         const dialog = require("../app/lib/renderer/dialog")
-        const ipc = require("../app/lib/ipc/ipcRenderer")
+        const ipc = require("../app/lib/ipcRenderer")
 
         beforeEach(() => {
             dialog.reset()

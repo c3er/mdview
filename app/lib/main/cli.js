@@ -1,6 +1,6 @@
 const path = require("path")
 
-const log = require("../log/log")
+const log = require("../log")
 
 let electron
 

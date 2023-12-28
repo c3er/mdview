@@ -1,7 +1,7 @@
-const common = require("../common")
-const dialog = require("../renderer/dialog")
-const fileLib = require("../file")
-const ipc = require("../ipc/ipcRenderer")
+const common = require("./common")
+const dialog = require("./renderer/dialog")
+const fileLib = require("./file")
+const ipc = require("./ipcRenderer")
 
 const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"

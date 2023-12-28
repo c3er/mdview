@@ -7,8 +7,8 @@ const playwright = require("playwright")
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
-const settings = require("../app/lib/settings/settingsMain")
-const toc = require("../app/lib/toc/tocMain")
+const settings = require("../app/lib/settingsMain")
+const toc = require("../app/lib/tocMain")
 
 const electron = playwright._electron
 
@@ -292,7 +292,7 @@ describe("Integration tests with their own app instance each", () => {
 
         describe("Menu item", () => {
             it("unblocks content", async () => {
-                const contentBlocking = require("../app/lib/contentBlocking/contentBlockingMain")
+                const contentBlocking = require("../app/lib/contentBlockingMain")
                 const unblockContentMenuId = contentBlocking.UNBLOCK_CONTENT_MENU_ID
 
                 await clickMenuItem(unblockContentMenuId)
@@ -416,7 +416,7 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Search dialog", () => {
-        const search = require("../app/lib/search/searchMain")
+        const search = require("../app/lib/searchMain")
 
         const searchResultClass = `class="${search.SEARCH_RESULT_CLASS}"`
         const selectedSearchResultId = `id="${search.SELECTED_SEARCH_RESULT_ID}"`
@@ -483,7 +483,7 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Settings dialog", () => {
-        const settings = require("../app/lib/settings/settingsMain")
+        const settings = require("../app/lib/settingsMain")
 
         async function opendDialog() {
             await clickMenuItem(settings.SETTINGS_MENU_ID)
@@ -576,7 +576,7 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("About dialog", () => {
-        const about = require("../app/lib/about/aboutMain")
+        const about = require("../app/lib/aboutMain")
 
         it("is displayed, copies info to clipboard and can be cosed", async () => {
             await clickMenuItem(about.ABOUT_DIALOG_MENU_ID)
@@ -605,7 +605,7 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Error dialog", () => {
-        const error = require("../app/lib/error/errorMain")
+        const error = require("../app/lib/errorMain")
 
         it("is displayed and can be closed", async () => {
             await clickMenuItem(error.SHOW_ERROR_MENU_ID)
@@ -636,7 +636,7 @@ describe("Integration tests with their own app instance each", () => {
             // The "evaluateHandle" function serializes the parameters and an object containing
             // a function cannot be serialized.
             await _page.evaluateHandle(filePath => {
-                const dragDrop = require("./lib/dragDrop/dragDropRenderer")
+                const dragDrop = require("./lib/dragDropRenderer")
 
                 // eslint-disable-next-line no-undef
                 dragDrop.dropHandler({

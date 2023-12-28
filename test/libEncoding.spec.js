@@ -5,8 +5,8 @@ const mocking = require("./mocking")
 
 describe("Encoding library", () => {
     describe("Main part", () => {
-        const encodingLib = require("../app/lib/encoding/encodingMain")
-        const ipc = require("../app/lib/ipc/ipcMain")
+        const encodingLib = require("../app/lib/encodingMain")
+        const ipc = require("../app/lib/ipcMain")
         const storage = require("../app/lib/main/storage")
 
         const encoding = "utf16le"
@@ -35,7 +35,7 @@ describe("Encoding library", () => {
     })
 
     describe("Renderer part", () => {
-        const encodingLib = require("../app/lib/encoding/encodingRenderer")
+        const encodingLib = require("../app/lib/encodingRenderer")
 
         const iso88592Encoding = "iso88592"
         const iso88592Buffer = Buffer.from(

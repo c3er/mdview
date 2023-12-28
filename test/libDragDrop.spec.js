@@ -5,10 +5,10 @@ const mocking = require("./mocking")
 
 describe("Drag & drop", () => {
     describe("Renderer part", () => {
-        const error = require("../app/lib/error/errorRenderer")
+        const error = require("../app/lib/errorRenderer")
         const dialog = require("../app/lib/renderer/dialog")
-        const dragDrop = require("../app/lib/dragDrop/dragDropRenderer")
-        const ipc = require("../app/lib/ipc/ipcRenderer")
+        const dragDrop = require("../app/lib/dragDropRenderer")
+        const ipc = require("../app/lib/ipcRenderer")
 
         const filePathToDrop = lib.DEFAULT_DOCUMENT_PATH
 

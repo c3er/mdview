@@ -4,8 +4,8 @@ const mocking = require("./mocking")
 
 describe("Search", () => {
     describe("Main part", () => {
-        const ipc = require("../app/lib/ipc/ipcMain")
-        const search = require("../app/lib/search/searchMain")
+        const ipc = require("../app/lib/ipcMain")
+        const search = require("../app/lib/searchMain")
 
         beforeEach(() => {
             ipc.init(mocking.mainWindow, mocking.electron)
@@ -31,9 +31,9 @@ describe("Search", () => {
     })
 
     describe("Renderer part", () => {
-        const ipc = require("../app/lib/ipc/ipcRenderer")
+        const ipc = require("../app/lib/ipcRenderer")
         const renderer = require("../app/lib/renderer/common")
-        const search = require("../app/lib/search/searchRenderer")
+        const search = require("../app/lib/searchRenderer")
 
         function initSearch() {
             search.init(mocking.document, () => {})

@@ -3,7 +3,7 @@ const assert = require("chai").assert
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
-const ipc = require("../app/lib/ipc/ipcShared")
+const ipc = require("../app/lib/ipcShared")
 const storage = require("../app/lib/main/storage")
 
 function registerSettingsMessage(expectedApplicationSettings, expectedDocumentSettings) {
@@ -18,9 +18,9 @@ function registerSettingsMessage(expectedApplicationSettings, expectedDocumentSe
 
 describe("Settings", () => {
     describe("Main part", () => {
-        const ipc = require("../app/lib/ipc/ipcMain")
-        const navigation = require("../app/lib/navigation/navigationMain")
-        const settings = require("../app/lib/settings/settingsMain")
+        const ipc = require("../app/lib/ipcMain")
+        const navigation = require("../app/lib/navigationMain")
+        const settings = require("../app/lib/settingsMain")
 
         beforeEach(() => {
             mocking.register.ipc.rendererOn(ipc.messages.resetContentBlocking)
@@ -66,8 +66,8 @@ describe("Settings", () => {
 
     describe("Renderer part", () => {
         const dialog = require("../app/lib/renderer/dialog")
-        const ipc = require("../app/lib/ipc/ipcRenderer")
-        const settings = require("../app/lib/settings/settingsRenderer")
+        const ipc = require("../app/lib/ipcRenderer")
+        const settings = require("../app/lib/settingsRenderer")
 
         beforeEach(() => {
             dialog.reset()

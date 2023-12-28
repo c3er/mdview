@@ -1,10 +1,10 @@
-const fileHistory = require("../main/fileHistory")
-const fileLib = require("../file")
-const ipc = require("../ipc/ipcMain")
-const menu = require("../main/menu")
-const navigation = require("../navigation/navigationMain")
-const storage = require("../main/storage")
-const toc = require("../toc/tocMain")
+const fileHistory = require("./main/fileHistory")
+const fileLib = require("./file")
+const ipc = require("./ipcMain")
+const menu = require("./main/menu")
+const navigation = require("./navigationMain")
+const storage = require("./main/storage")
+const toc = require("./tocMain")
 
 const SETTINGS_MENU_ID = "settings"
 

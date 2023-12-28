@@ -1,6 +1,6 @@
 const encodingShared = require("./encodingShared")
-const ipc = require("../ipc/ipcMain")
-const storage = require("../main/storage")
+const ipc = require("./ipcMain")
+const storage = require("./main/storage")
 
 let _mainMenu
 

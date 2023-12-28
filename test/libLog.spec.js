@@ -6,8 +6,8 @@ describe("Logging", () => {
     const testMessage = "this is a test"
 
     describe("Main part", () => {
-        const ipc = require("../app/lib/ipc/ipcMain")
-        const log = require("../app/lib/log/logMain")
+        const ipc = require("../app/lib/ipcMain")
+        const log = require("../app/lib/logMain")
 
         function assertMessageFromrenderer(ipcMessage, messageArray) {
             mocking.register.ipc.mainOn(ipcMessage, (_, msg) => assert.equal(msg, testMessage))
@@ -34,8 +34,8 @@ describe("Logging", () => {
     })
 
     describe("Renderer part", () => {
-        const ipc = require("../app/lib/ipc/ipcRenderer")
-        const log = require("../app/lib/log/logRenderer")
+        const ipc = require("../app/lib/ipcRenderer")
+        const log = require("../app/lib/logRenderer")
 
         function assertMessageToMain(ipcMessage, logFunc, messageArray) {
             mocking.register.ipc.mainOn(ipcMessage, (_, msg) => assert.equal(msg, testMessage))

@@ -4,7 +4,7 @@ const lib = require("./testLib")
 const mocking = require("./mocking")
 
 const documentRendering = require("../app/lib/renderer/documentRendering")
-const toc = require("../app/lib/toc/tocRenderer")
+const toc = require("../app/lib/tocRenderer")
 
 function assertSections(content, rootSection) {
     content = lib.prepareMdContent(content)

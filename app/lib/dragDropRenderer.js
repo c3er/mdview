@@ -1,6 +1,6 @@
-const dialog = require("../renderer/dialog")
-const ipc = require("../ipc/ipcRenderer")
-const navigation = require("../navigation/navigationRenderer")
+const dialog = require("./renderer/dialog")
+const ipc = require("./ipcRenderer")
+const navigation = require("./navigationRenderer")
 
 const shared = require("./dragDropShared")
 

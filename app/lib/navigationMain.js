@@ -1,6 +1,6 @@
-const encodingLib = require("../encoding/encodingMain")
-const ipc = require("../ipc/ipcMain")
-const menu = require("../main/menu")
+const encodingLib = require("./encodingMain")
+const ipc = require("./ipcMain")
+const menu = require("./main/menu")
 
 const BACK_MENU_ID = "back"
 const FORWARD_MENU_ID = "forward"

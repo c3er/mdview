@@ -1,6 +1,6 @@
-const common = require("../common")
-const ipc = require("../ipc/ipcRenderer")
-const log = require("../log/log")
+const common = require("./common")
+const ipc = require("./ipcRenderer")
+const log = require("./log")
 
 const _elementIDs = {
     element: "blocked-content-info",

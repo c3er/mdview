@@ -1,7 +1,7 @@
-const ipc = require("../ipc/ipcMain")
-const menu = require("../main/menu")
-const navigation = require("../navigation/navigationMain")
-const storage = require("../main/storage")
+const ipc = require("./ipcMain")
+const menu = require("./main/menu")
+const navigation = require("./navigationMain")
+const storage = require("./main/storage")
 
 const shared = require("./tocShared")
 

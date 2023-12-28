@@ -4,8 +4,8 @@ const mocking = require("./mocking")
 
 describe("Error dialog", () => {
     describe("Main part", () => {
-        const error = require("../app/lib/error/errorMain")
-        const log = require("../app/lib/log/logMain")
+        const error = require("../app/lib/errorMain")
+        const log = require("../app/lib/logMain")
 
         const errorMessage = "This is an error"
 
@@ -34,7 +34,7 @@ describe("Error dialog", () => {
 
     describe("Renderer part", () => {
         const dialog = require("../app/lib/renderer/dialog")
-        const error = require("../app/lib/error/errorRenderer")
+        const error = require("../app/lib/errorRenderer")
 
         beforeEach(() => {
             dialog.reset()

@@ -1,6 +1,6 @@
-const dialog = require("../renderer/dialog")
-const ipc = require("../ipc/ipcRenderer")
-const renderer = require("../renderer/common")
+const dialog = require("./renderer/dialog")
+const ipc = require("./ipcRenderer")
+const renderer = require("./renderer/common")
 
 const shared = require("./searchShared")
 

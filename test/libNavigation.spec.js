@@ -12,8 +12,8 @@ const htmlFilePath = path.join(documentDirectory, "file.html")
 
 describe("Navigation", () => {
     describe("Main part", () => {
-        const ipc = require("../app/lib/ipc/ipcMain")
-        const navigation = require("../app/lib/navigation/navigationMain")
+        const ipc = require("../app/lib/ipcMain")
+        const navigation = require("../app/lib/navigationMain")
 
         function prepareAssertion(expectedFilePath) {
             mocking.clear()
@@ -88,7 +88,7 @@ describe("Navigation", () => {
     })
 
     describe("Renderer part", () => {
-        const navigation = require("../app/lib/navigation/navigationRenderer")
+        const navigation = require("../app/lib/navigationRenderer")
 
         let htmlElement
         let event

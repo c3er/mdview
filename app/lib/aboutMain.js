@@ -1,9 +1,9 @@
 const path = require("path")
 
-const common = require("../common")
-const ipc = require("../ipc/ipcMain")
-const menu = require("../main/menu")
-const packageJson = require("../main/packageJson")
+const common = require("./common")
+const ipc = require("./ipcMain")
+const menu = require("./main/menu")
+const packageJson = require("./main/packageJson")
 
 const ABOUT_DIALOG_MENU_ID = "about"
 

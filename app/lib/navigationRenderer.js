@@ -1,11 +1,11 @@
 const fs = require("fs")
 const path = require("path")
 
-const common = require("../common")
-const error = require("../error/errorRenderer")
-const file = require("../file")
-const ipc = require("../ipc/ipcRenderer")
-const renderer = require("../renderer/common")
+const common = require("./common")
+const error = require("./errorRenderer")
+const file = require("./file")
+const ipc = require("./ipcRenderer")
+const renderer = require("./renderer/common")
 
 let electron
 

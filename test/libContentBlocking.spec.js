@@ -6,8 +6,8 @@ describe("Content blocking", () => {
     const expectedUrl = "http://example.com"
 
     describe("Main part", () => {
-        const ipc = require("../app/lib/ipc/ipcMain")
-        const contentBlocking = require("../app/lib/contentBlocking/contentBlockingMain")
+        const ipc = require("../app/lib/ipcMain")
+        const contentBlocking = require("../app/lib/contentBlockingMain")
 
         beforeEach(() => {
             ipc.init(mocking.mainWindow, mocking.electron)
@@ -74,8 +74,8 @@ describe("Content blocking", () => {
     })
 
     describe("Renderer part", () => {
-        const ipc = require("../app/lib/ipc/ipcRenderer")
-        const contentBlocking = require("../app/lib/contentBlocking/contentBlockingRenderer")
+        const ipc = require("../app/lib/ipcRenderer")
+        const contentBlocking = require("../app/lib/contentBlockingRenderer")
 
         beforeEach(() => {
             ipc.init(mocking.electron)
