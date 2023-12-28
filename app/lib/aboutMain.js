@@ -20,7 +20,6 @@ exports.open = () => {
         applicationIconPath: path.join(
             __dirname,
             "..",
-            "..",
             "assets",
             "icon",
             common.isMacOS() ? "md-mac-icon.svg" : "md-icon.svg",
