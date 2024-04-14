@@ -24,6 +24,7 @@
     "start": "electron .",
     "dist": "electron-builder",
     "dist-ci": "electron-builder -p never",
+    "lint": "eslint . --max-warnings 0 && prettier --check .",
     "test": "eslint . --max-warnings 0 && prettier --check . && mocha --timeout 20000",
     "test-ci": "eslint . --max-warnings 0 && prettier --check . && xvfb-maybe -- mocha --timeout 20000",
     "format": "prettier --write ."
