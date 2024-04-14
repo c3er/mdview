@@ -360,11 +360,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
     addEventListener("contextmenu", contextMenuHandler)
     if (hasMermaid(content)) {
         await import(MERMAID_MODULE_PATH)
-
-        // eslint-disable-next-line no-undef
         mermaid.initialize({ theme: isDarkMode() ? "dark" : "default" })
-
-        // eslint-disable-next-line no-undef
         mermaid.run()
     }
     renderer.contentElement().focus()
