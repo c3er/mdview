@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const mocking = require("./mocking")
 
@@ -21,13 +21,13 @@ describe("Error dialog", () => {
 
         it("logs the error message", () => {
             error.show(errorMessage)
-            assert.isTrue(log.errorMessages.some(msg => msg[1] === errorMessage))
+            assert(log.errorMessages.some(msg => msg[1] === errorMessage))
         })
 
         it("causes process exit with non zero exit code", () => {
             error.show(errorMessage)
 
-            assert.isTrue(process.exitCalled)
+            assert(process.exitCalled)
             assert.notStrictEqual(process.exitCode, 0)
         })
     })
@@ -42,24 +42,24 @@ describe("Error dialog", () => {
         })
 
         it("is closed by default", () => {
-            assert.isFalse(dialog.isOpen())
-            assert.isNull(dialog.current())
+            assert(!dialog.isOpen())
+            assert(dialog.current() === null)
         })
 
         it('is open after "show" call', () => {
             error.show("Some message")
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, error.DIALOG_ID)
         })
 
         it("is closed after opening and closing", () => {
             error.show("Some message")
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, error.DIALOG_ID)
 
             dialog.close()
-            assert.isFalse(dialog.isOpen())
-            assert.isNull(dialog.current())
+            assert(!dialog.isOpen())
+            assert(dialog.current() === null)
         })
     })
 })

@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const lib = require("./testLib")
 const mocking = require("./mocking")
@@ -21,14 +21,14 @@ describe("Encoding library", () => {
 
         it("remembers the encoding", () => {
             encodingLib.change(filename, encoding)
-            assert.equal(encodingLib.load(filename), encoding)
+            assert.strictEqual(encodingLib.load(filename), encoding)
         })
 
         it("reacts to changeEncoding IPC message", () => {
             const message = ipc.messages.changeEncoding
             mocking.register.ipc.mainOn(message, (_, filePath, actualEncoding) => {
-                assert.equal(filePath, filename)
-                assert.equal(actualEncoding, encoding)
+                assert.strictEqual(filePath, filename)
+                assert.strictEqual(actualEncoding, encoding)
             })
             mocking.send.ipc.toMain(message, null, filename, encoding)
         })
@@ -44,11 +44,14 @@ describe("Encoding library", () => {
         )
 
         it("detects ISO-8859-2 encoded bytes", () => {
-            assert.equal(encodingLib.detect(iso88592Buffer), iso88592Encoding)
+            assert.strictEqual(encodingLib.detect(iso88592Buffer), iso88592Encoding)
         })
 
         it("decodes ISO-8859-2 encoded bytes", () => {
-            assert.equal(encodingLib.decode(iso88592Buffer, iso88592Encoding), "Müller Straße")
+            assert.strictEqual(
+                encodingLib.decode(iso88592Buffer, iso88592Encoding),
+                "Müller Straße",
+            )
         })
     })
 })

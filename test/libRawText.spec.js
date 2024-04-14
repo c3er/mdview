@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const mocking = require("./mocking")
 
@@ -7,7 +7,10 @@ describe("Raw text", () => {
         const ipc = require("../app/lib/ipcMain")
         const rawText = require("../app/lib/rawTextMain")
 
-        beforeEach(() => rawText.init(mocking.mainWindow, mocking.mainMenu, mocking.electron))
+        beforeEach(() => {
+            ipc.init(mocking.mainWindow, mocking.electron)
+            rawText.init(mocking.mainWindow, mocking.mainMenu, mocking.electron)
+        })
 
         afterEach(() => mocking.clear())
 
@@ -21,7 +24,7 @@ describe("Raw text", () => {
             mocking.register.ipc.webContentsSend(ipc.messages.viewRawText, () => {
                 const expectedSwitchCount = 1
                 switchCount++
-                assert.equal(
+                assert.strictEqual(
                     switchCount,
                     expectedSwitchCount,
                     `Raw view was switched ${switchCount} times.`,
@@ -30,7 +33,7 @@ describe("Raw text", () => {
             mocking.register.ipc.webContentsSend(ipc.messages.leaveRawText, () => {
                 const expectedSwitchCount = 2
                 switchCount++
-                assert.equal(
+                assert.strictEqual(
                     switchCount,
                     expectedSwitchCount,
                     `Raw view was switched ${switchCount} times.`,
@@ -65,15 +68,15 @@ describe("Raw text", () => {
         it("can be activated", () => {
             mocking.send.ipc.toRenderer(ipc.messages.viewRawText)
 
-            assert.isTrue(reloaderIsCalled)
-            assert.isTrue(rawText.isInRawView())
+            assert(reloaderIsCalled)
+            assert(rawText.isInRawView())
         })
 
         it("can be deactivated", () => {
             mocking.send.ipc.toRenderer(ipc.messages.leaveRawText)
 
-            assert.isTrue(reloaderIsCalled)
-            assert.isFalse(rawText.isInRawView())
+            assert(reloaderIsCalled)
+            assert(!rawText.isInRawView())
         })
     })
 })

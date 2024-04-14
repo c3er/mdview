@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const lib = require("./testLib")
 const mocking = require("./mocking")
@@ -26,12 +26,12 @@ describe("Settings", () => {
             mocking.register.ipc.rendererOn(ipc.messages.resetContentBlocking)
             mocking.register.ipc.rendererOn(ipc.messages.fileOpen)
             mocking.register.ipc.rendererOn(ipc.messages.updateSettings, (_, options) => {
-                assert.exists(options.lineBreaksEnabled)
-                assert.exists(options.typographyEnabled)
-                assert.exists(options.emojisEnabled)
-                assert.exists(options.renderAsMarkdown)
-                assert.exists(options.hideMetadata)
-                assert.exists(options.dragDropBehavior)
+                assert(options.lineBreaksEnabled !== undefined)
+                assert(options.typographyEnabled !== undefined)
+                assert(options.emojisEnabled !== undefined)
+                assert(options.renderAsMarkdown !== undefined)
+                assert(options.hideMetadata !== undefined)
+                assert(options.dragDropBehavior !== undefined)
             })
 
             ipc.init(mocking.mainWindow, mocking.electron)
@@ -83,7 +83,7 @@ describe("Settings", () => {
 
         it("can be opened", () => {
             mocking.register.ipc.mainOn(ipc.messages.settingsDialogIsOpen, (_, dialogIsOpen) =>
-                assert.isTrue(dialogIsOpen),
+                assert(dialogIsOpen),
             )
 
             const expectedApplicationSettings = storage.loadApplicationSettings().toJSON()
@@ -92,7 +92,7 @@ describe("Settings", () => {
                 .toJSON()
             registerSettingsMessage(expectedApplicationSettings, expectedDocumentSettings)
             mocking.register.ipc.mainOn(ipc.messages.settingsDialogIsOpen, (_, dialogIsOpen) =>
-                assert.isTrue(dialogIsOpen),
+                assert(dialogIsOpen),
             )
             mocking.send.ipc.toRenderer(
                 ipc.messages.settings,
@@ -104,16 +104,16 @@ describe("Settings", () => {
 
         it("closes", () => {
             mocking.register.ipc.mainOn(ipc.messages.settingsDialogIsOpen, (_, dialogIsOpen) =>
-                assert.isFalse(dialogIsOpen),
+                assert(!dialogIsOpen),
             )
 
             settings.open()
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, settings.DIALOG_ID)
 
             dialog.close()
-            assert.isFalse(dialog.isOpen())
-            assert.isNull(dialog.current())
+            assert(!dialog.isOpen())
+            assert(dialog.current() === null)
         })
     })
 })

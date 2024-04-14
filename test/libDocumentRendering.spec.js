@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 const lodashClonedeep = require("lodash.clonedeep")
 
 const documentRendering = require("../app/lib/renderer/documentRendering")
@@ -17,14 +17,14 @@ describe("Document rendering", () => {
     beforeEach(() => documentRendering.reset(defaultOptions))
 
     it("renders a header", () => {
-        assert.isTrue(
+        assert(
             new RegExp(`<h1.*>${headerText}</h1>`).test(documentRendering.renderContent(mdHeader)),
         )
     })
 
     describe("Render as Markdown", () => {
         it("is active after enabling the option", () => {
-            assert.isTrue(documentRendering.shallRenderAsMarkdown())
+            assert(documentRendering.shallRenderAsMarkdown())
         })
 
         it("is inactive after disabling the option", () => {
@@ -32,7 +32,7 @@ describe("Document rendering", () => {
             options.renderAsMarkdown = false
             documentRendering.reset(options)
 
-            assert.isFalse(documentRendering.shallRenderAsMarkdown())
+            assert(!documentRendering.shallRenderAsMarkdown())
         })
     })
 })

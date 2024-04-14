@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const mocking = require("./mocking")
 
@@ -71,24 +71,22 @@ describe("Search", () => {
 
         it("is not active by default", () => {
             initSearch()
-            assert.isFalse(search.isActive())
+            assert(!search.isActive())
         })
 
         it("is active after confirming the dialog", () => {
             const searchTerm = "expected search term"
 
-            mocking.register.ipc.mainOn(ipc.messages.searchIsActive, (_, value) =>
-                assert.isTrue(value),
-            )
+            mocking.register.ipc.mainOn(ipc.messages.searchIsActive, (_, value) => assert(value))
 
             performSearch(searchTerm)
-            assert.isTrue(search.isActive())
+            assert(search.isActive())
             assert.strictEqual(search.term(), searchTerm)
         })
 
         it("is inactive after cancelling the dialog", () => {
             performSearch(search.CANCEL_VALUE)
-            assert.isFalse(search.isActive())
+            assert(!search.isActive())
         })
 
         describe("Function highlightTerm", () => {
@@ -107,11 +105,11 @@ describe("Search", () => {
                 mocking.registerHtmlElement(contentElement)
 
                 performSearch(searchTerm)
-                assert.isTrue(search.isActive())
+                assert(search.isActive())
 
                 search.highlightTerm()
                 const content = contentElement.innerHTML
-                assert.include(content, `class="${search.SEARCH_RESULT_CLASS}"`)
+                assert(content.includes(`class="${search.SEARCH_RESULT_CLASS}"`))
                 assert.strictEqual(selectedCount, 1)
             })
 
@@ -123,10 +121,10 @@ describe("Search", () => {
                 mocking.registerHtmlElement(contentElement)
 
                 performSearch("some text not to be found")
-                assert.isTrue(search.isActive())
+                assert(search.isActive())
 
                 search.highlightTerm()
-                assert.isFalse(search.isActive())
+                assert(!search.isActive())
                 assert.strictEqual(contentElement.innerHTML, content)
             })
         })

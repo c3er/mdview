@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const lib = require("./testLib")
 const mocking = require("./mocking")
@@ -29,7 +29,7 @@ describe("Drag & drop", () => {
 
         it("opens a dialog after drop", () => {
             drop(filePathToDrop)
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, dragDrop.DIALOG_ID)
         })
 
@@ -38,12 +38,12 @@ describe("Drag & drop", () => {
 
             drop(invalidFile)
 
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, error.DIALOG_ID)
 
             const errorMessage = error.lastErrorMessage()
-            assert.include(errorMessage, "directory")
-            assert.include(errorMessage, invalidFile)
+            assert(errorMessage.includes("directory"))
+            assert(errorMessage.includes(invalidFile))
         })
 
         it("can close the dialog", () => {
@@ -51,8 +51,8 @@ describe("Drag & drop", () => {
             assert.strictEqual(dialog.current().id, dragDrop.DIALOG_ID)
 
             dialog.close()
-            assert.isFalse(dialog.isOpen())
-            assert.isNull(dialog.current())
+            assert(!dialog.isOpen())
+            assert(dialog.current() === null)
         })
 
         it("can open the file without dialog", () => {
@@ -63,8 +63,8 @@ describe("Drag & drop", () => {
             dragDrop.setBehavior(dragDrop.behavior.currentWindow)
             drop(filePathToDrop)
 
-            assert.isFalse(dialog.isOpen())
-            assert.isNull(dialog.current())
+            assert(!dialog.isOpen())
+            assert(dialog.current() === null)
         })
 
         it("can open the file in a new window without dialog", () => {
@@ -75,8 +75,8 @@ describe("Drag & drop", () => {
             dragDrop.setBehavior(dragDrop.behavior.newWindow)
             drop(filePathToDrop)
 
-            assert.isFalse(dialog.isOpen())
-            assert.isNull(dialog.current())
+            assert(!dialog.isOpen())
+            assert(dialog.current() === null)
         })
     })
 })

@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const lib = require("./testLib")
 const mocking = require("./mocking")
@@ -14,7 +14,7 @@ describe("Storage", () => {
             for (const file of files) {
                 fileHistory.add(file)
             }
-            assert.isTrue(fileHistory.hasFiles())
+            assert(fileHistory.hasFiles())
         }
 
         beforeEach(async () => {
@@ -29,7 +29,7 @@ describe("Storage", () => {
 
         it("is empty by default", () => {
             assert.strictEqual(fileHistory.filePaths.length, 0)
-            assert.isFalse(fileHistory.hasFiles())
+            assert(!fileHistory.hasFiles())
         })
 
         it("remembers files", () => {

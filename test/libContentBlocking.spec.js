@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const mocking = require("./mocking")
 
@@ -26,28 +26,30 @@ describe("Content blocking", () => {
 
         it("unblocks a URL", () => {
             const unblockMessage = ipc.messages.unblockURL
-            mocking.register.ipc.mainOn(unblockMessage, (_, url) => assert.equal(url, expectedUrl))
+            mocking.register.ipc.mainOn(unblockMessage, (_, url) =>
+                assert.strictEqual(url, expectedUrl),
+            )
             mocking.send.ipc.toMain(unblockMessage, {}, expectedUrl)
         })
 
         it("unblocks always redirection URLs", () => {
             mocking.register.webRequest.onBeforeRedirect(details =>
-                assert.equal(details.redirectURL, expectedUrl),
+                assert.strictEqual(details.redirectURL, expectedUrl),
             )
             mocking.send.webRequest.beforeRedirect({
                 redirectURL: expectedUrl,
             })
-            assert.isTrue(contentBlocking.unblockedURLs.includes(expectedUrl))
+            assert(contentBlocking.unblockedURLs.includes(expectedUrl))
         })
 
         describe("Request handler", () => {
             function buildRequestCallback(isBlocked) {
-                return options => assert.equal(options.cancel, isBlocked)
+                return options => assert.strictEqual(options.cancel, isBlocked)
             }
 
             beforeEach(() =>
                 mocking.register.webRequest.onBeforeRequest(details =>
-                    assert.equal(details.url, expectedUrl),
+                    assert.strictEqual(details.url, expectedUrl),
                 ),
             )
 
@@ -88,12 +90,12 @@ describe("Content blocking", () => {
         })
 
         it("has no blocked elements in default", () => {
-            assert.isFalse(contentBlocking.hasBlockedElements())
+            assert(!contentBlocking.hasBlockedElements())
         })
 
         it("blocks a URL", () => {
             mocking.send.ipc.toRenderer(ipc.messages.contentBlocked, {}, expectedUrl)
-            assert.isTrue(contentBlocking.hasBlockedElements())
+            assert(contentBlocking.hasBlockedElements())
         })
 
         it("has no blocked URL after unblocking all", () => {
@@ -104,7 +106,7 @@ describe("Content blocking", () => {
             mocking.send.ipc.toRenderer(ipc.messages.contentBlocked, {}, expectedUrl)
 
             mocking.send.ipc.toRenderer(ipc.messages.unblockAll)
-            assert.isFalse(contentBlocking.hasBlockedElements())
+            assert(!contentBlocking.hasBlockedElements())
         })
     })
 })

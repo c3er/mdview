@@ -1,6 +1,5 @@
+const assert = require("assert")
 const path = require("path")
-
-const assert = require("chai").assert
 
 const file = require("../app/lib/file")
 
@@ -11,25 +10,25 @@ describe('Library "file"', () => {
 
     describe("file.isText", () => {
         it("recognizes a Markdown file", () => {
-            assert.isTrue(file.isText(mdFilePath))
+            assert(file.isText(mdFilePath))
         })
 
         it("recognizes a non Markdown file", () => {
-            assert.isTrue(file.isText(nonMdFilePath))
+            assert(file.isText(nonMdFilePath))
         })
 
         it("does not recognize a binary file", () => {
-            assert.isFalse(file.isText(binFilePath))
+            assert(!file.isText(binFilePath))
         })
     })
 
     describe("file.isMarkdown", () => {
         it("recognizes a Markdown file", () => {
-            assert.isTrue(file.isMarkdown(mdFilePath))
+            assert(file.isMarkdown(mdFilePath))
         })
 
         it("recognizes a non Markdown file", () => {
-            assert.isFalse(file.isMarkdown(nonMdFilePath))
+            assert(!file.isMarkdown(nonMdFilePath))
         })
     })
 })

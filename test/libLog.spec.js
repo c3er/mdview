@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const mocking = require("./mocking")
 
@@ -10,9 +10,11 @@ describe("Logging", () => {
         const log = require("../app/lib/logMain")
 
         function assertMessageFromrenderer(ipcMessage, messageArray) {
-            mocking.register.ipc.mainOn(ipcMessage, (_, msg) => assert.equal(msg, testMessage))
+            mocking.register.ipc.mainOn(ipcMessage, (_, msg) =>
+                assert.strictEqual(msg, testMessage),
+            )
             mocking.send.ipc.toMain(ipcMessage, null, testMessage)
-            assert.deepInclude(messageArray, [testMessage])
+            assert(messageArray.find(message => message[0] === testMessage))
         }
 
         beforeEach(() => {
@@ -38,12 +40,17 @@ describe("Logging", () => {
         const log = require("../app/lib/logRenderer")
 
         function assertMessageToMain(ipcMessage, logFunc, messageArray) {
-            mocking.register.ipc.mainOn(ipcMessage, (_, msg) => assert.equal(msg, testMessage))
+            mocking.register.ipc.mainOn(ipcMessage, (_, msg) =>
+                assert.strictEqual(msg, testMessage),
+            )
             logFunc(testMessage)
-            assert.deepInclude(messageArray, [testMessage])
+            assert(messageArray.find(message => message[0] === testMessage))
         }
 
-        beforeEach(() => log.init(true))
+        beforeEach(() => {
+            ipc.init(mocking.electron)
+            log.init(true)
+        })
 
         it("sends debug message to main process", () => {
             assertMessageToMain(ipc.messages.logToMainDebug, log.debug, log.debugMessages)

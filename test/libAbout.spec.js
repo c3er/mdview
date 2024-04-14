@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const mocking = require("./mocking")
 
@@ -16,13 +16,13 @@ describe("About dialog", () => {
 
         it("opens", () => {
             mocking.register.ipc.rendererOn(ipc.messages.about, (_, aboutInfo) => {
-                assert.exists(aboutInfo.applicationIconPath)
-                assert.exists(aboutInfo.applicationName)
-                assert.exists(aboutInfo.applicationDescription)
-                assert.exists(aboutInfo.applicationVersion)
-                assert.exists(aboutInfo.homepage)
-                assert.exists(aboutInfo.issueLink)
-                assert.exists(aboutInfo.frameworkVersions)
+                assert(Boolean(aboutInfo.applicationIconPath))
+                assert(Boolean(aboutInfo.applicationName))
+                assert(Boolean(aboutInfo.applicationDescription))
+                assert(Boolean(aboutInfo.applicationVersion))
+                assert(Boolean(aboutInfo.homepage))
+                assert(Boolean(aboutInfo.issueLink))
+                assert(Boolean(aboutInfo.frameworkVersions))
             })
             about.open()
         })
@@ -44,7 +44,7 @@ describe("About dialog", () => {
 
         it("can be opened", () => {
             mocking.register.ipc.mainOn(ipc.messages.aboutDialogIsOpen, (_, dialogIsOpen) =>
-                assert.isTrue(dialogIsOpen),
+                assert(dialogIsOpen),
             )
             mocking.send.ipc.toRenderer(
                 ipc.messages.about,
@@ -59,22 +59,22 @@ describe("About dialog", () => {
                     frameworkVersions: [["some-framework", "0.0.1"]],
                 },
             )
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, about.DIALOG_ID)
         })
 
         it("closes", () => {
             mocking.register.ipc.mainOn(ipc.messages.aboutDialogIsOpen, (_, dialogIsOpen) =>
-                assert.isFalse(dialogIsOpen),
+                assert(!dialogIsOpen),
             )
 
             about.open()
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, about.DIALOG_ID)
 
             dialog.close()
-            assert.isFalse(dialog.isOpen())
-            assert.isNull(dialog.current())
+            assert(!dialog.isOpen())
+            assert(dialog.current() === null)
         })
     })
 })

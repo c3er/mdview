@@ -1,6 +1,5 @@
+const assert = require("assert")
 const path = require("path")
-
-const assert = require("chai").assert
 
 const mocking = require("./mocking")
 
@@ -14,18 +13,19 @@ describe("Navigation", () => {
     describe("Main part", () => {
         const ipc = require("../app/lib/ipcMain")
         const navigation = require("../app/lib/navigationMain")
+        const storage = require("../app/lib/main/storage")
 
         function prepareAssertion(expectedFilePath) {
             mocking.clear()
             mocking.register.ipc.rendererOn(ipc.messages.resetContentBlocking)
             mocking.register.ipc.rendererOn(ipc.messages.fileOpen, (_, { path: filePath }) =>
-                assert.equal(filePath, expectedFilePath),
+                assert.strictEqual(filePath, expectedFilePath),
             )
         }
 
         function assertHistoryJumping(canGoBack, canGoForward) {
-            assert.equal(navigation.canGoBack(), canGoBack)
-            assert.equal(navigation.canGoForward(), canGoForward)
+            assert.strictEqual(navigation.canGoBack(), canGoBack)
+            assert.strictEqual(navigation.canGoForward(), canGoForward)
         }
 
         function go(expectedFilePath) {
@@ -43,7 +43,11 @@ describe("Navigation", () => {
             navigation.forward()
         }
 
-        beforeEach(() => navigation.init(mocking.mainMenu))
+        beforeEach(() => {
+            ipc.init(mocking.mainWindow, mocking.electron)
+            storage.init(mocking.dataDir, mocking.electron)
+            navigation.init(mocking.mainMenu)
+        })
 
         it("goes to a Markdown file without previous history", () => {
             go(mdFilePath1)
@@ -88,6 +92,7 @@ describe("Navigation", () => {
     })
 
     describe("Renderer part", () => {
+        const ipc = require("../app/lib/ipcRenderer")
         const navigation = require("../app/lib/navigationRenderer")
 
         let htmlElement
@@ -97,6 +102,7 @@ describe("Navigation", () => {
             htmlElement = mocking.loadHtmlElement()
             mocking.registerHtmlElement(htmlElement)
             event = mocking.createEvent()
+            ipc.init(mocking.electron)
             navigation.init(mocking.electron)
         })
 
@@ -104,8 +110,8 @@ describe("Navigation", () => {
             htmlElement.onclick = htmlElement.onauxclick = null
             navigation.registerLink(htmlElement, mdFilePath1, documentDirectory)
 
-            assert.isNotNull(event.onclick)
-            assert.isNotNull(event.onauxclick)
+            assert(event.onclick !== null)
+            assert(event.onauxclick !== null)
         })
     })
 })

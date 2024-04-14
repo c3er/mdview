@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const dialog = require("../app/lib/renderer/dialog")
 
@@ -6,8 +6,8 @@ describe("Dialog", () => {
     beforeEach(dialog.reset)
 
     it("is closed by default", () => {
-        assert.isFalse(dialog.isOpen())
-        assert.isNull(dialog.current())
+        assert(!dialog.isOpen())
+        assert(dialog.current() === null)
     })
 
     it("can be opened", () => {
@@ -18,7 +18,7 @@ describe("Dialog", () => {
             () => {},
         )
 
-        assert.isTrue(dialog.isOpen())
+        assert(dialog.isOpen())
         assert.strictEqual(dialog.current().id, id)
     })
 
@@ -31,7 +31,7 @@ describe("Dialog", () => {
             () => {},
         )
 
-        assert.isTrue(dialog.isOpen())
+        assert(dialog.isOpen())
         assert.strictEqual(dialog.current().id, id)
         assert.strictEqual(openCallbackCallCount, 1)
     })
@@ -44,12 +44,12 @@ describe("Dialog", () => {
             () => {},
         )
 
-        assert.isTrue(dialog.isOpen())
+        assert(dialog.isOpen())
         assert.strictEqual(dialog.current().id, id)
 
         dialog.close()
-        assert.isFalse(dialog.isOpen())
-        assert.isNull(dialog.current())
+        assert(!dialog.isOpen())
+        assert(dialog.current() === null)
     })
 
     it("calls the proper callback at opening", () => {
@@ -62,14 +62,14 @@ describe("Dialog", () => {
             () => openCallbackCallCount++,
             () => closeCallbackCallCount++,
         )
-        assert.isTrue(dialog.isOpen())
+        assert(dialog.isOpen())
         assert.strictEqual(dialog.current().id, id)
         assert.strictEqual(openCallbackCallCount, 1)
         assert.strictEqual(closeCallbackCallCount, 0)
 
         dialog.close()
-        assert.isFalse(dialog.isOpen())
-        assert.isNull(dialog.current())
+        assert(!dialog.isOpen())
+        assert(dialog.current() === null)
         assert.strictEqual(openCallbackCallCount, 1)
         assert.strictEqual(closeCallbackCallCount, 1)
     })
@@ -85,7 +85,7 @@ describe("Dialog", () => {
                 () => openCallbackCallCount++,
                 () => closeCallbackCallCount++,
             )
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, id)
         }
         assert.strictEqual(openCallbackCallCount, ids.length)
@@ -93,16 +93,16 @@ describe("Dialog", () => {
 
         const lastIdIndex = ids.length - 1
         for (let i = lastIdIndex; i >= 0; i--) {
-            assert.isTrue(dialog.isOpen())
+            assert(dialog.isOpen())
             assert.strictEqual(dialog.current().id, ids[i])
 
             dialog.close()
             if (i > 0) {
-                assert.isTrue(dialog.isOpen())
+                assert(dialog.isOpen())
                 assert.strictEqual(dialog.current().id, ids[i - 1])
             } else {
-                assert.isFalse(dialog.isOpen())
-                assert.isNull(dialog.current())
+                assert(!dialog.isOpen())
+                assert(dialog.current() === null)
             }
         }
         assert.strictEqual(openCallbackCallCount, ids.length)

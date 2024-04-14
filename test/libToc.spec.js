@@ -1,4 +1,4 @@
-const assert = require("chai").assert
+const assert = require("assert")
 
 const lib = require("./testLib")
 const mocking = require("./mocking")
@@ -11,7 +11,7 @@ function assertSections(content, rootSection) {
     documentRendering.renderContent(content)
     const actual = toc.build(content)
     const expected = toc.fromObject(rootSection)
-    assert.isTrue(
+    assert(
         actual.equals(expected),
         `\nExpected:\n${expected.toJson()}\n\nActual:\n${actual.toJson()}`,
     )
