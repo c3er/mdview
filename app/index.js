@@ -115,15 +115,19 @@ function isDataUrl(url) {
 }
 
 function populateToc(content, tocElementId) {
-    const rootSection = toc.build(content)
-    document.getElementById(tocElementId).innerHTML = rootSection.toHtml()
-    for (const section of rootSection.flattenTree()) {
-        const expandButtonElement = document.getElementById(section.buttonHtmlId)
-        if (section.hasSubSections) {
-            expandButtonElement.onclick = () => toc.handleExpandButtonClick(section)
-        } else {
-            expandButtonElement.style.display = "none"
+    try {
+        const rootSection = toc.build(content)
+        document.getElementById(tocElementId).innerHTML = rootSection.toHtml()
+        for (const section of rootSection.flattenTree()) {
+            const expandButtonElement = document.getElementById(section.buttonHtmlId)
+            if (section.hasSubSections) {
+                expandButtonElement.onclick = () => toc.handleExpandButtonClick(section)
+            } else {
+                expandButtonElement.style.display = "none"
+            }
         }
+    } catch (err) {
+        console.error(err)
     }
 }
 
