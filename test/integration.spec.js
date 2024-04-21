@@ -576,7 +576,7 @@ describe("Integration tests with their own app instance each", () => {
     describe("About dialog", () => {
         const about = require("../app/lib/aboutMain")
 
-        it("is displayed, copies info to clipboard and can be cosed", async () => {
+        it("is displayed, copies info to clipboard and can be closed", async () => {
             await clickMenuItem(about.ABOUT_DIALOG_MENU_ID)
 
             const aboutDialog = mocking.elements.aboutDialog
