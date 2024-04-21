@@ -20,3 +20,6 @@ exports.prepareMdContent = content =>
         .map(line => line.trimStart())
         .join("\n")
         .trim()
+
+exports.isNear = (number1, number2, tolerance) =>
+    number1 > number2 - tolerance && number1 < number2 + tolerance
