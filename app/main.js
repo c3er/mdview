@@ -23,6 +23,7 @@ const search = require("./lib/searchMain")
 const settings = require("./lib/settingsMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/tocMain")
+const zoom = require("./lib/main/zoom")
 
 const DATA_DIR_FILE = ".datadir"
 const USER_DATA_PLACEHOLDER = "MDVIEW_USER_DATA"
@@ -31,7 +32,6 @@ const MIN_WINDOW_WIDTH = 200 // Pixels
 const MIN_WINDOW_HEIGHT = 50 // Pixels
 const UPDATE_INTERVAL = 1000 // ms
 const UPDATE_FILE_TIME_NAV_ID = "update-file-time"
-const ZOOM_STEP = 0.1
 
 let _cliArgs
 let _finderFilePath
@@ -86,23 +86,6 @@ function reload(isFileModification, encoding) {
 
 function restoreScrollPosition() {
     ipc.send(ipc.messages.restorePosition, _scrollPosition)
-}
-
-function zoomIn() {
-    settings.setZoom(_applicationSettings.zoom + ZOOM_STEP)
-}
-
-function zoomOut() {
-    const minZoom = 0.1
-    let zoom = _applicationSettings.zoom - ZOOM_STEP
-    if (zoom < minZoom) {
-        zoom = minZoom
-    }
-    settings.setZoom(zoom)
-}
-
-function resetZoom() {
-    settings.setZoom(_applicationSettings.ZOOM_DEFAULT)
 }
 
 function createMainMenu() {
@@ -293,14 +276,14 @@ function createMainMenu() {
                             label: "Zoom &In",
                             accelerator: "CmdOrCtrl+Plus",
                             click() {
-                                zoomIn()
+                                zoom.in()
                             },
                         },
                         {
                             label: "Zoom &Out",
                             accelerator: "CmdOrCtrl+-",
                             click() {
-                                zoomOut()
+                                zoom.out()
                             },
                         },
                         { type: "separator" },
@@ -308,7 +291,7 @@ function createMainMenu() {
                             label: "&Reset Zoom",
                             accelerator: "CmdOrCtrl+0",
                             click() {
-                                resetZoom()
+                                zoom.reset()
                             },
                         },
                     ],
@@ -407,7 +390,7 @@ function createWindow() {
             if (input.control && input.key === "+") {
                 // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
                 event.preventDefault()
-                zoomIn()
+                zoom.in()
             } else if (common.isMacOS() && input.meta && input.key === "q") {
                 electron.app.quit()
             }
@@ -480,7 +463,7 @@ electron.app.on("open-file", (event, path) => {
 
 ipc.listen(ipc.messages.finishLoad, () => {
     settings.init(_mainMenu, determineCurrentFilePath())
-    settings.setZoom(_applicationSettings.zoom)
+    zoom.init()
 
     const filePath = _finderFilePath ?? _cliArgs.filePath
     openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
