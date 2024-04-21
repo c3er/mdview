@@ -23,7 +23,7 @@ const search = require("./lib/searchMain")
 const settings = require("./lib/settingsMain")
 const storage = require("./lib/main/storage")
 const toc = require("./lib/tocMain")
-const zoom = require("./lib/main/zoom")
+const zoom = require("./lib/zoomMain")
 
 const DATA_DIR_FILE = ".datadir"
 const USER_DATA_PLACEHOLDER = "MDVIEW_USER_DATA"
@@ -386,14 +386,22 @@ function createWindow() {
         }
     })
     mainWindow.webContents.on("before-input-event", (event, input) => {
-        if (input.type === "keyDown") {
-            if (input.control && input.key === "+") {
-                // Workaround for behavior that seems like https://github.com/electron/electron/issues/6731
-                event.preventDefault()
-                zoom.in()
-            } else if (common.isMacOS() && input.meta && input.key === "q") {
-                electron.app.quit()
+        if (input.type !== "keyDown") {
+            return
+        }
+        if (input.control) {
+            switch (input.key) {
+                case "+":
+                    event.preventDefault()
+                    zoom.in()
+                    break
+                case "-":
+                    event.preventDefault()
+                    zoom.out()
+                    break
             }
+        } else if (common.isMacOS() && input.meta && input.key === "q") {
+            electron.app.quit()
         }
     })
     remote.enable(mainWindow.webContents)

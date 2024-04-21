@@ -22,11 +22,14 @@ const renderer = require("./lib/renderer/common")
 const search = require("./lib/searchRenderer")
 const settings = require("./lib/settingsRenderer")
 const toc = require("./lib/tocRenderer")
+const zoom = require("./lib/zoomRenderer")
 
 const MERMAID_MODULE_PATH = "../node_modules/mermaid/dist/mermaid.js"
 
 // Needed for theme switching
 let _hasMermaid = false
+
+let _controlKeyIsPressed = false
 
 function alterTags(tagName, handler) {
     ;[...document.getElementsByTagName(tagName)].forEach(handler)
@@ -252,6 +255,28 @@ onkeydown = event => {
                 navigation.back()
             }
             return
+        case "Control":
+            _controlKeyIsPressed = true
+            return
+    }
+}
+
+onkeyup = event => {
+    switch (event.key) {
+        case "Control":
+            _controlKeyIsPressed = false
+            return
+    }
+}
+
+onwheel = event => {
+    if (!_controlKeyIsPressed) {
+        return
+    }
+    if (event.deltaY < 0) {
+        zoom.in()
+    } else if (event.deltaY > 0) {
+        zoom.out()
     }
 }
 

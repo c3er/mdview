@@ -39,4 +39,6 @@ exports.messages = {
     updateSettings: "update-settings",
     updateToc: "update-toc",
     viewRawText: "view-raw-text",
+    zoomIn: "zoom-in",
+    zoomOut: "zoom-out",
 }
