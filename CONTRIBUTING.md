@@ -38,8 +38,79 @@ Use GitHub's [pull request mechanism](https://github.com/c3er/mdview/compare) to
 
 Please ensure following points:
 
-- All automated tests pass by running `npm test`
-    - If a test fails after a fresh clone/checkout on your machine (i.e. without any changes by you), it is very clearly a bug and should be reported with all needed information about your environment.
-- The code is formatted properly by running `npm run format`
+- All automated tests pass by running `npm run test-all`
+    - If a test fails after a fresh clone/checkout on your machine (i.e. without any changes by you), it is very clearly a bug and and an issue with all needed information about your environment would be very appreciated.
+- The code is formatted properly by running `npm run fix`
 - Your changes do not have any merge conflicts with the current state of the master branch
 - For your convenience it is recommended that you make your changes not on the master branch but on an extra feature branch
+
+### Development environment
+
+#### Requirements
+
+The tool is developed and tested locally under Windows and macOS. Both at the current version. The continuous integration uses the latest Ubuntu version as provided by GitHub.
+
+A [local Git installation](https://git-scm.com/) is needed. For Windows, there is a GUI named [Git Extensions](https://gitextensions.github.io/).
+
+[Node.js](https://nodejs.org/en/) including the NPM package manager is needed. If your Node.js version is too old, the unit tests and some other scripts may fail because of syntax errors. On a Linux machine you can [use NVM](https://www.freecodecamp.org/news/how-to-install-node-js-on-ubuntu-and-update-npm-to-the-latest-version/) to install the latest LTS version.
+
+After cloning the Git repository, type `npm install`. NPM may put some warnings while installing the packages.
+
+#### Recommendations
+
+The author uses [Visual Studio Code](https://code.visualstudio.com/) as editor. Some plugins are helpful for this project:
+
+- [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint): Currently, a flag has to be set for support of the new ESLint configuration file format:
+  ![Screenshot of ESLint setting in VS Code to enable ESLint's flat config format](doc/assets/screenshot-vs-code-eslint-setting.png)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode): Some fine tuning in the settings may be required. Also, it is recommended to use Prettier as VS Code's formatter and enable automatic formatting at saving.
+
+The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMagick](https://www.imagemagick.org). While the application icon does not look too bad, a proper icon for Markdown *documents* is missing yet.
+
+#### Commands
+
+##### `npm start`
+
+Starts a new instance for development.
+
+`npm start path/to/file.md` starts an instance with the given file open.
+
+##### Testing
+
+`npm test` runs the unit tests.
+
+`npm run test-int` runs unit and integration tests.
+
+`npm run lint` checks the code style.
+
+`npm run test-all` does linting and runs all tests.
+
+`npm run fix` fixes linting (style) issues that can be fixed automatically.
+
+##### `npm run dist`
+
+Builds the setup packages for the current operating system, plus some additional files. Windows, macOS and Linux are supported.
+
+### Debugging
+
+Main and renderer processes have to be debugged independently of each other.
+
+#### Main process
+
+The main process can be debugged with [Visual Studio Code](https://code.visualstudio.com/). A `launch.json` is in the repository.
+
+#### Renderer process
+
+The renderer process (`index.html` and `index.js`) must be debugged with help of the Electron development tools by calling in the main menu "Tools" -> "Developer tools" or by pressing the F10 key.
+
+#### Tests
+
+For debugging the currently opened test spec file is a configuration provided for VS Code's `launch.json`.
+
+The integration tests cannot be debugged currently, i.e. one can only work with `console.log` statements.
+
+### Troubleshooting
+
+You may encounter some issue when trying to build the Electron distribution i.e. the build may (partially) fail. A possible fix is described here [not able to build installer/uninstaller (ERR_ELECTRON_BUILDER_CANNOT_EXECUTE)](doc/development-build-installer-issue.md)
+
+See [section Startup speed in the README](README.md#startup-speed) for known delays under Windows. If you observe a big delay at application startup, you should add the  development path of the application to your virus scanner exclusion list. This workaround may also help with other Electron applications.
