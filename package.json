@@ -24,10 +24,13 @@
     "start": "electron .",
     "dist": "electron-builder",
     "dist-ci": "electron-builder -p never",
-    "lint": "eslint . --max-warnings 0 && prettier --check .",
-    "test": "eslint . --max-warnings 0 && prettier --check . && mocha --timeout 20000",
+    "lint": "eslint . --max-warnings 0; prettier --check .",
+    "test": "mocha --exclude **/integration*",
+    "test-int": "mocha --timeout 20000",
+    "test-all": "eslint . --max-warnings 0 && prettier --check . && mocha --timeout 20000",
     "test-ci": "eslint . --max-warnings 0 && prettier --check . && xvfb-maybe -- mocha --timeout 20000",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "fix": "eslint . --fix; prettier --write ."
   },
   "build": {
     "afterPack": "scripts/afterPack.js",
