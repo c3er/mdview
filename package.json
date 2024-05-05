@@ -1,6 +1,6 @@
 {
   "name": "mdview",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "Standalone Markdown Viewer",
   "keywords": [
     "markdown",
@@ -126,9 +126,9 @@
   },
   "devDependencies": {
     "clipboardy": "4.0.0",
-    "electron": "29.3.0",
+    "electron": "30.0.2",
     "electron-builder": "24.13.3",
-    "eslint": "9.0.0",
+    "eslint": "9.2.0",
     "eslint-config-prettier": "9.1.0",
     "lodash.clonedeep": "4.5.0",
     "mocha": "10.4.0",
