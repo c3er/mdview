@@ -132,7 +132,7 @@
   },
   "devDependencies": {
     "clipboardy": "4.0.0",
-    "electron": "30.0.2",
+    "electron": "30.0.3",
     "electron-builder": "24.13.3",
     "eslint": "9.2.0",
     "eslint-config-prettier": "9.1.0",
