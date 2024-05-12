@@ -51,6 +51,11 @@
       "!tmp.md",
       "!*.log"
     ],
+    "msi": {
+      "createDesktopShortcut": false,
+      "oneClick": false,
+      "shortcutName": "Markdown Viewer"
+    },
     "nsis": {
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
@@ -78,6 +83,7 @@
     },
     "win": {
       "target": [
+        "msi",
         "nsis",
         "zip"
       ],
