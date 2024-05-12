@@ -52,3 +52,8 @@ exports.extractFileEnding = filePath => {
     const parts = filePath.split(".")
     return parts.length > 1 ? parts.at(-1) : ""
 }
+
+exports.transformRelativePath = (documentDirectory, filePath) =>
+    path.join(documentDirectory, filePath).replace("#", "%23")
+
+exports.isAbsolutePath = filePath => Boolean(filePath.match(/^(\S\:)?(\\|\/)/))

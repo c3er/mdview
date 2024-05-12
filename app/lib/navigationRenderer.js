@@ -1,5 +1,4 @@
 const fs = require("fs")
-const path = require("path")
 
 const common = require("./common")
 const error = require("./errorRenderer")
@@ -43,8 +42,13 @@ function openFile(fullPath, shallOpenInNewWindow, scrollPosition = 0) {
 }
 
 function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
-    const fullPath = path.join(documentDirectory, target)
+    target = common.prepareUrl(target)
+    const fullPath = file.isAbsolutePath(target)
+        ? target
+        : file.transformRelativePath(documentDirectory, target)
+
     const scrollPosition = renderer.contentElement().scrollTop
+
     if (common.isWebURL(target) || target.startsWith("mailto:")) {
         electron.shell.openExternal(target)
     } else if (isInternalLink(target)) {

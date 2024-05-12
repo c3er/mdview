@@ -31,4 +31,22 @@ describe('Library "file"', () => {
             assert(!file.isMarkdown(nonMdFilePath))
         })
     })
+
+    describe("file.isAbsolutePath", () => {
+        it("recognizes absolute paths", () => {
+            for (const filePath of [
+                "C:\\path\\to\\file.md",
+                "E:/path/to/file.md",
+                "/path/to/file.md",
+            ]) {
+                assert(file.isAbsolutePath(filePath))
+            }
+        })
+
+        it("does not recognize relative paths", () => {
+            for (const filePath of ["path/to/file.md", "path\\to\\file.md", "file.md"]) {
+                assert(!file.isAbsolutePath(filePath))
+            }
+        })
+    })
 })

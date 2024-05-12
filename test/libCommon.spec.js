@@ -24,6 +24,28 @@ describe('Library "common"', () => {
         })
     })
 
+    describe("common.prepareUrl", () => {
+        it("replaces all backslashes", () => {
+            assert.strictEqual(common.prepareUrl("path\\to\\file"), "path/to/file")
+        })
+
+        it("removes file protocol prefix", () => {
+            assert.strictEqual(common.prepareUrl("file:///path/to/file"), "/path/to/file")
+        })
+
+        it("does nothing with an empty string", () => {
+            assert.strictEqual(common.prepareUrl(""), "")
+        })
+
+        it("converts null to empty string", () => {
+            assert.strictEqual(common.prepareUrl(null), "")
+        })
+
+        it("converts undefined to empty string", () => {
+            assert.strictEqual(common.prepareUrl(undefined), "")
+        })
+    })
+
     describe("common.isEmptyObject", () => {
         it("recognizes an empty object", () => {
             assert(common.isEmptyObject({}))

@@ -14,6 +14,7 @@ const documentRendering = require("./lib/renderer/documentRendering")
 const dragDrop = require("./lib/dragDropRenderer")
 const encodingLib = require("./lib/encodingRenderer")
 const error = require("./lib/errorRenderer")
+const fileLib = require("./lib/file")
 const ipc = require("./lib/ipcRenderer")
 const log = require("./lib/log")
 const navigation = require("./lib/navigationRenderer")
@@ -129,10 +130,6 @@ function populateToc(content, tocElementId) {
     } catch (err) {
         console.error(err)
     }
-}
-
-function transformRelativePath(documentDirectory, filePath) {
-    return path.join(documentDirectory, filePath).replace("#", "%23")
 }
 
 function isLocalPath(url) {
@@ -336,9 +333,13 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         }
     })
     alterTags("img", image => {
-        const imageUrl = image.getAttribute("src") ?? ""
-        if (isLocalPath(imageUrl) && isInContainer(image, "content-body")) {
-            image.src = transformRelativePath(documentDirectory, imageUrl)
+        const imageUrl = common.prepareUrl(image.getAttribute("src"))
+        if (
+            isLocalPath(imageUrl) &&
+            isInContainer(image, "content-body") &&
+            !fileLib.isAbsolutePath(imageUrl)
+        ) {
+            image.src = fileLib.transformRelativePath(documentDirectory, imageUrl)
         }
         const altText = image.getAttribute("alt")
         statusOnMouseOver(image, imageUrl ? `${altText} (${imageUrl})` : altText)
@@ -346,15 +347,15 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         image.onerror = () => (image.style.backgroundColor = "#ffe6cc")
     })
     alterTags("audio", audioElement => {
-        const audioUrl = audioElement.getAttribute("src")
-        if (audioUrl && isLocalPath(audioUrl)) {
-            audioElement.src = transformRelativePath(documentDirectory, audioUrl)
+        const audioUrl = common.prepareUrl(audioElement.getAttribute("src"))
+        if (audioUrl && isLocalPath(audioUrl) && !fileLib.isAbsolutePath(audioUrl)) {
+            audioElement.src = fileLib.transformRelativePath(documentDirectory, audioUrl)
         }
     })
     alterTags("source", source => {
-        const url = source.getAttribute("src")
-        if (isLocalPath(url)) {
-            source.src = transformRelativePath(documentDirectory, url)
+        const url = common.prepareUrl(source.getAttribute("src"))
+        if (isLocalPath(url) && !fileLib.isAbsolutePath(url)) {
+            source.src = fileLib.transformRelativePath(documentDirectory, url)
         }
     })
 
