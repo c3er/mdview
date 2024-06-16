@@ -38,8 +38,8 @@ function openFile(shallOpenInNewWindow) {
 function dropHandler(event) {
     event.preventDefault()
 
-    const filePath = event.dataTransfer.files[0].path
-    if (!navigation.checkFile(filePath)) {
+    const filePath = event.dataTransfer?.files[0]?.path
+    if (!filePath || !navigation.checkFile(filePath)) {
         return
     }
 
