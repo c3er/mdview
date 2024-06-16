@@ -22,8 +22,8 @@
   "scripts": {
     "postinstall": "install-app-deps",
     "start": "electron .",
-    "dist": "electron-builder --config deployConfig.js",
-    "dist-ci": "electron-builder -p never --config deployConfig.js",
+    "dist": "electron-builder --config build/deployConfig.js",
+    "dist-ci": "electron-builder -p never --config build/deployConfig.js",
     "lint": "eslint . --max-warnings 0; prettier --check .",
     "test": "mocha --exclude **/integration*",
     "test-int": "mocha --timeout 20000",

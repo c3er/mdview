@@ -3,8 +3,8 @@ const WIN_ICON = "app/assets/icon/md.ico"
 const MAC_ICON = "app/assets/icon/md.icns"
 
 module.exports = {
-    afterPack: "scripts/afterPack.js",
-    afterAllArtifactBuild: "scripts/afterAllArtifactBuild.js",
+    afterPack: "build/afterPack.js",
+    afterAllArtifactBuild: "build/afterAllArtifactBuild.js",
     artifactName: "${name}-${version}-${arch}.${ext}",
     files: [
         "!**/node_modules/**/{test,__tests__,tests,powered-test,example,examples}",
@@ -14,7 +14,7 @@ module.exports = {
         "!.storage/*",
         "!.vscode/*",
         "!test/*",
-        "!scripts/*",
+        "!build/*",
         "!tmp/*",
         "!.eslintrc.js",
         "!.prettier*",
@@ -30,7 +30,7 @@ module.exports = {
         allowElevation: true,
         allowToChangeInstallationDirectory: true,
         createDesktopShortcut: false,
-        include: "scripts/installer.nsh",
+        include: "build/installer.nsh",
         license: "LICENSE",
         oneClick: false,
         perMachine: false,
@@ -52,7 +52,7 @@ module.exports = {
         icon: WIN_ICON,
         extraFiles: [
             {
-                from: "scripts/.datadir",
+                from: "build/.datadir",
                 to: ".datadir",
             },
         ],
