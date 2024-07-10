@@ -212,7 +212,7 @@ function contextMenuHandler(event) {
         )
     }
 
-    const linkElement = fittingTarget(target, /a/)
+    const linkElement = fittingTarget(target, /^a$/)
     if (linkElement) {
         menu.append(
             new MenuItem({
