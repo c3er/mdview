@@ -89,7 +89,42 @@ function restoreScrollPosition() {
 }
 
 function createMainMenu() {
+    const aboutEntry = {
+        label: "&About",
+        id: about.ABOUT_DIALOG_MENU_ID,
+        click() {
+            about.open()
+        },
+    }
+    const settingsEntry = {
+        label: "&Settings...",
+        accelerator: "CmdOrCtrl+,",
+        id: settings.SETTINGS_MENU_ID,
+        click() {
+            settings.open()
+        },
+    }
     return electron.Menu.buildFromTemplate([
+        ...(common.isMacOS()
+            ? [
+                  {
+                      label: electron.app.name,
+                      submenu: [
+                          aboutEntry,
+                          { type: "separator" },
+                          settingsEntry,
+                          { role: "services" },
+                          { type: "separator" },
+                          { role: "hide" },
+                          { role: "hideOthers" },
+                          { role: "unhide" },
+                          { type: "separator" },
+                          { type: "separator" },
+                          { role: "quit" },
+                      ],
+                  },
+              ]
+            : []),
         {
             label: "&File",
             submenu: [
@@ -139,13 +174,17 @@ function createMainMenu() {
                         fileHistory.clear()
                     },
                 },
-                { type: "separator" },
-                {
-                    label: "&Quit",
-                    click() {
-                        _mainWindow?.close()
-                    },
-                },
+                ...(!common.isMacOS()
+                    ? [
+                          { type: "separator" },
+                          {
+                              label: "&Quit",
+                              click() {
+                                  _mainWindow?.close()
+                              },
+                          },
+                      ]
+                    : []),
             ],
         },
         {
@@ -346,18 +385,15 @@ function createMainMenu() {
                 },
             ],
         },
-        {
-            label: "&Help",
-            submenu: [
-                {
-                    label: "&About",
-                    id: about.ABOUT_DIALOG_MENU_ID,
-                    click() {
-                        about.open()
-                    },
-                },
-            ],
-        },
+        { role: "windowMenu" },
+        ...(!common.isMacOS()
+            ? [
+                  {
+                      label: "&Help",
+                      submenu: [aboutEntry],
+                  },
+              ]
+            : []),
     ])
 }
 

@@ -7,6 +7,7 @@ const playwright = require("playwright")
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
+const common = require("../app/lib/common")
 const settings = require("../app/lib/settingsMain")
 const toc = require("../app/lib/tocMain")
 
@@ -198,6 +199,9 @@ describe("Integration tests with single app instance", () => {
 
         function assertMenu(menu, itemPath) {
             for (const [, currentItem] of Object.entries(menu)) {
+                if (common.isEmptyObject(currentItem)) {
+                    continue
+                }
                 const currentItemLabel = currentItem.label
                 const currentItemPath = [...itemPath, currentItemLabel]
                 describe(`Menu item "${currentItemLabel}"`, () => {

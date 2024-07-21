@@ -3,6 +3,8 @@ const path = require("path")
 
 const lodashClonedeep = require("lodash.clonedeep")
 
+const common = require("../app/lib/common")
+
 const DEFAULT_THEME = "system"
 
 const _electronIpcEvent = {}
@@ -217,6 +219,19 @@ exports.dataDir = path.join(__dirname, "data")
 
 exports.elements = {
     mainMenu: {
+        application: common.isMacOS()
+            ? {
+                  label: "mdview",
+                  sub: {
+                      about: {
+                          label: "&About",
+                      },
+                      settings: {
+                          label: "&Settings...",
+                      },
+                  },
+              }
+            : {},
         file: {
             label: "&File",
             sub: {
@@ -232,9 +247,11 @@ exports.elements = {
                 clearRecentFiles: {
                     label: "Clear Recent Files List",
                 },
-                quit: {
-                    label: "&Quit",
-                },
+                quit: !common.isMacOS()
+                    ? {
+                          label: "&Quit",
+                      }
+                    : {},
             },
         },
         edit: {
@@ -338,14 +355,16 @@ exports.elements = {
                 },
             },
         },
-        help: {
-            label: "&Help",
-            sub: {
-                about: {
-                    label: "&About",
-                },
-            },
-        },
+        help: !common.isMacOS()
+            ? {
+                  label: "&Help",
+                  sub: {
+                      about: {
+                          label: "&About",
+                      },
+                  },
+              }
+            : {},
     },
     blockedContentArea: {
         path: "#blocked-content-info",
