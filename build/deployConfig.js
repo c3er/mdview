@@ -55,8 +55,9 @@ module.exports = {
         icon: WIN_ICON,
         extraFiles: [
             {
-                from: "build/.datadir",
-                to: ".datadir",
+                from: "build/assets",
+                to: ".",
+                filter: ["**/*"],
             },
         ],
     },

@@ -64,3 +64,7 @@ exports.parse = args => {
 }
 
 exports.isDevelopment = isDevelopment
+
+exports.shallOutputAppPath = args => args.includes("--app-path")
+
+exports.shallOutputDataPath = args => args.includes("--data-path")

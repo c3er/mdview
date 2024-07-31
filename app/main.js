@@ -588,13 +588,15 @@ navigation.register(UPDATE_FILE_TIME_NAV_ID, lastModificationTime => {
 // Initialization before Electron's
 
 const args = process.argv
+const appDir = path.dirname(path.resolve(args[0]))
+
+// Set user data directory
 if (cli.isDevelopment()) {
     electron.app.setPath(
         "userData",
         path.join(path.resolve(args.slice(1).find(arg => !arg.startsWith("-"))), ".data"),
     )
 } else if (process.platform === "win32") {
-    const appDir = path.dirname(path.resolve(args[0]))
     const dataPath = fs.readFileSync(path.join(appDir, DATA_DIR_FILE), { encoding: "utf-8" }).trim()
     if (dataPath !== USER_DATA_PLACEHOLDER) {
         electron.app.setPath(
@@ -602,4 +604,18 @@ if (cli.isDevelopment()) {
             path.isAbsolute(dataPath) ? dataPath : path.join(appDir, ".data"),
         )
     }
+}
+
+// If set, ouput only paths and exit
+let shallExitApplication = false
+if (cli.shallOutputAppPath(args)) {
+    console.log(appDir)
+    shallExitApplication = true
+}
+if (cli.shallOutputDataPath(args)) {
+    console.log(electron.app.getPath("userData"))
+    shallExitApplication = true
+}
+if (shallExitApplication) {
+    process.exit(0)
 }
