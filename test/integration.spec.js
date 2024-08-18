@@ -373,8 +373,9 @@ describe("Integration tests with their own app instance each", () => {
         const DRAG_DISTANCE = 50
 
         async function displaySeparator() {
-            await clickMenuItem(toc.SHOW_FOR_ALL_DOCS_MENU_ID)
             const separatorLocator = _page.locator(mocking.elements.separator.path)
+            await clickMenuItem(toc.SHOW_FOR_ALL_DOCS_MENU_ID)
+            await separatorLocator.waitFor()
             assert(await separatorLocator.isVisible())
             return separatorLocator
         }
@@ -490,8 +491,10 @@ describe("Integration tests with their own app instance each", () => {
         const settings = require("../app/lib/settingsMain")
 
         async function opendDialog() {
+            const settingsDialogLocator = _page.locator(mocking.elements.settingsDialog.path)
             await clickMenuItem(settings.SETTINGS_MENU_ID)
-            assert(await _page.locator(mocking.elements.settingsDialog.path).isVisible())
+            await settingsDialogLocator.waitFor()
+            assert(await settingsDialogLocator.isVisible())
             assert(!(await menuItemIsEnabled(settings.SETTINGS_MENU_ID)))
         }
 
