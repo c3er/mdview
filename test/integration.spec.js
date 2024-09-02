@@ -13,6 +13,8 @@ const toc = require("../app/lib/tocMain")
 
 const electron = playwright._electron
 
+const DEFAULT_TIMEOUT = 3000
+
 let _app
 let _page
 
@@ -36,24 +38,25 @@ async function waitForWindowLoaded() {
     await _page.locator("#loading-indicator #loaded").waitFor({ state: "attached", timeout: 5000 })
 }
 
-async function startApp(documentPath) {
-    const defaultTimeout = 3000
-
-    _app = await electron.launch({
-        args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
-        executablePath: electronPath,
-    })
-    _app.context().setDefaultTimeout(defaultTimeout)
-
+async function initPage() {
     _page = await _app.firstWindow()
     _page.on("console", msg => addMessage(msg.text()))
     _page.on("crash", () => assert.fail("Crash happened"))
     _page.on("pageerror", error => assert.fail(`Page error: ${error.stack}`))
 
-    _page.setDefaultTimeout(defaultTimeout)
-    _page.setDefaultNavigationTimeout(defaultTimeout)
+    _page.setDefaultTimeout(DEFAULT_TIMEOUT)
+    _page.setDefaultNavigationTimeout(DEFAULT_TIMEOUT)
 
     await waitForWindowLoaded()
+}
+
+async function startApp(documentPath) {
+    _app = await electron.launch({
+        args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
+        executablePath: electronPath,
+    })
+    _app.context().setDefaultTimeout(DEFAULT_TIMEOUT)
+    await initPage()
 }
 
 async function restartApp(documentPath) {
@@ -724,6 +727,17 @@ describe("Integration tests with their own app instance each", () => {
                 await subMenuItems(fileHistory.RECENT_FILES_MENU_ID),
                 filePaths.reverse().concat([lib.DEFAULT_DOCUMENT_PATH]),
             )
+        })
+    })
+
+    describe("Refresh", () => {
+        it("stays in same document", async () => {
+            await _page.getByText("Link to README.md", { exact: true }).click()
+            assert((await _page.title()).includes("README.md"))
+
+            await clickMenuItem("refresh")
+            await initPage()
+            assert((await _page.title()).includes("README.md"))
         })
     })
 })

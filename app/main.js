@@ -252,6 +252,7 @@ function createMainMenu() {
                 {
                     label: "&Refresh",
                     accelerator: "F5",
+                    id: "refresh",
                     click() {
                         reload(false)
                     },
@@ -506,11 +507,15 @@ electron.app.on("open-file", (event, path) => {
 })
 
 ipc.listen(ipc.messages.finishLoad, () => {
-    settings.init(_mainMenu, determineCurrentFilePath())
+    const filePath = determineCurrentFilePath()
+    settings.init(_mainMenu, filePath)
     zoom.init()
 
-    const filePath = _finderFilePath ?? _cliArgs.filePath
-    openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
+    if (navigation.hasCurrentLocation()) {
+        navigation.reloadCurrent(_scrollPosition)
+    } else {
+        openFile(filePath, _cliArgs.internalTarget, encodingLib.load(filePath))
+    }
 
     if (_finderFilePath) {
         _mainWindow.setBounds(loadDocumentSettings().windowPosition)
