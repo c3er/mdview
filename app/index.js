@@ -25,7 +25,7 @@ const settings = require("./lib/settingsRenderer")
 const toc = require("./lib/tocRenderer")
 const zoom = require("./lib/zoomRenderer")
 
-const MERMAID_MODULE_PATH = "../node_modules/mermaid/dist/mermaid.js"
+const MERMAID_MODULE_PATH = "../node_modules/mermaid/dist/mermaid.esm.mjs"
 
 // Needed for theme switching
 let _hasMermaid = false
@@ -389,7 +389,7 @@ ipc.listen(ipc.messages.fileOpen, async file => {
 
     addEventListener("contextmenu", contextMenuHandler)
     if (hasMermaid(content)) {
-        await import(MERMAID_MODULE_PATH)
+        const mermaid = (await import(MERMAID_MODULE_PATH)).default
         mermaid.initialize({ theme: isDarkMode() ? "dark" : "default" })
         mermaid.run()
     }
