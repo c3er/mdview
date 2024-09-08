@@ -13,7 +13,7 @@ describe("Navigation", () => {
     describe("Main part", () => {
         const ipc = require("../app/lib/ipcMain")
         const navigation = require("../app/lib/navigationMain")
-        const storage = require("../app/lib/main/storage")
+        const storage = require("../app/lib/storageMain")
 
         function prepareAssertion(expectedFilePath) {
             mocking.clear()

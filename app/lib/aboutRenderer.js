@@ -1,4 +1,4 @@
-const dialog = require("./renderer/dialog")
+const dialog = require("./dialogRenderer")
 const ipc = require("./ipcRenderer")
 
 let electron

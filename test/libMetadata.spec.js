@@ -2,7 +2,7 @@ const assert = require("assert")
 
 const lib = require("./testLib")
 
-const metadata = require("../app/lib/renderer/metadata")
+const metadata = require("../app/lib/metadataRenderer")
 
 describe("Markdown metadata rendering", () => {
     describe("metadata.hide", () => {

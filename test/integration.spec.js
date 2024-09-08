@@ -131,7 +131,7 @@ describe("Integration tests with single app instance", () => {
     })
 
     describe('Library "storage"', () => {
-        const storage = require("../app/lib/main/storage")
+        const storage = require("../app/lib/storageMain")
 
         describe("Application settings", () => {
             let applicationSettings
@@ -693,7 +693,7 @@ describe("Integration tests with their own app instance each", () => {
     })
 
     describe("Recent files list", () => {
-        const fileHistory = require("../app/lib/main/fileHistory")
+        const fileHistory = require("../app/lib/fileHistoryMain")
 
         async function subMenuItems(id) {
             return await _app.evaluate(

@@ -6,7 +6,7 @@ const mocking = require("./mocking")
 describe("Drag & drop", () => {
     describe("Renderer part", () => {
         const error = require("../app/lib/errorRenderer")
-        const dialog = require("../app/lib/renderer/dialog")
+        const dialog = require("../app/lib/dialogRenderer")
         const dragDrop = require("../app/lib/dragDropRenderer")
         const ipc = require("../app/lib/ipcRenderer")
 

@@ -1,7 +1,7 @@
 const hljs = require("highlight.js")
 
-const metadata = require("./metadata")
-const toc = require("../tocRenderer.js")
+const metadata = require("./metadataRenderer")
+const toc = require("./tocRenderer")
 
 let _markdown
 
@@ -77,7 +77,7 @@ exports.reset = options => {
         .use(require("markdown-it-task-checkbox"), { disabled: false })
 
     if (options.emojisEnabled) {
-        _markdown.use(require("../../../node_modules/markdown-it-emoji/dist/markdown-it-emoji.js"))
+        _markdown.use(require("markdown-it-emoji/dist/markdown-it-emoji.js"))
     }
 
     _shallRenderAsMarkdown = options.renderAsMarkdown

@@ -1,7 +1,7 @@
 const common = require("./common")
 const ipc = require("./ipcMain")
 const log = require("./log")
-const menu = require("./main/menu")
+const menu = require("./menuMain")
 const navigation = require("./navigationMain")
 
 const UNBLOCK_CONTENT_MENU_ID = "unblock-content"

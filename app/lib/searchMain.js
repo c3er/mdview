@@ -1,5 +1,5 @@
 const ipc = require("./ipcMain")
-const menu = require("./main/menu")
+const menu = require("./menuMain")
 
 const shared = require("./searchShared")
 

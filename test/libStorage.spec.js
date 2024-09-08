@@ -3,7 +3,7 @@ const assert = require("assert")
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
-const storage = require("../app/lib/main/storage")
+const storage = require("../app/lib/storageMain")
 
 describe("Storage", () => {
     describe("File history", () => {

@@ -1,7 +1,7 @@
-const ipc = require("../ipcMain")
-const menu = require("./menu")
-const navigation = require("../navigationMain")
-const storage = require("./storage")
+const ipc = require("./ipcMain")
+const menu = require("./menuMain")
+const navigation = require("./navigationMain")
+const storage = require("./storageMain")
 
 let electron
 

@@ -30,7 +30,7 @@ describe("About dialog", () => {
 
     describe("Renderer part", () => {
         const about = require("../app/lib/aboutRenderer")
-        const dialog = require("../app/lib/renderer/dialog")
+        const dialog = require("../app/lib/dialogRenderer")
         const ipc = require("../app/lib/ipcRenderer")
 
         beforeEach(() => {

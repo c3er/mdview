@@ -1,5 +1,5 @@
 const common = require("./common")
-const dialog = require("./renderer/dialog")
+const dialog = require("./dialogRenderer")
 const fileLib = require("./file")
 const ipc = require("./ipcRenderer")
 

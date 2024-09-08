@@ -4,7 +4,7 @@ const lib = require("./testLib")
 const mocking = require("./mocking")
 
 const ipc = require("../app/lib/ipcShared")
-const storage = require("../app/lib/main/storage")
+const storage = require("../app/lib/storageMain")
 
 function registerSettingsMessage(expectedApplicationSettings, expectedDocumentSettings) {
     mocking.register.ipc.rendererOn(
@@ -65,7 +65,7 @@ describe("Settings", () => {
     })
 
     describe("Renderer part", () => {
-        const dialog = require("../app/lib/renderer/dialog")
+        const dialog = require("../app/lib/dialogRenderer")
         const ipc = require("../app/lib/ipcRenderer")
         const settings = require("../app/lib/settingsRenderer")
 

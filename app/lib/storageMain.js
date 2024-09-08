@@ -1,10 +1,10 @@
 const fs = require("fs")
 const path = require("path")
 
-const common = require("../common")
-const dragDrop = require("../dragDropShared")
-const log = require("../log")
-const navigation = require("../navigationMain")
+const common = require("./common")
+const dragDrop = require("./dragDropShared")
+const log = require("./log")
+const navigation = require("./navigationMain")
 
 let electron
 

@@ -7,7 +7,7 @@ describe("Encoding library", () => {
     describe("Main part", () => {
         const encodingLib = require("../app/lib/encodingMain")
         const ipc = require("../app/lib/ipcMain")
-        const storage = require("../app/lib/main/storage")
+        const storage = require("../app/lib/storageMain")
 
         const encoding = "utf16le"
         const filename = "testfile"

@@ -1,6 +1,6 @@
 const ipc = require("./ipcMain")
 const settings = require("./settingsMain")
-const storage = require("./main/storage")
+const storage = require("./storageMain")
 
 const STEP = 0.1
 const MIN_FACTOR = 0.1

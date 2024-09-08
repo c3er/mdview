@@ -1,6 +1,6 @@
 const assert = require("assert")
 
-const dialog = require("../app/lib/renderer/dialog")
+const dialog = require("../app/lib/dialogRenderer")
 
 describe("Dialog", () => {
     beforeEach(dialog.reset)

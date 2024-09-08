@@ -3,7 +3,7 @@ const assert = require("assert")
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
-const documentRendering = require("../app/lib/renderer/documentRendering")
+const documentRendering = require("../app/lib/documentRenderingRenderer")
 const toc = require("../app/lib/tocRenderer")
 
 function assertSections(content, rootSection) {

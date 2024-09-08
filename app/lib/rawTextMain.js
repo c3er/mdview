@@ -1,5 +1,5 @@
 const ipc = require("./ipcMain")
-const menu = require("./main/menu")
+const menu = require("./menuMain")
 
 const VIEW_RAW_TEXT_MENU_ID = "view-raw-text"
 

@@ -32,7 +32,7 @@ describe("Search", () => {
 
     describe("Renderer part", () => {
         const ipc = require("../app/lib/ipcRenderer")
-        const renderer = require("../app/lib/renderer/common")
+        const renderer = require("../app/lib/commonRenderer")
         const search = require("../app/lib/searchRenderer")
 
         function initSearch() {

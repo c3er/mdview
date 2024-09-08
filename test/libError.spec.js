@@ -33,7 +33,7 @@ describe("Error dialog", () => {
     })
 
     describe("Renderer part", () => {
-        const dialog = require("../app/lib/renderer/dialog")
+        const dialog = require("../app/lib/dialogRenderer")
         const error = require("../app/lib/errorRenderer")
 
         beforeEach(() => {

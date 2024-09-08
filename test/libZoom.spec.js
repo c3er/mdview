@@ -9,7 +9,7 @@ describe("Zoom library", () => {
     describe("Main part", () => {
         const ipc = require("../app/lib/ipcMain")
         const settings = require("../app/lib/settingsMain")
-        const storage = require("../app/lib/main/storage")
+        const storage = require("../app/lib/storageMain")
 
         const zoom = require("../app/lib/zoomMain")
 

@@ -1,10 +1,10 @@
 const path = require("path")
 
-const log = require("../log")
+const log = require("./log")
 
 let electron
 
-const DEFAULT_FILE = path.join(__dirname, "..", "..", "..", "README.md")
+const DEFAULT_FILE = path.join(__dirname, "..", "..", "README.md")
 
 function extractInternalTarget(args) {
     return args.find(arg => arg.startsWith("#"))

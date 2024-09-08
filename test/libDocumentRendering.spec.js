@@ -1,7 +1,7 @@
 const assert = require("assert")
 const lodashClonedeep = require("lodash.clonedeep")
 
-const documentRendering = require("../app/lib/renderer/documentRendering")
+const documentRendering = require("../app/lib/documentRenderingRenderer")
 
 describe("Document rendering", () => {
     const defaultOptions = {
