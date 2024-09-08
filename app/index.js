@@ -33,7 +33,9 @@ let _hasMermaid = false
 let _controlKeyIsPressed = false
 
 function alterTags(tagName, handler) {
-    ;[...document.getElementsByTagName(tagName)].forEach(handler)
+    for (const element of [...document.getElementsByTagName(tagName)]) {
+        handler(element)
+    }
 }
 
 function updateStatusBar(text) {
