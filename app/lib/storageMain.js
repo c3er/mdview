@@ -10,6 +10,10 @@ let electron
 
 const JSON_INDENTATION = 4
 
+const APPLICATION_SETTINGS_VERSION = 1
+const DOCUMENT_SETTINGS_VERSION = 0
+const FILE_HISTORY_VERSION = 0
+
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 const FILE_HISTORY_FILE = "file-history.json"
@@ -21,13 +25,23 @@ let _fileHistory
 let _documentSettings = {}
 
 class StorageBase {
+    #VERSION_KEY = "version"
+
     _storagePath
     _data
 
-    constructor(storageDir, storageFile) {
+    curentVersion
+    actualVersion
+
+    constructor(currentVersion, storageDir, storageFile) {
         StorageBase._initStorageDir(storageDir)
+
         this._storagePath = path.join(storageDir, storageFile)
         this._data = StorageBase._initData(this._storagePath)
+
+        this.curentVersion = currentVersion
+        this.actualVersion = this._data[this.#VERSION_KEY] ?? 0
+        this._data[this.#VERSION_KEY] = currentVersion
     }
 
     _save() {
@@ -93,6 +107,11 @@ class ApplicationSettings extends StorageBase {
     HIDE_METADATA_DEFAULT = false
     DRAG_DROP_BEHAVIOR_DEFAULT = dragDrop.behavior.ask
     FILE_HISTORY_SIZE_DEFAULT = 5
+
+    constructor(storageDir, storageFile) {
+        super(APPLICATION_SETTINGS_VERSION, storageDir, storageFile)
+        this._updateVersion()
+    }
 
     get theme() {
         return this._loadValue(this.#THEME_KEY, electron.nativeTheme.themeSource)
@@ -196,6 +215,15 @@ class ApplicationSettings extends StorageBase {
         this._data[key] = value
         this._save()
     }
+
+    _updateVersion() {
+        if (this.actualVersion === this.VERSION) {
+            return
+        }
+
+        // Currently, the only previous version is version 0
+        this.mdFileTypes = [...new Set(this.mdFileTypes.map(fileType => fileType.toLowerCase()))]
+    }
 }
 
 class DocumentSettings extends StorageBase {
@@ -218,7 +246,7 @@ class DocumentSettings extends StorageBase {
     _documentData
 
     constructor(storageDir, storageFile, documentPath) {
-        super(storageDir, storageFile)
+        super(DOCUMENT_SETTINGS_VERSION, storageDir, storageFile)
         if (!this._data[documentPath]) {
             this._data[documentPath] = {}
         }
@@ -294,7 +322,7 @@ class DocumentSettings extends StorageBase {
 
 class FileHistory extends StorageBase {
     constructor(storageDir, storageFile) {
-        super(storageDir, storageFile)
+        super(FILE_HISTORY_VERSION, storageDir, storageFile)
         if (!this._data.files) {
             this._data.files = []
         }

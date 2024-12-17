@@ -50,7 +50,7 @@ exports.isText = filePath => {
 
 exports.extractFileEnding = filePath => {
     const parts = filePath.split(".")
-    return parts.length > 1 ? parts.at(-1) : ""
+    return parts.length > 1 ? parts.at(-1).toLowerCase() : ""
 }
 
 exports.transformRelativePath = (documentDirectory, filePath) =>

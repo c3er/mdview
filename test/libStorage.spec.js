@@ -3,9 +3,30 @@ const assert = require("assert")
 const lib = require("./testLib")
 const mocking = require("./mocking")
 
+const common = require("../app/lib/common")
+
 const storage = require("../app/lib/storageMain")
 
+async function initStorage() {
+    await lib.removeDataDir()
+    storage.reset()
+    storage.init(mocking.dataDir, mocking.electron)
+}
+
 describe("Storage", () => {
+    describe("Application settings", () => {
+        let applicationSettings
+
+        beforeEach(async () => {
+            await initStorage()
+            applicationSettings = storage.loadApplicationSettings()
+        })
+
+        it("has default Markdown endings", () => {
+            assert.deepStrictEqual(applicationSettings.mdFileTypes, common.FILE_EXTENSIONS)
+        })
+    })
+
     describe("File history", () => {
         let applicationSettings
         let fileHistory
@@ -18,10 +39,7 @@ describe("Storage", () => {
         }
 
         beforeEach(async () => {
-            await lib.removeDataDir()
-            storage.reset()
-
-            storage.init(mocking.dataDir, mocking.electron)
+            await initStorage()
 
             applicationSettings = storage.loadApplicationSettings()
             fileHistory = storage.loadFileHistory()
