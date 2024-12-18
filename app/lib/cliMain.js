@@ -38,7 +38,7 @@ function parseTestArgs(args) {
         storageDirArgIndex = testArgIndex + 1
     }
     const storageDir = isDevelopment()
-        ? path.join(__dirname, "..", "..", "..", ".storage")
+        ? path.join(__dirname, "..", "..", ".storage")
         : path.join(electron.app.getPath("userData"), "storage")
 
     return {
