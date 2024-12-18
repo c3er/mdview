@@ -33,7 +33,6 @@ module.exports = {
         allowElevation: true,
         allowToChangeInstallationDirectory: true,
         createDesktopShortcut: false,
-        include: "build/installer.nsh",
         license: "LICENSE",
         oneClick: false,
         perMachine: false,

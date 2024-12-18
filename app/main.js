@@ -25,9 +25,6 @@ const storage = require("./lib/storageMain")
 const toc = require("./lib/tocMain")
 const zoom = require("./lib/zoomMain")
 
-const DATA_DIR_FILE = ".datadir"
-const USER_DATA_PLACEHOLDER = "MDVIEW_USER_DATA"
-
 const MIN_WINDOW_WIDTH = 200 // Pixels
 const MIN_WINDOW_HEIGHT = 50 // Pixels
 const UPDATE_INTERVAL = 1000 // ms
@@ -601,14 +598,12 @@ if (cli.isDevelopment()) {
         "userData",
         path.join(path.resolve(args.slice(1).find(arg => !arg.startsWith("-"))), ".data"),
     )
-} else if (process.platform === "win32") {
-    const dataPath = fs.readFileSync(path.join(appDir, DATA_DIR_FILE), { encoding: "utf-8" }).trim()
-    if (dataPath !== USER_DATA_PLACEHOLDER) {
-        electron.app.setPath(
-            "userData",
-            path.isAbsolute(dataPath) ? dataPath : path.join(appDir, ".data"),
-        )
-    }
+} else if (
+    process.platform === "win32" &&
+    !appDir.startsWith(process.env.ProgramFiles) &&
+    !appDir.startsWith(process.env.LOCALAPPDATA)
+) {
+    electron.app.setPath("userData", path.join(appDir, ".data"))
 }
 
 // If set, ouput only paths and exit
