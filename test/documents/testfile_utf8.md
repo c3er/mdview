@@ -67,7 +67,7 @@ Another link to Google: https://www.google.com/
 
 ![Image with hash sign in file name](images/image#.png)
 
-![Image from the evil Internet](https://placekitten.com/1000/2000)
+![Image from the evil Internet](https://c3er.github.io/cat.jpg)
 
 ## Multimedia
 
