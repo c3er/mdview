@@ -94,9 +94,15 @@ class IpcChannel {
     _targetAssertionCallbacks = []
 
     send(event, ...args) {
-        this._targetCallbacks.forEach(callback => callback(event, ...args))
-        this._sourceAssertionCallbacks.forEach(callback => callback(event, ...args))
-        this._targetAssertionCallbacks.forEach(callback => callback(event, ...args))
+        for (const callback of this._targetCallbacks) {
+            callback(event, ...args)
+        }
+        for (const callback of this._sourceAssertionCallbacks) {
+            callback(event, ...args)
+        }
+        for (const callback of this._targetAssertionCallbacks) {
+            callback(event, ...args)
+        }
     }
 
     addTarget(callback) {

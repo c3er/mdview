@@ -50,24 +50,22 @@ function hasBlockedElements() {
 function unblockURL(url) {
     ipc.send(ipc.messages.unblockURL, url)
 
-    const elements = _blockedElements[url]
-    if (elements) {
-        elements.forEach(element => {
-            element.removeAttribute("style")
+    const elements = _blockedElements[url] ?? []
+    for (const element of elements) {
+        element.removeAttribute("style")
 
-            // Force element to reload without recreating the DOM element.
-            // Recreating the DOM element would cause the attached event handlers to be lost.
-            const attributes = element.attributes
-            for (let i = 0; i < attributes.length; i++) {
-                const attr = attributes[i]
-                const value = attr.nodeValue
-                if (value === url) {
-                    element.setAttribute(attr.nodeName, value)
-                }
+        // Force element to reload without recreating the DOM element.
+        // Recreating the DOM element would cause the attached event handlers to be lost.
+        const attributes = element.attributes
+        for (let i = 0; i < attributes.length; i++) {
+            const attr = attributes[i]
+            const value = attr.nodeValue
+            if (value === url) {
+                element.setAttribute(attr.nodeName, value)
             }
-        })
-        delete _blockedElements[url]
+        }
     }
+    delete _blockedElements[url]
 
     if (!hasBlockedElements()) {
         changeInfoElementVisiblity(false)
@@ -97,7 +95,9 @@ exports.init = (document, window, shallForceInitialization) => {
 
     ipc.listen(ipc.messages.contentBlocked, url => {
         const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
-        elements.forEach(element => (element.onclick = () => unblockURL(url)))
+        for (const element of elements) {
+            element.onclick = () => unblockURL(url)
+        }
 
         changeInfoElementVisiblity(true)
         _document.getElementById(_elementIDs.textContainer).onclick = unblockAll
