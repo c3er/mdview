@@ -93,16 +93,24 @@ function hasUnblockedContentMessage() {
     return containsConsoleMessage("unblocked")
 }
 
-async function elementIsHidden(elementPath) {
+async function elementHasState(elementPath, state, locatorCallback) {
     const attempts = 3
     for (let i = 0; i < attempts; i++) {
         const locator = _page.locator(elementPath)
-        await locator.waitFor({ state: "hidden" })
-        if (await locator.isHidden()) {
+        await locator.waitFor({ state: state })
+        if (await locatorCallback(locator)) {
             return true
         }
     }
     return false
+}
+
+async function elementIsHidden(elementPath) {
+    return await elementHasState(elementPath, "hidden", async locator => await locator.isHidden())
+}
+
+async function elementIsVisible(elementPath) {
+    return await elementHasState(elementPath, "visible", async locator => await locator.isVisible())
 }
 
 describe("Integration tests with single app instance", () => {
@@ -122,8 +130,7 @@ describe("Integration tests with single app instance", () => {
     })
 
     it("displays blocked content banner", async () => {
-        const elem = await _page.$(mocking.elements.blockedContentArea.path)
-        assert(await elem.isVisible())
+        assert(await elementIsVisible(mocking.elements.blockedContentArea.path))
     })
 
     it("loads all local images", () => {
@@ -262,10 +269,7 @@ describe("Integration tests with their own app instance each", () => {
     async function assertErrorDialog(text) {
         const errorDialog = mocking.elements.errorDialog
 
-        const errorDialogLocator = _page.locator(errorDialog.path)
-        await errorDialogLocator.waitFor()
-        assert(await errorDialogLocator.isVisible())
-
+        assert(await elementIsVisible(errorDialog.path))
         assert((await _page.locator(errorDialog.content.path).innerText()).includes(text))
 
         await _page.locator(errorDialog.okButton.path).click()
@@ -326,13 +330,8 @@ describe("Integration tests with their own app instance each", () => {
 
     describe("Table of Content", () => {
         async function assertTocIsVisible() {
-            const tocLocator = _page.locator(mocking.elements.toc.path)
-            await tocLocator.waitFor()
-            assert(await tocLocator.isVisible())
-
-            const separatorLocator = _page.locator(mocking.elements.separator.path)
-            await separatorLocator.waitFor()
-            assert(await separatorLocator.isVisible())
+            assert(await elementIsVisible(mocking.elements.toc.path))
+            assert(await elementIsVisible(mocking.elements.separator.path))
         }
 
         async function assertMenuItemIsChecked(id, isChecked) {
@@ -376,11 +375,9 @@ describe("Integration tests with their own app instance each", () => {
         const DRAG_DISTANCE = 50
 
         async function displaySeparator() {
-            const separatorLocator = _page.locator(mocking.elements.separator.path)
             await clickMenuItem(toc.SHOW_FOR_ALL_DOCS_MENU_ID)
-            await separatorLocator.waitFor()
-            assert(await separatorLocator.isVisible())
-            return separatorLocator
+            assert(await elementIsVisible(mocking.elements.toc.path))
+            return _page.locator(mocking.elements.separator.path)
         }
 
         async function determineMiddlePosition(element) {
@@ -414,10 +411,9 @@ describe("Integration tests with their own app instance each", () => {
             const { updatedX } = await separatorLocator.boundingBox()
 
             await restartApp()
+            assert(await elementIsVisible(mocking.elements.separator.path))
 
-            separatorLocator = _page.locator(mocking.elements.separator.path)
-            assert(await separatorLocator.isVisible())
-
+            separatorLocator = await _page.locator(mocking.elements.separator.path)
             const { rememberedX } = await separatorLocator.boundingBox()
             assert.strictEqual(rememberedX, updatedX)
         })
@@ -435,7 +431,7 @@ describe("Integration tests with their own app instance each", () => {
 
         async function opendDialog() {
             await clickMenuItem(search.FIND_MENU_ID)
-            assert(await _page.locator(mocking.elements.searchDialog.path).isVisible())
+            assert(await elementIsVisible(mocking.elements.searchDialog.path))
         }
 
         async function confirmDialog() {
@@ -494,10 +490,8 @@ describe("Integration tests with their own app instance each", () => {
         const settings = require("../app/lib/settingsMain")
 
         async function opendDialog() {
-            const settingsDialogLocator = _page.locator(mocking.elements.settingsDialog.path)
             await clickMenuItem(settings.SETTINGS_MENU_ID)
-            await settingsDialogLocator.waitFor()
-            assert(await settingsDialogLocator.isVisible())
+            assert(await elementIsVisible(mocking.elements.settingsDialog.path))
             assert(!(await menuItemIsEnabled(settings.SETTINGS_MENU_ID)))
         }
 
@@ -514,8 +508,8 @@ describe("Integration tests with their own app instance each", () => {
         async function changeToDocumentSettings() {
             const settingsDialogMock = mocking.elements.settingsDialog
             await _page.locator(settingsDialogMock.documentSettingsTab.path).click()
-            assert(await _page.locator(settingsDialogMock.applicationSettings.path).isHidden())
-            assert(await _page.locator(settingsDialogMock.documentSettings.path).isVisible())
+            assert(await elementIsHidden(settingsDialogMock.applicationSettings.path))
+            assert(await elementIsVisible(settingsDialogMock.documentSettings.path))
         }
 
         it("can be opened", async () => {
@@ -590,9 +584,7 @@ describe("Integration tests with their own app instance each", () => {
             await clickMenuItem(about.ABOUT_DIALOG_MENU_ID)
 
             const aboutDialog = mocking.elements.aboutDialog
-            const aboutDialogLocator = _page.locator(aboutDialog.path)
-            await aboutDialogLocator.waitFor()
-            assert(await aboutDialogLocator.isVisible())
+            assert(await elementIsVisible(aboutDialog.path))
 
             const clipboard = (await import("clipboardy")).default
             await clipboard.write("")
