@@ -17,4 +17,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Test
-        run: npm run test-ci
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: npm run test-ci
