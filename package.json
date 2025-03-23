@@ -36,7 +36,7 @@
     "@electron/remote": "2.1.2",
     "github-markdown-css": "5.8.1",
     "github-markdown-dracula-css": "4.0.3",
-    "highlight.js": "11.11.0",
+    "highlight.js": "11.11.1",
     "iconv-lite": "0.6.3",
     "jschardet": "3.1.4",
     "markdown-it": "14.1.0",
@@ -52,18 +52,18 @@
     "markdown-it-sub": "2.0.0",
     "markdown-it-sup": "2.0.0",
     "markdown-it-task-checkbox": "1.0.6",
-    "mermaid": "11.4.1"
+    "mermaid": "11.5.0"
   },
   "devDependencies": {
     "clipboardy": "4.0.0",
-    "electron": "33.2.1",
+    "electron": "35.0.3",
     "electron-builder": "25.1.8",
-    "eslint": "9.17.0",
-    "eslint-config-prettier": "9.1.0",
+    "eslint": "9.23.0",
+    "eslint-config-prettier": "10.1.1",
     "lodash.clonedeep": "4.5.0",
-    "mocha": "11.0.1",
-    "playwright": "1.49.1",
-    "prettier": "3.4.2",
+    "mocha": "11.1.0",
+    "playwright": "1.51.1",
+    "prettier": "3.5.3",
     "tslib": "2.8.1",
     "xvfb-maybe": "0.2.1"
   }
