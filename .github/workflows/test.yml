@@ -17,4 +17,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Test
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- npm run test-all
+        run: npm run test-all
