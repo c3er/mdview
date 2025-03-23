@@ -54,6 +54,10 @@ async function startApp(documentPath) {
     _app = await electron.launch({
         args: [path.join(__dirname, ".."), documentPath, "--test", mocking.dataDir],
         executablePath: electronPath,
+        env: {
+            ...process.env,
+            NODE_ENV: "development",
+        },
     })
     _app.context().setDefaultTimeout(DEFAULT_TIMEOUT)
     await initPage()
