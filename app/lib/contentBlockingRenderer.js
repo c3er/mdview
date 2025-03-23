@@ -33,7 +33,7 @@ function searchElementsWithAttributeValue(value) {
 }
 
 function changeInfoElementVisiblity(isVisible) {
-    const infoElement = _document.getElementById("blocked-content-info")
+    const infoElement = _document.getElementById(_elementIDs.element)
     infoElement.hidden = !isVisible
 
     // If the info element is visible, adapt the top margin of the body element,
