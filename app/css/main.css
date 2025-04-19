@@ -33,3 +33,7 @@ div.error {
 body {
     font-family: sans-serif;
 }
+
+button {
+    white-space: nowrap;
+}

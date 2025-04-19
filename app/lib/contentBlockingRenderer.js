@@ -34,7 +34,7 @@ function searchElementsWithAttributeValue(value) {
 
 function changeInfoElementVisiblity(isVisible) {
     const infoElement = _document.getElementById(_elementIDs.element)
-    infoElement.hidden = !isVisible
+    infoElement.style.display = isVisible ? "flex" : "none"
 
     // If the info element is visible, adapt the top margin of the body element,
     // otherwise, remove (set to an empty string) the custom margin from the body element
