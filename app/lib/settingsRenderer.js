@@ -2,6 +2,7 @@ const common = require("./common")
 const dialog = require("./dialogRenderer")
 const fileLib = require("./file")
 const ipc = require("./ipcRenderer")
+const renderer = require("./commonRenderer")
 
 const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"
@@ -192,14 +193,14 @@ exports.init = document => {
     _dialogElement.addEventListener("keydown", handleKeyboardConfirm)
     _zoomInput.onkeydown = handleKeyboardConfirm
     _fileHistorySizeInput.onkeydown = handleKeyboardConfirm
-    dialog.addStdButtonHandler(
+    renderer.addStdButtonHandler(
         _document.getElementById("reset-zoom-button"),
         () => (_zoomInput.value = _applicationSettings.zoom = common.ZOOM_DEFAULT),
     )
-    dialog.addStdButtonHandler(_document.getElementById("clear-file-history-button"), () =>
+    renderer.addStdButtonHandler(_document.getElementById("clear-file-history-button"), () =>
         ipc.send(ipc.messages.clearFileHistory),
     )
-    dialog.addStdButtonHandler(_document.getElementById("forget-toc-override-button"), () => {
+    renderer.addStdButtonHandler(_document.getElementById("forget-toc-override-button"), () => {
         _documentSettings.showTocOverridesAppSettings = false
         updateTocForDocumentCheckbox()
     })
@@ -209,7 +210,7 @@ exports.init = document => {
     )
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
-    dialog.addStdButtonHandler(_document.getElementById("settings-cancel-button"), dialog.close)
+    renderer.addStdButtonHandler(_document.getElementById("settings-cancel-button"), dialog.close)
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
         if (_dialogForm.reportValidity()) {
             event.preventDefault()

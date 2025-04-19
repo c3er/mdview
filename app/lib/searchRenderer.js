@@ -87,7 +87,7 @@ exports.init = (document, reloader) => {
         }
     })
 
-    dialog.addStdButtonHandler(_document.getElementById("search-ok-button"), () =>
+    renderer.addStdButtonHandler(_document.getElementById("search-ok-button"), () =>
         _searchDialog.close(_searchInputElement.value),
     )
 

@@ -1,5 +1,6 @@
 const dialog = require("./dialogRenderer")
 const ipc = require("./ipcRenderer")
+const renderer = require("./commonRenderer")
 
 let electron
 
@@ -41,9 +42,9 @@ exports.init = (document, electronMock) => {
     }
 
     const okButton = _document.getElementById("about-ok-button")
-    dialog.addStdButtonHandler(okButton, () => dialog.close())
+    renderer.addStdButtonHandler(okButton, () => dialog.close())
 
-    dialog.addStdButtonHandler(_document.getElementById("copy-about-info-button"), () => {
+    renderer.addStdButtonHandler(_document.getElementById("copy-about-info-button"), () => {
         const aboutInfo = structuredClone(_aboutInfo)
         const indentation = 4
         const filterList = ["applicationIconPath"]

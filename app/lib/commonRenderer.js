@@ -18,3 +18,10 @@ exports.elementYPosition = element => {
             Number(containerElement.style.paddingTop.replace("px", "")))
     )
 }
+
+exports.addStdButtonHandler = (element, callback) => {
+    element.addEventListener("click", event => {
+        event.preventDefault()
+        callback()
+    })
+}
