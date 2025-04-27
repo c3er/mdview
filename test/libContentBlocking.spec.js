@@ -81,7 +81,7 @@ describe("Content blocking", () => {
 
         beforeEach(() => {
             ipc.init(mocking.electron)
-            contentBlocking.init(mocking.document, mocking.window, mocking.electron, true)
+            contentBlocking.init(mocking.document, mocking.window, true)
         })
 
         afterEach(() => {
