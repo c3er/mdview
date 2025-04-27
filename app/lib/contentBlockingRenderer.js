@@ -1,6 +1,9 @@
 const common = require("./common")
 const ipc = require("./ipcRenderer")
 const log = require("./log")
+const renderer = require("./commonRenderer")
+
+let remote
 
 const _elementIDs = {
     element: "blocked-content-info",
@@ -12,6 +15,7 @@ let _isInitialized = false
 
 let _document
 let _window
+let _unblockContentButton
 
 let _blockedElements = {}
 
@@ -41,6 +45,26 @@ function changeInfoElementVisiblity(isVisible) {
     _document.querySelector("main#content").style.marginTop = isVisible
         ? _window.getComputedStyle(infoElement).height
         : ""
+}
+
+function createUnblockMenu() {
+    remote.Menu.buildFromTemplate([
+        {
+            label: "Temporary",
+            click() {
+                unblockAll()
+            },
+        },
+        {
+            label: "Permanent",
+            click() {
+                console.log("Permanent unblock clicked")
+            },
+        },
+    ]).popup({
+        x: Math.ceil(_unblockContentButton.getBoundingClientRect().left),
+        y: Math.ceil(_unblockContentButton.getBoundingClientRect().bottom),
+    })
 }
 
 function hasBlockedElements() {
@@ -85,14 +109,18 @@ function reset() {
     _blockedElements = {}
 }
 
-exports.init = (document, window, shallForceInitialization) => {
+exports.init = (document, window, shallForceInitialization, remoteMock) => {
     if (_isInitialized && !shallForceInitialization) {
         return
     }
 
+    remote = remoteMock ?? require("@electron/remote")
+
     _document = document
     _window = window
+    _unblockContentButton = _document.querySelector("button#unblock-content-button")
 
+    renderer.addStdButtonHandler(_unblockContentButton, createUnblockMenu)
     ipc.listen(ipc.messages.contentBlocked, url => {
         const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
         for (const element of elements) {
@@ -100,7 +128,6 @@ exports.init = (document, window, shallForceInitialization) => {
         }
 
         changeInfoElementVisiblity(true)
-        _document.getElementById(_elementIDs.textContainer).onclick = unblockAll
         _document.getElementById(_elementIDs.closeButton).onclick = () =>
             changeInfoElementVisiblity(false)
     })

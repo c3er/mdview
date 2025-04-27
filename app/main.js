@@ -256,11 +256,23 @@ function createMainMenu() {
                 },
                 {
                     label: "&Unblock All External Content",
-                    accelerator: "Alt+U",
-                    id: contentBlocking.UNBLOCK_CONTENT_MENU_ID,
-                    click() {
-                        contentBlocking.unblockAll()
-                    },
+                    submenu: [
+                        {
+                            label: "&Temporary",
+                            accelerator: "Alt+U",
+                            id: contentBlocking.UNBLOCK_CONTENT_MENU_ID,
+                            click() {
+                                contentBlocking.unblockAll()
+                            },
+                        },
+                        {
+                            label: "&Permanent",
+                            id: contentBlocking.UNBLOCK_CONTENT_PERMANENTLY_MENU_ID,
+                            click() {
+                                contentBlocking.unblockAllPermamently()
+                            },
+                        },
+                    ],
                 },
                 {
                     label: "&View Raw Text",

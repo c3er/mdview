@@ -291,14 +291,6 @@ describe("Integration tests with their own app instance each", () => {
                 await _page.locator(blockedContentArea.closeButton.path).click()
                 assert(await elementIsHidden(blockedContentArea.path))
             })
-
-            it("unblocks content", async () => {
-                const blockedContentArea = mocking.elements.blockedContentArea
-
-                await _page.locator(blockedContentArea.textContainer.path).click()
-                assert(await elementIsHidden(blockedContentArea.path))
-                assert(hasUnblockedContentMessage())
-            })
         })
 
         describe("Menu item", () => {

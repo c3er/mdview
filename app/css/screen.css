@@ -49,7 +49,7 @@ div#blocked-content-info {
     border-color: #ddd;
     border-width: var(--border-width);
     color: black;
-    cursor: pointer;
+    cursor: default;
     display: flex;
     height: 30px;
     left: 0;

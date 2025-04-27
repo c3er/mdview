@@ -298,6 +298,14 @@ exports.elements = {
                 },
                 unblock: {
                     label: "&Unblock All External Content",
+                    sub: {
+                        temporary: {
+                            label: "&Temporary",
+                        },
+                        permanent: {
+                            label: "&Permanent",
+                        },
+                    },
                 },
                 rawText: {
                     label: "&View Raw Text",

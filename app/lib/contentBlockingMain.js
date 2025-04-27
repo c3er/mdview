@@ -5,6 +5,7 @@ const menu = require("./menuMain")
 const navigation = require("./navigationMain")
 
 const UNBLOCK_CONTENT_MENU_ID = "unblock-content"
+const UNBLOCK_CONTENT_PERMANENTLY_MENU_ID = "unblock-content-permanently"
 const CONTENT_BLOCKING_NAV_ID = "content-blocking"
 
 let _mainMenu
@@ -25,6 +26,8 @@ function allowUnblockContent(isAllowed) {
 }
 
 exports.UNBLOCK_CONTENT_MENU_ID = UNBLOCK_CONTENT_MENU_ID
+
+exports.UNBLOCK_CONTENT_PERMANENTLY_MENU_ID = UNBLOCK_CONTENT_PERMANENTLY_MENU_ID
 
 exports.unblockedURLs = _unblockedURLs
 
@@ -83,5 +86,7 @@ exports.init = (mainMenu, electronMock) => {
 }
 
 exports.unblockAll = () => ipc.send(ipc.messages.unblockAll)
+
+exports.unblockAllPermamently = () => console.log("Unblock all content permanently")
 
 exports.clearUnblockedURLs = () => (_unblockedURLs.length = 0)
