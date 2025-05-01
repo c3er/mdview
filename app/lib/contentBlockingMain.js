@@ -44,9 +44,7 @@ exports.init = (mainMenu, electronMock) => {
         const url = details.url
         const isBlocked = common.isWebURL(url) && !_unblockedURLs.includes(url)
         log.info(
-            `${isBlocked ? "Blocked" : "Loading"}: ${url} (${
-                currentTime - lastTime
-            } ms since last load)`,
+            `${isBlocked ? "Blocked" : "Loading"}: ${url} (${currentTime - lastTime} ms since last load)`,
         )
         callback({ cancel: isBlocked })
         if (isBlocked) {

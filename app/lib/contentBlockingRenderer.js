@@ -48,6 +48,7 @@ function changeInfoElementVisiblity(isVisible) {
 }
 
 function createUnblockMenu() {
+    const unblockContentButtonRect = _unblockContentButton.getBoundingClientRect()
     remote.Menu.buildFromTemplate([
         {
             label: "Temporary",
@@ -62,8 +63,8 @@ function createUnblockMenu() {
             },
         },
     ]).popup({
-        x: Math.ceil(_unblockContentButton.getBoundingClientRect().left),
-        y: Math.ceil(_unblockContentButton.getBoundingClientRect().bottom),
+        x: Math.ceil(unblockContentButtonRect.left),
+        y: Math.ceil(unblockContentButtonRect.bottom),
     })
 }
 
