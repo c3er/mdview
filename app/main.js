@@ -260,7 +260,7 @@ function createMainMenu() {
                         {
                             label: "&Temporary",
                             accelerator: "Alt+U",
-                            id: contentBlocking.UNBLOCK_CONTENT_MENU_ID,
+                            id: contentBlocking.UNBLOCK_CONTENT_TEMPORARY_MENU_ID,
                             click() {
                                 contentBlocking.unblockAll()
                             },

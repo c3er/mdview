@@ -8,9 +8,11 @@ describe("Content blocking", () => {
     describe("Main part", () => {
         const ipc = require("../app/lib/ipcMain")
         const contentBlocking = require("../app/lib/contentBlockingMain")
+        const storage = require("../app/lib/storageMain")
 
         beforeEach(() => {
             ipc.init(mocking.mainWindow, mocking.electron)
+            storage.init(mocking.dataDir, mocking.electron)
             contentBlocking.init(mocking.mainMenu, mocking.electron)
         })
 

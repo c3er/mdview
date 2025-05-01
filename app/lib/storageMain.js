@@ -13,15 +13,18 @@ const JSON_INDENTATION = 4
 const APPLICATION_SETTINGS_VERSION = 1
 const DOCUMENT_SETTINGS_VERSION = 0
 const FILE_HISTORY_VERSION = 0
+const ALLOWED_URLS_VERSION = 0
 
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 const FILE_HISTORY_FILE = "file-history.json"
+const ALLOWED_URLS_FILE = "allowed-urls.json"
 
 let _dataDir
 
 let _applicationSettings
 let _fileHistory
+let _allowedUrls
 let _documentSettings = {}
 
 class StorageBase {
@@ -366,6 +369,41 @@ class FileHistory extends StorageBase {
     }
 }
 
+class AllowedUrls extends StorageBase {
+    #ALLOWED_URLS_KEY = "allowed-urls"
+
+    urls
+
+    constructor(storageDir, storageFile) {
+        super(ALLOWED_URLS_VERSION, storageDir, storageFile)
+        this.urls = new Set(this._data[this.#ALLOWED_URLS_KEY] ?? [])
+    }
+
+    add(url) {
+        this.urls.add(url)
+        this._save()
+    }
+
+    remove(url) {
+        this.urls.delete(url)
+        this._save()
+    }
+
+    has(url) {
+        return this.urls.has(url)
+    }
+
+    clear() {
+        this.urls.clear()
+        this._save()
+    }
+
+    _save() {
+        this._data[this.#ALLOWED_URLS_KEY] = [...this.urls]
+        super._save()
+    }
+}
+
 function loadApplicationSettings() {
     return (
         _applicationSettings ??
@@ -395,7 +433,10 @@ exports.loadDocumentSettings = documentPath => {
 exports.loadFileHistory = () =>
     _fileHistory ?? (_fileHistory = new FileHistory(_dataDir, FILE_HISTORY_FILE))
 
+exports.loadAllowedUrls = () =>
+    _allowedUrls ?? (_allowedUrls = new AllowedUrls(_dataDir, ALLOWED_URLS_FILE))
+
 exports.reset = () => {
-    _applicationSettings = _fileHistory = null
+    _applicationSettings = _fileHistory = _allowedUrls = null
     _documentSettings = {}
 }

@@ -53,13 +53,13 @@ function createUnblockMenu() {
         {
             label: "Temporary",
             click() {
-                unblockAll()
+                unblockAll(false)
             },
         },
         {
             label: "Permanent",
             click() {
-                console.log("Permanent unblock clicked")
+                unblockAll(true)
             },
         },
     ]).popup({
@@ -72,11 +72,10 @@ function hasBlockedElements() {
     return !common.isEmptyObject(_blockedElements)
 }
 
-function unblockURL(url) {
-    ipc.send(ipc.messages.unblockURL, url)
+function unblockURL(url, isPermanent) {
+    ipc.send(ipc.messages.unblockURL, url, isPermanent)
 
-    const elements = _blockedElements[url] ?? []
-    for (const element of elements) {
+    for (const element of _blockedElements[url] ?? []) {
         element.removeAttribute("style")
 
         // Force element to reload without recreating the DOM element.
@@ -97,12 +96,12 @@ function unblockURL(url) {
         ipc.send(ipc.messages.allContentUnblocked)
     }
 
-    log.info(`Unblocked: ${url}`)
+    log.info(`Unblocked ${isPermanent ? "permanently" : "temporary"}: ${url}`)
 }
 
-function unblockAll() {
+function unblockAll(isPermanent) {
     for (const url in _blockedElements) {
-        unblockURL(url)
+        unblockURL(url, isPermanent)
     }
 }
 
@@ -125,7 +124,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     ipc.listen(ipc.messages.contentBlocked, url => {
         const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
         for (const element of elements) {
-            element.onclick = () => unblockURL(url)
+            element.onclick = () => unblockURL(url, false)
         }
 
         changeInfoElementVisiblity(true)

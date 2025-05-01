@@ -296,7 +296,7 @@ describe("Integration tests with their own app instance each", () => {
         describe("Menu item", () => {
             it("unblocks content", async () => {
                 const contentBlocking = require("../app/lib/contentBlockingMain")
-                const unblockContentMenuId = contentBlocking.UNBLOCK_CONTENT_MENU_ID
+                const unblockContentMenuId = contentBlocking.UNBLOCK_CONTENT_TEMPORARY_MENU_ID
 
                 await clickMenuItem(unblockContentMenuId)
 
