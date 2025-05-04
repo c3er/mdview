@@ -92,10 +92,15 @@ input#search-input {
 }
 
 .dialog-buttons {
+    background-color: #fff;
+    border-top: var(--border-width) solid var(--border-color);
+    bottom: 0;
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin: 0;
+    padding: 10px 10px 20px 10px;
+    position: sticky;
 }
 
 .dialog-buttons button {
@@ -104,6 +109,7 @@ input#search-input {
 }
 
 dialog {
+    padding-bottom: 0;
     width: 80%;
 }
 
@@ -249,6 +255,7 @@ div.dialog-tab-content {
     border-color: var(--border-color);
     border-style: solid;
     border-width: var(--border-width);
+    border-bottom-style: none; /* Button container below has its own border */
     border-top-style: none; /* Needs to be after other border definitions */
     padding: 5px 20px;
 }
@@ -339,6 +346,11 @@ p#issue-link-paragraph {
 
     span#selected-search-result {
         background-color: var(--strong-highlight-dark-color);
+    }
+
+    .dialog-buttons {
+        background-color: var(--element-dark-bgcolor);
+        border-top: var(--border-width) solid var(--dark-border-color);
     }
 
     dialog,
