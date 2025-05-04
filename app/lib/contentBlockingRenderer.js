@@ -41,7 +41,7 @@ function changeInfoElementVisiblity(isVisible) {
         : ""
 }
 
-function createUnblockMenu() {
+function createUnblockAllMenu() {
     const unblockContentButtonRect = _unblockContentButton.getBoundingClientRect()
     remote.Menu.buildFromTemplate([
         {
@@ -60,6 +60,23 @@ function createUnblockMenu() {
         x: Math.ceil(unblockContentButtonRect.left),
         y: Math.ceil(unblockContentButtonRect.bottom),
     })
+}
+
+function createUnblockMenu(url) {
+    remote.Menu.buildFromTemplate([
+        {
+            label: "Unblock Temporary",
+            click() {
+                unblockURL(url, false)
+            },
+        },
+        {
+            label: "Unblock Permanently",
+            click() {
+                unblockURL(url, true)
+            },
+        },
+    ]).popup()
 }
 
 function hasBlockedElements() {
@@ -114,11 +131,11 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     _window = window
     _unblockContentButton = _document.querySelector("button#unblock-content-button")
 
-    renderer.addStdButtonHandler(_unblockContentButton, createUnblockMenu)
+    renderer.addStdButtonHandler(_unblockContentButton, createUnblockAllMenu)
     ipc.listen(ipc.messages.contentBlocked, url => {
         const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
         for (const element of elements) {
-            element.onclick = () => unblockURL(url, false)
+            element.onclick = () => createUnblockMenu(url)
         }
 
         changeInfoElementVisiblity(true)
