@@ -5,12 +5,6 @@ const renderer = require("./commonRenderer")
 
 let remote
 
-const _elementIDs = {
-    element: "blocked-content-info",
-    textContainer: "blocked-content-info-text-container",
-    closeButton: "blocked-content-info-close-button",
-}
-
 let _isInitialized = false
 
 let _document
@@ -37,7 +31,7 @@ function searchElementsWithAttributeValue(value) {
 }
 
 function changeInfoElementVisiblity(isVisible) {
-    const infoElement = _document.getElementById(_elementIDs.element)
+    const infoElement = _document.querySelector("div#blocked-content-info")
     infoElement.style.display = isVisible ? "flex" : "none"
 
     // If the info element is visible, adapt the top margin of the body element,
@@ -128,7 +122,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
         }
 
         changeInfoElementVisiblity(true)
-        _document.getElementById(_elementIDs.closeButton).onclick = () =>
+        _document.querySelector("span#blocked-content-info-close-button").onclick = () =>
             changeInfoElementVisiblity(false)
     })
     ipc.listen(ipc.messages.resetContentBlocking, reset)
