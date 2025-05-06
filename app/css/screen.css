@@ -11,6 +11,19 @@
     --text-dark-color: #f8f8f2;
 }
 
+.top-border {
+    border-top: var(--border-width) solid var(--border-color);
+}
+
+.bottom-border {
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.scrollable {
+    overflow-y: scroll;
+    height: calc(100vh - 200px);
+}
+
 div#status-bar {
     background-color: #fff;
     border-top: var(--border-width) solid var(--border-color);
@@ -93,14 +106,12 @@ input#search-input {
 
 .dialog-buttons {
     background-color: #fff;
-    border-top: var(--border-width) solid var(--border-color);
     bottom: 0;
     display: flex;
     gap: 10px;
     justify-content: flex-end;
     margin: 0;
     padding: 10px 10px 20px 10px;
-    position: sticky;
 }
 
 .dialog-buttons button {
