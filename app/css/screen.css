@@ -19,9 +19,14 @@
     border-bottom: var(--border-width) solid var(--border-color);
 }
 
-.scrollable {
-    overflow-y: scroll;
+#settings-scroll-container {
+    /* It appears currently impossble to get the heights of the surrounding elements without using
+     * JavaScript and/or maintaining a list of these elements. */
     height: calc(100vh - 200px);
+
+    margin: 0;
+    overflow-y: scroll;
+    padding: 0;
 }
 
 div#status-bar {
