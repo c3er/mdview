@@ -5,18 +5,26 @@
     --element-dark-bgcolor: #292a2d;
     --highlight-dark-color: #444;
     --highlight-light-color: #ddd;
+    --shadow-bottom-light: inset 0 -4px 9px -7px rgba(0, 0, 0, 0.7);
+    --shadow-top-light: inset 0 4px 9px -7px rgba(0, 0, 0, 0.7);
+    --shadow-bottom-dark: inset 0 -8px 9px -7px black;
+    --shadow-top-dark: inset 0 8px 9px -7px black;
     --status-bar-height: 20px;
     --strong-highlight-dark-color: #777;
     --strong-highlight-light-color: #aaa;
     --text-dark-color: #f8f8f2;
 }
 
-.top-border {
-    border-top: var(--border-width) solid var(--border-color);
+.both-sides-shadow {
+    box-shadow: var(--shadow-top-light), var(--shadow-bottom-light);
 }
 
-.bottom-border {
-    border-bottom: var(--border-width) solid var(--border-color);
+.top-shadow {
+    box-shadow: var(--shadow-top-light);
+}
+
+.bottom-shadow {
+    box-shadow: var(--shadow-bottom-light);
 }
 
 #settings-scroll-container {
@@ -306,6 +314,18 @@ p#issue-link-paragraph {
 }
 
 @media (prefers-color-scheme: dark) {
+    .both-sides-shadow {
+        box-shadow: var(--shadow-top-dark), var(--shadow-bottom-dark);
+    }
+
+    .top-shadow {
+        box-shadow: var(--shadow-top-dark);
+    }
+
+    .bottom-shadow {
+        box-shadow: var(--shadow-bottom-dark);
+    }
+
     div.info {
         background-color: #726a95;
     }
