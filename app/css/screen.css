@@ -119,6 +119,7 @@ input#search-input {
 
 .dialog-buttons {
     background-color: #fff;
+    border-top: var(--border-width) solid var(--border-color);
     bottom: 0;
     display: flex;
     gap: 10px;
