@@ -18,3 +18,8 @@ exports.elementYPosition = element => {
             Number(containerElement.style.paddingTop.replace("px", "")))
     )
 }
+
+exports.isScrolledToTop = element => element.scrollTop <= 0
+
+exports.isScrolledToBottom = element =>
+    Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) <= 1

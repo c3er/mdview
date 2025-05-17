@@ -2,6 +2,7 @@ const common = require("./common")
 const dialog = require("./dialogRenderer")
 const fileLib = require("./file")
 const ipc = require("./ipcRenderer")
+const renderer = require("./commonRenderer")
 
 const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"
@@ -150,6 +151,26 @@ function handleKeyboardConfirm(event) {
     }
 }
 
+function setupScrollShadows(scrollContainer) {
+    const classList = scrollContainer.classList
+    classList.add("bottom-shadow")
+    scrollContainer.onscroll = () => {
+        classList.remove("both-sides-shadow")
+        classList.remove("top-shadow")
+        classList.remove("bottom-shadow")
+
+        const isScrolledToTop = renderer.isScrolledToTop(scrollContainer)
+        const isScrolledToBottom = renderer.isScrolledToBottom(scrollContainer)
+        if (!isScrolledToTop && !isScrolledToBottom) {
+            classList.add("both-sides-shadow")
+        } else if (isScrolledToTop) {
+            classList.add("bottom-shadow")
+        } else if (isScrolledToBottom) {
+            classList.add("top-shadow")
+        }
+    }
+}
+
 exports.DIALOG_ID = DIALOG_ID
 
 exports.init = document => {
@@ -176,6 +197,7 @@ exports.init = document => {
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]
+    setupScrollShadows(_document.querySelector("div#settings-scroll-container"))
 
     // Tabs should have the same height. To determine the maximum height, the dialog has to be visible.
     _dialogElement.show()
