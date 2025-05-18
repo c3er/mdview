@@ -22,10 +22,10 @@ exports.close = () => {
 exports.isOpen = isOpen
 
 exports.addStdButtonHandler = (element, callback) => {
-    element.addEventListener("click", event => {
+    element.onclick = event => {
         event.preventDefault()
         callback()
-    })
+    }
 }
 
 // For testing
