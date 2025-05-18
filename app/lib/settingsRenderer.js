@@ -8,11 +8,13 @@ const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"
 
 let _document
+let _window
 let _dialogElement
 let _dialogForm
 
 let _tabElements
 let _tabContentElements
+let _scrollContainer
 
 let _systemThemeRadioButton
 let _lightThemeRadioButton
@@ -34,6 +36,8 @@ let _renderDocumentAsMarkdownCheckbox
 let _applicationSettings
 let _documentSettings
 let _filePath
+
+let _shallPreventScrollEvent = false
 
 function parseRadioButtons(radioButtonMapping) {
     return Object.entries(radioButtonMapping)
@@ -115,6 +119,13 @@ function applySettings() {
     ipc.send(ipc.messages.applySettings, _applicationSettings, _documentSettings)
 }
 
+function removeShadows() {
+    const scrollClassList = _scrollContainer.classList
+    scrollClassList.remove("both-sides-shadow")
+    scrollClassList.remove("top-shadow")
+    scrollClassList.remove("bottom-shadow")
+}
+
 function changeTab(tabIndex) {
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
@@ -130,6 +141,15 @@ function changeTab(tabIndex) {
             tabContentElement.style.display = "none"
         }
     }
+
+    removeShadows()
+    if (
+        parseFloat(_window.getComputedStyle(_tabContentElements[tabIndex]).height) >
+        _scrollContainer.clientHeight
+    ) {
+        _scrollContainer.classList.add("bottom-shadow")
+    }
+    _shallPreventScrollEvent = true
 }
 
 function closeDialog() {
@@ -151,30 +171,42 @@ function handleKeyboardConfirm(event) {
     }
 }
 
-function setupScrollShadows(scrollContainer) {
-    const classList = scrollContainer.classList
-    classList.add("bottom-shadow")
-    scrollContainer.onscroll = () => {
-        classList.remove("both-sides-shadow")
-        classList.remove("top-shadow")
-        classList.remove("bottom-shadow")
-
-        const isScrolledToTop = renderer.isScrolledToTop(scrollContainer)
-        const isScrolledToBottom = renderer.isScrolledToBottom(scrollContainer)
-        if (!isScrolledToTop && !isScrolledToBottom) {
-            classList.add("both-sides-shadow")
-        } else if (isScrolledToTop) {
-            classList.add("bottom-shadow")
-        } else if (isScrolledToBottom) {
-            classList.add("top-shadow")
+function setupLayout() {
+    const scrollClassList = _scrollContainer.classList
+    _scrollContainer.onscroll = () => {
+        if (_shallPreventScrollEvent) {
+            _shallPreventScrollEvent = false
+            return
         }
+
+        removeShadows()
+        const isScrolledToTop = renderer.isScrolledToTop(_scrollContainer)
+        const isScrolledToBottom = renderer.isScrolledToBottom(_scrollContainer)
+        if (!isScrolledToTop && !isScrolledToBottom) {
+            scrollClassList.add("both-sides-shadow")
+        } else if (isScrolledToTop) {
+            scrollClassList.add("bottom-shadow")
+        } else if (isScrolledToBottom) {
+            scrollClassList.add("top-shadow")
+        }
+    }
+
+    const scrollContainerHeight = _scrollContainer.clientHeight
+    for (const tabContentElement of _tabContentElements) {
+        const computedStyle = _window.getComputedStyle(tabContentElement)
+        tabContentElement.style.minHeight = `${
+            scrollContainerHeight -
+            parseFloat(computedStyle.paddingTop) -
+            parseFloat(computedStyle.paddingBottom)
+        }px`
     }
 }
 
 exports.DIALOG_ID = DIALOG_ID
 
-exports.init = document => {
+exports.init = (document, window) => {
     _document = document
+    _window = window
     _dialogElement = _document.getElementById("settings-dialog")
     _dialogForm = _document.getElementById("settings-dialog-form")
 
@@ -197,19 +229,12 @@ exports.init = document => {
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]
-    setupScrollShadows(_document.querySelector("div#settings-scroll-container"))
-
-    // Tabs should have the same height. To determine the maximum height, the dialog has to be visible.
-    _dialogElement.show()
-    const maxTabHeight = Math.max(..._tabContentElements.map(element => element.clientHeight))
-    _dialogElement.close() // closeDialog() not needed here
+    _scrollContainer = _document.querySelector("div#settings-scroll-container")
 
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
-        _tabElements[i].addEventListener("click", () => changeTab(i))
-        _tabContentElements[i].style.minHeight = `${maxTabHeight}px`
+        _tabElements[i].onclick = () => changeTab(i)
     }
-    changeTab(0)
 
     _dialogElement.addEventListener("keydown", handleKeyboardConfirm)
     _zoomInput.onkeydown = handleKeyboardConfirm
@@ -248,6 +273,8 @@ exports.init = document => {
                 populateDialog()
 
                 _dialogElement.showModal()
+                setupLayout()
+                changeTab(0)
                 _document.getElementById("settings-ok-button").focus()
                 ipc.send(ipc.messages.settingsDialogIsOpen, true)
             },

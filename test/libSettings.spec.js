@@ -72,7 +72,7 @@ describe("Settings", () => {
         beforeEach(() => {
             dialog.reset()
             ipc.init(mocking.electron)
-            settings.init(mocking.document)
+            settings.init(mocking.document, mocking.window)
             settings.setFilePath(lib.DEFAULT_DOCUMENT_PATH)
         })
 
