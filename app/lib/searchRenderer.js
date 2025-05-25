@@ -79,10 +79,10 @@ exports.init = (document, reloader) => {
         _dialogIsOpen = false
 
         const result = _searchDialog.returnValue
-        if (result && result !== CANCEL_VALUE) {
+        if (result?.trim() && result !== CANCEL_VALUE) {
             _term = result
             _reloader()
-        } else {
+        } else if (dialog.isOpen()) {
             dialog.close()
         }
     })
