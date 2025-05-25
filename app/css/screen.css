@@ -27,6 +27,10 @@
     box-shadow: var(--shadow-bottom-light);
 }
 
+.top-border {
+    border-top: var(--border-width) solid var(--border-color);
+}
+
 #settings-scroll-container {
     /* It appears currently impossble to get the heights of the surrounding elements without using
      * JavaScript and/or maintaining a list of these elements. */
@@ -119,7 +123,6 @@ input#search-input {
 
 .dialog-buttons {
     background-color: #fff;
-    border-top: var(--border-width) solid var(--border-color);
     bottom: 0;
     display: flex;
     gap: 10px;
@@ -325,6 +328,10 @@ p#issue-link-paragraph {
 
     .bottom-shadow {
         box-shadow: var(--shadow-bottom-dark);
+    }
+
+    .top-border {
+        border-top: var(--border-width) solid var(--dark-border-color);
     }
 
     div.info {
