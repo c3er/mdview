@@ -5,10 +5,10 @@
     --element-dark-bgcolor: #292a2d;
     --highlight-dark-color: #444;
     --highlight-light-color: #ddd;
-    --shadow-bottom-light: inset 0 -4px 9px -7px rgba(0, 0, 0, 0.7);
-    --shadow-top-light: inset 0 4px 9px -7px rgba(0, 0, 0, 0.7);
-    --shadow-bottom-dark: inset 0 -8px 9px -7px black;
-    --shadow-top-dark: inset 0 8px 9px -7px black;
+    --shadow-bottom-light: inset 0 -4px 4px -4px rgba(0, 0, 0, 0.4);
+    --shadow-top-light: inset 0 4px 4px -4px rgba(0, 0, 0, 0.4);
+    --shadow-bottom-dark: inset 0 -6px 4px -4px rgba(0, 0, 0, 0.5);
+    --shadow-top-dark: inset 0 6px 4px -4px rgba(0, 0, 0, 0.5);
     --status-bar-height: 20px;
     --strong-highlight-dark-color: #777;
     --strong-highlight-light-color: #aaa;
