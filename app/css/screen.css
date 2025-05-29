@@ -394,7 +394,6 @@ p#issue-link-paragraph {
 
     .dialog-buttons {
         background-color: var(--element-dark-bgcolor);
-        border-top: var(--border-width) solid var(--dark-border-color);
     }
 
     dialog,
