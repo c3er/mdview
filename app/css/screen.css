@@ -31,7 +31,7 @@
     border-top: var(--border-width) solid var(--border-color);
 }
 
-#settings-scroll-container {
+.dialog-scroll-container {
     /* It appears currently impossble to get the heights of the surrounding elements without using
      * JavaScript and/or maintaining a list of these elements. */
     height: calc(100vh - 200px);

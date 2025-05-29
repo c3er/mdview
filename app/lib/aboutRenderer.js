@@ -1,5 +1,6 @@
 const dialog = require("./dialogRenderer")
 const ipc = require("./ipcRenderer")
+const renderer = require("./commonRenderer")
 
 let electron
 
@@ -24,6 +25,12 @@ function populateDialog(aboutInfo) {
         .map(([framework, version]) => `<tr><th>${framework}</th><td>${version}</td></tr>`)
         .join("\n")
     _document.getElementById("issue-link").setAttribute("href", aboutInfo.issueLink)
+}
+
+function setupShadows() {
+    const scrollContainer = _document.querySelector("div#about-dialog-scroll-container")
+    renderer.setupShadows(scrollContainer)
+    renderer.addBottomShadow(scrollContainer, _document.querySelector("div#about-dialog-content"))
 }
 
 exports.DIALOG_ID = DIALOG_ID
@@ -62,6 +69,7 @@ exports.init = (document, electronMock) => {
                 _aboutInfo = aboutInfo
                 populateDialog(aboutInfo)
                 _dialogElement.showModal()
+                setupShadows()
                 okButton.focus()
                 ipc.send(ipc.messages.aboutDialogIsOpen, true)
             },

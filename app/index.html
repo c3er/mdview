@@ -41,7 +41,7 @@
                         <div class="dialog-tab" id="application-settings-tab">Application wide</div>
                         <div class="dialog-tab" id="document-settings-tab">This document</div>
                     </div>
-                    <div id="settings-scroll-container">
+                    <div class="dialog-scroll-container" id="settings-dialog-scroll-container">
                         <div class="dialog-tab-content" id="application-settings-tab-content">
                             <h1>Theme</h1>
                             <div>
@@ -213,20 +213,22 @@
 
         <dialog id="about-dialog">
             <form>
-                <div class="dialog-content">
-                    <p>
-                        <a class="dialog-link" id="hompage">
-                            <img id="application-icon" alt="Link to project's hompage" />
-                        </a>
-                    </p>
-                    <h1 id="application-name"></h1>
-                    <h2 id="application-description"></h2>
-                    <table id="framework-versions"></table>
-                    <p id="issue-link-paragraph">
-                        <b>
-                            <a class="dialog-link" id="issue-link">Report an issue</a>
-                        </b>
-                    </p>
+                <div class="dialog-scroll-container" id="about-dialog-scroll-container">
+                    <div class="dialog-content" id="about-dialog-content">
+                        <p>
+                            <a class="dialog-link" id="hompage">
+                                <img id="application-icon" alt="Link to project's hompage" />
+                            </a>
+                        </p>
+                        <h1 id="application-name"></h1>
+                        <h2 id="application-description"></h2>
+                        <table id="framework-versions"></table>
+                        <p id="issue-link-paragraph">
+                            <b>
+                                <a class="dialog-link" id="issue-link">Report an issue</a>
+                            </b>
+                        </p>
+                    </div>
                 </div>
                 <div class="dialog-buttons">
                     <button id="copy-about-info-button" value="about-dialog-copy">

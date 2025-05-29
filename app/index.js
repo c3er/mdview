@@ -161,7 +161,7 @@ function domContentLoadedHandler() {
 
     ipc.init()
     log.init()
-    renderer.init(document)
+    renderer.init(document, window)
     toc.init(document, false)
     contentBlocking.init(document, window)
     rawText.init(() => reload(false))

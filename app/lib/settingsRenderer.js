@@ -37,8 +37,6 @@ let _applicationSettings
 let _documentSettings
 let _filePath
 
-let _shallPreventScrollEvent = false
-
 function parseRadioButtons(radioButtonMapping) {
     return Object.entries(radioButtonMapping)
         .filter(([, radioButton]) => radioButton.checked)
@@ -119,13 +117,6 @@ function applySettings() {
     ipc.send(ipc.messages.applySettings, _applicationSettings, _documentSettings)
 }
 
-function removeShadows() {
-    const scrollClassList = _scrollContainer.classList
-    scrollClassList.remove("both-sides-shadow")
-    scrollClassList.remove("top-shadow")
-    scrollClassList.remove("bottom-shadow")
-}
-
 function changeTab(tabIndex) {
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
@@ -142,14 +133,9 @@ function changeTab(tabIndex) {
         }
     }
 
-    removeShadows()
-    if (
-        parseFloat(_window.getComputedStyle(_tabContentElements[tabIndex]).height) >
-        _scrollContainer.clientHeight
-    ) {
-        _scrollContainer.classList.add("bottom-shadow")
-    }
-    _shallPreventScrollEvent = true
+    renderer.removeShadows(_scrollContainer)
+    renderer.addBottomShadow(_scrollContainer, _tabContentElements[tabIndex])
+    renderer.preventNextScrollEvent()
 }
 
 function closeDialog() {
@@ -172,25 +158,7 @@ function handleKeyboardConfirm(event) {
 }
 
 function setupLayout() {
-    const scrollClassList = _scrollContainer.classList
-    _scrollContainer.onscroll = () => {
-        if (_shallPreventScrollEvent) {
-            _shallPreventScrollEvent = false
-            return
-        }
-
-        removeShadows()
-        const isScrolledToTop = renderer.isScrolledToTop(_scrollContainer)
-        const isScrolledToBottom = renderer.isScrolledToBottom(_scrollContainer)
-        if (!isScrolledToTop && !isScrolledToBottom) {
-            scrollClassList.add("both-sides-shadow")
-        } else if (isScrolledToTop) {
-            scrollClassList.add("bottom-shadow")
-        } else if (isScrolledToBottom) {
-            scrollClassList.add("top-shadow")
-        }
-    }
-
+    renderer.setupShadows(_scrollContainer)
     const scrollContainerHeight = _scrollContainer.clientHeight
     for (const tabContentElement of _tabContentElements) {
         const computedStyle = _window.getComputedStyle(tabContentElement)
@@ -229,7 +197,7 @@ exports.init = (document, window) => {
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]
-    _scrollContainer = _document.querySelector("div#settings-scroll-container")
+    _scrollContainer = _document.querySelector("div#settings-dialog-scroll-container")
 
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
