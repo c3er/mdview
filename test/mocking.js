@@ -508,6 +508,9 @@ exports.document = {
     querySelector() {
         return loadHtmlElement()
     },
+    querySelectorAll() {
+        return [loadHtmlElement()]
+    },
 }
 
 exports.window = {
