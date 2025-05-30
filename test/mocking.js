@@ -212,7 +212,12 @@ const _electronDefault = {
 }
 
 function loadHtmlElement() {
-    return _htmlElement ?? lodashClonedeep(_defaultHtmlElement)
+    if (_htmlElement) {
+        return _htmlElement
+    }
+    const element = lodashClonedeep(_defaultHtmlElement)
+    element.children = [lodashClonedeep(_defaultHtmlElement)]
+    return element
 }
 
 function resetElectron() {
@@ -516,6 +521,9 @@ exports.document = {
     querySelector() {
         return loadHtmlElement()
     },
+    querySelectorAll() {
+        return [loadHtmlElement()]
+    },
 }
 
 exports.window = {
@@ -523,6 +531,9 @@ exports.window = {
         return {
             height: 0,
         }
+    },
+    ResizeObserver: class {
+        observe() {}
     },
 }
 

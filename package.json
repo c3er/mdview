@@ -51,17 +51,17 @@
     "markdown-it-sub": "2.0.0",
     "markdown-it-sup": "2.0.0",
     "markdown-it-task-checkbox": "1.0.6",
-    "mermaid": "11.5.0"
+    "mermaid": "11.6.0"
   },
   "devDependencies": {
     "clipboardy": "4.0.0",
-    "electron": "35.0.3",
-    "electron-builder": "25.1.8",
-    "eslint": "9.23.0",
-    "eslint-config-prettier": "10.1.1",
+    "electron": "36.1.0",
+    "electron-builder": "26.0.12",
+    "eslint": "9.26.0",
+    "eslint-config-prettier": "10.1.2",
     "lodash.clonedeep": "4.5.0",
-    "mocha": "11.1.0",
-    "playwright": "1.51.1",
+    "mocha": "11.2.2",
+    "playwright": "1.52.0",
     "prettier": "3.5.3",
     "tslib": "2.8.1"
   }

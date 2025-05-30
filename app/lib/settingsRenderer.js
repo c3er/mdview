@@ -8,11 +8,13 @@ const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"
 
 let _document
+let _window
 let _dialogElement
 let _dialogForm
 
 let _tabElements
 let _tabContentElements
+let _scrollContainer
 
 let _systemThemeRadioButton
 let _lightThemeRadioButton
@@ -130,6 +132,10 @@ function changeTab(tabIndex) {
             tabContentElement.style.display = "none"
         }
     }
+
+    renderer.removeShadows(_scrollContainer)
+    renderer.addBottomShadow(_scrollContainer, _tabContentElements[tabIndex])
+    renderer.preventNextScrollEvent()
 }
 
 function closeDialog() {
@@ -151,10 +157,24 @@ function handleKeyboardConfirm(event) {
     }
 }
 
+function setupLayout() {
+    const scrollContainerHeight = _scrollContainer.clientHeight
+    for (const tabContentElement of _tabContentElements) {
+        const computedStyle = _window.getComputedStyle(tabContentElement)
+        tabContentElement.style.minHeight = `${
+            scrollContainerHeight -
+            parseFloat(computedStyle.paddingTop) -
+            parseFloat(computedStyle.paddingBottom)
+        }px`
+    }
+    renderer.setupShadows(_scrollContainer)
+}
+
 exports.DIALOG_ID = DIALOG_ID
 
-exports.init = document => {
+exports.init = (document, window) => {
     _document = document
+    _window = window
     _dialogElement = _document.getElementById("settings-dialog")
     _dialogForm = _document.getElementById("settings-dialog-form")
 
@@ -177,18 +197,12 @@ exports.init = document => {
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]
-
-    // Tabs should have the same height. To determine the maximum height, the dialog has to be visible.
-    _dialogElement.show()
-    const maxTabHeight = Math.max(..._tabContentElements.map(element => element.clientHeight))
-    _dialogElement.close() // closeDialog() not needed here
+    _scrollContainer = _document.querySelector("div#settings-dialog-scroll-container")
 
     const tabCount = _tabElements.length
     for (let i = 0; i < tabCount; i++) {
-        _tabElements[i].addEventListener("click", () => changeTab(i))
-        _tabContentElements[i].style.minHeight = `${maxTabHeight}px`
+        _tabElements[i].onclick = () => changeTab(i)
     }
-    changeTab(0)
 
     _dialogElement.addEventListener("keydown", handleKeyboardConfirm)
     _zoomInput.onkeydown = handleKeyboardConfirm
@@ -227,6 +241,8 @@ exports.init = document => {
                 populateDialog()
 
                 _dialogElement.showModal()
+                setupLayout()
+                changeTab(0)
                 _document.getElementById("settings-ok-button").focus()
                 ipc.send(ipc.messages.settingsDialogIsOpen, true)
             },

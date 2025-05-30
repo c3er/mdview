@@ -16,15 +16,26 @@ function closeDialog() {
 }
 
 function populateDialog(aboutInfo) {
-    _document.getElementById("application-icon").setAttribute("src", aboutInfo.applicationIconPath)
-    _document.getElementById("hompage").setAttribute("href", aboutInfo.homepage)
-    _document.getElementById("application-name").innerText =
+    _document
+        .querySelector("#about-dialog #application-icon")
+        .setAttribute("src", aboutInfo.applicationIconPath)
+    _document.querySelector("#about-dialog #hompage").setAttribute("href", aboutInfo.homepage)
+    _document.querySelector("#about-dialog #application-name").innerText =
         `${aboutInfo.applicationName} ${aboutInfo.applicationVersion}`
-    _document.getElementById("application-description").innerText = aboutInfo.applicationDescription
-    _document.getElementById("framework-versions").innerHTML = aboutInfo.frameworkVersions
-        .map(([framework, version]) => `<tr><th>${framework}</th><td>${version}</td></tr>`)
-        .join("\n")
-    _document.getElementById("issue-link").setAttribute("href", aboutInfo.issueLink)
+    _document.querySelector("#about-dialog #application-description").innerText =
+        aboutInfo.applicationDescription
+    _document.querySelector("#about-dialog #framework-versions").innerHTML =
+        aboutInfo.frameworkVersions
+            .map(([framework, version]) => `<tr><th>${framework}</th><td>${version}</td></tr>`)
+            .join("\n")
+    _document.querySelector("#about-dialog #issue-link").setAttribute("href", aboutInfo.issueLink)
+}
+
+function setupShadows() {
+    const scrollContainer = _document.querySelector("div#about-dialog-scroll-container")
+    const contentElement = _document.querySelector("div#about-dialog-content")
+    renderer.setupShadows(scrollContainer, contentElement)
+    renderer.addBottomShadow(scrollContainer, contentElement)
 }
 
 exports.DIALOG_ID = DIALOG_ID
@@ -32,29 +43,32 @@ exports.DIALOG_ID = DIALOG_ID
 exports.init = (document, electronMock) => {
     electron = electronMock ?? require("electron")
     _document = document
-    _dialogElement = _document.getElementById("about-dialog")
+    _dialogElement = _document.querySelector("dialog#about-dialog")
 
-    for (const link of _document.getElementsByClassName("dialog-link")) {
+    for (const link of _document.querySelectorAll("#about-dialog .dialog-link")) {
         link.onclick = event => {
             event.preventDefault()
             electron.shell.openExternal(link.getAttribute("href"))
         }
     }
 
-    const okButton = _document.getElementById("about-ok-button")
+    const okButton = _document.querySelector("#about-dialog #about-ok-button")
     renderer.addStdButtonHandler(okButton, () => dialog.close())
 
-    renderer.addStdButtonHandler(_document.getElementById("copy-about-info-button"), () => {
-        const aboutInfo = structuredClone(_aboutInfo)
-        const indentation = 4
-        const filterList = ["applicationIconPath"]
-        for (const filtered of filterList) {
-            delete aboutInfo[filtered]
-        }
-        electron.clipboard.writeText(JSON.stringify(aboutInfo, null, indentation))
+    renderer.addStdButtonHandler(
+        _document.querySelector("#about-dialog #copy-about-info-button"),
+        () => {
+            const aboutInfo = structuredClone(_aboutInfo)
+            const indentation = 4
+            const filterList = ["applicationIconPath"]
+            for (const filtered of filterList) {
+                delete aboutInfo[filtered]
+            }
+            electron.clipboard.writeText(JSON.stringify(aboutInfo, null, indentation))
 
-        okButton.focus()
-    })
+            okButton.focus()
+        },
+    )
 
     ipc.listen(ipc.messages.about, aboutInfo =>
         dialog.open(
@@ -63,6 +77,7 @@ exports.init = (document, electronMock) => {
                 _aboutInfo = aboutInfo
                 populateDialog(aboutInfo)
                 _dialogElement.showModal()
+                setupShadows()
                 okButton.focus()
                 ipc.send(ipc.messages.aboutDialogIsOpen, true)
             },
