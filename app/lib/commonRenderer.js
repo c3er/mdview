@@ -18,11 +18,33 @@ function isScrolledToBottom(element) {
     return Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) <= 1
 }
 
+function isOverflowing(scrollContainer, element) {
+    return parseFloat(_window.getComputedStyle(element).height) > scrollContainer.clientHeight
+}
+
 function removeShadows(scrollContainer) {
     const scrollClassList = scrollContainer.classList
     scrollClassList.remove(BOTH_SIDES_SHADOW_CLASS)
     scrollClassList.remove(TOP_SHADOW_CLASS)
     scrollClassList.remove(BOTTOM_SHADOW_CLASS)
+}
+
+function addBottomShadow(scrollContainer, element) {
+    if (isOverflowing(scrollContainer, element)) {
+        scrollContainer.classList.add(BOTTOM_SHADOW_CLASS)
+    }
+}
+
+function updateShadows(scrollContainer) {
+    const scrollClassList = scrollContainer.classList
+    removeShadows(scrollContainer)
+    if (isScrolledToTop(scrollContainer)) {
+        scrollClassList.add(BOTTOM_SHADOW_CLASS)
+    } else if (isScrolledToBottom(scrollContainer)) {
+        scrollClassList.add(TOP_SHADOW_CLASS)
+    } else {
+        scrollClassList.add(BOTH_SIDES_SHADOW_CLASS)
+    }
 }
 
 exports.init = (document, window) => {
@@ -43,33 +65,26 @@ exports.elementYPosition = element => {
     )
 }
 
-exports.setupShadows = scrollContainer => {
-    const scrollClassList = scrollContainer.classList
+exports.setupShadows = (scrollContainer, contentElement) => {
     scrollContainer.onscroll = () => {
         if (_shallPreventScrollEvent) {
             _shallPreventScrollEvent = false
             return
         }
-
-        removeShadows(scrollContainer)
-        const scrolledToTop = isScrolledToTop(scrollContainer)
-        const scrolledToBottom = isScrolledToBottom(scrollContainer)
-        if (scrolledToTop) {
-            scrollClassList.add(BOTTOM_SHADOW_CLASS)
-        } else if (scrolledToBottom) {
-            scrollClassList.add(TOP_SHADOW_CLASS)
-        } else {
-            scrollClassList.add(BOTH_SIDES_SHADOW_CLASS)
-        }
+        updateShadows(scrollContainer)
     }
+    contentElement ??= scrollContainer.children[0]
+    new _window.ResizeObserver(() => {
+        if (isOverflowing(scrollContainer, contentElement)) {
+            updateShadows(scrollContainer)
+        } else {
+            removeShadows(scrollContainer)
+        }
+    }).observe(scrollContainer)
 }
 
 exports.preventNextScrollEvent = () => (_shallPreventScrollEvent = true)
 
 exports.removeShadows = removeShadows
 
-exports.addBottomShadow = (scrollContainer, element) => {
-    if (parseFloat(_window.getComputedStyle(element).height) > scrollContainer.clientHeight) {
-        scrollContainer.classList.add(BOTTOM_SHADOW_CLASS)
-    }
-}
+exports.addBottomShadow = addBottomShadow

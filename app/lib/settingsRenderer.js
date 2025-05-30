@@ -158,7 +158,6 @@ function handleKeyboardConfirm(event) {
 }
 
 function setupLayout() {
-    renderer.setupShadows(_scrollContainer)
     const scrollContainerHeight = _scrollContainer.clientHeight
     for (const tabContentElement of _tabContentElements) {
         const computedStyle = _window.getComputedStyle(tabContentElement)
@@ -168,6 +167,7 @@ function setupLayout() {
             parseFloat(computedStyle.paddingBottom)
         }px`
     }
+    renderer.setupShadows(_scrollContainer)
 }
 
 exports.DIALOG_ID = DIALOG_ID

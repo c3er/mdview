@@ -33,8 +33,9 @@ function populateDialog(aboutInfo) {
 
 function setupShadows() {
     const scrollContainer = _document.querySelector("div#about-dialog-scroll-container")
-    renderer.setupShadows(scrollContainer)
-    renderer.addBottomShadow(scrollContainer, _document.querySelector("div#about-dialog-content"))
+    const contentElement = _document.querySelector("div#about-dialog-content")
+    renderer.setupShadows(scrollContainer, contentElement)
+    renderer.addBottomShadow(scrollContainer, contentElement)
 }
 
 exports.DIALOG_ID = DIALOG_ID
