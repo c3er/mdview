@@ -67,12 +67,14 @@ describe("Settings", () => {
     describe("Renderer part", () => {
         const dialog = require("../app/lib/dialogRenderer")
         const ipc = require("../app/lib/ipcRenderer")
+        const renderer = require("../app/lib/commonRenderer")
         const settings = require("../app/lib/settingsRenderer")
 
         beforeEach(() => {
             dialog.reset()
             ipc.init(mocking.electron)
-            settings.init(mocking.document)
+            renderer.init(mocking.document, mocking.window)
+            settings.init(mocking.document, mocking.window)
             settings.setFilePath(lib.DEFAULT_DOCUMENT_PATH)
         })
 

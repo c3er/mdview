@@ -32,11 +32,13 @@ describe("About dialog", () => {
         const about = require("../app/lib/aboutRenderer")
         const dialog = require("../app/lib/dialogRenderer")
         const ipc = require("../app/lib/ipcRenderer")
+        const renderer = require("../app/lib/commonRenderer")
 
         beforeEach(() => {
             dialog.reset()
 
             ipc.init(mocking.electron)
+            renderer.init(mocking.document, mocking.window)
             about.init(mocking.document, mocking.electron)
         })
 
