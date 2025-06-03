@@ -27,7 +27,7 @@ describe("Content blocking", () => {
         })
 
         it("unblocks a URL", () => {
-            const unblockMessage = ipc.messages.unblockURL
+            const unblockMessage = ipc.messages.unblockUrl
             mocking.register.ipc.mainOn(unblockMessage, (_, url) =>
                 assert.strictEqual(url, expectedUrl),
             )
@@ -66,7 +66,7 @@ describe("Content blocking", () => {
             })
 
             it("does not block an unblocked URL", () => {
-                mocking.send.ipc.toMain(ipc.messages.unblockURL, {}, expectedUrl)
+                mocking.send.ipc.toMain(ipc.messages.unblockUrl, {}, expectedUrl)
                 mocking.send.webRequest.beforeRequest(
                     {
                         url: expectedUrl,
@@ -101,7 +101,7 @@ describe("Content blocking", () => {
         })
 
         it("has no blocked URL after unblocking all", () => {
-            mocking.register.ipc.rendererSend(ipc.messages.unblockURL)
+            mocking.register.ipc.rendererSend(ipc.messages.unblockUrl)
             mocking.register.ipc.rendererSend(ipc.messages.allContentUnblocked)
 
             // First, block a URL

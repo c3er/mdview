@@ -15,7 +15,7 @@ let _contentIsBlocked = false
 let _allowedURLs = []
 let _permanentlyAllowedURLs
 
-function unblockURL(url, isPermanent) {
+function unblockUrl(url, isPermanent) {
     if (!url) {
         throw new Error("No url given")
     }
@@ -66,10 +66,10 @@ exports.init = (mainMenu, electronMock) => {
     webRequest.onBeforeRedirect(details => {
         const url = details.redirectURL
         log.info(`Redirecting: ${url}`)
-        unblockURL(url)
+        unblockUrl(url)
     })
 
-    ipc.listen(ipc.messages.unblockURL, unblockURL)
+    ipc.listen(ipc.messages.unblockUrl, unblockUrl)
     ipc.listen(ipc.messages.allContentUnblocked, () => {
         _contentIsBlocked = false
         allowUnblockContent(false)
@@ -94,5 +94,7 @@ exports.init = (mainMenu, electronMock) => {
 exports.unblockAll = () => ipc.send(ipc.messages.unblockAll)
 
 exports.unblockAllPermamently = () => console.log("Unblock all content permanently")
+
+exports.manageUnblocked = () => console.log("Manage unblocked content")
 
 exports.clearUnblockedURLs = () => (_allowedURLs.length = 0)

@@ -67,13 +67,13 @@ function createUnblockMenu(url) {
         {
             label: "Unblock Temporary",
             click() {
-                unblockURL(url, false)
+                unblockUrl(url, false)
             },
         },
         {
             label: "Unblock Permanently",
             click() {
-                unblockURL(url, true)
+                unblockUrl(url, true)
             },
         },
     ]).popup()
@@ -83,8 +83,8 @@ function hasBlockedElements() {
     return !common.isEmptyObject(_blockedElements)
 }
 
-function unblockURL(url, isPermanent) {
-    ipc.send(ipc.messages.unblockURL, url, isPermanent)
+function unblockUrl(url, isPermanent) {
+    ipc.send(ipc.messages.unblockUrl, url, isPermanent)
 
     for (const element of _blockedElements[url] ?? []) {
         element.removeAttribute("style")
@@ -112,7 +112,7 @@ function unblockURL(url, isPermanent) {
 
 function unblockAll(isPermanent) {
     for (const url in _blockedElements) {
-        unblockURL(url, isPermanent)
+        unblockUrl(url, isPermanent)
     }
 }
 
