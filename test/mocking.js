@@ -301,14 +301,17 @@ exports.elements = {
                 refresh: {
                     label: "&Refresh",
                 },
-                unblock: {
-                    label: "&Unblock All External Content",
+                contentBlocking: {
+                    label: "&Content Blocking",
                     sub: {
-                        temporary: {
-                            label: "&Temporary",
+                        unblockAllTemporaryly: {
+                            label: "Unblock All External Content &Temporaryly",
                         },
-                        permanent: {
-                            label: "&Permanent",
+                        unblockAllPermanently: {
+                            label: "Unblock All External Content &Permanently...",
+                        },
+                        manage: {
+                            label: "&Manage Unblocked Content...",
                         },
                     },
                 },
