@@ -27,6 +27,7 @@ exports.messages = {
     reloadPrepared: "reload-prepared",
     resetContentBlocking: "reset-content-blocking",
     restorePosition: "restore-position",
+    storeUnblockedUrl: "store-unblocked-url",
     search: "search",
     searchIsActive: "search-is-active",
     searchNext: "search-next",

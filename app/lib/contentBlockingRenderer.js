@@ -47,13 +47,14 @@ function createUnblockAllMenu() {
         {
             label: "Temporary",
             click() {
-                unblockAll(false)
+                unblockAll()
             },
         },
         {
             label: "Permanent",
             click() {
-                unblockAll(true)
+                storeAll()
+                unblockAll()
             },
         },
     ]).popup({
@@ -67,13 +68,14 @@ function createUnblockMenu(url) {
         {
             label: "Unblock Temporary",
             click() {
-                unblockUrl(url, false)
+                unblockUrl(url)
             },
         },
         {
             label: "Unblock Permanently",
             click() {
-                unblockUrl(url, true)
+                storeUnblockedUrl(url)
+                unblockUrl(url)
             },
         },
     ]).popup()
@@ -83,8 +85,8 @@ function hasBlockedElements() {
     return !common.isEmptyObject(_blockedElements)
 }
 
-function unblockUrl(url, isPermanent) {
-    ipc.send(ipc.messages.unblockUrl, url, isPermanent)
+function unblockUrl(url) {
+    ipc.send(ipc.messages.unblockUrl, url)
 
     for (const element of _blockedElements[url] ?? []) {
         element.removeAttribute("style")
@@ -107,12 +109,23 @@ function unblockUrl(url, isPermanent) {
         ipc.send(ipc.messages.allContentUnblocked)
     }
 
-    log.info(`Unblocked ${isPermanent ? "permanently" : "temporary"}: ${url}`)
+    log.info(`Unblocked: ${url}`)
 }
 
-function unblockAll(isPermanent) {
+function unblockAll() {
     for (const url in _blockedElements) {
-        unblockUrl(url, isPermanent)
+        unblockUrl(url)
+    }
+}
+
+function storeUnblockedUrl(url) {
+    ipc.send(ipc.messages.storeUnblockedUrl, url)
+    log.info(`Stored unblocked URL: ${url}`)
+}
+
+function storeAll() {
+    for (const url in _blockedElements) {
+        storeUnblockedUrl(url)
     }
 }
 

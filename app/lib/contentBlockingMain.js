@@ -16,15 +16,20 @@ let _contentIsBlocked = false
 let _allowedURLs = []
 let _permanentlyAllowedURLs
 
-function unblockUrl(url, isPermanent) {
+function unblockUrl(url) {
     if (!url) {
         throw new Error("No url given")
     }
-    log.info(`Unblocked ${isPermanent ? "permanently" : "temporary"}: ${url}`)
+    log.info(`Unblocked: ${url}`)
     _allowedURLs.push(url)
-    if (isPermanent) {
-        _permanentlyAllowedURLs.add(url)
+}
+
+function storeUnblockedUrl(url) {
+    if (!url) {
+        throw new Error("No url given to store")
     }
+    log.info(`Stored unblocked URL: ${url}`)
+    _permanentlyAllowedURLs.add(url)
 }
 
 function allowUnblockContent(isAllowed) {
@@ -73,6 +78,7 @@ exports.init = (mainMenu, electronMock) => {
     })
 
     ipc.listen(ipc.messages.unblockUrl, unblockUrl)
+    ipc.listen(ipc.messages.storeUnblockedUrl, storeUnblockedUrl)
     ipc.listen(ipc.messages.allContentUnblocked, () => {
         _contentIsBlocked = false
         allowUnblockContent(false)
