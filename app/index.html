@@ -211,6 +211,32 @@
             </form>
         </dialog>
 
+        <dialog id="content-blocking-dialog">
+            <form>
+                <div class="dialog-content">
+                    <p>Content Blocking</p>
+                    <div
+                        class="dialog-scroll-container"
+                        id="content-blocking-dialog-scroll-container"
+                    >
+                        URLs that shall be unblocked appear here.
+                    </div>
+                </div>
+                <div class="dialog-buttons">
+                    <button id="content-blocking-ok-button" value="content-blocking-dialog-default">
+                        OK
+                    </button>
+                    <button
+                        id="content-blocking-cancel-button"
+                        value="content-blocking-dialog-cancel"
+                        formmethod="dialog"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </dialog>
+
         <dialog id="about-dialog">
             <form>
                 <div class="dialog-scroll-container" id="about-dialog-scroll-container">

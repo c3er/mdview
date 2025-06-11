@@ -1,7 +1,10 @@
 const common = require("./common")
+const dialog = require("./dialogRenderer")
 const ipc = require("./ipcRenderer")
 const log = require("./log")
 const renderer = require("./commonRenderer")
+
+const DIALOG_ID = "content-blocking"
 
 let remote
 
@@ -10,6 +13,7 @@ let _isInitialized = false
 let _document
 let _window
 let _unblockContentButton
+let _dialogElement
 
 let _blockedElements = {}
 
@@ -53,8 +57,7 @@ function createUnblockAllMenu() {
         {
             label: "Permanent",
             click() {
-                storeAll()
-                unblockAll()
+                openDialog()
             },
         },
     ]).popup({
@@ -123,10 +126,12 @@ function storeUnblockedUrl(url) {
     log.info(`Stored unblocked URL: ${url}`)
 }
 
-function storeAll() {
-    for (const url in _blockedElements) {
-        storeUnblockedUrl(url)
-    }
+function openDialog() {
+    dialog.open(
+        DIALOG_ID,
+        () => _dialogElement.showModal(),
+        () => _dialogElement.close(),
+    )
 }
 
 function reset() {
@@ -143,8 +148,16 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     _document = document
     _window = window
     _unblockContentButton = _document.querySelector("button#unblock-content-button")
+    _dialogElement = _document.querySelector("dialog#content-blocking-dialog")
 
     renderer.addStdButtonHandler(_unblockContentButton, createUnblockAllMenu)
+    renderer.addStdButtonHandler(_document.querySelector("button#content-blocking-ok-button"), () =>
+        _dialogElement.close(),
+    )
+    renderer.addStdButtonHandler(
+        _document.querySelector("button#content-blocking-cancel-button"),
+        () => _dialogElement.close(),
+    )
     ipc.listen(ipc.messages.contentBlocked, url => {
         const elements = (_blockedElements[url] = searchElementsWithAttributeValue(url))
         for (const element of elements) {
