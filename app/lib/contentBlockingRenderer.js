@@ -14,20 +14,27 @@ let _document
 let _window
 let _unblockContentButton
 let _dialogElement
+let _dialogOkButton
 
 let _contents = {}
 
 class Content {
     url = ""
+    id = ""
     elements = []
-    isBlocked = true
+    shallBeUnblocked = true
 
     constructor(url) {
         this.url = url
-        this.elements = searchElementsWithAttributeValue(url)
+        this.id = Content._url2id(url)
+        this.elements = Content._searchElementsWithAttributeValue(url)
         for (const element of this.elements) {
             element.onclick = () => createUnblockMenu(url)
         }
+    }
+
+    get checkBoxElement() {
+        return _document.querySelector(`tr#${this.id} input`)
     }
 
     unblock() {
@@ -49,28 +56,49 @@ class Content {
 
     toHtml() {
         return `
-            <tr>
+            <tr id="${this.id}">
+                <td><input type="checkbox" /></td>
                 <td>${this.url}</td>
             </tr>
         `
     }
-}
 
-function searchElementsWithAttributeValue(value) {
-    // Based on https://stackoverflow.com/a/30840550 (JQuery selector using value, but unknown attribute)
-    const elements = _document.getElementsByTagName("*")
-    const foundElements = []
-    for (let elementIndex = 0; elementIndex < elements.length; elementIndex++) {
-        const element = elements[elementIndex]
-        const attributes = element.attributes
-        for (let attrIndex = 0; attrIndex < attributes.length; attrIndex++) {
-            if (attributes[attrIndex].nodeValue === value) {
-                foundElements.push(element)
-                break
-            }
+    handleClick() {
+        this.checkBoxElement.checked = this.shallBeUnblocked
+        _document.querySelector(`tr#${this.id}`).onclick = () => {
+            this.shallBeUnblocked = this.checkBoxElement.checked = !this.shallBeUnblocked
+            updateDialogOkButton()
         }
     }
-    return foundElements
+
+    static _url2id(url) {
+        let id = url.replace(/[^a-zA-Z0-9]/g, "-")
+        if (!/^[a-zA-Z]/.test(id)) {
+            id = `_${id}`
+        }
+        return id
+    }
+
+    static _searchElementsWithAttributeValue(value) {
+        // Based on https://stackoverflow.com/a/30840550 (JQuery selector using value, but unknown attribute)
+        const elements = _document.getElementsByTagName("*")
+        const foundElements = []
+        for (let elementIndex = 0; elementIndex < elements.length; elementIndex++) {
+            const element = elements[elementIndex]
+            const attributes = element.attributes
+            for (let attrIndex = 0; attrIndex < attributes.length; attrIndex++) {
+                if (attributes[attrIndex].nodeValue === value) {
+                    foundElements.push(element)
+                    break
+                }
+            }
+        }
+        return foundElements
+    }
+}
+
+function updateDialogOkButton() {
+    _dialogOkButton.disabled = !Object.values(_contents).some(content => content.shallBeUnblocked)
 }
 
 function changeInfoElementVisiblity(isVisible) {
@@ -147,13 +175,23 @@ function unblockAll() {
     }
 }
 
+function unblockSelected() {
+    for (const [url] of Object.entries(_contents).filter(
+        ([, content]) => content.shallBeUnblocked,
+    )) {
+        unblockUrl(url)
+    }
+}
+
 function storeUnblockedUrl(url) {
     ipc.send(ipc.messages.storeUnblockedUrl, url)
     log.info(`Stored unblocked URL: ${url}`)
 }
 
-function storeAllUnblocked() {
-    for (const url in _contents) {
+function storeSelectedUnblocked() {
+    for (const [url] of Object.entries(_contents).filter(
+        ([, content]) => content.shallBeUnblocked,
+    )) {
         storeUnblockedUrl(url)
     }
 }
@@ -162,12 +200,16 @@ function openDialog() {
     dialog.open(
         DIALOG_ID,
         () => {
+            const contents = Object.values(_contents)
             _document.querySelector("dialog #content-blocking-dialog-scroll-container").innerHTML =
                 `
                     <table>
-                        ${Object.values(_contents).map(content => content.toHtml())}
+                        ${contents.map(content => content.toHtml()).join("\n")}
                     </table>
                 `
+            for (const content of contents) {
+                content.handleClick()
+            }
             _dialogElement.showModal()
         },
         () => _dialogElement.close(),
@@ -189,16 +231,14 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     _window = window
     _unblockContentButton = _document.querySelector("button#unblock-content-button")
     _dialogElement = _document.querySelector("dialog#content-blocking-dialog")
+    _dialogOkButton = _document.querySelector("button#content-blocking-ok-button")
 
     renderer.addStdButtonHandler(_unblockContentButton, createUnblockAllMenu)
-    renderer.addStdButtonHandler(
-        _document.querySelector("button#content-blocking-ok-button"),
-        () => {
-            storeAllUnblocked()
-            unblockAll()
-            _dialogElement.close()
-        },
-    )
+    renderer.addStdButtonHandler(_dialogOkButton, () => {
+        storeSelectedUnblocked()
+        unblockSelected()
+        _dialogElement.close()
+    })
     renderer.addStdButtonHandler(
         _document.querySelector("button#content-blocking-cancel-button"),
         () => _dialogElement.close(),
