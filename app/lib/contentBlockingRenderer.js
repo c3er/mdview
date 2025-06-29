@@ -1,4 +1,3 @@
-const common = require("./common")
 const dialog = require("./dialogRenderer")
 const ipc = require("./ipcRenderer")
 const log = require("./log")
@@ -16,7 +15,64 @@ let _unblockContentButton
 let _dialogElement
 let _dialogOkButton
 
-let _contents = {}
+class ContentList {
+    #data
+
+    constructor(data) {
+        this.#data = data ?? []
+    }
+
+    get urls() {
+        return this.#data.map(content => content.url)
+    }
+
+    add(content) {
+        const existingIndex = this.#data.findIndex(existing => existing.url === content.url)
+        if (existingIndex === -1) {
+            this.#data.push(content)
+        } else {
+            this.#data[existingIndex] = content
+        }
+    }
+
+    byUrl(url) {
+        return this.#data.find(content => content.url === url)
+    }
+
+    remove(url) {
+        this.#data = this.#data.filter(content => content.url !== url)
+    }
+
+    reset() {
+        this.#data = []
+    }
+
+    isEmpty() {
+        return this.#data.length === 0
+    }
+
+    filter(predicate) {
+        return new ContentList(this.#data.filter(predicate))
+    }
+
+    some(predicate) {
+        return this.#data.some(predicate)
+    }
+
+    toHtml() {
+        return `
+            <table>
+                ${this.#data.map(content => content.toHtml()).join("\n")}
+            </table>
+        `
+    }
+
+    handleClick() {
+        for (const content of this.#data) {
+            content.handleClick()
+        }
+    }
+}
 
 class Content {
     url = ""
@@ -97,8 +153,10 @@ class Content {
     }
 }
 
+const _contents = new ContentList()
+
 function updateDialogOkButton() {
-    _dialogOkButton.disabled = !Object.values(_contents).some(content => content.shallBeUnblocked)
+    _dialogOkButton.disabled = !_contents.some(content => content.shallBeUnblocked)
 }
 
 function changeInfoElementVisiblity(isVisible) {
@@ -152,14 +210,14 @@ function createUnblockMenu(url) {
 }
 
 function hasBlockedElements() {
-    return !common.isEmptyObject(_contents)
+    return !_contents.isEmpty()
 }
 
 function unblockUrl(url) {
     ipc.send(ipc.messages.unblockUrl, url)
 
-    _contents[url]?.unblock()
-    delete _contents[url]
+    _contents.byUrl(url)?.unblock()
+    _contents.remove(url)
 
     if (!hasBlockedElements()) {
         changeInfoElementVisiblity(false)
@@ -170,15 +228,13 @@ function unblockUrl(url) {
 }
 
 function unblockAll() {
-    for (const url in _contents) {
+    for (const url of _contents.urls) {
         unblockUrl(url)
     }
 }
 
 function unblockSelected() {
-    for (const [url] of Object.entries(_contents).filter(
-        ([, content]) => content.shallBeUnblocked,
-    )) {
+    for (const url of _contents.filter(content => content.shallBeUnblocked).urls) {
         unblockUrl(url)
     }
 }
@@ -189,9 +245,7 @@ function storeUnblockedUrl(url) {
 }
 
 function storeSelectedUnblocked() {
-    for (const [url] of Object.entries(_contents).filter(
-        ([, content]) => content.shallBeUnblocked,
-    )) {
+    for (const url of _contents.filter(content => content.shallBeUnblocked).urls) {
         storeUnblockedUrl(url)
     }
 }
@@ -200,16 +254,9 @@ function openDialog() {
     dialog.open(
         DIALOG_ID,
         () => {
-            const contents = Object.values(_contents)
             _document.querySelector("dialog #content-blocking-dialog-scroll-container").innerHTML =
-                `
-                    <table>
-                        ${contents.map(content => content.toHtml()).join("\n")}
-                    </table>
-                `
-            for (const content of contents) {
-                content.handleClick()
-            }
+                _contents.toHtml()
+            _contents.handleClick()
             _dialogElement.showModal()
         },
         () => _dialogElement.close(),
@@ -217,7 +264,7 @@ function openDialog() {
 }
 
 function reset() {
-    _contents = {}
+    _contents.reset()
 }
 
 exports.init = (document, window, shallForceInitialization, remoteMock) => {
@@ -244,7 +291,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
         () => _dialogElement.close(),
     )
     ipc.listen(ipc.messages.contentBlocked, url => {
-        _contents[url] = new Content(url)
+        _contents.add(new Content(url))
         changeInfoElementVisiblity(true)
         _document.querySelector("span#blocked-content-info-close-button").onclick = () =>
             changeInfoElementVisiblity(false)
