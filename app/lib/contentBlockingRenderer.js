@@ -72,6 +72,12 @@ class ContentList {
             content.handleClick()
         }
     }
+
+    resetSelection() {
+        for (const content of this.#data) {
+            content.shallBeUnblocked = true
+        }
+    }
 }
 
 class Content {
@@ -254,6 +260,7 @@ function openDialog() {
     dialog.open(
         DIALOG_ID,
         () => {
+            _contents.resetSelection()
             _document.querySelector("dialog #content-blocking-dialog-scroll-container").innerHTML =
                 _contents.toHtml()
             _contents.handleClick()
