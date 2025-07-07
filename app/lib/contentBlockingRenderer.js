@@ -13,7 +13,10 @@ let _document
 let _window
 let _unblockContentButton
 let _dialogElement
+let _contentsArea
 let _dialogOkButton
+let _selectAllButton
+let _unselectAllButton
 
 class ContentList {
     #data
@@ -59,6 +62,15 @@ class ContentList {
         return this.#data.some(predicate)
     }
 
+    every(predicate) {
+        return this.#data.every(predicate)
+    }
+
+    update(containerElement) {
+        containerElement.innerHTML = this.toHtml()
+        this.handleClick()
+    }
+
     toHtml() {
         return `
             <table>
@@ -73,10 +85,19 @@ class ContentList {
         }
     }
 
-    resetSelection() {
+    selectAll() {
+        this._setSelection(true)
+    }
+
+    unselectAll() {
+        this._setSelection(false)
+    }
+
+    _setSelection(areSelected) {
         for (const content of this.#data) {
-            content.shallBeUnblocked = true
+            content.shallBeUnblocked = areSelected
         }
+        updateDialogButtons()
     }
 }
 
@@ -129,7 +150,7 @@ class Content {
         this.checkBoxElement.checked = this.shallBeUnblocked
         _document.querySelector(`tr#${this.id}`).onclick = () => {
             this.shallBeUnblocked = this.checkBoxElement.checked = !this.shallBeUnblocked
-            updateDialogOkButton()
+            updateDialogButtons()
         }
     }
 
@@ -161,8 +182,11 @@ class Content {
 
 const _contents = new ContentList()
 
-function updateDialogOkButton() {
-    _dialogOkButton.disabled = !_contents.some(content => content.shallBeUnblocked)
+function updateDialogButtons() {
+    _dialogOkButton.disabled = _unselectAllButton.disabled = !_contents.some(
+        content => content.shallBeUnblocked,
+    )
+    _selectAllButton.disabled = _contents.every(content => content.shallBeUnblocked)
 }
 
 function changeInfoElementVisiblity(isVisible) {
@@ -260,10 +284,11 @@ function openDialog() {
     dialog.open(
         DIALOG_ID,
         () => {
-            _contents.resetSelection()
-            _document.querySelector("dialog #content-blocking-dialog-scroll-container").innerHTML =
-                _contents.toHtml()
-            _contents.handleClick()
+            _contents.selectAll()
+            _selectAllButton.disabled = true
+            _unselectAllButton.disabled = false
+
+            _contents.update(_contentsArea)
             _dialogElement.showModal()
         },
         () => _dialogElement.close(),
@@ -285,7 +310,10 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     _window = window
     _unblockContentButton = _document.querySelector("button#unblock-content-button")
     _dialogElement = _document.querySelector("dialog#content-blocking-dialog")
+    _contentsArea = _document.querySelector("dialog #content-blocking-dialog-scroll-container")
     _dialogOkButton = _document.querySelector("button#content-blocking-ok-button")
+    _selectAllButton = _document.querySelector("button#content-blocking-select-all-button")
+    _unselectAllButton = _document.querySelector("button#content-blocking-unselect-all-button")
 
     renderer.addStdButtonHandler(_unblockContentButton, createUnblockAllMenu)
     renderer.addStdButtonHandler(_dialogOkButton, () => {
@@ -297,6 +325,15 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
         _document.querySelector("button#content-blocking-cancel-button"),
         () => _dialogElement.close(),
     )
+    renderer.addStdButtonHandler(_selectAllButton, () => {
+        _contents.selectAll()
+        _contents.update(_contentsArea)
+    })
+    renderer.addStdButtonHandler(_unselectAllButton, () => {
+        _contents.unselectAll()
+        _contents.update(_contentsArea)
+    })
+
     ipc.listen(ipc.messages.contentBlocked, url => {
         _contents.add(new Content(url))
         changeInfoElementVisiblity(true)

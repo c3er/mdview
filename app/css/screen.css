@@ -118,6 +118,13 @@ input#search-input {
     width: 100%;
 }
 
+div.button-row {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 5px 10px 5px 0px;
+}
+
 .dialog-buttons {
     background-color: #fff;
     bottom: 0;
