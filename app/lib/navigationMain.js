@@ -79,7 +79,6 @@ function canGoForward() {
 }
 
 function openFile(file) {
-    // console.debug(`Navigate to "${_locations.current}"`)
     ipc.send(ipc.messages.fileOpen, file)
 }
 
