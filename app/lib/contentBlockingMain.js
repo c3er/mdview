@@ -14,7 +14,7 @@ let _mainMenu
 
 let _contentIsBlocked = false
 let _allowedURLs = []
-let _permanentlyAllowedURLs
+let _blockingStorage
 
 function unblockUrl(url) {
     if (!url) {
@@ -29,7 +29,7 @@ function storeUnblockedUrl(url) {
         throw new Error("No url given to store")
     }
     log.info(`Stored unblocked URL: ${url}`)
-    _permanentlyAllowedURLs.add(url)
+    _blockingStorage.unblock(url, navigation.currentFilePath())
 }
 
 function allowUnblockContent(isAllowed) {
@@ -48,8 +48,12 @@ exports.init = (mainMenu, electronMock) => {
     const electron = electronMock ?? require("electron")
     _mainMenu = mainMenu
 
-    _permanentlyAllowedURLs = storage.loadAllowedUrls()
-    _allowedURLs.push(..._permanentlyAllowedURLs.urls)
+    _blockingStorage = storage.loadContentBlocking()
+    _allowedURLs.push(
+        ..._blockingStorage.contents
+            .filter(content => !content.isBlocked)
+            .map(content => content.url),
+    )
 
     let lastTime = Date.now()
 

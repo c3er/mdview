@@ -13,18 +13,18 @@ const JSON_INDENTATION = 4
 const APPLICATION_SETTINGS_VERSION = 1
 const DOCUMENT_SETTINGS_VERSION = 0
 const FILE_HISTORY_VERSION = 0
-const ALLOWED_URLS_VERSION = 0
+const CONTENT_BLOCKING_VERSION = 0
 
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 const FILE_HISTORY_FILE = "file-history.json"
-const ALLOWED_URLS_FILE = "allowed-urls.json"
+const CONTENT_BLOCKING_FILE = "content-blocking.json"
 
 let _dataDir
 
 let _applicationSettings
 let _fileHistory
-let _allowedUrls
+let _contentBlocking
 let _documentSettings = {}
 
 class StorageBase {
@@ -369,37 +369,69 @@ class FileHistory extends StorageBase {
     }
 }
 
-class AllowedUrls extends StorageBase {
-    #ALLOWED_URLS_KEY = "allowed-urls"
+class Content {
+    #URL_KEY = "url"
+    #IS_BLOCKED_KEY = "is-blocked"
+    #DOCUMENTS_KEY = "documents"
 
-    urls
+    url = ""
+    isBlocked = true
+    documents = new Set()
+
+    constructor(url) {
+        this.url = url
+    }
+
+    addDocument(document) {
+        this.documents.add(document)
+    }
+
+    toObject() {
+        const obj = {}
+        obj[this.#URL_KEY] = this.url
+        obj[this.#IS_BLOCKED_KEY] = this.isBlocked
+        obj[this.#DOCUMENTS_KEY] = [...this.documents]
+        return obj
+    }
+}
+
+class ContentBlocking extends StorageBase {
+    #CONTENTS_KEY = "contents"
+
+    contents = []
 
     constructor(storageDir, storageFile) {
-        super(ALLOWED_URLS_VERSION, storageDir, storageFile)
-        this.urls = new Set(this._data[this.#ALLOWED_URLS_KEY] ?? [])
+        super(CONTENT_BLOCKING_VERSION, storageDir, storageFile)
+        this.contents = this._data[this.#CONTENTS_KEY] ?? []
     }
 
-    add(url) {
-        this.urls.add(url)
+    unblock(url, originDocument) {
+        let content = this._findContent(url)
+        if (!content) {
+            content = new Content(url)
+            this.contents.push(content)
+        }
+        content.isBlocked = false
+        content.addDocument(originDocument)
         this._save()
     }
 
-    remove(url) {
-        this.urls.delete(url)
+    block(url, originDocument) {
+        const content = this._findContent(url)
+        if (!content) {
+            throw new Error(`Could not find URL: ${url}`)
+        }
+        content.isBlocked = true
+        content.addDocument(originDocument)
         this._save()
     }
 
-    has(url) {
-        return this.urls.has(url)
-    }
-
-    clear() {
-        this.urls.clear()
-        this._save()
+    _findContent(url) {
+        return this.contents.find(content => content.url === url)
     }
 
     _save() {
-        this._data[this.#ALLOWED_URLS_KEY] = [...this.urls]
+        this._data[this.#CONTENTS_KEY] = this.contents.map(content => content.toObject())
         super._save()
     }
 }
@@ -433,10 +465,10 @@ exports.loadDocumentSettings = documentPath => {
 exports.loadFileHistory = () =>
     _fileHistory ?? (_fileHistory = new FileHistory(_dataDir, FILE_HISTORY_FILE))
 
-exports.loadAllowedUrls = () =>
-    _allowedUrls ?? (_allowedUrls = new AllowedUrls(_dataDir, ALLOWED_URLS_FILE))
+exports.loadContentBlocking = () =>
+    _contentBlocking ?? (_contentBlocking = new ContentBlocking(_dataDir, CONTENT_BLOCKING_FILE))
 
 exports.reset = () => {
-    _applicationSettings = _fileHistory = _allowedUrls = null
+    _applicationSettings = _fileHistory = _contentBlocking = null
     _documentSettings = {}
 }
