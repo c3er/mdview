@@ -370,16 +370,18 @@ class FileHistory extends StorageBase {
 }
 
 class Content {
-    #URL_KEY = "url"
-    #IS_BLOCKED_KEY = "is-blocked"
-    #DOCUMENTS_KEY = "documents"
+    static _URL_KEY = "url"
+    static _IS_BLOCKED_KEY = "is-blocked"
+    static _DOCUMENTS_KEY = "documents"
 
-    url = ""
-    isBlocked = true
-    documents = new Set()
+    url
+    isBlocked
+    documents
 
-    constructor(url) {
+    constructor(url, isBlocked = true, documents = new Set()) {
         this.url = url
+        this.isBlocked = isBlocked
+        this.documents = documents
     }
 
     addDocument(document) {
@@ -387,11 +389,19 @@ class Content {
     }
 
     toObject() {
-        const obj = {}
-        obj[this.#URL_KEY] = this.url
-        obj[this.#IS_BLOCKED_KEY] = this.isBlocked
-        obj[this.#DOCUMENTS_KEY] = [...this.documents]
-        return obj
+        return {
+            [Content._URL_KEY]: this.url,
+            [Content._IS_BLOCKED_KEY]: this.isBlocked,
+            [Content._DOCUMENTS_KEY]: [...this.documents],
+        }
+    }
+
+    static fromObject(obj) {
+        return new Content(
+            obj[Content._URL_KEY],
+            obj[Content._IS_BLOCKED_KEY],
+            obj[Content._DOCUMENTS_KEY],
+        )
     }
 }
 
@@ -402,7 +412,7 @@ class ContentBlocking extends StorageBase {
 
     constructor(storageDir, storageFile) {
         super(CONTENT_BLOCKING_VERSION, storageDir, storageFile)
-        this.contents = this._data[this.#CONTENTS_KEY] ?? []
+        this.contents = (this._data[this.#CONTENTS_KEY] ?? []).map(Content.fromObject)
     }
 
     unblock(url, originDocument) {
