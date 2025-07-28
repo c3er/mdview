@@ -87,6 +87,9 @@ exports.init = (mainMenu, electronMock) => {
         _contentIsBlocked = false
         allowUnblockContent(false)
     })
+    ipc.listen(ipc.messages.unblockDialogIsOpen, isOpen =>
+        menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_PERMANENTLY_MENU_ID, !isOpen),
+    )
 
     navigation.register(CONTENT_BLOCKING_NAV_ID, info => {
         const contentIsBlocked = _contentIsBlocked
@@ -106,7 +109,7 @@ exports.init = (mainMenu, electronMock) => {
 
 exports.unblockAll = () => ipc.send(ipc.messages.unblockAll)
 
-exports.unblockAllPermamently = () => console.log("Unblock all content permanently")
+exports.unblockAllPermamently = () => ipc.send(ipc.messages.unblockAllPermanently)
 
 exports.manageUnblocked = () => console.log("Manage unblocked content")
 

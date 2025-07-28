@@ -290,8 +290,13 @@ function openDialog() {
 
             _contents.update(_contentsArea)
             _dialogElement.showModal()
+
+            ipc.send(ipc.messages.unblockDialogIsOpen, true)
         },
-        () => _dialogElement.close(),
+        () => {
+            _dialogElement.close()
+            ipc.send(ipc.messages.unblockDialogIsOpen, false)
+        },
     )
 }
 
@@ -323,7 +328,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     })
     renderer.addStdButtonHandler(
         _document.querySelector("button#content-blocking-cancel-button"),
-        () => _dialogElement.close(),
+        () => dialog.close(),
     )
     renderer.addStdButtonHandler(_selectAllButton, () => {
         _contents.selectAll()
@@ -342,6 +347,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     })
     ipc.listen(ipc.messages.resetContentBlocking, reset)
     ipc.listen(ipc.messages.unblockAll, unblockAll)
+    ipc.listen(ipc.messages.unblockAllPermanently, openDialog)
 
     _isInitialized = true
 }

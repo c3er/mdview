@@ -36,6 +36,8 @@ exports.messages = {
     settingsDialogIsOpen: "settings-dialog-is-open",
     showErrorDialog: "show-error-dialog",
     unblockAll: "unblock-all",
+    unblockAllPermanently: "unblock-all-permanently",
+    unblockDialogIsOpen: "unblock-dialog-is-open",
     unblockUrl: "unblock-url",
     updateSettings: "update-settings",
     updateToc: "update-toc",
