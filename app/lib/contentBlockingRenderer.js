@@ -280,10 +280,16 @@ function storeSelectedUnblocked() {
     }
 }
 
+function setDialogTitle(title) {
+    _document.querySelector("#content-blocking-dialog #content-blocking-dialog-title").innerText =
+        title
+}
+
 function openDialog() {
     dialog.open(
         DIALOG_ID,
         () => {
+            setDialogTitle("Unblock content permanently")
             _contents.selectAll()
             _selectAllButton.disabled = true
             _unselectAllButton.disabled = false
