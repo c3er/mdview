@@ -330,7 +330,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     renderer.addStdButtonHandler(_dialogOkButton, () => {
         storeSelectedUnblocked()
         unblockSelected()
-        _dialogElement.close()
+        dialog.close()
     })
     renderer.addStdButtonHandler(
         _document.querySelector("button#content-blocking-cancel-button"),
