@@ -18,7 +18,7 @@ let _blockingStorage
 
 function unblockUrl(url) {
     if (!url) {
-        throw new Error("No url given")
+        throw new Error("No url given to unblock")
     }
     log.info(`Unblocked: ${url}`)
     _allowedURLs.push(url)
