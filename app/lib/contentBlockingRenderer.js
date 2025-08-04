@@ -3,7 +3,11 @@ const ipc = require("./ipcRenderer")
 const log = require("./log")
 const renderer = require("./commonRenderer")
 
+const shared = require("./contentBlockingShared")
+
 const DIALOG_ID = "content-blocking"
+const UNBLOCK_PERMANENT_DIALOG_TITLE = "Unblock Content Permanently"
+const MANAGE_CONTENT_DIALOG_TITLE = "Manage External Content"
 
 let remote
 
@@ -19,51 +23,47 @@ let _selectAllButton
 let _unselectAllButton
 
 class ContentList {
-    #data
+    data
 
     constructor(data) {
-        this.#data = data ?? []
-    }
-
-    get urls() {
-        return this.#data.map(content => content.url)
+        this.data = data ?? []
     }
 
     add(content) {
-        const existingIndex = this.#data.findIndex(existing => existing.url === content.url)
+        const existingIndex = this.data.findIndex(existing => existing.url === content.url)
         if (existingIndex === -1) {
-            this.#data.push(content)
+            this.data.push(content)
         } else {
-            this.#data[existingIndex] = content
+            this.data[existingIndex] = content
         }
     }
 
     byUrl(url) {
-        return this.#data.find(content => content.url === url)
-    }
-
-    remove(url) {
-        this.#data = this.#data.filter(content => content.url !== url)
+        return this.data.find(content => content.url === url)
     }
 
     reset() {
-        this.#data = []
+        this.data = []
     }
 
     isEmpty() {
-        return this.#data.length === 0
+        return this.data.length === 0
+    }
+
+    isAllUnblocked() {
+        return this.every(content => !content.isBlocked)
     }
 
     filter(predicate) {
-        return new ContentList(this.#data.filter(predicate))
+        return new ContentList(this.data.filter(predicate))
     }
 
     some(predicate) {
-        return this.#data.some(predicate)
+        return this.data.some(predicate)
     }
 
     every(predicate) {
-        return this.#data.every(predicate)
+        return this.data.every(predicate)
     }
 
     update(containerElement) {
@@ -74,14 +74,24 @@ class ContentList {
     toHtml() {
         return `
             <table>
-                ${this.#data.map(content => content.toHtml()).join("\n")}
+                <tr>
+                    <th>Blocked</th>
+                    <th>URL</th>
+                </tr>
+                ${this.data.map(content => content.toHtml()).join("\n")}
             </table>
         `
     }
 
     handleClick() {
-        for (const content of this.#data) {
+        for (const content of this.data) {
             content.handleClick()
+        }
+    }
+
+    renderOriginDocuments() {
+        for (const content of this.data) {
+            content.renderOriginDocuments()
         }
     }
 
@@ -93,27 +103,51 @@ class ContentList {
         this._setSelection(false)
     }
 
+    updateDialogButtons() {
+        _unselectAllButton.disabled = !this.some(content => content.isBlocked)
+        _selectAllButton.disabled = this.every(content => content.isBlocked)
+    }
+
+    static fromObject(obj) {
+        return new ContentList(
+            obj.map(contentObject => {
+                const content = new Content(contentObject[shared.URL_STORAGE_KEY])
+                content.isBlocked = contentObject[shared.IS_BLOCKED_STORAGE_KEY]
+                content.originDocuments = contentObject[shared.DOCUMENTS_STORAGE_KEY]
+                return content
+            }),
+        )
+    }
+
     _setSelection(areSelected) {
-        for (const content of this.#data) {
-            content.shallBeUnblocked = areSelected
+        for (const content of this.data) {
+            content.isBlocked = areSelected
         }
-        updateDialogButtons()
+        this.updateDialogButtons()
     }
 }
 
 class Content {
+    _parentList
+
     url = ""
     id = ""
     elements = []
-    shallBeUnblocked = true
+    originDocuments = []
+    isBlocked = true
 
-    constructor(url) {
+    constructor(url, parentList) {
         this.url = url
+        this._parentList = parentList
         this.id = Content._url2id(url)
         this.elements = Content._searchElementsWithAttributeValue(url)
         for (const element of this.elements) {
-            element.onclick = () => createUnblockMenu(url)
+            element.onclick = () => this._createUnblockMenu()
         }
+    }
+
+    get rowElement() {
+        return _document.querySelector(`tr#${this.id}`)
     }
 
     get checkBoxElement() {
@@ -121,6 +155,7 @@ class Content {
     }
 
     unblock() {
+        this.isBlocked = false
         for (const element of this.elements) {
             element.removeAttribute("style")
 
@@ -147,11 +182,46 @@ class Content {
     }
 
     handleClick() {
-        this.checkBoxElement.checked = this.shallBeUnblocked
-        _document.querySelector(`tr#${this.id}`).onclick = () => {
-            this.shallBeUnblocked = this.checkBoxElement.checked = !this.shallBeUnblocked
-            updateDialogButtons()
+        this.checkBoxElement.checked = this.isBlocked
+        this.rowElement.onclick = () => {
+            this.isBlocked = this.checkBoxElement.checked = !this.isBlocked
+            this._parentList.updateDialogButtons()
         }
+    }
+
+    renderOriginDocuments() {
+        this.rowElement.setAttribute("title", this.originDocuments.join("\n"))
+    }
+
+    store() {
+        ipc.send(ipc.messages.storeUrl, this.url, this.isBlocked)
+        log.info(`Stored ${this.isBlocked ? "blocked" : "unblocked"} URL: ${this.url}`)
+    }
+
+    toString() {
+        let str = `URL: ${this.url}; is blocked: ${this.isBlocked}`
+        if (this.originDocuments.length > 0) {
+            str += ` origin documents: ${this.originDocuments}`
+        }
+        return str
+    }
+
+    _createUnblockMenu() {
+        remote.Menu.buildFromTemplate([
+            {
+                label: "Unblock Temporary",
+                click() {
+                    unblock(this)
+                },
+            },
+            {
+                label: "Unblock Permanently",
+                click() {
+                    unblock(this)
+                    this.store()
+                },
+            },
+        ]).popup()
     }
 
     static _url2id(url) {
@@ -180,14 +250,7 @@ class Content {
     }
 }
 
-const _contents = new ContentList()
-
-function updateDialogButtons() {
-    _dialogOkButton.disabled = _unselectAllButton.disabled = !_contents.some(
-        content => content.shallBeUnblocked,
-    )
-    _selectAllButton.disabled = _contents.every(content => content.shallBeUnblocked)
-}
+const _localContents = new ContentList()
 
 function changeInfoElementVisiblity(isVisible) {
     const infoElement = _document.querySelector("div#blocked-content-info")
@@ -212,7 +275,7 @@ function createUnblockAllMenu() {
         {
             label: "Permanent",
             click() {
-                openDialog()
+                openUnblockPermanentDialog()
             },
         },
     ]).popup({
@@ -221,62 +284,19 @@ function createUnblockAllMenu() {
     })
 }
 
-function createUnblockMenu(url) {
-    remote.Menu.buildFromTemplate([
-        {
-            label: "Unblock Temporary",
-            click() {
-                unblockUrl(url)
-            },
-        },
-        {
-            label: "Unblock Permanently",
-            click() {
-                storeUnblockedUrl(url)
-                unblockUrl(url)
-            },
-        },
-    ]).popup()
-}
-
-function hasBlockedElements() {
-    return !_contents.isEmpty()
-}
-
-function unblockUrl(url) {
-    ipc.send(ipc.messages.unblockUrl, url)
-
-    _contents.byUrl(url)?.unblock()
-    _contents.remove(url)
-
-    if (!hasBlockedElements()) {
+function unblock(content) {
+    content.unblock()
+    ipc.send(ipc.messages.unblock, content.url, content.isBlocked)
+    if (_localContents.isAllUnblocked()) {
         changeInfoElementVisiblity(false)
         ipc.send(ipc.messages.allContentUnblocked)
     }
-
-    log.info(`Unblocked: ${url}`)
+    log.info(`Unblocked: ${content}`)
 }
 
 function unblockAll() {
-    for (const url of _contents.urls) {
-        unblockUrl(url)
-    }
-}
-
-function unblockSelected() {
-    for (const url of _contents.filter(content => content.shallBeUnblocked).urls) {
-        unblockUrl(url)
-    }
-}
-
-function storeUnblockedUrl(url) {
-    ipc.send(ipc.messages.storeUnblockedUrl, url)
-    log.info(`Stored unblocked URL: ${url}`)
-}
-
-function storeSelectedUnblocked() {
-    for (const url of _contents.filter(content => content.shallBeUnblocked).urls) {
-        storeUnblockedUrl(url)
+    for (const content of _localContents.data) {
+        unblock(content)
     }
 }
 
@@ -285,29 +305,46 @@ function setDialogTitle(title) {
         title
 }
 
-function openDialog() {
+function openDialog(title, contents, dialogIsOpenIpcMessage) {
+    renderer.addStdButtonHandler(_selectAllButton, () => {
+        contents.selectAll()
+        contents.update(_contentsArea)
+    })
+    renderer.addStdButtonHandler(_unselectAllButton, () => {
+        contents.unselectAll()
+        contents.update(_contentsArea)
+    })
     dialog.open(
         DIALOG_ID,
         () => {
-            setDialogTitle("Unblock content permanently")
-            _contents.selectAll()
-            _selectAllButton.disabled = true
-            _unselectAllButton.disabled = false
+            setDialogTitle(title)
+            contents.updateDialogButtons()
 
-            _contents.update(_contentsArea)
+            contents.update(_contentsArea)
             _dialogElement.showModal()
 
-            ipc.send(ipc.messages.unblockDialogIsOpen, true)
+            ipc.send(dialogIsOpenIpcMessage, true)
         },
         () => {
             _dialogElement.close()
-            ipc.send(ipc.messages.unblockDialogIsOpen, false)
+            ipc.send(dialogIsOpenIpcMessage, false)
         },
     )
 }
 
+function openUnblockPermanentDialog() {
+    openDialog(UNBLOCK_PERMANENT_DIALOG_TITLE, _localContents, ipc.messages.unblockDialogIsOpen)
+    renderer.addStdButtonHandler(_dialogOkButton, () => {
+        for (const content of _localContents.filter(content => !content.isBlocked)) {
+            unblock(content)
+            content.store()
+        }
+        dialog.close()
+    })
+}
+
 function reset() {
-    _contents.reset()
+    _localContents.reset()
 }
 
 exports.init = (document, window, shallForceInitialization, remoteMock) => {
@@ -327,38 +364,41 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     _unselectAllButton = _document.querySelector("button#content-blocking-unselect-all-button")
 
     renderer.addStdButtonHandler(_unblockContentButton, createUnblockAllMenu)
-    renderer.addStdButtonHandler(_dialogOkButton, () => {
-        storeSelectedUnblocked()
-        unblockSelected()
-        dialog.close()
-    })
     renderer.addStdButtonHandler(
         _document.querySelector("button#content-blocking-cancel-button"),
         () => dialog.close(),
     )
-    renderer.addStdButtonHandler(_selectAllButton, () => {
-        _contents.selectAll()
-        _contents.update(_contentsArea)
-    })
-    renderer.addStdButtonHandler(_unselectAllButton, () => {
-        _contents.unselectAll()
-        _contents.update(_contentsArea)
-    })
 
     ipc.listen(ipc.messages.contentBlocked, url => {
-        _contents.add(new Content(url))
+        _localContents.add(new Content(url, _localContents))
         changeInfoElementVisiblity(true)
         _document.querySelector("span#blocked-content-info-close-button").onclick = () =>
             changeInfoElementVisiblity(false)
     })
     ipc.listen(ipc.messages.resetContentBlocking, reset)
     ipc.listen(ipc.messages.unblockAll, unblockAll)
-    ipc.listen(ipc.messages.unblockAllPermanently, openDialog)
+    ipc.listen(ipc.messages.unblockAllPermanently, openUnblockPermanentDialog)
+    ipc.listen(ipc.messages.manageContentBlocking, contentsObject => {
+        const contents = ContentList.fromObject(contentsObject)
+        openDialog(
+            MANAGE_CONTENT_DIALOG_TITLE,
+            contents,
+            ipc.messages.contentManagementDialogIsOpen,
+        )
+        contents.renderOriginDocuments()
+        renderer.addStdButtonHandler(_dialogOkButton, () => {
+            for (const content of contents) {
+                unblock(content)
+                content.store()
+            }
+            dialog.close()
+        })
+    })
 
     _isInitialized = true
 }
 
-exports.hasBlockedElements = hasBlockedElements
+exports.hasBlockedElements = () => !_localContents.isAllUnblocked()
 
 exports.changeInfoElementVisiblity = changeInfoElementVisiblity
 

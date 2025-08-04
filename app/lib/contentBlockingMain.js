@@ -24,14 +24,6 @@ function unblockUrl(url) {
     _allowedURLs.push(url)
 }
 
-function storeUnblockedUrl(url) {
-    if (!url) {
-        throw new Error("No url given to store")
-    }
-    log.info(`Stored unblocked URL: ${url}`)
-    _blockingStorage.unblock(url, navigation.currentFilePath())
-}
-
 function allowUnblockContent(isAllowed) {
     menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_TEMPORARY_MENU_ID, isAllowed)
 }
@@ -81,14 +73,27 @@ exports.init = (mainMenu, electronMock) => {
         unblockUrl(url)
     })
 
-    ipc.listen(ipc.messages.unblockUrl, unblockUrl)
-    ipc.listen(ipc.messages.storeUnblockedUrl, storeUnblockedUrl)
+    ipc.listen(ipc.messages.unblock, (url, isBlocked) => {
+        if (!isBlocked) {
+            unblockUrl(url)
+        }
+    })
+    ipc.listen(ipc.messages.storeUrl, (url, isBlocked) => {
+        if (!url) {
+            throw new Error("No url given to store")
+        }
+        log.info(`Stored ${isBlocked ? "blocked" : "unblocked"} URL: ${url}`)
+        _blockingStorage.save(url, isBlocked, navigation.currentFilePath())
+    })
     ipc.listen(ipc.messages.allContentUnblocked, () => {
         _contentIsBlocked = false
         allowUnblockContent(false)
     })
     ipc.listen(ipc.messages.unblockDialogIsOpen, isOpen =>
         menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_PERMANENTLY_MENU_ID, !isOpen),
+    )
+    ipc.listen(ipc.messages.manageContentBlocking, isOpen =>
+        menu.setEnabled(_mainMenu, MANAGE_UNBLOCKED_MENU_ID, !isOpen),
     )
 
     navigation.register(CONTENT_BLOCKING_NAV_ID, info => {
@@ -111,6 +116,7 @@ exports.unblockAll = () => ipc.send(ipc.messages.unblockAll)
 
 exports.unblockAllPermamently = () => ipc.send(ipc.messages.unblockAllPermanently)
 
-exports.manageUnblocked = () => console.log("Manage unblocked content")
+exports.manageUnblocked = () =>
+    ipc.send(ipc.messages.manageContentBlocking, _blockingStorage.toObject())
 
 exports.clearUnblockedURLs = () => (_allowedURLs.length = 0)

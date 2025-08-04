@@ -2,6 +2,7 @@ const fs = require("fs")
 const path = require("path")
 
 const common = require("./common")
+const contentBlocking = require("./contentBlockingShared")
 const dragDrop = require("./dragDropShared")
 const log = require("./log")
 const navigation = require("./navigationMain")
@@ -370,10 +371,6 @@ class FileHistory extends StorageBase {
 }
 
 class Content {
-    static _URL_KEY = "url"
-    static _IS_BLOCKED_KEY = "is-blocked"
-    static _DOCUMENTS_KEY = "documents"
-
     url
     isBlocked
     documents
@@ -390,17 +387,17 @@ class Content {
 
     toObject() {
         return {
-            [Content._URL_KEY]: this.url,
-            [Content._IS_BLOCKED_KEY]: this.isBlocked,
-            [Content._DOCUMENTS_KEY]: [...this.documents],
+            [contentBlocking.URL_STORAGE_KEY]: this.url,
+            [contentBlocking.IS_BLOCKED_STORAGE_KEY]: this.isBlocked,
+            [contentBlocking.DOCUMENTS_STORAGE_KEY]: [...this.documents],
         }
     }
 
     static fromObject(obj) {
         return new Content(
-            obj[Content._URL_KEY],
-            obj[Content._IS_BLOCKED_KEY],
-            obj[Content._DOCUMENTS_KEY],
+            obj[contentBlocking.URL_STORAGE_KEY],
+            obj[contentBlocking.IS_BLOCKED_STORAGE_KEY],
+            obj[contentBlocking.DOCUMENTS_STORAGE_KEY],
         )
     }
 }
@@ -415,25 +412,19 @@ class ContentBlocking extends StorageBase {
         this.contents = (this._data[this.#CONTENTS_KEY] ?? []).map(Content.fromObject)
     }
 
-    unblock(url, originDocument) {
+    save(url, isBlocked, originDocument) {
         let content = this._findContent(url)
         if (!content) {
             content = new Content(url)
             this.contents.push(content)
         }
-        content.isBlocked = false
+        content.isBlocked = isBlocked
         content.addDocument(originDocument)
         this._save()
     }
 
-    block(url, originDocument) {
-        const content = this._findContent(url)
-        if (!content) {
-            throw new Error(`Could not find URL: ${url}`)
-        }
-        content.isBlocked = true
-        content.addDocument(originDocument)
-        this._save()
+    toObject() {
+        return this.contents.map(content => content.toObject())
     }
 
     _findContent(url) {
@@ -441,7 +432,7 @@ class ContentBlocking extends StorageBase {
     }
 
     _save() {
-        this._data[this.#CONTENTS_KEY] = this.contents.map(content => content.toObject())
+        this._data[this.#CONTENTS_KEY] = this.toObject()
         super._save()
     }
 }
