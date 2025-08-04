@@ -31,7 +31,11 @@ Another link to Google: https://www.google.com/
 
 [Link to README.md](../../README.md)
 
-[Internal link](#sub-heading-1)
+[Internal link to a header](#sub-heading-1)
+
+[Internal link, utilizing anchor with ID](#test-id)
+
+[Internal link, utilizing anchor with name](#test-name)
 
 <a href="#some-javascript" id="internal-test-link">Another internal link</a>
 
@@ -120,6 +124,12 @@ See https://github.com/cmrd-senya/markdown-it-html5-embed
 This is a paragraph.
 
 This is another paragraph.
+
+## Anchor targets
+
+<a id="test-id"></a>Paragraph on anchor "test-id"
+
+<a name="test-name"></a>Paragraph on anchor "test-name"
 
 ## Lists
 
