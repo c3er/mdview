@@ -274,7 +274,7 @@ function createMainMenu() {
                         { type: "separator" },
                         {
                             label: "&Manage Unblocked Content...",
-                            id: contentBlocking.MANAGE_UNBLOCKED_MENU_ID,
+                            id: contentBlocking.MANAGE_CONTENT_BLOCKING_MENU_ID,
                             click() {
                                 contentBlocking.manageUnblocked()
                             },

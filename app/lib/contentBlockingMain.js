@@ -7,7 +7,7 @@ const storage = require("./storageMain")
 
 const UNBLOCK_CONTENT_TEMPORARY_MENU_ID = "unblock-content"
 const UNBLOCK_CONTENT_PERMANENTLY_MENU_ID = "unblock-content-permanently"
-const MANAGE_UNBLOCKED_MENU_ID = "manage-unblocked-content"
+const MANAGE_CONTENT_BLOCKING_MENU_ID = "manage-content-blocking"
 const CONTENT_BLOCKING_NAV_ID = "content-blocking"
 
 let _mainMenu
@@ -32,7 +32,7 @@ exports.UNBLOCK_CONTENT_TEMPORARY_MENU_ID = UNBLOCK_CONTENT_TEMPORARY_MENU_ID
 
 exports.UNBLOCK_CONTENT_PERMANENTLY_MENU_ID = UNBLOCK_CONTENT_PERMANENTLY_MENU_ID
 
-exports.MANAGE_UNBLOCKED_MENU_ID = MANAGE_UNBLOCKED_MENU_ID
+exports.MANAGE_CONTENT_BLOCKING_MENU_ID = MANAGE_CONTENT_BLOCKING_MENU_ID
 
 exports.unblockedURLs = _allowedURLs
 
@@ -92,8 +92,8 @@ exports.init = (mainMenu, electronMock) => {
     ipc.listen(ipc.messages.unblockDialogIsOpen, isOpen =>
         menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_PERMANENTLY_MENU_ID, !isOpen),
     )
-    ipc.listen(ipc.messages.manageContentBlocking, isOpen =>
-        menu.setEnabled(_mainMenu, MANAGE_UNBLOCKED_MENU_ID, !isOpen),
+    ipc.listen(ipc.messages.contentManagementDialogIsOpen, isOpen =>
+        menu.setEnabled(_mainMenu, MANAGE_CONTENT_BLOCKING_MENU_ID, !isOpen),
     )
 
     navigation.register(CONTENT_BLOCKING_NAV_ID, info => {
