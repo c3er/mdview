@@ -28,6 +28,9 @@ class ContentList {
 
     constructor(data) {
         this.data = data ?? []
+        for (const content of this.data) {
+            content.parentList = this
+        }
     }
 
     add(content) {
@@ -37,6 +40,7 @@ class ContentList {
         } else {
             this.data[existingIndex] = content
         }
+        content.parentList = this
     }
 
     byUrl(url) {
@@ -125,17 +129,15 @@ class ContentList {
 }
 
 class Content {
-    _parentList
-
+    parentList
     url = ""
     id = ""
     elements = []
     originDocuments = []
     isBlocked = true
 
-    constructor(url, parentList) {
+    constructor(url) {
         this.url = url
-        this._parentList = parentList
         this.id = Content._url2id(url)
         this.elements = Content._searchElementsWithAttributeValue(url)
         for (const element of this.elements) {
@@ -182,7 +184,7 @@ class Content {
         this.checkBoxElement.checked = this.isBlocked
         this.rowElement.onclick = () => {
             this.isBlocked = this.checkBoxElement.checked = !this.isBlocked
-            this._parentList.updateDialogButtons()
+            this.parentList.updateDialogButtons()
         }
     }
 
@@ -367,7 +369,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     )
 
     ipc.listen(ipc.messages.contentBlocked, url => {
-        _localContents.add(new Content(url, _localContents))
+        _localContents.add(new Content(url))
         changeInfoElementVisiblity(true)
         _document.querySelector("span#blocked-content-info-close-button").onclick = () =>
             changeInfoElementVisiblity(false)
