@@ -12,6 +12,7 @@ const MANAGE_CONTENT_DIALOG_TITLE = "Manage External Content"
 let remote
 
 let _isInitialized = false
+let _localContents
 
 let _document
 let _window
@@ -40,10 +41,6 @@ class ContentList {
 
     byUrl(url) {
         return this.data.find(content => content.url === url)
-    }
-
-    reset() {
-        this.data = []
     }
 
     isEmpty() {
@@ -250,8 +247,6 @@ class Content {
     }
 }
 
-const _localContents = new ContentList()
-
 function changeInfoElementVisiblity(isVisible) {
     const infoElement = _document.querySelector("div#blocked-content-info")
     infoElement.style.display = isVisible ? "flex" : "none"
@@ -344,7 +339,7 @@ function openUnblockPermanentDialog() {
 }
 
 function reset() {
-    _localContents.reset()
+    _localContents = new ContentList()
 }
 
 exports.init = (document, window, shallForceInitialization, remoteMock) => {
@@ -353,6 +348,8 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     }
 
     remote = remoteMock ?? require("@electron/remote")
+
+    reset()
 
     _document = document
     _window = window
