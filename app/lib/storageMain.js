@@ -376,6 +376,9 @@ class Content {
     documents
 
     constructor(url, isBlocked = true, documents = new Set()) {
+        if (!(documents instanceof Set)) {
+            throw new Error('Parameter "documents" is not a "Set" object.')
+        }
         this.url = url
         this.isBlocked = isBlocked
         this.documents = documents
@@ -397,7 +400,7 @@ class Content {
         return new Content(
             obj[contentBlocking.URL_STORAGE_KEY],
             obj[contentBlocking.IS_BLOCKED_STORAGE_KEY],
-            obj[contentBlocking.DOCUMENTS_STORAGE_KEY],
+            new Set(obj[contentBlocking.DOCUMENTS_STORAGE_KEY]),
         )
     }
 }

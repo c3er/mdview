@@ -1,6 +1,7 @@
 const dialog = require("./dialogRenderer")
 const ipc = require("./ipcRenderer")
 const log = require("./log")
+const navigation = require("./navigationRenderer")
 const renderer = require("./commonRenderer")
 
 const shared = require("./contentBlockingShared")
@@ -24,31 +25,49 @@ let _selectAllButton
 let _unselectAllButton
 
 class ContentList {
-    data
+    #data
 
     constructor(data) {
-        this.data = data ?? []
-        for (const content of this.data) {
+        this.#data = data ?? []
+        for (const content of this) {
             content.parentList = this
         }
     }
 
+    [Symbol.iterator]() {
+        let index = 0
+        return {
+            next: () => ({
+                value: this.#data[index],
+                done: index++ >= this.#data.length,
+            }),
+        }
+    }
+
+    merge(contents) {
+        const merged = new ContentList(this.#data)
+        for (const content of contents) {
+            merged.add(content)
+        }
+        return merged
+    }
+
     add(content) {
-        const existingIndex = this.data.findIndex(existing => existing.url === content.url)
+        const existingIndex = this.#data.findIndex(existing => existing.url === content.url)
         if (existingIndex === -1) {
-            this.data.push(content)
+            this.#data.push(content)
         } else {
-            this.data[existingIndex] = content
+            this.#data[existingIndex] = content
         }
         content.parentList = this
     }
 
     byUrl(url) {
-        return this.data.find(content => content.url === url)
+        return this.#data.find(content => content.url === url)
     }
 
     isEmpty() {
-        return this.data.length === 0
+        return this.#data.length === 0
     }
 
     isAllUnblocked() {
@@ -56,15 +75,15 @@ class ContentList {
     }
 
     filter(predicate) {
-        return new ContentList(this.data.filter(predicate))
+        return new ContentList(this.#data.filter(predicate))
     }
 
     some(predicate) {
-        return this.data.some(predicate)
+        return this.#data.some(predicate)
     }
 
     every(predicate) {
-        return this.data.every(predicate)
+        return this.#data.every(predicate)
     }
 
     update(containerElement) {
@@ -79,19 +98,19 @@ class ContentList {
                     <th>Blocked</th>
                     <th>URL</th>
                 </tr>
-                ${this.data.map(content => content.toHtml()).join("\n")}
+                ${this.#data.map(content => content.toHtml()).join("\n")}
             </table>
         `
     }
 
     handleClick() {
-        for (const content of this.data) {
+        for (const content of this) {
             content.handleClick()
         }
     }
 
     renderOriginDocuments() {
-        for (const content of this.data) {
+        for (const content of this) {
             content.renderOriginDocuments()
         }
     }
@@ -121,7 +140,7 @@ class ContentList {
     }
 
     _setSelection(areSelected) {
-        for (const content of this.data) {
+        for (const content of this) {
             content.isBlocked = areSelected
         }
         this.updateDialogButtons()
@@ -136,9 +155,12 @@ class Content {
     originDocuments = []
     isBlocked = true
 
-    constructor(url) {
+    constructor(url, originDocument) {
         this.url = url
         this.id = Content._url2id(url)
+        if (originDocument) {
+            this.originDocuments.push(originDocument)
+        }
         this.elements = Content._searchElementsWithAttributeValue(url)
         for (const element of this.elements) {
             element.onclick = () => this._createUnblockMenu()
@@ -273,7 +295,7 @@ function createUnblockAllMenu() {
         {
             label: "Permanent",
             click() {
-                openUnblockPermanentDialog()
+                ipc.send(ipc.messages.unblockAllPermanentlyRequest)
             },
         },
     ]).popup({
@@ -293,7 +315,7 @@ function unblock(content) {
 }
 
 function unblockAll() {
-    for (const content of _localContents.data) {
+    for (const content of _localContents) {
         unblock(content)
     }
 }
@@ -330,17 +352,6 @@ function openDialog(title, contents, dialogIsOpenIpcMessage) {
     )
 }
 
-function openUnblockPermanentDialog() {
-    openDialog(UNBLOCK_PERMANENT_DIALOG_TITLE, _localContents, ipc.messages.unblockDialogIsOpen)
-    renderer.addStdButtonHandler(_dialogOkButton, () => {
-        for (const content of _localContents.filter(content => !content.isBlocked)) {
-            unblock(content)
-            content.store()
-        }
-        dialog.close()
-    })
-}
-
 function reset() {
     _localContents = new ContentList()
 }
@@ -370,16 +381,31 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     )
 
     ipc.listen(ipc.messages.contentBlocked, url => {
-        _localContents.add(new Content(url))
+        _localContents.add(new Content(url, navigation.currentFilePath()))
         changeInfoElementVisiblity(true)
         _document.querySelector("span#blocked-content-info-close-button").onclick = () =>
             changeInfoElementVisiblity(false)
     })
     ipc.listen(ipc.messages.resetContentBlocking, reset)
     ipc.listen(ipc.messages.unblockAll, unblockAll)
-    ipc.listen(ipc.messages.unblockAllPermanently, openUnblockPermanentDialog)
+    ipc.listen(ipc.messages.unblockAllPermanently, contentsObject => {
+        openDialog(
+            UNBLOCK_PERMANENT_DIALOG_TITLE,
+            _localContents
+                .merge(ContentList.fromObject(contentsObject))
+                .filter(content => content.originDocuments.includes(navigation.currentFilePath())),
+            ipc.messages.unblockDialogIsOpen,
+        )
+        renderer.addStdButtonHandler(_dialogOkButton, () => {
+            for (const content of _localContents.filter(content => !content.isBlocked)) {
+                unblock(content)
+                content.store()
+            }
+            dialog.close()
+        })
+    })
     ipc.listen(ipc.messages.manageContentBlocking, contentsObject => {
-        const contents = ContentList.fromObject(contentsObject)
+        const contents = _localContents.merge(ContentList.fromObject(contentsObject))
         openDialog(
             MANAGE_CONTENT_DIALOG_TITLE,
             contents,
