@@ -206,18 +206,19 @@ class Content {
     }
 
     _createUnblockMenu() {
+        const that = this
         remote.Menu.buildFromTemplate([
             {
                 label: "Unblock Temporary",
                 click() {
-                    unblock(this)
+                    unblock(that)
                 },
             },
             {
                 label: "Unblock Permanently",
                 click() {
-                    unblock(this)
-                    this.store()
+                    unblock(that)
+                    that.store()
                 },
             },
         ]).popup()
