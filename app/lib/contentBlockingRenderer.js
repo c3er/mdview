@@ -414,7 +414,9 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
         contents.renderOriginDocuments()
         renderer.addStdButtonHandler(_dialogOkButton, () => {
             for (const content of contents) {
-                unblock(content)
+                if (!content.isBlocked) {
+                    unblock(content)
+                }
                 content.store()
             }
             dialog.close()
