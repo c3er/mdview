@@ -371,17 +371,23 @@ class FileHistory extends StorageBase {
 }
 
 class Content {
+    _documents
+
     url
     isBlocked
-    documents
 
     constructor(url, isBlocked = true, documents = new Set()) {
-        if (!(documents instanceof Set)) {
-            throw new Error('Parameter "documents" is not a "Set" object.')
-        }
         this.url = url
         this.isBlocked = isBlocked
         this.documents = documents
+    }
+
+    get documents() {
+        return this._documents
+    }
+
+    set documents(value) {
+        this._documents = value instanceof Set ? value : new Set(value)
     }
 
     addDocument(document) {
@@ -400,7 +406,7 @@ class Content {
         return new Content(
             obj[contentBlocking.URL_STORAGE_KEY],
             obj[contentBlocking.IS_BLOCKED_STORAGE_KEY],
-            new Set(obj[contentBlocking.DOCUMENTS_STORAGE_KEY]),
+            obj[contentBlocking.DOCUMENTS_STORAGE_KEY],
         )
     }
 }
@@ -415,14 +421,14 @@ class ContentBlocking extends StorageBase {
         this.contents = (this._data[this.#CONTENTS_KEY] ?? []).map(Content.fromObject)
     }
 
-    save(url, isBlocked, originDocument) {
+    save(url, isBlocked, originDocuments) {
         let content = this._findContent(url)
         if (!content) {
             content = new Content(url)
             this.contents.push(content)
         }
         content.isBlocked = isBlocked
-        content.addDocument(originDocument)
+        content.documents = originDocuments
         this._save()
     }
 

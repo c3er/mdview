@@ -82,12 +82,12 @@ exports.init = (mainMenu, electronMock) => {
             unblockUrl(url)
         }
     })
-    ipc.listen(ipc.messages.storeUrl, (url, isBlocked) => {
+    ipc.listen(ipc.messages.storeUrl, (url, isBlocked, originDocuments) => {
         if (!url) {
             throw new Error("No url given to store")
         }
         log.info(`Stored ${isBlocked ? "blocked" : "unblocked"} URL: ${url}`)
-        _blockingStorage.save(url, isBlocked, navigation.currentFilePath())
+        _blockingStorage.save(url, isBlocked, originDocuments)
     })
     ipc.listen(ipc.messages.allContentUnblocked, () => {
         _contentIsBlocked = false
