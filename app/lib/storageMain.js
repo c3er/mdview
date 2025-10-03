@@ -421,6 +421,10 @@ class ContentBlocking extends StorageBase {
         this.contents = (this._data[this.#CONTENTS_KEY] ?? []).map(Content.fromObject)
     }
 
+    get isEmpty() {
+        return this.contents.length === 0
+    }
+
     save(url, isBlocked, originDocuments) {
         let content = this._findContent(url)
         if (!content) {

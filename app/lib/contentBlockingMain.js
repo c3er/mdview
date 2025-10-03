@@ -24,8 +24,17 @@ function unblockUrl(url) {
     _allowedURLs.push(url)
 }
 
+function canManageContentBlocking() {
+    return _contentIsBlocked || !_blockingStorage.isEmpty
+}
+
+function allowManageContentBlocking(isAllowed) {
+    menu.setEnabled(_mainMenu, MANAGE_CONTENT_BLOCKING_MENU_ID, isAllowed)
+}
+
 function allowUnblockContent(isAllowed) {
     menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_TEMPORARY_MENU_ID, isAllowed)
+    menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_PERMANENTLY_MENU_ID, isAllowed)
 }
 
 function unblockAllPermanently() {
@@ -68,6 +77,7 @@ exports.init = (mainMenu, electronMock) => {
             ipc.send(ipc.messages.contentBlocked, url)
         }
         allowUnblockContent(_contentIsBlocked)
+        allowManageContentBlocking(canManageContentBlocking())
 
         lastTime = currentTime
     })
