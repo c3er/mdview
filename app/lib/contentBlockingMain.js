@@ -37,8 +37,8 @@ function allowUnblockContent(isAllowed) {
     menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_PERMANENTLY_MENU_ID, isAllowed)
 }
 
-function unblockAllPermanently() {
-    ipc.send(ipc.messages.unblockAllPermanently, _blockingStorage.toObject())
+function update() {
+    ipc.send(ipc.messages.updateBlockedContents, _blockingStorage.toObject())
 }
 
 exports.UNBLOCK_CONTENT_TEMPORARY_MENU_ID = UNBLOCK_CONTENT_TEMPORARY_MENU_ID
@@ -103,7 +103,7 @@ exports.init = (mainMenu, electronMock) => {
         _contentIsBlocked = false
         allowUnblockContent(false)
     })
-    ipc.listen(ipc.messages.unblockAllPermanentlyRequest, unblockAllPermanently)
+    ipc.listen(ipc.messages.updateBlockedContentsRequest, update)
     ipc.listen(ipc.messages.unblockDialogIsOpen, isOpen =>
         menu.setEnabled(_mainMenu, UNBLOCK_CONTENT_PERMANENTLY_MENU_ID, !isOpen),
     )
@@ -129,7 +129,7 @@ exports.init = (mainMenu, electronMock) => {
 
 exports.unblockAll = () => ipc.send(ipc.messages.unblockAll)
 
-exports.unblockAllPermamently = unblockAllPermanently
+exports.unblockAllPermamently = update
 
 exports.manageUnblocked = () =>
     ipc.send(ipc.messages.manageContentBlocking, _blockingStorage.toObject())

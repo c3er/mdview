@@ -44,6 +44,14 @@ class ContentList {
         }
     }
 
+    get modified() {
+        return this.#data.filter(content => content.isModified)
+    }
+
+    get isAllUnblocked() {
+        return this.every(content => !content.isBlocked)
+    }
+
     merge(contents) {
         const merged = new ContentList(this.#data)
         for (const content of contents) {
@@ -57,6 +65,7 @@ class ContentList {
         if (existingIndex === -1) {
             this.#data.push(content)
         } else {
+            content.isBlocked = this.#data[existingIndex].isBlocked
             this.#data[existingIndex] = content
         }
         content.parentList = this
@@ -64,14 +73,6 @@ class ContentList {
 
     byUrl(url) {
         return this.#data.find(content => content.url === url)
-    }
-
-    isEmpty() {
-        return this.#data.length === 0
-    }
-
-    isAllUnblocked() {
-        return this.every(content => !content.isBlocked)
     }
 
     filter(predicate) {
@@ -86,7 +87,7 @@ class ContentList {
         return this.#data.every(predicate)
     }
 
-    update(containerElement) {
+    updateUi(containerElement) {
         containerElement.innerHTML = this.toHtml()
         this.handleClick()
     }
@@ -148,12 +149,14 @@ class ContentList {
 }
 
 class Content {
+    #isBlocked = true
+
     parentList
     url = ""
     id = ""
     elements = []
     originDocuments = []
-    isBlocked = true
+    isModified = false
 
     constructor(url, originDocument) {
         this.url = url
@@ -167,6 +170,15 @@ class Content {
         }
     }
 
+    get isBlocked() {
+        return this.#isBlocked
+    }
+
+    set isBlocked(value) {
+        this.#isBlocked = value
+        this.isModified = true
+    }
+
     get rowElement() {
         return _document.querySelector(`tr#${this.id}`)
     }
@@ -175,8 +187,8 @@ class Content {
         return _document.querySelector(`tr#${this.id} input`)
     }
 
-    unblock() {
-        this.isBlocked = false
+    update(isBlocked) {
+        this.isBlocked = isBlocked
         for (const element of this.elements) {
             element.removeAttribute("style")
 
@@ -205,7 +217,8 @@ class Content {
     handleClick() {
         this.checkBoxElement.checked = this.isBlocked
         this.rowElement.onclick = () => {
-            this.isBlocked = this.checkBoxElement.checked = !this.isBlocked
+            this.isBlocked = !this.isBlocked
+            this.checkBoxElement.checked = this.isBlocked
             this.parentList.updateDialogButtons()
         }
     }
@@ -217,6 +230,8 @@ class Content {
     store() {
         ipc.send(ipc.messages.storeUrl, this.url, this.isBlocked, this.originDocuments)
         log.info(`Stored ${this.isBlocked ? "blocked" : "unblocked"} URL: ${this.url}`)
+
+        this.isModified = false
     }
 
     toString() {
@@ -233,13 +248,13 @@ class Content {
             {
                 label: "Unblock Temporary",
                 click() {
-                    unblock(that)
+                    update(that, false)
                 },
             },
             {
                 label: "Unblock Permanently",
                 click() {
-                    unblock(that)
+                    update(that, false)
                     that.store()
                 },
             },
@@ -295,7 +310,7 @@ function createUnblockAllMenu() {
         {
             label: "Permanent",
             click() {
-                ipc.send(ipc.messages.unblockAllPermanentlyRequest)
+                ipc.send(ipc.messages.updateBlockedContentsRequest)
             },
         },
     ]).popup({
@@ -304,10 +319,10 @@ function createUnblockAllMenu() {
     })
 }
 
-function unblock(content) {
-    content.unblock()
+function update(content, isBlocked) {
+    content.update(isBlocked ?? content.isBlocked)
     ipc.send(ipc.messages.unblock, content.url, content.isBlocked)
-    if (_localContents.isAllUnblocked()) {
+    if (_localContents.isAllUnblocked) {
         changeInfoElementVisiblity(false)
         ipc.send(ipc.messages.allContentUnblocked)
     }
@@ -316,7 +331,7 @@ function unblock(content) {
 
 function unblockAll() {
     for (const content of _localContents) {
-        unblock(content)
+        update(content, false)
     }
 }
 
@@ -328,11 +343,11 @@ function setDialogTitle(title) {
 function openDialog(title, contents, dialogIsOpenIpcMessage) {
     renderer.addStdButtonHandler(_selectAllButton, () => {
         contents.selectAll()
-        contents.update(_contentsArea)
+        contents.updateUi(_contentsArea)
     })
     renderer.addStdButtonHandler(_unselectAllButton, () => {
         contents.unselectAll()
-        contents.update(_contentsArea)
+        contents.updateUi(_contentsArea)
     })
     dialog.open(
         DIALOG_ID,
@@ -340,7 +355,7 @@ function openDialog(title, contents, dialogIsOpenIpcMessage) {
             setDialogTitle(title)
             contents.updateDialogButtons()
 
-            contents.update(_contentsArea)
+            contents.updateUi(_contentsArea)
             _dialogElement.showModal()
 
             ipc.send(dialogIsOpenIpcMessage, true)
@@ -388,7 +403,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     })
     ipc.listen(ipc.messages.resetContentBlocking, reset)
     ipc.listen(ipc.messages.unblockAll, unblockAll)
-    ipc.listen(ipc.messages.unblockAllPermanently, contentsObject => {
+    ipc.listen(ipc.messages.updateBlockedContents, contentsObject => {
         openDialog(
             UNBLOCK_PERMANENT_DIALOG_TITLE,
             _localContents
@@ -397,8 +412,8 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
             ipc.messages.unblockDialogIsOpen,
         )
         renderer.addStdButtonHandler(_dialogOkButton, () => {
-            for (const content of _localContents.filter(content => !content.isBlocked)) {
-                unblock(content)
+            for (const content of _localContents.modified) {
+                update(content)
                 content.store()
             }
             dialog.close()
@@ -413,10 +428,8 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
         )
         contents.renderOriginDocuments()
         renderer.addStdButtonHandler(_dialogOkButton, () => {
-            for (const content of contents) {
-                if (!content.isBlocked) {
-                    unblock(content)
-                }
+            for (const content of contents.modified) {
+                update(content)
                 content.store()
             }
             dialog.close()
@@ -426,7 +439,7 @@ exports.init = (document, window, shallForceInitialization, remoteMock) => {
     _isInitialized = true
 }
 
-exports.hasBlockedElements = () => !_localContents.isAllUnblocked()
+exports.hasBlockedElements = () => !_localContents.isAllUnblocked
 
 exports.changeInfoElementVisiblity = changeInfoElementVisiblity
 
