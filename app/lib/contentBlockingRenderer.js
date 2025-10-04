@@ -229,9 +229,8 @@ class Content {
 
     store() {
         ipc.send(ipc.messages.storeUrl, this.url, this.isBlocked, this.originDocuments)
-        log.info(`Stored ${this.isBlocked ? "blocked" : "unblocked"} URL: ${this.url}`)
-
         this.isModified = false
+        log.info(`Stored ${this.isBlocked ? "blocked" : "unblocked"} URL: ${this.url}`)
     }
 
     toString() {
