@@ -167,6 +167,7 @@ class Content {
         this.elements = Content._searchElementsWithAttributeValue(url)
         for (const element of this.elements) {
             element.onclick = () => this._createUnblockMenu()
+            element.onerror = () => Content._indicateBlocked(element)
         }
     }
 
@@ -190,7 +191,11 @@ class Content {
     update(isBlocked) {
         this.isBlocked = isBlocked
         for (const element of this.elements) {
-            element.removeAttribute("style")
+            if (isBlocked) {
+                Content._indicateBlocked(element)
+            } else {
+                element.classList.remove("blocked")
+            }
 
             // Force element to reload without recreating the DOM element.
             // Recreating the DOM element would cause the attached event handlers to be lost.
@@ -258,6 +263,10 @@ class Content {
                 },
             },
         ]).popup()
+    }
+
+    static _indicateBlocked(element) {
+        element.classList.add("blocked")
     }
 
     static _url2id(url) {

@@ -345,8 +345,6 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         }
         const altText = image.getAttribute("alt")
         statusOnMouseOver(image, imageUrl ? `${altText} (${imageUrl})` : altText)
-
-        image.onerror = () => (image.style.backgroundColor = "#ffe6cc")
     })
     alterTags("audio", audioElement => {
         const audioUrl = common.prepareUrl(audioElement.getAttribute("src"))
