@@ -208,7 +208,7 @@ describe("Integration tests with single app instance", () => {
         }
 
         function assertMenu(menu, itemPath) {
-            for (const [, currentItem] of Object.entries(menu)) {
+            for (const currentItem of Object.values(menu)) {
                 if (common.isEmptyObject(currentItem)) {
                     continue
                 }
