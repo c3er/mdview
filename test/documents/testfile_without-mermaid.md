@@ -69,6 +69,10 @@ Another link to Google: https://www.google.com/
 
 ![Image from the evil Internet](http://placekitten.com/1000/2000)
 
+![Evil image from the Internet](https://c3er.github.io/cat2.jpg)
+
+![Another evil image from the evil Internet](https://c3er.github.io/cat3.jpg)
+
 ## Multimedia
 
 ### Audio
