@@ -75,7 +75,7 @@ Another link to Google: https://www.google.com/
 
 ![Evil image from the Internet](https://c3er.github.io/cat2.jpg)
 
-![Another evil image from image from the evil Internet](https://c3er.github.io/cat3.jpg)
+![Another evil image from the evil Internet](https://c3er.github.io/cat3.jpg)
 
 ## Multimedia
 
