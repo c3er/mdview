@@ -192,8 +192,8 @@ describe("Integration tests with single app instance", () => {
 
     describe("Main menu", () => {
         async function searchMenuItem(menuItemPath) {
-            return await _app.evaluate(({ Menu }, itemPath) => {
-                let menu = Menu.getApplicationMenu()
+            return await _app.evaluate((electron, itemPath) => {
+                let menu = electron.Menu.getApplicationMenu()
                 let item
                 for (const label of itemPath) {
                     item = menu.items.find(item => item.label === label)
@@ -681,8 +681,8 @@ describe("Integration tests with their own app instance each", () => {
 
         async function subMenuItems(id) {
             return await _app.evaluate(
-                ({ Menu }, id) =>
-                    Menu.getApplicationMenu()
+                (electron, id) =>
+                    electron.Menu.getApplicationMenu()
                         .getMenuItemById(id)
                         .submenu.items.filter(item => item.visible)
                         .map(item => item.label),
