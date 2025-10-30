@@ -89,10 +89,6 @@ function containsConsoleMessage(message) {
     return Boolean(_consoleMessages.find(msg => msg.toLowerCase().includes(message.toLowerCase())))
 }
 
-function hasUnblockedContentMessage() {
-    return containsConsoleMessage("unblocked")
-}
-
 async function elementHasState(elementPath, state, locatorCallback) {
     const attempts = 3
     for (let i = 0; i < attempts; i++) {
@@ -283,7 +279,9 @@ describe("Integration tests with their own app instance each", () => {
 
     afterEach(async () => await _app.close())
 
-    describe("Blocked content", () => {
+    describe("Content blocking", () => {
+        const contentBlocking = require("../app/lib/contentBlockingMain")
+
         describe("UI element", () => {
             it("disappears at click on X", async () => {
                 const blockedContentArea = mocking.elements.blockedContentArea
@@ -295,14 +293,54 @@ describe("Integration tests with their own app instance each", () => {
 
         describe("Menu item", () => {
             it("unblocks content", async () => {
-                const contentBlocking = require("../app/lib/contentBlockingMain")
-                const unblockContentMenuId = contentBlocking.UNBLOCK_CONTENT_TEMPORARY_MENU_ID
+                const unblockContentTemporaryMenuId =
+                    contentBlocking.UNBLOCK_CONTENT_TEMPORARY_MENU_ID
 
-                await clickMenuItem(unblockContentMenuId)
+                await clickMenuItem(unblockContentTemporaryMenuId)
 
                 assert(await elementIsHidden(mocking.elements.blockedContentArea.path))
-                assert(!(await menuItemIsEnabled(unblockContentMenuId)))
-                assert(hasUnblockedContentMessage())
+                assert(!(await menuItemIsEnabled(unblockContentTemporaryMenuId)))
+                assert(containsConsoleMessage("unblocked"))
+            })
+        })
+
+        describe("Dialog and storage", () => {
+            // Parts of the UI must stay untested for now, because it is not possible to click on
+            // (or react to) popup menus.
+            // See https://github.com/microsoft/playwright/issues/11100
+
+            async function openDialog() {
+                const dialogPath = mocking.elements.contentBlockingDialog.path
+                await clickMenuItem(contentBlocking.UNBLOCK_CONTENT_PERMANENTLY_MENU_ID)
+                assert(await elementIsVisible(dialogPath))
+                return _page.locator(dialogPath)
+            }
+
+            async function collectContents(dialog) {
+                const rows = dialog.locator("tr:has(td)")
+                const contents = []
+                const rowCount = await rows.count()
+                for (let i = 0; i < rowCount; i++) {
+                    const cells = rows.nth(i).locator("td")
+                    contents.push({
+                        checkbox: cells.nth(0).locator('input[type="checkbox"]'),
+                        url: await cells.nth(1).innerText(),
+                    })
+                }
+                return contents
+            }
+
+            it("unblocks content selectively", async () => {
+                const EXPECTED_CONTENT_COUNT = 3
+
+                const dialog = await openDialog()
+                const contents = await collectContents(dialog)
+                assert.strictEqual(contents.length, EXPECTED_CONTENT_COUNT)
+
+                const firstContent = contents[0]
+                await firstContent.checkbox.click()
+                await _page.locator(mocking.elements.contentBlockingDialog.okButton.path).click()
+                assert(containsConsoleMessage(`Unblocked: URL: ${firstContent.url}`))
             })
         })
     })

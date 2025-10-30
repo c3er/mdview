@@ -466,6 +466,15 @@ exports.elements = {
             path: "#drag-drop-remember",
         },
     },
+    contentBlockingDialog: {
+        path: "#content-blocking-dialog",
+        okButton: {
+            path: "#content-blocking-ok-button",
+        },
+        cancelButton: {
+            path: "#content-blocking-cancel-button",
+        },
+    },
     aboutDialog: {
         path: "#about-dialog",
         copyInfoButton: {
