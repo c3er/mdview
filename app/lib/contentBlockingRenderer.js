@@ -4,7 +4,7 @@ const log = require("./log")
 const navigation = require("./navigationRenderer")
 const renderer = require("./commonRenderer")
 
-const shared = require("./contentBlockingShared")
+const constants = require("./contentBlockingConstants")
 
 const DIALOG_ID = "content-blocking"
 const UNBLOCK_PERMANENT_DIALOG_TITLE = "Unblock Content Permanently"
@@ -132,9 +132,9 @@ class ContentList {
     static fromObject(obj) {
         return new ContentList(
             obj.map(contentObject => {
-                const content = new Content(contentObject[shared.URL_STORAGE_KEY])
-                content.isBlocked = contentObject[shared.IS_BLOCKED_STORAGE_KEY]
-                content.originDocuments = contentObject[shared.DOCUMENTS_STORAGE_KEY]
+                const content = new Content(contentObject[constants.URL_STORAGE_KEY])
+                content.isBlocked = contentObject[constants.IS_BLOCKED_STORAGE_KEY]
+                content.originDocuments = contentObject[constants.DOCUMENTS_STORAGE_KEY]
                 return content
             }),
         )

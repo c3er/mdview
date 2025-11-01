@@ -2,7 +2,7 @@ const fs = require("fs")
 const path = require("path")
 
 const common = require("./common")
-const contentBlocking = require("./contentBlockingShared")
+const contentBlocking = require("./contentBlockingConstants")
 const dragDrop = require("./dragDropShared")
 const log = require("./log")
 const navigation = require("./navigationMain")
