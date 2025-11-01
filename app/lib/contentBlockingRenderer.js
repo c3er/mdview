@@ -176,6 +176,9 @@ class Content {
     }
 
     set isBlocked(value) {
+        if (this.#isBlocked === value) {
+            return
+        }
         this.#isBlocked = value
         this.isModified = true
     }
