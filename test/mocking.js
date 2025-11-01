@@ -471,9 +471,6 @@ exports.elements = {
         okButton: {
             path: "#content-blocking-ok-button",
         },
-        cancelButton: {
-            path: "#content-blocking-cancel-button",
-        },
     },
     aboutDialog: {
         path: "#about-dialog",
