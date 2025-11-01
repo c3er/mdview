@@ -9,6 +9,7 @@ const mocking = require("./mocking")
 
 const common = require("../app/lib/common")
 const settings = require("../app/lib/settingsMain")
+const storage = require("../app/lib/storageMain")
 const toc = require("../app/lib/tocMain")
 
 const electron = playwright._electron
@@ -134,8 +135,6 @@ describe("Integration tests with single app instance", () => {
     })
 
     describe('Library "storage"', () => {
-        const storage = require("../app/lib/storageMain")
-
         describe("Application settings", () => {
             let applicationSettings
 
@@ -330,8 +329,14 @@ describe("Integration tests with their own app instance each", () => {
                 return contents
             }
 
+            beforeEach(() => {
+                mocking.resetElectron()
+                storage.init(mocking.dataDir, mocking.electron)
+            })
+
             it("unblocks content selectively", async () => {
                 const EXPECTED_CONTENT_COUNT = 3
+                const EXPECTED_BLOCKED_CONTENT = 1
 
                 const dialog = await openDialog()
                 const contents = await collectContents(dialog)
@@ -341,6 +346,14 @@ describe("Integration tests with their own app instance each", () => {
                 await firstContent.checkbox.click()
                 await _page.locator(mocking.elements.contentBlockingDialog.okButton.path).click()
                 assert(containsConsoleMessage(`Unblocked: URL: ${firstContent.url}`))
+
+                const storedContents = storage.loadContentBlocking().contents
+                assert.strictEqual(storedContents.length, EXPECTED_BLOCKED_CONTENT)
+
+                const firstStoredContent = storedContents[0]
+                assert(!firstStoredContent.isBlocked)
+                assert.strictEqual(firstStoredContent.url, firstContent.url)
+                assert(firstStoredContent.documents.has(lib.DEFAULT_DOCUMENT_PATH))
             })
         })
     })
