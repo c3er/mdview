@@ -37,7 +37,7 @@
     "github-markdown-css": "5.8.1",
     "github-markdown-dracula-css": "4.0.3",
     "highlight.js": "11.11.1",
-    "iconv-lite": "0.6.3",
+    "iconv-lite": "0.7.0",
     "jschardet": "3.1.4",
     "markdown-it": "14.1.0",
     "markdown-it-abbr": "2.0.0",
@@ -52,17 +52,17 @@
     "markdown-it-sub": "2.0.0",
     "markdown-it-sup": "2.0.0",
     "markdown-it-task-checkbox": "1.0.6",
-    "mermaid": "11.9.0"
+    "mermaid": "11.12.1"
   },
   "devDependencies": {
-    "clipboardy": "4.0.0",
-    "electron": "37.2.5",
+    "clipboardy": "5.0.0",
+    "electron": "39.0.0",
     "electron-builder": "26.0.12",
-    "eslint": "9.32.0",
+    "eslint": "9.39.0",
     "eslint-config-prettier": "10.1.8",
     "lodash.clonedeep": "4.5.0",
-    "mocha": "11.7.1",
-    "playwright": "1.54.2",
+    "mocha": "11.7.4",
+    "playwright": "1.56.1",
     "prettier": "3.6.2",
     "tslib": "2.8.1"
   }
