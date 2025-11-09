@@ -32,6 +32,7 @@ let _fileHistorySizeInput
 let _showTocCheckbox
 let _showTocForDocumentCheckbox
 let _renderDocumentAsMarkdownCheckbox
+let _blockContentCheckbox
 
 let _applicationSettings
 let _documentSettings
@@ -83,6 +84,7 @@ function populateDialog() {
     )
     _fileHistorySizeInput.value = _applicationSettings.fileHistorySize
     _showTocCheckbox.checked = _applicationSettings.showToc
+    _blockContentCheckbox.checked = _applicationSettings.blockContent
 
     // Document settings
     updateTocForDocumentCheckbox()
@@ -109,6 +111,7 @@ function applySettings() {
     updateMdFileTypeSetting(_renderFileTypeAsMarkdownCheckbox.checked)
     _applicationSettings.fileHistorySize = Number(_fileHistorySizeInput.value)
     _applicationSettings.showToc = _showTocCheckbox.checked
+    _applicationSettings.blockContent = _blockContentCheckbox.checked
 
     // Document settings
     _documentSettings.showToc = _showTocForDocumentCheckbox.checked
@@ -194,6 +197,7 @@ exports.init = (document, window) => {
     _showTocCheckbox = _document.getElementById("show-toc")
     _showTocForDocumentCheckbox = _document.getElementById("show-toc-for-doc")
     _renderDocumentAsMarkdownCheckbox = _document.getElementById("render-doc-as-markdown")
+    _blockContentCheckbox = _document.getElementById("block-content")
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]

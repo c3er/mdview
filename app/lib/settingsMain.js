@@ -1,3 +1,4 @@
+const contentBlocking = require("./contentBlockingMain")
 const fileHistory = require("./fileHistoryMain")
 const fileLib = require("./file")
 const ipc = require("./ipcMain")
@@ -46,6 +47,7 @@ function applySettings(applicationSettingsData, documentSettingsData) {
         documentSettings[setting] = value
     }
 
+    contentBlocking.setShallBlockContent(_applicationSettings.blockContent)
     setZoom(applicationSettingsData.zoom)
     notifySettingsChanges(navigation.currentFilePath())
     toc.setVisibilityForApplication(_applicationSettings.showToc)

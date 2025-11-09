@@ -93,6 +93,7 @@ class ApplicationSettings extends StorageBase {
     #HIDE_METADATA_KEY = "hide-metadata"
     #DRAG_DROP_BEHAVIOR_KEY = "drag-drop-behavior"
     #FILE_HISTORY_SIZE_KEY = "file-history-size"
+    #BLOCK_CONTENT_KEY = "block-content"
 
     SYSTEM_THEME = common.SYSTEM_THEME
     LIGHT_THEME = common.LIGHT_THEME
@@ -111,6 +112,7 @@ class ApplicationSettings extends StorageBase {
     HIDE_METADATA_DEFAULT = false
     DRAG_DROP_BEHAVIOR_DEFAULT = dragDrop.behavior.ask
     FILE_HISTORY_SIZE_DEFAULT = 5
+    BLOCK_CONTENT_DEFAULT = true
 
     constructor(storageDir, storageFile) {
         super(APPLICATION_SETTINGS_VERSION, storageDir, storageFile)
@@ -209,6 +211,14 @@ class ApplicationSettings extends StorageBase {
 
     set fileHistorySize(value) {
         this._storeValue(this.#FILE_HISTORY_SIZE_KEY, value)
+    }
+
+    get blockContent() {
+        return this._loadValue(this.#BLOCK_CONTENT_KEY, this.BLOCK_CONTENT_DEFAULT)
+    }
+
+    set blockContent(value) {
+        this._storeValue(this.#BLOCK_CONTENT_KEY, value)
     }
 
     _loadValue(key, defaultValue) {

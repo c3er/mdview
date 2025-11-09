@@ -12,6 +12,7 @@ const CONTENT_BLOCKING_NAV_ID = "content-blocking"
 
 let _mainMenu
 
+let _shallBlockContent = true
 let _contentIsBlocked = false
 let _allowedURLs = []
 let _blockingStorage
@@ -59,6 +60,7 @@ exports.init = (mainMenu, electronMock) => {
             .filter(content => !content.isBlocked)
             .map(content => content.url),
     )
+    _shallBlockContent = storage.loadApplicationSettings().blockContent
 
     let lastTime = Date.now()
 
@@ -67,7 +69,7 @@ exports.init = (mainMenu, electronMock) => {
         const currentTime = Date.now()
 
         const url = details.url
-        const isBlocked = common.isWebURL(url) && !_allowedURLs.includes(url)
+        const isBlocked = _shallBlockContent && common.isWebURL(url) && !_allowedURLs.includes(url)
         log.info(
             `${isBlocked ? "Blocked" : "Loading"}: ${url} (${currentTime - lastTime} ms since last load)`,
         )
@@ -135,3 +137,5 @@ exports.manageUnblocked = () =>
     ipc.send(ipc.messages.manageContentBlocking, _blockingStorage.toObject())
 
 exports.clearUnblockedURLs = () => (_allowedURLs.length = 0)
+
+exports.setShallBlockContent = value => (_shallBlockContent = value)
