@@ -147,11 +147,12 @@ function closeDialog() {
 }
 
 function handleConfirm(event) {
-    if (_dialogForm.reportValidity()) {
-        event.preventDefault()
-        applySettings()
-        dialog.close()
+    if (!_dialogForm.reportValidity()) {
+        return
     }
+    event.preventDefault()
+    applySettings()
+    dialog.close()
 }
 
 function handleKeyboardConfirm(event) {
