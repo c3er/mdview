@@ -2,6 +2,8 @@
     --border-color: #ccc;
     --border-width: 1px;
     --dark-border-color: #555;
+    --discouraging-text-dark-color: #666;
+    --discouraging-text-light-color: #999;
     --element-dark-bgcolor: #292a2d;
     --highlight-dark-color: #444;
     --highlight-light-color: #ddd;
@@ -13,6 +15,10 @@
     --strong-highlight-dark-color: #777;
     --strong-highlight-light-color: #aaa;
     --text-dark-color: #f8f8f2;
+    --warn-text-dark-bgcolor: #ff0;
+    --warn-text-dark-color: #f00;
+    --warn-text-light-bgcolor: #f00;
+    --warn-text-light-color: #ff0;
 }
 
 .both-sides-shadow {
@@ -29,6 +35,17 @@
 
 .top-border {
     border-top: var(--border-width) solid var(--border-color);
+}
+
+.discourage {
+    color: var(--discouraging-text-light-color);
+    font-style: italic;
+}
+
+.warn-text {
+    background-color: var(--warn-text-light-bgcolor);
+    color: var(--warn-text-light-color);
+    font-weight: bold;
 }
 
 .dialog-scroll-container {
@@ -344,6 +361,15 @@ p#issue-link-paragraph {
 
     .top-border {
         border-top: var(--border-width) solid var(--dark-border-color);
+    }
+
+    .discourage {
+        color: var(--discouraging-text-dark-color);
+    }
+
+    .warn-text {
+        background-color: var(--warn-text-dark-bgcolor);
+        color: var(--warn-text-dark-color);
     }
 
     div.info {

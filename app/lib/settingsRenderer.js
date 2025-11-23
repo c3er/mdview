@@ -4,8 +4,12 @@ const fileLib = require("./file")
 const ipc = require("./ipcRenderer")
 const renderer = require("./commonRenderer")
 
+const shared = require("./settingsShared")
+
 const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"
+const DISCOURAGE_CLASS = shared.DISCOURAGE_CLASS
+const WARN_TEXT_CLASS = shared.WARN_TEXT_CLASS
 
 let _document
 let _window
@@ -33,6 +37,7 @@ let _showTocCheckbox
 let _showTocForDocumentCheckbox
 let _renderDocumentAsMarkdownCheckbox
 let _blockContentCheckbox
+let _blockContentCheckboxLabel
 
 let _applicationSettings
 let _documentSettings
@@ -63,6 +68,17 @@ function updateMdFileTypeSetting(shallRenderAsMarkdown) {
     }
 }
 
+function styleblockContentCheckbox() {
+    const classList = _blockContentCheckboxLabel.classList
+    if (_blockContentCheckbox.checked) {
+        classList.remove(WARN_TEXT_CLASS)
+        classList.add(DISCOURAGE_CLASS)
+    } else {
+        classList.add(WARN_TEXT_CLASS)
+        classList.remove(DISCOURAGE_CLASS)
+    }
+}
+
 function populateDialog() {
     ;({
         system: _systemThemeRadioButton,
@@ -89,6 +105,9 @@ function populateDialog() {
     // Document settings
     updateTocForDocumentCheckbox()
     _renderDocumentAsMarkdownCheckbox.checked = _documentSettings.renderAsMarkdown
+
+    // Setting dependent styling
+    styleblockContentCheckbox()
 }
 
 function applySettings() {
@@ -199,6 +218,7 @@ exports.init = (document, window) => {
     _showTocForDocumentCheckbox = _document.getElementById("show-toc-for-doc")
     _renderDocumentAsMarkdownCheckbox = _document.getElementById("render-doc-as-markdown")
     _blockContentCheckbox = _document.getElementById("block-content")
+    _blockContentCheckboxLabel = _document.querySelector('label[for="block-content"]')
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]
@@ -227,6 +247,7 @@ exports.init = (document, window) => {
         "click",
         () => (_documentSettings.showTocOverridesAppSettings = true),
     )
+    _blockContentCheckbox.onclick = styleblockContentCheckbox
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
     renderer.addStdButtonHandler(_document.getElementById("settings-cancel-button"), dialog.close)

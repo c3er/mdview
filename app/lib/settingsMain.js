@@ -7,6 +7,8 @@ const navigation = require("./navigationMain")
 const storage = require("./storageMain")
 const toc = require("./tocMain")
 
+const shared = require("./settingsShared")
+
 const SETTINGS_MENU_ID = "settings"
 
 const UPDATE_FILE_SPECIFICA_NAV_ID = "update-file-specific-document-rendering"
@@ -60,6 +62,10 @@ function applySettings(applicationSettingsData, documentSettingsData) {
 }
 
 exports.SETTINGS_MENU_ID = SETTINGS_MENU_ID
+
+exports.DISCOURAGE_CLASS = shared.DISCOURAGE_CLASS
+
+exports.WARN_TEXT_CLASS = shared.WARN_TEXT_CLASS
 
 exports.init = (mainMenu, filePath) => {
     _mainMenu = mainMenu

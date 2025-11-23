@@ -431,6 +431,12 @@ exports.elements = {
             hideMetadataCheckbox: {
                 path: "#hide-metadata",
             },
+            blockContentCheckbox: {
+                path: "input#block-content",
+                label: {
+                    path: 'label[for="block-content"]',
+                },
+            },
         },
         documentSettings: {
             path: "#document-settings-tab-content",

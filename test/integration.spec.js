@@ -110,6 +110,10 @@ async function elementIsVisible(elementPath) {
     return await elementHasState(elementPath, "visible", async locator => await locator.isVisible())
 }
 
+async function hasCssClass(locator, className) {
+    return ((await locator.getAttribute("class"))?.split(" ") ?? []).includes(className)
+}
+
 describe("Integration tests with single app instance", () => {
     before(async () => {
         await cleanup()
@@ -617,6 +621,27 @@ describe("Integration tests with their own app instance each", () => {
                 await applyButtonLocator.click()
                 assert(!containsConsoleMessage("error"))
             }
+        })
+
+        it("discourages circumvention of content blocking", async () => {
+            const blockContentCheckboxLocator = _page.locator(
+                mocking.elements.settingsDialog.applicationSettings.blockContentCheckbox.path,
+            )
+            const blockContentCheckboxLabelLocator = _page.locator(
+                mocking.elements.settingsDialog.applicationSettings.blockContentCheckbox.label.path,
+            )
+
+            await opendDialog()
+            assert(await blockContentCheckboxLocator.isChecked())
+            assert(await hasCssClass(blockContentCheckboxLabelLocator, settings.DISCOURAGE_CLASS))
+            assert(!(await hasCssClass(blockContentCheckboxLabelLocator, settings.WARN_TEXT_CLASS)))
+
+            await blockContentCheckboxLocator.click()
+            assert(!(await blockContentCheckboxLocator.isChecked()))
+            assert(
+                !(await hasCssClass(blockContentCheckboxLabelLocator, settings.DISCOURAGE_CLASS)),
+            )
+            assert(await hasCssClass(blockContentCheckboxLabelLocator, settings.WARN_TEXT_CLASS))
         })
     })
 
