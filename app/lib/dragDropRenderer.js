@@ -1,6 +1,7 @@
 const dialog = require("./dialogRenderer")
 const ipc = require("./ipcRenderer")
 const navigation = require("./navigationRenderer")
+const renderer = require("./commonRenderer")
 
 const shared = require("./dragDropShared")
 
@@ -73,15 +74,18 @@ exports.init = document => {
     }
     _document.body.ondrop = dropHandler
 
-    dialog.addStdButtonHandler(_document.getElementById("drag-drop-open-in-current-window"), () => {
-        dialog.close()
-        openFile(false)
-    })
-    dialog.addStdButtonHandler(_document.getElementById("drag-drop-open-in-new-window"), () => {
+    renderer.addStdButtonHandler(
+        _document.getElementById("drag-drop-open-in-current-window"),
+        () => {
+            dialog.close()
+            openFile(false)
+        },
+    )
+    renderer.addStdButtonHandler(_document.getElementById("drag-drop-open-in-new-window"), () => {
         dialog.close()
         openFile(true)
     })
-    dialog.addStdButtonHandler(_document.getElementById("drag-drop-cancel"), dialog.close)
+    renderer.addStdButtonHandler(_document.getElementById("drag-drop-cancel"), dialog.close)
 }
 
 exports.setBehavior = value => (_behavior = value)

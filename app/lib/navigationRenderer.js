@@ -8,6 +8,8 @@ const renderer = require("./commonRenderer")
 
 let electron
 
+let _currentFilePath
+
 function isInternalLink(url) {
     return url.startsWith("#")
 }
@@ -64,7 +66,11 @@ function dispatchLink(target, documentDirectory, shallOpenInNewWindow) {
     }
 }
 
-exports.init = electronMock => (electron = electronMock ?? require("electron"))
+exports.init = electronMock => {
+    electron = electronMock ?? require("electron")
+
+    ipc.listen(ipc.messages.currentFilePath, filePath => (_currentFilePath = filePath))
+}
 
 exports.registerLink = (linkElement, target, documentDirectory) => {
     linkElement.onclick = event => {
@@ -84,3 +90,5 @@ exports.back = () => ipc.send(ipc.messages.navigateBack)
 exports.checkFile = checkFile
 
 exports.openFile = openFile
+
+exports.currentFilePath = () => _currentFilePath

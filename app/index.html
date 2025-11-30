@@ -33,14 +33,28 @@
             </form>
         </dialog>
 
+        <dialog id="question-dialog">
+            <form>
+                <p>Question</p>
+                <div class="dialog-content" id="question-dialog-content"></div>
+
+                <div class="dialog-buttons">
+                    <button id="question-ok-button" value="question-dialog-default"></button>
+                    <button id="question-cancel-button" value="question-dialog-cancel"></button>
+                </div>
+            </form>
+        </dialog>
+
         <dialog id="settings-dialog">
             <form id="settings-dialog-form">
                 <p>Settings</p>
+
                 <div class="dialog-content">
                     <div class="dialog-tab-container">
                         <div class="dialog-tab" id="application-settings-tab">Application wide</div>
                         <div class="dialog-tab" id="document-settings-tab">This document</div>
                     </div>
+
                     <div class="dialog-scroll-container" id="settings-dialog-scroll-container">
                         <div class="dialog-tab-content" id="application-settings-tab-content">
                             <h1>Theme</h1>
@@ -131,7 +145,12 @@
                                 <input type="checkbox" id="show-toc" />
                                 <label for="show-toc">Show table of content</label>
                             </div>
+                            <div>
+                                <input type="checkbox" id="block-content" />
+                                <label for="block-content">Block content from the internet</label>
+                            </div>
                         </div>
+
                         <div class="dialog-tab-content" id="document-settings-tab-content">
                             <h1>Table of content</h1>
                             <p>
@@ -154,6 +173,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="dialog-buttons top-border">
                     <button id="settings-ok-button" value="settings-dialog-default">OK</button>
                     <button id="settings-cancel-button" value="settings-dialog-cancel">
@@ -211,6 +231,34 @@
             </form>
         </dialog>
 
+        <dialog id="content-blocking-dialog">
+            <form>
+                <div class="dialog-content">
+                    <p id="content-blocking-dialog-title"></p>
+                    <div class="button-row">
+                        <button id="content-blocking-select-all-button">Block all</button>
+                        <button id="content-blocking-unselect-all-button">Unblock all</button>
+                    </div>
+                    <div
+                        class="dialog-scroll-container"
+                        id="content-blocking-dialog-scroll-container"
+                    ></div>
+                </div>
+                <div class="dialog-buttons">
+                    <button id="content-blocking-ok-button" value="content-blocking-dialog-default">
+                        OK
+                    </button>
+                    <button
+                        id="content-blocking-cancel-button"
+                        value="content-blocking-dialog-cancel"
+                        formmethod="dialog"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </dialog>
+
         <dialog id="about-dialog">
             <form>
                 <div class="dialog-scroll-container" id="about-dialog-scroll-container">
@@ -243,10 +291,9 @@
 
         <div id="blocked-content-info" hidden="true">
             <span id="blocked-content-info-text-container">
-                <p class="blocked-content-info-text">
-                    Content is blocked. Click here to unblock all blocked elements.
-                </p>
+                <p class="blocked-content-info-text">Content from the internet is blocked.</p>
             </span>
+            <button id="unblock-content-button">Unblock all ▾</button>
             <span id="blocked-content-info-close-button" title="Hide this message">
                 <p class="blocked-content-info-text">
                     <b>X</b>

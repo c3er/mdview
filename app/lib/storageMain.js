@@ -2,6 +2,7 @@ const fs = require("fs")
 const path = require("path")
 
 const common = require("./common")
+const contentBlocking = require("./contentBlockingConstants")
 const dragDrop = require("./dragDropShared")
 const log = require("./log")
 const navigation = require("./navigationMain")
@@ -13,15 +14,18 @@ const JSON_INDENTATION = 4
 const APPLICATION_SETTINGS_VERSION = 1
 const DOCUMENT_SETTINGS_VERSION = 0
 const FILE_HISTORY_VERSION = 0
+const CONTENT_BLOCKING_VERSION = 0
 
 const APPLICATION_SETTINGS_FILE = "app-settings.json"
 const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 const FILE_HISTORY_FILE = "file-history.json"
+const CONTENT_BLOCKING_FILE = "content-blocking.json"
 
 let _dataDir
 
 let _applicationSettings
 let _fileHistory
+let _contentBlocking
 let _documentSettings = {}
 
 class StorageBase {
@@ -89,6 +93,7 @@ class ApplicationSettings extends StorageBase {
     #HIDE_METADATA_KEY = "hide-metadata"
     #DRAG_DROP_BEHAVIOR_KEY = "drag-drop-behavior"
     #FILE_HISTORY_SIZE_KEY = "file-history-size"
+    #BLOCK_CONTENT_KEY = "block-content"
 
     SYSTEM_THEME = common.SYSTEM_THEME
     LIGHT_THEME = common.LIGHT_THEME
@@ -107,6 +112,7 @@ class ApplicationSettings extends StorageBase {
     HIDE_METADATA_DEFAULT = false
     DRAG_DROP_BEHAVIOR_DEFAULT = dragDrop.behavior.ask
     FILE_HISTORY_SIZE_DEFAULT = 5
+    BLOCK_CONTENT_DEFAULT = true
 
     constructor(storageDir, storageFile) {
         super(APPLICATION_SETTINGS_VERSION, storageDir, storageFile)
@@ -205,6 +211,14 @@ class ApplicationSettings extends StorageBase {
 
     set fileHistorySize(value) {
         this._storeValue(this.#FILE_HISTORY_SIZE_KEY, value)
+    }
+
+    get blockContent() {
+        return this._loadValue(this.#BLOCK_CONTENT_KEY, this.BLOCK_CONTENT_DEFAULT)
+    }
+
+    set blockContent(value) {
+        this._storeValue(this.#BLOCK_CONTENT_KEY, value)
     }
 
     _loadValue(key, defaultValue) {
@@ -366,6 +380,86 @@ class FileHistory extends StorageBase {
     }
 }
 
+class Content {
+    _documents
+
+    url
+    isBlocked
+
+    constructor(url, isBlocked = true, documents = new Set()) {
+        this.url = url
+        this.isBlocked = isBlocked
+        this.documents = documents
+    }
+
+    get documents() {
+        return this._documents
+    }
+
+    set documents(value) {
+        this._documents = value instanceof Set ? value : new Set(value)
+    }
+
+    addDocument(document) {
+        this.documents.add(document)
+    }
+
+    toObject() {
+        return {
+            [contentBlocking.URL_STORAGE_KEY]: this.url,
+            [contentBlocking.IS_BLOCKED_STORAGE_KEY]: this.isBlocked,
+            [contentBlocking.DOCUMENTS_STORAGE_KEY]: [...this.documents],
+        }
+    }
+
+    static fromObject(obj) {
+        return new Content(
+            obj[contentBlocking.URL_STORAGE_KEY],
+            obj[contentBlocking.IS_BLOCKED_STORAGE_KEY],
+            obj[contentBlocking.DOCUMENTS_STORAGE_KEY],
+        )
+    }
+}
+
+class ContentBlocking extends StorageBase {
+    #CONTENTS_KEY = "contents"
+
+    contents = []
+
+    constructor(storageDir, storageFile) {
+        super(CONTENT_BLOCKING_VERSION, storageDir, storageFile)
+        this.contents = (this._data[this.#CONTENTS_KEY] ?? []).map(Content.fromObject)
+    }
+
+    get isEmpty() {
+        return this.contents.length === 0
+    }
+
+    save(url, isBlocked, originDocuments) {
+        let content = this._findContent(url)
+        if (!content) {
+            content = new Content(url)
+            this.contents.push(content)
+        }
+        content.isBlocked = isBlocked
+        content.documents = originDocuments
+        this._save()
+    }
+
+    toObject() {
+        return this.contents.map(content => content.toObject())
+    }
+
+    _findContent(url) {
+        return this.contents.find(content => content.url === url)
+    }
+
+    _save() {
+        this._data[this.#CONTENTS_KEY] = this.toObject()
+        super._save()
+    }
+}
+
 function loadApplicationSettings() {
     return (
         _applicationSettings ??
@@ -395,7 +489,10 @@ exports.loadDocumentSettings = documentPath => {
 exports.loadFileHistory = () =>
     _fileHistory ?? (_fileHistory = new FileHistory(_dataDir, FILE_HISTORY_FILE))
 
+exports.loadContentBlocking = () =>
+    _contentBlocking ?? (_contentBlocking = new ContentBlocking(_dataDir, CONTENT_BLOCKING_FILE))
+
 exports.reset = () => {
-    _applicationSettings = _fileHistory = null
+    _applicationSettings = _fileHistory = _contentBlocking = null
     _documentSettings = {}
 }

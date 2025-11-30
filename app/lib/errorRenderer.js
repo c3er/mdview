@@ -1,4 +1,5 @@
 const dialog = require("./dialogRenderer")
+const renderer = require("./commonRenderer")
 
 const DIALOG_ID = "error"
 
@@ -11,7 +12,7 @@ exports.DIALOG_ID = DIALOG_ID
 exports.init = document => {
     _document = document
     _dialogElement = document.getElementById("error-dialog")
-    dialog.addStdButtonHandler(_document.getElementById("error-ok-button"), dialog.close)
+    renderer.addStdButtonHandler(_document.getElementById("error-ok-button"), dialog.close)
 }
 
 exports.show = msg =>

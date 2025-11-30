@@ -25,6 +25,7 @@ describe("Settings", () => {
         beforeEach(() => {
             mocking.register.ipc.rendererOn(ipc.messages.resetContentBlocking)
             mocking.register.ipc.rendererOn(ipc.messages.fileOpen)
+            mocking.register.ipc.rendererOn(ipc.messages.currentFilePath)
             mocking.register.ipc.rendererOn(ipc.messages.updateSettings, (_, options) => {
                 assert(options.lineBreaksEnabled !== undefined)
                 assert(options.typographyEnabled !== undefined)

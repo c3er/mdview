@@ -301,8 +301,19 @@ exports.elements = {
                 refresh: {
                     label: "&Refresh",
                 },
-                unblock: {
-                    label: "&Unblock All External Content",
+                contentBlocking: {
+                    label: "&Content Blocking",
+                    sub: {
+                        unblockAllTemporaryly: {
+                            label: "Unblock All External Content &Temporaryly",
+                        },
+                        unblockAllPermanently: {
+                            label: "Unblock All External Content &Permanently...",
+                        },
+                        manage: {
+                            label: "&Manage Unblocked Content...",
+                        },
+                    },
                 },
                 rawText: {
                     label: "&View Raw Text",
@@ -420,6 +431,12 @@ exports.elements = {
             hideMetadataCheckbox: {
                 path: "#hide-metadata",
             },
+            blockContentCheckbox: {
+                path: "input#block-content",
+                label: {
+                    path: 'label[for="block-content"]',
+                },
+            },
         },
         documentSettings: {
             path: "#document-settings-tab-content",
@@ -455,6 +472,12 @@ exports.elements = {
             path: "#drag-drop-remember",
         },
     },
+    contentBlockingDialog: {
+        path: "#content-blocking-dialog",
+        okButton: {
+            path: "#content-blocking-ok-button",
+        },
+    },
     aboutDialog: {
         path: "#about-dialog",
         copyInfoButton: {
@@ -471,6 +494,12 @@ exports.elements = {
         },
         okButton: {
             path: "#error-ok-button",
+        },
+    },
+    questionDialog: {
+        path: "#question-dialog",
+        okButton: {
+            path: "#question-ok-button",
         },
     },
 }

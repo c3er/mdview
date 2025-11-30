@@ -160,9 +160,7 @@ class Section {
                     <span class="${EXPAND_BUTTON_HTML_CLASS}" id="${this.buttonHtmlId}">
                         ${toButtonHtml(_expandedSymbolPath)}
                     </span>
-                    <a href="#${
-                        this.id
-                    }" style="width: calc(100% - ${indentationWidth}px - ${buttonOffset}em)">
+                    <a href="#${this.id}" style="width: calc(100% - ${indentationWidth}px - ${buttonOffset}em)">
                         ${this.header}
                     </a>
                 </nobr>

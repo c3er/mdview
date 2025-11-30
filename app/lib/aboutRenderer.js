@@ -53,9 +53,9 @@ exports.init = (document, electronMock) => {
     }
 
     const okButton = _document.querySelector("#about-dialog #about-ok-button")
-    dialog.addStdButtonHandler(okButton, () => dialog.close())
+    renderer.addStdButtonHandler(okButton, () => dialog.close())
 
-    dialog.addStdButtonHandler(
+    renderer.addStdButtonHandler(
         _document.querySelector("#about-dialog #copy-about-info-button"),
         () => {
             const aboutInfo = structuredClone(_aboutInfo)

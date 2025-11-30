@@ -1,3 +1,4 @@
+const contentBlocking = require("./contentBlockingMain")
 const fileHistory = require("./fileHistoryMain")
 const fileLib = require("./file")
 const ipc = require("./ipcMain")
@@ -5,6 +6,8 @@ const menu = require("./menuMain")
 const navigation = require("./navigationMain")
 const storage = require("./storageMain")
 const toc = require("./tocMain")
+
+const shared = require("./settingsShared")
 
 const SETTINGS_MENU_ID = "settings"
 
@@ -46,6 +49,7 @@ function applySettings(applicationSettingsData, documentSettingsData) {
         documentSettings[setting] = value
     }
 
+    contentBlocking.setShallBlockContent(_applicationSettings.blockContent)
     setZoom(applicationSettingsData.zoom)
     notifySettingsChanges(navigation.currentFilePath())
     toc.setVisibilityForApplication(_applicationSettings.showToc)
@@ -58,6 +62,10 @@ function applySettings(applicationSettingsData, documentSettingsData) {
 }
 
 exports.SETTINGS_MENU_ID = SETTINGS_MENU_ID
+
+exports.DISCOURAGE_CLASS = shared.DISCOURAGE_CLASS
+
+exports.WARN_TEXT_CLASS = shared.WARN_TEXT_CLASS
 
 exports.init = (mainMenu, filePath) => {
     _mainMenu = mainMenu

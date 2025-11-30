@@ -2,10 +2,15 @@ const common = require("./common")
 const dialog = require("./dialogRenderer")
 const fileLib = require("./file")
 const ipc = require("./ipcRenderer")
+const question = require("./questionRenderer")
 const renderer = require("./commonRenderer")
+
+const shared = require("./settingsShared")
 
 const DIALOG_ID = "settings"
 const UNSELECTED_TAB_CLASS = "unselected-tab"
+const DISCOURAGE_CLASS = shared.DISCOURAGE_CLASS
+const WARN_TEXT_CLASS = shared.WARN_TEXT_CLASS
 
 let _document
 let _window
@@ -32,6 +37,8 @@ let _fileHistorySizeInput
 let _showTocCheckbox
 let _showTocForDocumentCheckbox
 let _renderDocumentAsMarkdownCheckbox
+let _blockContentCheckbox
+let _blockContentCheckboxLabel
 
 let _applicationSettings
 let _documentSettings
@@ -62,6 +69,17 @@ function updateMdFileTypeSetting(shallRenderAsMarkdown) {
     }
 }
 
+function styleblockContentCheckbox() {
+    const classList = _blockContentCheckboxLabel.classList
+    if (_blockContentCheckbox.checked) {
+        classList.remove(WARN_TEXT_CLASS)
+        classList.add(DISCOURAGE_CLASS)
+    } else {
+        classList.add(WARN_TEXT_CLASS)
+        classList.remove(DISCOURAGE_CLASS)
+    }
+}
+
 function populateDialog() {
     ;({
         system: _systemThemeRadioButton,
@@ -83,10 +101,14 @@ function populateDialog() {
     )
     _fileHistorySizeInput.value = _applicationSettings.fileHistorySize
     _showTocCheckbox.checked = _applicationSettings.showToc
+    _blockContentCheckbox.checked = _applicationSettings.blockContent
 
     // Document settings
     updateTocForDocumentCheckbox()
     _renderDocumentAsMarkdownCheckbox.checked = _documentSettings.renderAsMarkdown
+
+    // Setting dependent styling
+    styleblockContentCheckbox()
 }
 
 function applySettings() {
@@ -109,6 +131,7 @@ function applySettings() {
     updateMdFileTypeSetting(_renderFileTypeAsMarkdownCheckbox.checked)
     _applicationSettings.fileHistorySize = Number(_fileHistorySizeInput.value)
     _applicationSettings.showToc = _showTocCheckbox.checked
+    _applicationSettings.blockContent = _blockContentCheckbox.checked
 
     // Document settings
     _documentSettings.showToc = _showTocForDocumentCheckbox.checked
@@ -144,11 +167,12 @@ function closeDialog() {
 }
 
 function handleConfirm(event) {
-    if (_dialogForm.reportValidity()) {
-        event.preventDefault()
-        applySettings()
-        dialog.close()
+    if (!_dialogForm.reportValidity()) {
+        return
     }
+    event.preventDefault()
+    applySettings()
+    dialog.close()
 }
 
 function handleKeyboardConfirm(event) {
@@ -194,6 +218,8 @@ exports.init = (document, window) => {
     _showTocCheckbox = _document.getElementById("show-toc")
     _showTocForDocumentCheckbox = _document.getElementById("show-toc-for-doc")
     _renderDocumentAsMarkdownCheckbox = _document.getElementById("render-doc-as-markdown")
+    _blockContentCheckbox = _document.getElementById("block-content")
+    _blockContentCheckboxLabel = _document.querySelector('label[for="block-content"]')
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]
@@ -207,24 +233,36 @@ exports.init = (document, window) => {
     _dialogElement.addEventListener("keydown", handleKeyboardConfirm)
     _zoomInput.onkeydown = handleKeyboardConfirm
     _fileHistorySizeInput.onkeydown = handleKeyboardConfirm
-    dialog.addStdButtonHandler(
+    renderer.addStdButtonHandler(
         _document.getElementById("reset-zoom-button"),
         () => (_zoomInput.value = _applicationSettings.zoom = common.ZOOM_DEFAULT),
     )
-    dialog.addStdButtonHandler(_document.getElementById("clear-file-history-button"), () =>
+    renderer.addStdButtonHandler(_document.getElementById("clear-file-history-button"), () =>
         ipc.send(ipc.messages.clearFileHistory),
     )
-    dialog.addStdButtonHandler(_document.getElementById("forget-toc-override-button"), () => {
+    renderer.addStdButtonHandler(_document.getElementById("forget-toc-override-button"), () => {
         _documentSettings.showTocOverridesAppSettings = false
         updateTocForDocumentCheckbox()
     })
-    _showTocForDocumentCheckbox.addEventListener(
-        "click",
-        () => (_documentSettings.showTocOverridesAppSettings = true),
-    )
+    _showTocForDocumentCheckbox.onclick = () =>
+        (_documentSettings.showTocOverridesAppSettings = true)
+    _blockContentCheckbox.onclick = async () => {
+        if (
+            !_blockContentCheckbox.checked &&
+            !(await question.ask(
+                "No content loaded from the internet will be blocked! Proceed?",
+                "Circumvent content blocking",
+                "Continue content blocking",
+            ))
+        ) {
+            _blockContentCheckbox.checked = true
+            return
+        }
+        styleblockContentCheckbox()
+    }
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
-    dialog.addStdButtonHandler(_document.getElementById("settings-cancel-button"), dialog.close)
+    renderer.addStdButtonHandler(_document.getElementById("settings-cancel-button"), dialog.close)
     _document.getElementById("settings-apply-button").addEventListener("click", event => {
         if (_dialogForm.reportValidity()) {
             event.preventDefault()

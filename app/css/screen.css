@@ -2,17 +2,23 @@
     --border-color: #ccc;
     --border-width: 1px;
     --dark-border-color: #555;
+    --discouraging-text-dark-color: #666;
+    --discouraging-text-light-color: #999;
     --element-dark-bgcolor: #292a2d;
     --highlight-dark-color: #444;
     --highlight-light-color: #ddd;
-    --shadow-bottom-light: inset 0 -4px 4px -4px rgba(0, 0, 0, 0.4);
-    --shadow-top-light: inset 0 4px 4px -4px rgba(0, 0, 0, 0.4);
     --shadow-bottom-dark: inset 0 -6px 4px -4px rgba(0, 0, 0, 0.5);
+    --shadow-bottom-light: inset 0 -4px 4px -4px rgba(0, 0, 0, 0.4);
     --shadow-top-dark: inset 0 6px 4px -4px rgba(0, 0, 0, 0.5);
+    --shadow-top-light: inset 0 4px 4px -4px rgba(0, 0, 0, 0.4);
     --status-bar-height: 20px;
     --strong-highlight-dark-color: #777;
     --strong-highlight-light-color: #aaa;
     --text-dark-color: #f8f8f2;
+    --warn-text-dark-bgcolor: #ff0;
+    --warn-text-dark-color: #f00;
+    --warn-text-light-bgcolor: #f00;
+    --warn-text-light-color: #ff0;
 }
 
 .both-sides-shadow {
@@ -31,10 +37,21 @@
     border-top: var(--border-width) solid var(--border-color);
 }
 
+.discourage {
+    color: var(--discouraging-text-light-color);
+    font-style: italic;
+}
+
+.warn-text {
+    background-color: var(--warn-text-light-bgcolor);
+    color: var(--warn-text-light-color);
+    font-weight: bold;
+}
+
 .dialog-scroll-container {
     /* It appears currently impossble to get the heights of the surrounding elements without using
      * JavaScript and/or maintaining a list of these elements. */
-    height: calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
 
     margin: 0;
     overflow-y: scroll;
@@ -79,7 +96,8 @@ div#blocked-content-info {
     border-color: #ddd;
     border-width: var(--border-width);
     color: black;
-    cursor: pointer;
+    cursor: default;
+    display: flex;
     height: 30px;
     left: 0;
     line-height: 30px;
@@ -92,6 +110,7 @@ div#blocked-content-info {
 }
 
 p.blocked-content-info-text {
+    flex: 1;
     font-size: 10pt;
     margin-bottom: 0px;
     margin-top: 0px;
@@ -100,12 +119,7 @@ p.blocked-content-info-text {
 }
 
 span#blocked-content-info-text-container {
-    display: table-cell;
     width: 100%;
-}
-
-span#blocked-content-info-close-button {
-    display: table-cell;
 }
 
 div.dialog-content {
@@ -119,6 +133,13 @@ div.dialog-input-field {
 
 input#search-input {
     width: 100%;
+}
+
+div.button-row {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 5px 10px 5px 0px;
 }
 
 .dialog-buttons {
@@ -318,6 +339,14 @@ p#issue-link-paragraph {
 }
 
 @media (prefers-color-scheme: dark) {
+    .markdown-body img {
+        color: var(--text-dark-color);
+    }
+
+    .blocked {
+        box-shadow: 0 0 2px 2px #ffab19;
+    }
+
     .both-sides-shadow {
         box-shadow: var(--shadow-top-dark), var(--shadow-bottom-dark);
     }
@@ -332,6 +361,15 @@ p#issue-link-paragraph {
 
     .top-border {
         border-top: var(--border-width) solid var(--dark-border-color);
+    }
+
+    .discourage {
+        color: var(--discouraging-text-dark-color);
+    }
+
+    .warn-text {
+        background-color: var(--warn-text-dark-bgcolor);
+        color: var(--warn-text-dark-color);
     }
 
     div.info {

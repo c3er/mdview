@@ -73,6 +73,10 @@ Another link to Google: https://www.google.com/
 
 ![Image from the evil Internet](https://c3er.github.io/cat.jpg)
 
+![Evil image from the Internet](https://c3er.github.io/cat2.jpg)
+
+![Another evil image from the evil Internet](https://c3er.github.io/cat3.jpg)
+
 ## Multimedia
 
 ### Audio
@@ -165,7 +169,7 @@ This is another paragraph.
 ## Table
 
 | Header 1        | Header 2        | Header 3        |
-| ---             | ---             | ---             |
+| --------------- | --------------- | --------------- |
 | Row 1, column 1 | Row 1, column 2 | Row 1, column 3 |
 | Row 2, column 1 | Row 2, column 2 | Row 2, column 3 |
 | Row 3, column 1 | Row 3, column 2 | Row 3, column 3 |
@@ -411,10 +415,10 @@ Examples are from [the project page](https://github.com/RedBug312/markdown-it-mu
 #### Basic example
 
 |             |          Grouping           ||
-First Header  | Second Header | Third Header |
- ------------ | :-----------: | -----------: |
-Content       |          *Long Cell*        ||
-Content       |   **Cell**    |         Cell |
+| First Header | Second Header | Third Header |
+| ------------ | :-----------: | -----------: |
+| Content      |  *Long Cell*  |              |
+| Content      |   **Cell**    |         Cell |
                                               
 New section   |     More      |         Data |
 And more      | With an escaped '\\|'       ||
@@ -422,27 +426,27 @@ And more      | With an escaped '\\|'       ||
 
 #### Multiline
 
-|   Markdown   | Rendered HTML |
-|--------------|---------------|
-|    *Italic*  | *Italic*      | \
-|              |               |
-|    - Item 1  | - Item 1      | \
-|    - Item 2  | - Item 2      |
-|    ```python | ```python       \
-|    .1 + .2   | .1 + .2         \
-|    ```       | ```           |
+| Markdown  | Rendered HTML     |
+| --------- | ----------------- |
+| *Italic*  | *Italic*          | \ |
+|           |                   |
+| - Item 1  | - Item 1          | \ |
+| - Item 2  | - Item 2          |
+| ```python | ```python       \ |
+| .1 + .2   | .1 + .2         \ |
+| ```       | ```               |
 
 #### Rowspan
 
-Stage | Direct Products | ATP Yields
-----: | --------------: | ---------:
-Glycolysis | 2 ATP ||
-^^ | 2 NADH | 3--5 ATP |
-Pyruvaye oxidation | 2 NADH | 5 ATP |
-Citric acid cycle | 2 ATP ||
-^^ | 6 NADH | 15 ATP |
-^^ | 2 FADH2 | 3 ATP |
-**30--32** ATP |||
+|              Stage | Direct Products | ATP Yields |
+| -----------------: | --------------: | ---------: |
+|         Glycolysis |           2 ATP |            |
+|                 ^^ |          2 NADH |   3--5 ATP |
+| Pyruvaye oxidation |          2 NADH |      5 ATP |
+|  Citric acid cycle |           2 ATP |            |
+|                 ^^ |          6 NADH |     15 ATP |
+|                 ^^ |         2 FADH2 |      3 ATP |
+|     **30--32** ATP |                 |            |
 [Net ATP yields per hexose]
 
 #### Headerless

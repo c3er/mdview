@@ -14,6 +14,10 @@
     white-space: pre-wrap;
 }
 
+.blocked {
+    box-shadow: 0 0 2px 2px #8b0000;
+}
+
 #raw-text {
     display: none;
 }
@@ -32,4 +36,8 @@ div.error {
 
 body {
     font-family: sans-serif;
+}
+
+button {
+    white-space: nowrap;
 }

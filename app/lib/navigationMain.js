@@ -46,6 +46,10 @@ class Location {
     }
 }
 
+function currentFilePath() {
+    return _locations.current.filePath
+}
+
 function allowBack(isAllowed) {
     menu.setEnabled(_mainMenu, BACK_MENU_ID, isAllowed)
 }
@@ -79,7 +83,6 @@ function canGoForward() {
 }
 
 function openFile(file) {
-    // console.debug(`Navigate to "${_locations.current}"`)
     ipc.send(ipc.messages.fileOpen, file)
 }
 
@@ -136,6 +139,7 @@ function go(filePath, internalTarget, encoding, lastScrollPosition) {
         scrollPosition: 0,
     })
     handleCallbacks(oldLocation, destination)
+    ipc.send(ipc.messages.currentFilePath, currentFilePath())
 }
 
 function back() {
@@ -182,7 +186,7 @@ exports.reloadCurrent = scrollPosition => {
 
 exports.register = (id, callback) => (_callbacks[id] = callback)
 
-exports.currentFilePath = () => _locations.current.filePath
+exports.currentFilePath = currentFilePath
 
 exports.hasCurrentLocation = () => Boolean(_locations.current)
 

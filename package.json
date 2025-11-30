@@ -1,6 +1,6 @@
 {
   "name": "mdview",
-  "version": "3.2.1",
+  "version": "4.0.0",
   "description": "Standalone Markdown Viewer",
   "keywords": [
     "markdown",
@@ -29,7 +29,8 @@
     "test-int": "mocha --timeout 20000",
     "test-all": "eslint . --max-warnings 0 && prettier --check . && mocha --timeout 20000",
     "format": "prettier --write .",
-    "fix": "eslint . --fix; prettier --write ."
+    "fix": "eslint . --fix; prettier --write .",
+    "list-tests": "mocha --dry-run"
   },
   "dependencies": {
     "@electron/remote": "2.1.3",

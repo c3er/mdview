@@ -21,13 +21,6 @@ exports.close = () => {
 
 exports.isOpen = isOpen
 
-exports.addStdButtonHandler = (element, callback) => {
-    element.onclick = event => {
-        event.preventDefault()
-        callback()
-    }
-}
-
 // For testing
 
 exports.reset = () => (_dialogs.length = 0)

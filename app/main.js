@@ -255,12 +255,31 @@ function createMainMenu() {
                     },
                 },
                 {
-                    label: "&Unblock All External Content",
-                    accelerator: "Alt+U",
-                    id: contentBlocking.UNBLOCK_CONTENT_MENU_ID,
-                    click() {
-                        contentBlocking.unblockAll()
-                    },
+                    label: "&Content Blocking",
+                    submenu: [
+                        {
+                            label: "Unblock All External Content &Temporaryly",
+                            id: contentBlocking.UNBLOCK_CONTENT_TEMPORARY_MENU_ID,
+                            click() {
+                                contentBlocking.unblockAll()
+                            },
+                        },
+                        {
+                            label: "Unblock All External Content &Permanently...",
+                            id: contentBlocking.UNBLOCK_CONTENT_PERMANENTLY_MENU_ID,
+                            click() {
+                                contentBlocking.unblockAllPermamently()
+                            },
+                        },
+                        { type: "separator" },
+                        {
+                            label: "&Manage Unblocked Content...",
+                            id: contentBlocking.MANAGE_CONTENT_BLOCKING_MENU_ID,
+                            click() {
+                                contentBlocking.manageUnblocked()
+                            },
+                        },
+                    ],
                 },
                 {
                     label: "&View Raw Text",

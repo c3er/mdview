@@ -65,6 +65,13 @@ exports.elementYPosition = element => {
     )
 }
 
+exports.addStdButtonHandler = (element, callback) => {
+    element.onclick = event => {
+        event.preventDefault()
+        callback()
+    }
+}
+
 exports.setupShadows = (scrollContainer, contentElement) => {
     scrollContainer.onscroll = () => {
         if (_shallPreventScrollEvent) {
