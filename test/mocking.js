@@ -496,6 +496,12 @@ exports.elements = {
             path: "#error-ok-button",
         },
     },
+    questionDialog: {
+        path: "#question-dialog",
+        okButton: {
+            path: "#question-ok-button",
+        },
+    },
 }
 
 exports.mainWindow = {

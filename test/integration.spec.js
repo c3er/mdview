@@ -637,6 +637,7 @@ describe("Integration tests with their own app instance each", () => {
             assert(!(await hasCssClass(blockContentCheckboxLabelLocator, settings.WARN_TEXT_CLASS)))
 
             await blockContentCheckboxLocator.click()
+            await _page.locator(mocking.elements.questionDialog.okButton.path).click()
             assert(!(await blockContentCheckboxLocator.isChecked()))
             assert(
                 !(await hasCssClass(blockContentCheckboxLabelLocator, settings.DISCOURAGE_CLASS)),

@@ -2,6 +2,7 @@ const common = require("./common")
 const dialog = require("./dialogRenderer")
 const fileLib = require("./file")
 const ipc = require("./ipcRenderer")
+const question = require("./questionRenderer")
 const renderer = require("./commonRenderer")
 
 const shared = require("./settingsShared")
@@ -247,7 +248,20 @@ exports.init = (document, window) => {
         "click",
         () => (_documentSettings.showTocOverridesAppSettings = true),
     )
-    _blockContentCheckbox.onclick = styleblockContentCheckbox
+    _blockContentCheckbox.onclick = async () => {
+        if (
+            !_blockContentCheckbox.checked &&
+            !(await question.ask(
+                "No content loaded from the internet will be blocked! Proceed?",
+                "Circumvent content blocking",
+                "Continue content blocking",
+            ))
+        ) {
+            _blockContentCheckbox.checked = true
+            return
+        }
+        styleblockContentCheckbox()
+    }
 
     _document.getElementById("settings-ok-button").addEventListener("click", handleConfirm)
     renderer.addStdButtonHandler(_document.getElementById("settings-cancel-button"), dialog.close)
