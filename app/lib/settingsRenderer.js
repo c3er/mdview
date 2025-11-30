@@ -244,10 +244,8 @@ exports.init = (document, window) => {
         _documentSettings.showTocOverridesAppSettings = false
         updateTocForDocumentCheckbox()
     })
-    _showTocForDocumentCheckbox.addEventListener(
-        "click",
-        () => (_documentSettings.showTocOverridesAppSettings = true),
-    )
+    _showTocForDocumentCheckbox.onclick = () =>
+        (_documentSettings.showTocOverridesAppSettings = true)
     _blockContentCheckbox.onclick = async () => {
         if (
             !_blockContentCheckbox.checked &&
