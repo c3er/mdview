@@ -18,6 +18,7 @@ const fileLib = require("./lib/file")
 const ipc = require("./lib/ipcRenderer")
 const log = require("./lib/log")
 const navigation = require("./lib/navigationRenderer")
+const question = require("./lib/questionRenderer")
 const rawText = require("./lib/rawTextRenderer")
 const renderer = require("./lib/commonRenderer")
 const search = require("./lib/searchRenderer")
@@ -171,6 +172,7 @@ function domContentLoadedHandler() {
     error.init(document)
     dragDrop.init(document)
     about.init(document)
+    question.init(document)
 
     // Based on https://davidwalsh.name/detect-system-theme-preference-change-using-javascript
     const match = matchMedia("(prefers-color-scheme: dark)")
