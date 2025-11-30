@@ -246,6 +246,7 @@ document.addEventListener("DOMContentLoaded", domContentLoadedHandler)
 onkeydown = event => {
     switch (event.key) {
         case "Escape":
+            event.preventDefault()
             if (dialog.isOpen()) {
                 dialog.close()
             } else {
