@@ -64,6 +64,22 @@ function determineCurrentFilePath() {
         : (_cliArgs.filePath ?? _finderFilePath)
 }
 
+function loadWindowPosition() {
+    const applicationSettings = storage.loadApplicationSettings()
+    return applicationSettings.windowPositionPerDocument
+        ? loadDocumentSettings().windowPosition
+        : applicationSettings.windowPosition
+}
+
+function storeWindowPosition(windowPosition) {
+    const applicationSettings = storage.loadApplicationSettings()
+    if (applicationSettings.windowPositionPerDocument) {
+        loadDocumentSettings().windowPosition = windowPosition
+    } else {
+        applicationSettings.windowPosition = windowPosition
+    }
+}
+
 function createChildWindow(filePath, internalTarget) {
     const processName = process.argv[0]
     const args = processName.includes("electron") ? [".", filePath] : [filePath]
@@ -415,7 +431,7 @@ function createMainMenu() {
 }
 
 function createWindow() {
-    const windowPosition = loadDocumentSettings().windowPosition
+    const windowPosition = loadWindowPosition()
     const mainWindow = new electron.BrowserWindow({
         x: windowPosition.x,
         y: windowPosition.y,
@@ -430,7 +446,7 @@ function createWindow() {
             contextIsolation: false,
         },
     })
-    mainWindow.on("close", () => (loadDocumentSettings().windowPosition = mainWindow.getBounds()))
+    mainWindow.on("close", () => storeWindowPosition(mainWindow.getBounds()))
     mainWindow.on("closed", () => (_mainWindow = null))
     mainWindow.webContents.on("did-finish-load", () => {
         if (_isReloading) {
@@ -534,7 +550,7 @@ ipc.listen(ipc.messages.finishLoad, () => {
     }
 
     if (_finderFilePath) {
-        _mainWindow.setBounds(loadDocumentSettings().windowPosition)
+        _mainWindow.setBounds(loadWindowPosition())
     }
 
     toc.init(_mainMenu, _applicationSettings)

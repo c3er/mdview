@@ -39,6 +39,8 @@ let _showTocForDocumentCheckbox
 let _renderDocumentAsMarkdownCheckbox
 let _blockContentCheckbox
 let _blockContentCheckboxLabel
+let _perDocumentPositionRadioButton
+let _globalPositionRadioButton
 
 let _applicationSettings
 let _documentSettings
@@ -102,6 +104,11 @@ function populateDialog() {
     _fileHistorySizeInput.value = _applicationSettings.fileHistorySize
     _showTocCheckbox.checked = _applicationSettings.showToc
     _blockContentCheckbox.checked = _applicationSettings.blockContent
+    if (_applicationSettings.windowPositionPerDocument) {
+        _perDocumentPositionRadioButton.checked = true
+    } else {
+        _globalPositionRadioButton.checked = true
+    }
 
     // Document settings
     updateTocForDocumentCheckbox()
@@ -132,6 +139,7 @@ function applySettings() {
     _applicationSettings.fileHistorySize = Number(_fileHistorySizeInput.value)
     _applicationSettings.showToc = _showTocCheckbox.checked
     _applicationSettings.blockContent = _blockContentCheckbox.checked
+    _applicationSettings.windowPositionPerDocument = _perDocumentPositionRadioButton.checked
 
     // Document settings
     _documentSettings.showToc = _showTocForDocumentCheckbox.checked
@@ -220,6 +228,8 @@ exports.init = (document, window) => {
     _renderDocumentAsMarkdownCheckbox = _document.getElementById("render-doc-as-markdown")
     _blockContentCheckbox = _document.getElementById("block-content")
     _blockContentCheckboxLabel = _document.querySelector('label[for="block-content"]')
+    _perDocumentPositionRadioButton = _document.querySelector("input#per-document-position")
+    _globalPositionRadioButton = _document.querySelector("input#global-position")
 
     _tabElements = [..._document.getElementsByClassName("dialog-tab")]
     _tabContentElements = [..._document.getElementsByClassName("dialog-tab-content")]

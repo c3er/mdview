@@ -21,6 +21,9 @@ const DOCUMENT_SETTINGS_FILE = "doc-settings.json"
 const FILE_HISTORY_FILE = "file-history.json"
 const CONTENT_BLOCKING_FILE = "content-blocking.json"
 
+const WINDOW_WIDTH_DEFAULT = 1024
+const WINDOW_HEIGHT_DEFAULT = 768
+
 let _dataDir
 
 let _applicationSettings
@@ -94,6 +97,8 @@ class ApplicationSettings extends StorageBase {
     #DRAG_DROP_BEHAVIOR_KEY = "drag-drop-behavior"
     #FILE_HISTORY_SIZE_KEY = "file-history-size"
     #BLOCK_CONTENT_KEY = "block-content"
+    #WINDOW_POSITION_PER_DOCUMENT_KEY = "window-position-per-document"
+    #WINDOW_POSITION_KEY = "window-position"
 
     SYSTEM_THEME = common.SYSTEM_THEME
     LIGHT_THEME = common.LIGHT_THEME
@@ -113,6 +118,10 @@ class ApplicationSettings extends StorageBase {
     DRAG_DROP_BEHAVIOR_DEFAULT = dragDrop.behavior.ask
     FILE_HISTORY_SIZE_DEFAULT = 5
     BLOCK_CONTENT_DEFAULT = true
+
+    WINDOW_POSITION_PER_DOCUMENT_DEFAULT = true
+    WINDOW_WIDTH_DEFAULT = WINDOW_WIDTH_DEFAULT
+    WINDOW_HEIGHT_DEFAULT = WINDOW_HEIGHT_DEFAULT
 
     constructor(storageDir, storageFile) {
         super(APPLICATION_SETTINGS_VERSION, storageDir, storageFile)
@@ -221,6 +230,28 @@ class ApplicationSettings extends StorageBase {
         this._storeValue(this.#BLOCK_CONTENT_KEY, value)
     }
 
+    get windowPositionPerDocument() {
+        return this._loadValue(
+            this.#WINDOW_POSITION_PER_DOCUMENT_KEY,
+            this.WINDOW_POSITION_PER_DOCUMENT_DEFAULT,
+        )
+    }
+
+    set windowPositionPerDocument(value) {
+        this._storeValue(this.#WINDOW_POSITION_PER_DOCUMENT_KEY, value)
+    }
+
+    get windowPosition() {
+        return this._loadValue(
+            this.#WINDOW_POSITION_KEY,
+            calcWindowPositionDefault(this.WINDOW_WIDTH_DEFAULT, this.WINDOW_HEIGHT_DEFAULT),
+        )
+    }
+
+    set windowPosition(value) {
+        this._storeValue(this.#WINDOW_POSITION_KEY, value)
+    }
+
     _loadValue(key, defaultValue) {
         return this._data[key] ?? defaultValue
     }
@@ -250,8 +281,8 @@ class DocumentSettings extends StorageBase {
 
     ENCODING_DEFAULT = null
     RENDER_AS_MD_DEFAULT = false
-    WINDOW_WIDTH_DEFAULT = 1024
-    WINDOW_HEIGHT_DEFAULT = 768
+    WINDOW_WIDTH_DEFAULT = WINDOW_WIDTH_DEFAULT
+    WINDOW_HEIGHT_DEFAULT = WINDOW_HEIGHT_DEFAULT
 
     SHOW_TOC_OVERRIDES_APP_SETTINGS_DEFAULT = false
     SHOW_TOC_DEFAULT = false
@@ -284,13 +315,10 @@ class DocumentSettings extends StorageBase {
     }
 
     get windowPosition() {
-        const screenSize = electron.screen.getPrimaryDisplay().size
-        return this._loadValue(this.#WINDOW_POSITION_KEY, {
-            x: screenSize.width / 2 - this.WINDOW_WIDTH_DEFAULT / 2,
-            y: screenSize.height / 2 - this.WINDOW_HEIGHT_DEFAULT / 2,
-            width: this.WINDOW_WIDTH_DEFAULT,
-            height: this.WINDOW_HEIGHT_DEFAULT,
-        })
+        return this._loadValue(
+            this.#WINDOW_POSITION_KEY,
+            calcWindowPositionDefault(this.WINDOW_WIDTH_DEFAULT, this.WINDOW_HEIGHT_DEFAULT),
+        )
     }
 
     set windowPosition(value) {
@@ -457,6 +485,16 @@ class ContentBlocking extends StorageBase {
     _save() {
         this._data[this.#CONTENTS_KEY] = this.toObject()
         super._save()
+    }
+}
+
+function calcWindowPositionDefault(widthDefault, heightDefault) {
+    const screenSize = electron.screen.getPrimaryDisplay().size
+    return {
+        x: screenSize.width / 2 - widthDefault / 2,
+        y: screenSize.height / 2 - heightDefault / 2,
+        width: widthDefault,
+        height: heightDefault,
     }
 }
 
