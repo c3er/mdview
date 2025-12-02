@@ -374,7 +374,9 @@ ipc.listen(ipc.messages.fileOpen, async file => {
             renderer.scrollTo(scrollPosition)
         }
         if (internalTarget) {
-            const targetElement = document.getElementById(internalTarget.replace("#", ""))
+            const targetElement =
+                document.querySelector(internalTarget) ??
+                document.querySelector(`[name=${internalTarget.replace("#", "")}]`)
             if (targetElement) {
                 if (!scrollPosition) {
                     renderer.scrollTo(renderer.elementYPosition(targetElement))
