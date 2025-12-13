@@ -168,7 +168,7 @@ function domContentLoadedHandler() {
     rawText.init(() => reload(false))
     navigation.init()
     search.init(document, () => reload(false))
-    settings.init(document, window)
+    settings.init(document)
     error.init(document)
     dragDrop.init(document)
     about.init(document)

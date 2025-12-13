@@ -13,7 +13,6 @@ const DISCOURAGE_CLASS = shared.DISCOURAGE_CLASS
 const WARN_TEXT_CLASS = shared.WARN_TEXT_CLASS
 
 let _document
-let _window
 let _dialogElement
 let _dialogForm
 
@@ -191,22 +190,44 @@ function handleKeyboardConfirm(event) {
 
 function setupLayout() {
     const scrollContainerHeight = _scrollContainer.clientHeight
+
+    let tallest = 0
     for (const tabContentElement of _tabContentElements) {
-        const computedStyle = _window.getComputedStyle(tabContentElement)
-        tabContentElement.style.minHeight = `${
-            scrollContainerHeight -
-            parseFloat(computedStyle.paddingTop) -
-            parseFloat(computedStyle.paddingBottom)
-        }px`
+        const contentStyle = tabContentElement.style
+
+        const oldDisplay = contentStyle.display
+        const oldPosition = contentStyle.position
+        const oldVisibility = contentStyle.visibility
+
+        contentStyle.display = "block"
+        contentStyle.position = "absolute"
+        contentStyle.visibility = "hidden"
+
+        const naturalHeight = tabContentElement.scrollHeight
+        if (naturalHeight > tallest) {
+            tallest = naturalHeight
+        }
+
+        contentStyle.display = oldDisplay
+        contentStyle.position = oldPosition
+        contentStyle.visibility = oldVisibility
     }
+
+    const targetHeight = Math.min(scrollContainerHeight, tallest)
+    for (const tabContentElement of _tabContentElements) {
+        const contentStyle = tabContentElement.style
+        const padding = contentStyle.paddingTob + contentStyle.paddingBottom
+        contentStyle.minHeight = `${targetHeight - padding}px`
+        contentStyle.maxHeight = `${scrollContainerHeight - padding}px`
+    }
+
     renderer.setupShadows(_scrollContainer)
 }
 
 exports.DIALOG_ID = DIALOG_ID
 
-exports.init = (document, window) => {
+exports.init = document => {
     _document = document
-    _window = window
     _dialogElement = _document.getElementById("settings-dialog")
     _dialogForm = _document.getElementById("settings-dialog-form")
 
