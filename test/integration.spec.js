@@ -110,6 +110,10 @@ async function elementIsVisible(elementPath) {
     return await elementHasState(elementPath, "visible", async locator => await locator.isVisible())
 }
 
+async function elementHeight(elementPath) {
+    return await _page.locator(elementPath).evaluate(element => element.clientHeight)
+}
+
 async function hasCssClass(locator, className) {
     return ((await locator.getAttribute("class"))?.split(" ") ?? []).includes(className)
 }
@@ -559,6 +563,16 @@ describe("Integration tests with their own app instance each", () => {
             assert(await elementIsVisible(settingsDialogMock.documentSettings.path))
         }
 
+        async function locatorHasTabSelection(locator, isSelected) {
+            return await locator.evaluate((element, isSelected) => {
+                const isUnselectedTab = element.classList.contains("unselected-tab")
+                return (
+                    element.classList.contains("dialog-tab") &&
+                    ((!isSelected && isUnselectedTab) || (isSelected && !isUnselectedTab)) // XOR
+                )
+            }, isSelected)
+        }
+
         it("can be opened", async () => {
             await opendDialog()
             await confirmDialog()
@@ -569,11 +583,34 @@ describe("Integration tests with their own app instance each", () => {
             const tabLocators = await _page.locator(".dialog-tab").all()
             let unselectedTabCount = 0
             for (const tabLocator of tabLocators) {
-                unselectedTabCount += await tabLocator.evaluate(tabElement =>
-                    tabElement.classList.contains("unselected-tab") ? 1 : 0,
-                )
+                unselectedTabCount += (await locatorHasTabSelection(tabLocator, false)) ? 1 : 0
             }
             assert.strictEqual(tabLocators.length - unselectedTabCount, 1)
+        })
+
+        it("can change tab and keeps its height", async () => {
+            await opendDialog()
+
+            const settingsDialogPath = mocking.elements.settingsDialog.path
+            const dialogHeight = await elementHeight(settingsDialogPath)
+
+            let expectedSelectedTabIndex = 0
+            const tabLocators = await _page.locator(".dialog-tab").all()
+            for (let i = 0; i < tabLocators.length; i++) {
+                const tabLocator = tabLocators[i]
+                if (await locatorHasTabSelection(tabLocator, true)) {
+                    assert.strictEqual(i, expectedSelectedTabIndex)
+                    assert.strictEqual(await elementHeight(settingsDialogPath), dialogHeight)
+                } else if (await locatorHasTabSelection(tabLocator, false)) {
+                    assert.notStrictEqual(i, expectedSelectedTabIndex)
+                    await tabLocator.click()
+                    assert(await locatorHasTabSelection(tabLocator, true))
+                    assert.strictEqual(await elementHeight(settingsDialogPath), dialogHeight)
+                    expectedSelectedTabIndex = i
+                } else {
+                    assert.fail('Functon "locatorHasTabSelection" not working.')
+                }
+            }
         })
 
         it("remembers a changed setting", async () => {

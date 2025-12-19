@@ -13,6 +13,7 @@ const DISCOURAGE_CLASS = shared.DISCOURAGE_CLASS
 const WARN_TEXT_CLASS = shared.WARN_TEXT_CLASS
 
 let _document
+let _window
 let _dialogElement
 let _dialogForm
 
@@ -215,8 +216,11 @@ function setupLayout() {
 
     const targetHeight = Math.min(scrollContainerHeight, tallest)
     for (const tabContentElement of _tabContentElements) {
+        const computedStyle = _window.getComputedStyle(tabContentElement)
+        const padding =
+            parseFloat(computedStyle.paddingTop || 0) + parseFloat(computedStyle.paddingBottom || 0)
+
         const contentStyle = tabContentElement.style
-        const padding = contentStyle.paddingTob + contentStyle.paddingBottom
         contentStyle.minHeight = `${targetHeight - padding}px`
         contentStyle.maxHeight = `${scrollContainerHeight - padding}px`
     }
@@ -226,8 +230,9 @@ function setupLayout() {
 
 exports.DIALOG_ID = DIALOG_ID
 
-exports.init = document => {
+exports.init = (document, window) => {
     _document = document
+    _window = window
     _dialogElement = _document.getElementById("settings-dialog")
     _dialogForm = _document.getElementById("settings-dialog-form")
 
