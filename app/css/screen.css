@@ -301,11 +301,6 @@ div.unselected-tab:hover {
 }
 
 div.dialog-tab-content {
-    border-color: var(--border-color);
-    border-style: solid;
-    border-width: var(--border-width);
-    border-bottom-style: none; /* Button container below has its own border */
-    border-top-style: none; /* Needs to be after other border definitions */
     padding: 5px 20px;
 }
 
@@ -336,6 +331,14 @@ p#issue-link-paragraph {
 #about-dialog th,
 #about-dialog td {
     text-align: left;
+}
+
+div#settings-dialog-scroll-container {
+    border-color: var(--border-color);
+    border-style: solid;
+    border-width: var(--border-width);
+    border-bottom-style: none; /* Button container below has its own border */
+    border-top-style: none; /* Needs to be after other border definitions */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -452,7 +455,7 @@ p#issue-link-paragraph {
         background-color: var(--highlight-dark-color);
     }
 
-    div.dialog-tab-content {
+    div#settings-dialog-scroll-container {
         border-color: var(--dark-border-color);
     }
 }
