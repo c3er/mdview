@@ -2,6 +2,7 @@ const APPLICATION_NAME = "Markdown Viewer"
 const APPLICATION_SHORTNAME = "mdview"
 const WIN_ICON = "app/assets/icon/md.ico"
 const MAC_ICON = "app/assets/icon/md.icns"
+const RESPOURCE_FILES = ["README.md", "CONTRIBUTING.md", "doc/**"]
 
 module.exports = {
     productName: APPLICATION_NAME,
@@ -23,7 +24,9 @@ module.exports = {
         "!.prettier*",
         "!tmp.md",
         "!*.log",
+        ...RESPOURCE_FILES.map(file => `!${file}`),
     ],
+    extraResources: RESPOURCE_FILES,
     msi: {
         createDesktopShortcut: false,
         oneClick: false,

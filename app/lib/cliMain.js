@@ -1,13 +1,25 @@
+const fs = require("fs")
 const path = require("path")
 
 const log = require("./log")
 
 let electron
 
-const DEFAULT_FILE = path.join(__dirname, "..", "..", "README.md")
-
 function extractInternalTarget(args) {
     return args.find(arg => arg.startsWith("#"))
+}
+
+function findDefaultFile() {
+    const FILENAME = "README.md"
+    let dir = __dirname
+    do {
+        dir = path.resolve(dir, "..")
+        const filePath = path.join(dir, FILENAME)
+        if (fs.existsSync(filePath)) {
+            return filePath
+        }
+    } while (!dir.replaceAll("\\", "/").endsWith("/"))
+    throw new Error(`Could not find default file "${FILENAME}.`)
 }
 
 function extractFilePath(args, storageDirArgIndex) {
@@ -21,7 +33,7 @@ function extractFilePath(args, storageDirArgIndex) {
                 !arg.startsWith("-") &&
                 !arg.startsWith("#") &&
                 args.indexOf(arg) !== storageDirArgIndex,
-        ) ?? DEFAULT_FILE
+        ) ?? findDefaultFile()
     )
 }
 
