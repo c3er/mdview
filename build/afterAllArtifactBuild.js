@@ -63,6 +63,7 @@ async function createScoopManifest(outDir, artifacts) {
 
     const zipArtifact = artifacts.find(artifact => artifact.path.toLowerCase().endsWith(".zip"))
     if (!zipArtifact) {
+        console.warn("Could not generate Scoop manifest: ZIP package not found.")
         return
     }
 
@@ -80,5 +81,7 @@ async function createScoopManifest(outDir, artifacts) {
 
 exports.default = async context => {
     const artifacts = await createChecksumFiles(context.artifactPaths)
-    await createScoopManifest(context.outDir, artifacts)
+    if (process.platform === "win32") {
+        await createScoopManifest(context.outDir, artifacts)
+    }
 }
