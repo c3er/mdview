@@ -21,9 +21,7 @@ async function calcChecksum(filePath, algorithm) {
             hash.update(buffer)
         } while (bytesRead > 0)
     } finally {
-        if (file !== undefined) {
-            await file.close()
-        }
+        await file?.close()
     }
     return hash.digest("hex")
 }
@@ -50,9 +48,7 @@ async function createChecksumFiles(artifactPaths) {
                 `${checksum}  ${path.basename(artifactPath)}\n`,
             )
             console.log(
-                `${artifactPath.padEnd(maxArtifactPathLength)} ${algorithm.padEnd(
-                    maxAlgorithmNameLength,
-                )} ${checksum}`,
+                `${artifactPath.padEnd(maxArtifactPathLength)} ${algorithm.padEnd(maxAlgorithmNameLength)} ${checksum}`,
             )
         }
         artifacts.push(artifact)
