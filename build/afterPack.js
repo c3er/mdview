@@ -26,8 +26,9 @@ exports.default = async context => {
     const LOCALES_DIR = "locales"
     const LOCALE_TO_KEEP = "en-US.pak"
 
-    const MAC_RESOURCE_DIR =
+    const MAC_FRAMEWORK_RESOURCE_DIR =
         "mdview.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources"
+    const MAC_RESOURCES_DIR = "mdview.app/Contents/Resources"
     const MAC_RESOURCES_TO_KEEP = [
         "Info.plist",
         "MainMenu.nib",
@@ -78,6 +79,12 @@ exports.default = async context => {
     }
 
     if (platform === "darwin") {
-        await removeResources(path.join(outDir, MAC_RESOURCE_DIR), MAC_RESOURCES_TO_KEEP)
+        await removeResources(path.join(outDir, MAC_FRAMEWORK_RESOURCE_DIR), MAC_RESOURCES_TO_KEEP)
+
+        const resourcesDir = path.join(outDir, MAC_RESOURCES_DIR)
+        await removeFiles(
+            resourcesDir,
+            (await fs.readdir(resourcesDir)).filter(file => file.endsWith(".lproj")),
+        )
     }
 }
