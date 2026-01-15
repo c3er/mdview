@@ -12,7 +12,7 @@ The installation folder contains now some additional files, that were hidden ins
 
 ## 4.0.0 Content Blocking Memory
 
-## Unblocked content can now be remembered (issue #61)
+## Unblocked content can now be remembered (issue [#61](https://github.com/c3er/mdview/issues/61))
 
 It is now possible, to unblock images permanently, meaning that media doesn't need to be unblocked again after restarting the application.
 
@@ -30,7 +30,7 @@ Clicking on "Permanent" opens a dialog, allowing to select, which content shall 
 
 ![Screenshot of the dialog for unblocking images permanently](https://github.com/user-attachments/assets/a13089e5-501d-4aa7-9a5a-fd76583809b4 "Dialog for unblocking images permanently")
 
-## Single window position, independent of the document (issue #67)
+## Single window position, independent of the document (issue [#67](https://github.com/c3er/mdview/issues/67))
 
 The application settings have now an option for remembering the window position:
 
@@ -39,7 +39,7 @@ The application settings have now an option for remembering the window position:
 
 ## Bugfixes
 
-### Issue #62
+### Issue [#62](https://github.com/c3er/mdview/issues/62)
 
 HTML anchors can now be defined also via `name`, additionally to the already supported `id` attribute.
 
@@ -76,11 +76,11 @@ The Windows command line behaves weirdly when invoking the application. To worka
 
 ### Bugfixes
 
-#### Issue #57
+#### Issue [#57](https://github.com/c3er/mdview/issues/57)
 
 The recognition of file ending is case insensitive now, i.e. `.MD` is now the same as `.md`
 
-#### Issue #58
+#### Issue [#58](https://github.com/c3er/mdview/issues/58)
 
 The application now runs properly after installing globally via the MSI package.
 
@@ -92,13 +92,13 @@ The application now runs properly after installing globally via the MSI package.
 
 ### Bugfix for absolute local paths
 
-Issue #52
+Issue [#52](https://github.com/c3er/mdview/issues/52)
 
 Absolute local paths to media and in links where not regarded by the application, leading to be broken.
 
 ### MSI package
 
-Issue #53
+Issue [#53](https://github.com/c3er/mdview/issues/53)
 
 This is the first release containing an MSI package.
 
@@ -109,11 +109,11 @@ There are now additional ways to zoom in and zoom out your document, change the 
 - Minus and plus keys on numpad
 - Control + mouse wheel
 
-See issue #50
+See issue [#50](https://github.com/c3er/mdview/issues/50)
 
 ## 3.0.2 Fix weird behaviors with certain headers
 
-Issue #47
+Issue [#47](https://github.com/c3er/mdview/issues/47)
 
 Certain header titles, e.g. "Content" could cause the application to behave weirdly or even break the usability.
 
@@ -121,7 +121,7 @@ Certain header titles, e.g. "Content" could cause the application to behave weir
 
 ### Application crash at invalid file links
 
-Issue #45
+Issue [#45](https://github.com/c3er/mdview/issues/45)
 
 The application crashed after a click on a link to a non existing file. Now, only a meaningful error message is displayed.
 
@@ -139,25 +139,25 @@ All settings are now reachable via a new settings dialog. It can be opened via m
 
 ### Drag & Drop
 
-Issue #40
+Issue [#40](https://github.com/c3er/mdview/issues/40)
 
 Any text file can now be dropped into the Markdown Viewer window to open it. By default, a dialog asks whether to open the file in the window were dropped or in a new window.
 
 ### Markdown Metadata
 
-Issue #37
+Issue [#37](https://github.com/c3er/mdview/issues/37)
 
 If a Markdown file contains a metadata header, it is now rendered properly. In the settings dialog is an option to hide this header.
 
 ### Recently Opened Files
 
-Issue #41
+Issue [#41](https://github.com/c3er/mdview/issues/41)
 
 The File menu now contains a list of recently opened files. The count can be adjusted in the settings.
 
 ### Bugfixes
 
-- Mermaid diagrams are now displayed with readable colors in dark mode (issue #39)
+- Mermaid diagrams are now displayed with readable colors in dark mode (issue [#39](https://github.com/c3er/mdview/issues/39))
 
 ## 2.8.0 Mermaid and Search
 
@@ -223,7 +223,7 @@ The local development instance now stores its settings inside the project direct
 
 Since the introduction of the table of content feature, it was not possible to scroll via keyboard (arrow keys, page-up/-down) without clicking into the content first.
 
-See issue #31
+See issue [#31](https://github.com/c3er/mdview/issues/31)
 
 ## 2.6.1 Bugfixes for Table of Content
 
@@ -232,13 +232,13 @@ See issue #31
 
 Other fixes:
 
-- Printing of wide tables was not fixed in a satisfactory manner. See issue #26
+- Printing of wide tables was not fixed in a satisfactory manner. See issue [#26](https://github.com/c3er/mdview/issues/26)
 
 ## 2.6.0 Table Of Content
 
 The application can now display a Table of Content (TOC). The TOC is hidden by default. It can be displayed via entries in the "View" menu or by pressing Alt+C (Option+C on macOS) for a single document only or via Alt+Shift+C (Option+Shift+C on macOS) for all documents.
 
-A bug regarding very wide tables as fixed. If a document was printed, wide tables could be cropped. See issue #26
+A bug regarding very wide tables as fixed. If a document was printed, wide tables could be cropped. See issue [#26](https://github.com/c3er/mdview/issues/26)
 
 ## 2.5.1 Support for embedded Base64 image data
 
@@ -264,7 +264,7 @@ Also, the package is not signed, so expect some hassles at installing.
 
 ## 2.4.0 Support for Task lists
 
-The application renders now task lists. See issue #19 for details.
+The application renders now task lists. See issue [#19](https://github.com/c3er/mdview/issues/19) for details.
 
 Bugfixes:
 
@@ -312,7 +312,7 @@ Bug fixes:
 
 Links are now opened in the same window. If you want to open a link in a new window (previous default behavior), use the middle mouse button, i.e. pressing the mouse wheel.
 
-See also issue #11
+See also issue [#11](https://github.com/c3er/mdview/issues/11)
 
 ## 1.6.0 Additional Markdown rendering
 
@@ -328,8 +328,8 @@ Non Markdown text files were opened in raw text view mode. Expected behavior is 
 
 ## 1.4.3 Bugfixing
 
-- Menu item File/Open works again (issue #10)
-- URLs to local files inside of `<script>...</script>` do now work (issue #9)
+- Menu item File/Open works again (issue [#10](https://github.com/c3er/mdview/issues/10))
+- URLs to local files inside of `<script>...</script>` do now work (issue [#9](https://github.com/c3er/mdview/issues/9))
 
 ## 1.4.2 Bugfixes
 
@@ -347,9 +347,9 @@ The Windows EXE files are now signed with self generated certificate in the hope
 
 ## 1.4.0 File Encoding support
 
-Markdown Viewer does now support different file encodings (see issue #4). Additionally, the set encoding is remembered for each file (issue #5).
+Markdown Viewer does now support different file encodings (see issue [#4](https://github.com/c3er/mdview/issues/4)). Additionally, the set encoding is remembered for each file (issue [#5](https://github.com/c3er/mdview/issues/5)).
 
-Some bug fixes (issue #3 and a regression).
+Some bug fixes (issue [#3](https://github.com/c3er/mdview/issues/3) and a regression).
 
 ## 1.3.0 Auto refresh
 
