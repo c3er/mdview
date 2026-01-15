@@ -1,8 +1,8 @@
 # Markdown Viewer
 
-![Screenshot of the application in light mode](doc/assets/screenshot-light.png)
+![Screenshot of the application in light mode](doc/assets/screenshots/light.png)
 
-![Screenshot of the application in dark mode](doc/assets/screenshot-dark.png)
+![Screenshot of the application in dark mode](doc/assets/screenshots/dark.png)
 
 A standalone application that renders and displays Markdown files. It does nothing else! No direct editing nor any fancy note taking features. It is not distributed as a browser extension nor does it fire up a web server - so no web browser is needed to see the rendered Markdown file.
 

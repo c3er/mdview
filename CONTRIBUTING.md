@@ -62,7 +62,7 @@ The author uses [Visual Studio Code](https://code.visualstudio.com/) as editor. 
 
 - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint): Currently, a flag has to be set for support of the new ESLint configuration file format:
-  ![Screenshot of ESLint setting in VS Code to enable ESLint's flat config format](doc/assets/screenshot-vs-code-eslint-setting.png)
+  ![Screenshot of ESLint setting in VS Code to enable ESLint's flat config format](doc/assets/screenshots/vs-code-eslint-setting.png)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode): Some fine tuning in the settings may be required. Also, it is recommended to use Prettier as VS Code's formatter and enable automatic formatting at saving.
 
 The icon is made with help of [Inkscape](https://inkscape.org/en/) and [ImageMagick](https://www.imagemagick.org). While the application icon does not look too bad, a proper icon for Markdown *documents* is missing yet.
