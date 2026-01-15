@@ -18,17 +18,17 @@ It is now possible, to unblock images permanently, meaning that media doesn't ne
 
 Clicking on a blocked image opens now a menu:
 
-![Screenshot of the menu for unblocking a single image, with the options "Unblock Temporary" and "Unblock Permanently"](https://github.com/user-attachments/assets/e6af9116-7d65-4443-85ba-310ce000402f "Menu for unblocking a single image")
+![Screenshot of the menu for unblocking a single image, with the options "Unblock Temporary" and "Unblock Permanently"](doc/assets/screenshots/unblock-item-menu.png "Menu for unblocking a single image")
 
 The blocked content banner has now a button for unblocking, that opens also a menu on clicking:
 
-![Screenshot of the menu unblocking all images, with the options "Temporary" and "Permanent"](https://github.com/user-attachments/assets/5cfb9635-3a1f-4fd6-8412-45c6789822fb "Menu for unblocking a all images")
+![Screenshot of the menu unblocking all images, with the options "Temporary" and "Permanent"](doc/assets/screenshots/unblock-menu.png "Menu for unblocking a all images")
 
 Clicking on "Temporary" behaves like clicking on the banner itself in previous versions.
 
 Clicking on "Permanent" opens a dialog, allowing to select, which content shall stay unblocked:
 
-![Screenshot of the dialog for unblocking images permanently](https://github.com/user-attachments/assets/a13089e5-501d-4aa7-9a5a-fd76583809b4 "Dialog for unblocking images permanently")
+![Screenshot of the dialog for unblocking images permanently](doc/assets/screenshots/permanent-unblock-dialog.png "Dialog for unblocking images permanently")
 
 ## Single window position, independent of the document (issue [#67](https://github.com/c3er/mdview/issues/67))
 
@@ -135,7 +135,7 @@ The About Dialog was reworked to fit better the other dialogs
 
 All settings are now reachable via a new settings dialog. It can be opened via main menu "Edit" --> "Settings..." or via `Ctrl+,`
 
-![Screenshot of settings dialog](https://github.com/c3er/mdview/assets/24460532/f5fd0b6f-3e9d-48b9-b2a1-ad150dba3224)
+![Screenshot of settings dialog](doc/assets/screenshots/settings-dialog.png)
 
 ### Drag & Drop
 
@@ -178,15 +178,15 @@ graph TD
 ```
 ````
 
-![Screenshot of Markdown Viewer displaying a Mermaid diagram](https://github.com/c3er/mdview/assets/24460532/135981f4-c754-4d6c-a5d9-8f3e6f0d6071)
+![Screenshot of Markdown Viewer displaying a Mermaid diagram](doc/assets/screenshots/mermaid.png)
 
 ### Search
 
 The application can now search for a term via Ctrl+F. F3 highlights the next occurrence of the term and Shift+F3 highlights the previous one.
 
-![Screenshot of Markdown Viewer with open search dialog](https://github.com/c3er/mdview/assets/24460532/a39b1a83-61f0-4d04-bb94-2c3f3a43b3b2)
+![Screenshot of Markdown Viewer with open search dialog](doc/assets/screenshots/search-dialog.png)
 
-![Screenshot of Markdown Viewer with highlighted search term](https://github.com/c3er/mdview/assets/24460532/68ef6c04-1b81-4997-a947-de6ae70b4736)
+![Screenshot of Markdown Viewer with highlighted search term](doc/assets/screenshots/search-highlight.png)
 
 ## 2.7.0 Embed multimedia files
 
