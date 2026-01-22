@@ -2,7 +2,7 @@ const APPLICATION_NAME = "Markdown Viewer"
 const APPLICATION_SHORTNAME = "mdview"
 const WIN_ICON = "app/assets/icon/md.ico"
 const MAC_ICON = "app/assets/icon/md.icns"
-const RESPOURCE_FILES = ["README.md", "CONTRIBUTING.md", "CHANGELOG.md", "doc/**"]
+const RESPOURCE_FILES = ["README.md", "CONTRIBUTING.md", "CHANGELOG.md", "LICENSE", "doc/**"]
 
 module.exports = {
     productName: APPLICATION_NAME,
