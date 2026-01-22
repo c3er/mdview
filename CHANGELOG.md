@@ -10,7 +10,7 @@ The installation folder contains now some additional files, that were hidden ins
 - `CONTRIBUTING.md`
 - etc.
 
-## 4.0.0 Content Blocking Memory
+## [4.0.0 Content Blocking Memory](https://github.com/c3er/mdview/releases/tag/v4.0.0)
 
 ## Unblocked content can now be remembered (issue [#61](https://github.com/c3er/mdview/issues/61))
 
@@ -57,7 +57,7 @@ you can use
 <a name="anchor-with-id"></a>
 ```
 
-## 3.2.0 Bugfixes and minor UI additions
+## [3.2.0 Bugfixes and minor UI additions](https://github.com/c3er/mdview/releases/tag/v3.2.0)
 
 **Note:** The file `mdview-3.2.0-x64.exe` was marked as malicious on VirusTotal by "Bkav Pro" as "W32.AIDetectMalware".
 
@@ -88,7 +88,7 @@ The application now runs properly after installing globally via the MSI package.
 
 - Fixed a regression at the context menu that too many entries appeared
 
-## 3.1.1 Bugfix for absolute paths
+## [3.1.1 Bugfix for absolute paths](https://github.com/c3er/mdview/releases/tag/v3.1.1)
 
 ### Bugfix for absolute local paths
 
@@ -102,7 +102,7 @@ Issue [#53](https://github.com/c3er/mdview/issues/53)
 
 This is the first release containing an MSI package.
 
-## 3.1.0 Additional ways to zoom
+## [3.1.0 Additional ways to zoom](https://github.com/c3er/mdview/releases/tag/v3.1.0)
 
 There are now additional ways to zoom in and zoom out your document, change the sizes of the contents:
 
@@ -111,13 +111,13 @@ There are now additional ways to zoom in and zoom out your document, change the 
 
 See issue [#50](https://github.com/c3er/mdview/issues/50)
 
-## 3.0.2 Fix weird behaviors with certain headers
+## [3.0.2 Fix weird behaviors with certain headers](https://github.com/c3er/mdview/releases/tag/v3.0.2)
 
 Issue [#47](https://github.com/c3er/mdview/issues/47)
 
 Certain header titles, e.g. "Content" could cause the application to behave weirdly or even break the usability.
 
-## 3.0.1 Fix Application Crash at Invalid File Links
+## [3.0.1 Fix Application Crash at Invalid File Links](https://github.com/c3er/mdview/releases/tag/v3.0.1)
 
 ### Application crash at invalid file links
 
@@ -129,7 +129,7 @@ The application crashed after a click on a link to a non existing file. Now, onl
 
 The About Dialog was reworked to fit better the other dialogs
 
-## 3.0.0 Settings Dialog, Drag & Drop, Metadata
+## [3.0.0 Settings Dialog, Drag & Drop, Metadata](https://github.com/c3er/mdview/releases/tag/v3.0.0)
 
 ### Settings dialog
 
@@ -159,7 +159,7 @@ The File menu now contains a list of recently opened files. The count can be adj
 
 - Mermaid diagrams are now displayed with readable colors in dark mode (issue [#39](https://github.com/c3er/mdview/issues/39))
 
-## 2.8.0 Mermaid and Search
+## [2.8.0 Mermaid and Search](https://github.com/c3er/mdview/releases/tag/v2.8.0)
 
 ### Mermaid
 
@@ -188,7 +188,7 @@ The application can now search for a term via Ctrl+F. F3 highlights the next occ
 
 ![Screenshot of Markdown Viewer with highlighted search term](doc/assets/screenshots/search-highlight.png)
 
-## 2.7.0 Embed multimedia files
+## [2.7.0 Embed multimedia files](https://github.com/c3er/mdview/releases/tag/v2.7.0)
 
 ### Features
 
@@ -219,13 +219,13 @@ See [this page of the Chromium project](https://www.chromium.org/audio-video/) f
 
 The local development instance now stores its settings inside the project directory.
 
-## 2.6.2 Bugfix at keyboard handling
+## [2.6.2 Bugfix at keyboard handling](https://github.com/c3er/mdview/releases/tag/v2.6.2)
 
 Since the introduction of the table of content feature, it was not possible to scroll via keyboard (arrow keys, page-up/-down) without clicking into the content first.
 
 See issue [#31](https://github.com/c3er/mdview/issues/31)
 
-## 2.6.1 Bugfixes for Table of Content
+## [2.6.1 Bugfixes for Table of Content](https://github.com/c3er/mdview/releases/tag/v2.6.1)
 
 - The TOC used black as font color for dark mode. Now, the TOC font has the same color as the rest of the UI
 - Symbols to expand and collapse TOC entries are improved and should look the same in different operating systems.
@@ -234,13 +234,13 @@ Other fixes:
 
 - Printing of wide tables was not fixed in a satisfactory manner. See issue [#26](https://github.com/c3er/mdview/issues/26)
 
-## 2.6.0 Table Of Content
+## [2.6.0 Table Of Content](https://github.com/c3er/mdview/releases/tag/v2.6.0)
 
 The application can now display a Table of Content (TOC). The TOC is hidden by default. It can be displayed via entries in the "View" menu or by pressing Alt+C (Option+C on macOS) for a single document only or via Alt+Shift+C (Option+Shift+C on macOS) for all documents.
 
 A bug regarding very wide tables as fixed. If a document was printed, wide tables could be cropped. See issue [#26](https://github.com/c3er/mdview/issues/26)
 
-## 2.5.1 Support for embedded Base64 image data
+## [2.5.1 Support for embedded Base64 image data](https://github.com/c3er/mdview/releases/tag/v2.5.1)
 
 The tools now supports embedding an image as Base64 inside a data URL.
 
@@ -250,7 +250,7 @@ Example:
 ![A PNG image](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMkAAAB2CAIAAADtOCDyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAN9SURBVHhe7dhrcoIwAADhnosDeR5P42U4TBsgTwiKDttph/3+CSHGsgL261ti2JYotiWKbYliW6LYlii2JYptiWJbotiWKLYlim2JYlui2JYotiWKbYliW6LYlii2JYptiWJbotiWKLYlim2JYlui2JYotiWKbYliW6LYlii2JYptiWJbotiWKLYlim2JYlui2JYotiWKbYliW6LYlii2JYptiWJborzR1u3rudsjDsSNj7iW33tLve+PtXWsmjTIuP60z+6J+eSefW7H+3Bg4vG+vP9gWn/Zv2xL/wLSVrizDbGRYAiXlzHuWYyP+y3vz7vLna7Sf4M0NE8cmxzuY/Pmwy1smHY323qraZa7HJQ1y63Ua3v1ka/o/La6idQjOwPmnR+0NbU0S20F847KcNuG8XQxkzzx7oggz7IzpL/26zi5rXxPG+7xizt9oZdNcWw6Nn6zx/kbv2rk1XlJc2yPm1qaJw7Txg3BZls+MGyZLzJpnjwiLiBNHA8Il7Dm9bTp9Ue+qHPbWp2JKI2eB1f11GOiam/c0pVm3LZVHddb5N7Ci2ax+eU2pTTBgY98Vee2lbd3LYNzBkF9yZid2dbhbe3zVhQHrN5pe9068pEv6tS26mw60uByz1hUD8+/3tZqKUU+qBtP3nvwI18Sc91qbxBdy3PWMrwc8MttlTLyHTpNHQ9KI6ql3tJz1eyNj3w1zPPWevuu9QEHJzi7rSqMtq04INy6550dvXfR7Ny2yl86nK787V4uUfH8hRHlm59/luWTuztz4+y20kT59WZAZfpHR/VDpAzZ+8hXdXJb/bMx256+ojoJeerF9g0mZ7W1v9p80Go9RVnz7iS29YH0a6l/6tc/vKoL1aR50Fo/vgRj/U/7/tlJJzxfPj5tK2jeLvyqiHPHAfFVtY48Rb22Fx/5mj5r6ypSR81XqNesOmzrmXxDrP5LUraZ1nO29VQOaePiz1JH2NYL8RdfLCrwUeoo2xLFtkSxLVFsSxTbEsW2RLEtUWxLFNsSxbZEsS1RbEsU2xLFtkSxLVFsSxTbEsW2RLEtUWxLFNsSxbZEsS1RbEsU2xLFtkSxLVFsSxTbEsW2RLEtUWxLFNsSxbZEsS1RbEsU2xLFtkSxLVFsSxTbEsW2RLEtUWxLFNsSxbZEsS1RbEsU2xLFtkSxLVFsSxTbEsW2xPj+/gHoQQBYIGLfTAAAAABJRU5ErkJggg==)
 ```
 
-## 2.5.0 Choose which files are rendered as Markdown
+## [2.5.0 Choose which files are rendered as Markdown](https://github.com/c3er/mdview/releases/tag/v2.5.0)
 
 It is now possible to choose whether an opened file shall be rendered as Markdown or just as plain text. Based on the file name ending, it can also be chosen to render all files of a type (i.e. with the same ending) as Markdown or not.
 
@@ -262,7 +262,7 @@ This is the first release that also contains a Mac package (DMG for ARM).
 
 Also, the package is not signed, so expect some hassles at installing.
 
-## 2.4.0 Support for Task lists
+## [2.4.0 Support for Task lists](https://github.com/c3er/mdview/releases/tag/v2.4.0)
 
 The application renders now task lists. See issue [#19](https://github.com/c3er/mdview/issues/19) for details.
 
@@ -271,11 +271,11 @@ Bugfixes:
 - Images, those file names include a hash sign `#` were not displayed
 - Fixed link to release page in README
 
-## 2.3.1 Context menu regression fix
+## [2.3.1 Context menu regression fix](https://github.com/c3er/mdview/releases/tag/v2.3.1)
 
 The context menu (right click) did not appear since the last version (2.3.0).
 
-## 2.3.0 Markdown rendering options
+## [2.3.0 Markdown rendering options](https://github.com/c3er/mdview/releases/tag/v2.3.0)
 
 Certain Markdown rendering features are now configurable:
 
@@ -283,15 +283,15 @@ Certain Markdown rendering features are now configurable:
 - Converting Emoticons to Emojis
 - Typographic replacements
 
-## 2.2.1 Regression fix
+## [2.2.1 Regression fix](https://github.com/c3er/mdview/releases/tag/v2.2.1)
 
 The encoding recognition could lead the application to crash at opening certain documents.
 
-## 2.2.0 File encoding recognization
+## [2.2.0 File encoding recognization](https://github.com/c3er/mdview/releases/tag/v2.2.0)
 
 The tool now recognizes the encoding of a Markdown file automatically. The encoding can still be set manually, if the encoding was not recognized correctly.
 
-## 2.1.0 Additional settings
+## [2.1.0 Additional settings](https://github.com/c3er/mdview/releases/tag/v2.1.0)
 
 The application now remembers the last window position for each last opened document.
 
@@ -308,30 +308,30 @@ Bug fixes:
 - Regression at handling of backslashes in document paths. Version 2.0.0 could not open documents that are on a Windows network share (with a path like `\\computer\share\path\to\file.md`).
 - Markdown file recognition is now case insensitive (thanks to [Loïs Bégué](https://github.com/khatastroffik)).
 
-## 2.0.0 Open links in same window
+## [2.0.0 Open links in same window](https://github.com/c3er/mdview/releases/tag/v2.0.0)
 
 Links are now opened in the same window. If you want to open a link in a new window (previous default behavior), use the middle mouse button, i.e. pressing the mouse wheel.
 
 See also issue [#11](https://github.com/c3er/mdview/issues/11)
 
-## 1.6.0 Additional Markdown rendering
+## [1.6.0 Additional Markdown rendering](https://github.com/c3er/mdview/releases/tag/v1.6.0)
 
 Support for additional Markdown features was added. See the README file for more details.
 
-## 1.5.0 Dark theme
+## [1.5.0 Dark theme](https://github.com/c3er/mdview/releases/tag/v1.5.0)
 
 The app does now support a dark theme.
 
-## 1.4.4 Fix opening non Markdown files
+## [1.4.4 Fix opening non Markdown files](https://github.com/c3er/mdview/releases/tag/v1.4.4)
 
 Non Markdown text files were opened in raw text view mode. Expected behavior is to open them embedded in the source area of a Markdown file and disable the raw text view menu item.
 
-## 1.4.3 Bugfixing
+## [1.4.3 Bugfixing](https://github.com/c3er/mdview/releases/tag/v1.4.3)
 
 - Menu item File/Open works again (issue [#10](https://github.com/c3er/mdview/issues/10))
 - URLs to local files inside of `<script>...</script>` do now work (issue [#9](https://github.com/c3er/mdview/issues/9))
 
-## 1.4.2 Bugfixes
+## [1.4.2 Bugfixes](https://github.com/c3er/mdview/releases/tag/v1.4.2)
 
 Some bugfixes by updating the dependencies
 
@@ -339,41 +339,41 @@ Additionally, when an external image is unblocked, the position is now preserved
 
 The Windows EXE files are now signed with self generated certificate in the hope that SmartScreen may whitelist the application one day.
 
-## 1.4.1 Changed keyboard shortcuts
+## [1.4.1 Changed keyboard shortcuts](https://github.com/c3er/mdview/releases/tag/v1.4.1)
 
 - An MDView window can be closed now vie the Esc key
     - Raw text view is now left via pressing Ctrl+U (was Escape before)
 - Regression at reloading the opened file was fixed
 
-## 1.4.0 File Encoding support
+## [1.4.0 File Encoding support](https://github.com/c3er/mdview/releases/tag/v1.4.0)
 
 Markdown Viewer does now support different file encodings (see issue [#4](https://github.com/c3er/mdview/issues/4)). Additionally, the set encoding is remembered for each file (issue [#5](https://github.com/c3er/mdview/issues/5)).
 
 Some bug fixes (issue [#3](https://github.com/c3er/mdview/issues/3) and a regression).
 
-## 1.3.0 Auto refresh
+## [1.3.0 Auto refresh](https://github.com/c3er/mdview/releases/tag/v1.3.0)
 
 Displayed content is now refreshed automatically when the file is modified.
 
 Additionally, some bugfixes.
 
-## 1.2.0 Print feature
+## [1.2.0 Print feature](https://github.com/c3er/mdview/releases/tag/v1.2.0)
 
 It is now possible to print the current document. A view for the raw Markdown text is also integrated.
 
-## 1.1.2 Bugfix
+## [1.1.2 Bugfix](https://github.com/c3er/mdview/releases/tag/v1.1.2)
 
 Links that are formatted as inline code are now handled properly.
 
 Additionally, a Linux AppImage package is also added with this release - though not tested yet.
 
-## 1.1.1 Display improvements
+## [1.1.1 Display improvements](https://github.com/c3er/mdview/releases/tag/v1.1.1)
 
 - Font rendering is improved
 - Broken (or blocked) images are more recognizable
 - The text in the bar elements do not break visibly anymore
 
-## 1.1.0 Better handling of local non Markdown files
+## [1.1.0 Better handling of local non Markdown files](https://github.com/c3er/mdview/releases/tag/v1.1.0)
 
 Links to local non Markdown files are now handled better. If the file is a binary file, it will be opened by the application associated in the operating system. Source code files are rendered with syntax highlighting now.
 
@@ -384,11 +384,11 @@ Additionally:
 
 There is now a bug regarding the display of blocked (and broken) images. This is caused by the current Electron framework. See [Electron issue 14426](https://github.com/electron/electron/issues/14426).
 
-## 1.0.1 Bugfix
+## [1.0.1 Bugfix](https://github.com/c3er/mdview/releases/tag/v1.0.1)
 
 Headers with links were not transformed properly for the anchor elements
 
-## 1.0.0 Context menu
+## [1.0.0 Context menu](https://github.com/c3er/mdview/releases/tag/v1.0.0)
 
 Added a context menu that can:
 
@@ -398,33 +398,33 @@ Added a context menu that can:
 
 The tool is now feature complete.
 
-## 0.9.5 Regression fix
+## [0.9.5 Regression fix](https://github.com/c3er/mdview/releases/tag/v0.9.5)
 
 Clicking on file links did not work.
 
-## 0.9.4 Block content from the Internet
+## [0.9.4 Block content from the Internet](https://github.com/c3er/mdview/releases/tag/v0.9.4)
 
 Content that would be loaded from the Internet is now blocked by default. It is possible to unblock this content if desired.
 
 Additionally some bugfixes.
 
-## 0.9.3 Support for internal links
+## [0.9.3 Support for internal links](https://github.com/c3er/mdview/releases/tag/v0.9.3)
 
 Links that lead to targets inside the document (starting with a hash "#") are now supported. As GitHub, headings are supported to be linked. A click on such link will open a new window where the document is positioned to the target.
 
 Additionally, the content can now be refreshed by pressing F5.
 
-## 0.9.2 Status bar added
+## [0.9.2 Status bar added](https://github.com/c3er/mdview/releases/tag/v0.9.2)
 
 There is now a status bar that shows information to certain elements while the mouse pointer is over them.
 
 - Links: Shows the target URL
 - Images: Shows the alternative text and the image URL
 
-## 0.9.1 Local file handling
+## [0.9.1 Local file handling](https://github.com/c3er/mdview/releases/tag/v0.9.1)
 
 The tool handles links to local files and local images now properly. A links to a local file will be opened in a new window. A link to a website will be opened in the standard web browser.
 
-## 0.9.0 Initial release
+## [0.9.0 Initial release](https://github.com/c3er/mdview/releases/tag/v0.9.0)
 
 Initial release of Markdown Viewer. Some features are missing yet. See README file for further information.
