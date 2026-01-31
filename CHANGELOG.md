@@ -10,6 +10,10 @@ The installation folder contains now some additional files, that were hidden ins
 - `CONTRIBUTING.md`
 - etc.
 
+### Bugfixes
+
+- Fixed brief flashing of the content blocking banner during application start
+
 ## [4.0.0 Content Blocking Memory](https://github.com/c3er/mdview/releases/tag/v4.0.0)
 
 ## Unblocked content can now be remembered (issue [#61](https://github.com/c3er/mdview/issues/61))
