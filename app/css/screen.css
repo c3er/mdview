@@ -97,7 +97,7 @@ div#blocked-content-info {
     border-width: var(--border-width);
     color: black;
     cursor: default;
-    display: flex;
+    display: none;
     height: 30px;
     left: 0;
     line-height: 30px;
