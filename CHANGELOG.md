@@ -10,6 +10,12 @@ The installation folder contains now some additional files, that were hidden ins
 - `CONTRIBUTING.md`
 - etc.
 
+### Dark scrollbars
+
+If the theme is set to dark mode, the scrollbars are now displayed dark, instead of light grey.
+
+See issue [#71](https://github.com/c3er/mdview/issues/71).
+
 ### Bugfixes
 
 - Fixed brief flashing of the content blocking banner during application start

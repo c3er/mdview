@@ -342,6 +342,10 @@ div#settings-dialog-scroll-container {
 }
 
 @media (prefers-color-scheme: dark) {
+    body {
+        scrollbar-color: #555 #222;
+    }
+
     .markdown-body img {
         color: var(--text-dark-color);
     }
