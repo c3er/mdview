@@ -51,6 +51,13 @@ exports.reset = options => {
             callback(_, info) {
                 toc.addHeader(info.title, info.slug)
             },
+            slugify(text) {
+                // Took the illegal CSS characters from this StackOverflow answer:
+                // https://stackoverflow.com/a/6592488/13949398
+                return encodeURIComponent(
+                    String(text).trim().toLowerCase().replace(/\s+/g, "-"),
+                ).replace(/[~!@\$%\^&\*\(\)\+=,\.\/';:"?><\[\]\\\{\}\|`#]/g, "_")
+            },
         })
         .use(require("markdown-it-html5-embed"), {
             html5embed: {

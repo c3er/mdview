@@ -13,6 +13,7 @@ The installation folder contains now some additional files, that were hidden ins
 ### Bugfixes
 
 - Fixed brief flashing of the content blocking banner during application start
+- Regression fix: it was not possible anymore to navigate to headers with non ASCII characters in them. See issue [#70](https://github.com/c3er/mdview/issues/70).
 
 ## [4.0.0 Content Blocking Memory](https://github.com/c3er/mdview/releases/tag/v4.0.0)
 
