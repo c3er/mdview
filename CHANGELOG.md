@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## Current
 
 ### Documentation in installation folder
 
