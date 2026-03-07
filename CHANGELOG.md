@@ -20,6 +20,7 @@ See issue [#71](https://github.com/c3er/mdview/issues/71).
 
 - Fixed brief flashing of the content blocking banner during application start
 - Regression fix: it was not possible anymore to navigate to headers with non ASCII characters in them. See issue [#70](https://github.com/c3er/mdview/issues/70).
+- Bugfix at file type handling: the checkbox in the settings dialog, deciding whether the file shall be rendered as Markdown, was unchecked, if the file handling contains big letters, e.g. `.MD`, causing the application to lose the association for rendering it as Markdown. See issue [#72](https://github.com/c3er/mdview/issues/72).
 
 ## [4.0.0 Content Blocking Memory](https://github.com/c3er/mdview/releases/tag/v4.0.0)
 

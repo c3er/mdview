@@ -99,7 +99,7 @@ function populateDialog() {
         "new-window": _dragDropNewWindowRadioButton,
     })[_applicationSettings.dragDropBehavior].checked = true
     _renderFileTypeAsMarkdownCheckbox.checked = _applicationSettings.mdFileTypes.some(fileType =>
-        _filePath.endsWith(fileType),
+        _filePath.toLowerCase().endsWith(fileType),
     )
     _fileHistorySizeInput.value = _applicationSettings.fileHistorySize
     _showTocCheckbox.checked = _applicationSettings.showToc
