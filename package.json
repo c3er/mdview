@@ -58,7 +58,7 @@
     "clipboardy": "5.3.1",
     "electron": "40.6.1",
     "electron-builder": "26.8.1",
-    "eslint": "10.0.2",
+    "eslint": "10.0.3",
     "eslint-config-prettier": "10.1.8",
     "lodash.clonedeep": "4.5.0",
     "mocha": "11.7.5",
