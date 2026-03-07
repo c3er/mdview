@@ -2,6 +2,10 @@
 
 ## Current
 
+...
+
+## [4.0.1 Regression fixes and minor improvements](https://github.com/c3er/mdview/releases/tag/v4.0.1)
+
 ### Documentation in installation folder
 
 The installation folder contains now some additional files, that were hidden inside the application data archive file:
