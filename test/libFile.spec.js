@@ -1,10 +1,12 @@
 const assert = require("assert")
 const path = require("path")
 
+const lib = require("./testLib")
+
 const file = require("../app/lib/file")
 
 describe('Library "file"', () => {
-    const mdFilePath = path.join(__dirname, "documents", "testfile_utf8.md")
+    const mdFilePath = lib.DEFAULT_DOCUMENT_PATH
     const nonMdFilePath = path.join(__dirname, "mocking.js")
     const binFilePath = path.join(__dirname, "documents", "font1", "Daedric.ttf")
 

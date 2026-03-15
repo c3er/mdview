@@ -3,7 +3,7 @@ const path = require("path")
 
 const mocking = require("./mocking")
 
-const DEFAULT_DOCUMENT_FILE = "testfile_without-mermaid.md"
+const DEFAULT_DOCUMENT_FILE = "without-mermaid.md"
 const DEFAULT_DOCUMENT_DIR = path.join(__dirname, "documents")
 
 exports.DEFAULT_DOCUMENT_FILE = DEFAULT_DOCUMENT_FILE
