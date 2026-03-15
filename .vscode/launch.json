@@ -51,7 +51,7 @@
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
       "args": [
         ".",
-        "./test/documents/testfile_utf8.md"
+        "./test/documents/default.md"
       ],
       "outputCapture": "std"
     }
