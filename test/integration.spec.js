@@ -804,7 +804,7 @@ describe("Integration tests with their own app instance each", () => {
             )
         }
 
-        it("contains the currently opened document after cearing the list", async () => {
+        it("contains the currently opened document after clearing the list", async () => {
             await clickMenuItem(fileHistory.REMOVE_RECENT_FILES_MENU_ID)
             assert.deepEqual(await subMenuItems(fileHistory.RECENT_FILES_MENU_ID), [
                 lib.DEFAULT_DOCUMENT_PATH,
