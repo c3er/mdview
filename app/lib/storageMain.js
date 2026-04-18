@@ -60,12 +60,24 @@ class StorageBase {
     }
 
     toJSON() {
-        const getters = common.listGettersWithSetters(this)
+        const getters = this._listGettersWithSetters()
         const obj = {}
         for (const getter of getters) {
             obj[getter] = this[getter]
         }
         return obj
+    }
+
+    _listGettersWithSetters() {
+        // Based on https://stackoverflow.com/a/70250484 (how to enumerate/discover getters and setters in javascript?)
+        return Object.entries(Object.getOwnPropertyDescriptors(Reflect.getPrototypeOf(this)))
+            .filter(
+                ([name, descriptor]) =>
+                    typeof descriptor.get === "function" &&
+                    typeof descriptor.set === "function" &&
+                    name !== "__proto__",
+            )
+            .map(([name]) => name)
     }
 
     static _initStorageDir(storageDir) {
