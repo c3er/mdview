@@ -439,7 +439,7 @@ function createWindow() {
         height: windowPosition.height,
         minWidth: MIN_WINDOW_WIDTH,
         minHeight: MIN_WINDOW_HEIGHT,
-        backgroundColor: "#fff",
+        backgroundColor: electron.nativeTheme.shouldUseDarkColors ? "#282a36" : "#fff",
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,

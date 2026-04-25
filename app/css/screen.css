@@ -341,6 +341,12 @@ div#settings-dialog-scroll-container {
     border-top-style: none; /* Needs to be after other border definitions */
 }
 
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: #fff;
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     body {
         scrollbar-color: #555 #222;
