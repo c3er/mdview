@@ -8,14 +8,8 @@ let _markdown
 let _shallRenderAsMarkdown = false
 let _shallHideMetadata = false
 
-function generateCodeText(text, options = {}) {
-    options = {
-        isHighlighted: false,
-        ...options,
-    }
-
-    const preClass = options.isHighlighted ? `class="${options.isHighlighted ? "hljs" : ""}"` : ""
-    return `<pre ${preClass}><code>${text}</code></pre>`
+function generateCodeText(text) {
+    return `<pre class="hljs"><code>${text}</code></pre>`
 }
 
 exports.reset = options => {
@@ -34,10 +28,9 @@ exports.reset = options => {
                         language: language,
                         ignoreIllegals: true,
                     }).value,
-                    { isHighlighted: true },
                 )
             }
-            return generateCodeText(_markdown.utils.escapeHtml(text), { isHighlighted: true })
+            return generateCodeText(_markdown.utils.escapeHtml(text))
         },
         xhtmlOut: true,
         html: true,
