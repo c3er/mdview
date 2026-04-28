@@ -17,7 +17,7 @@ describe("Encoding library", () => {
             encodingLib.init(mocking.mainMenu)
         })
 
-        afterEach(async () => await lib.removeDataDir())
+        afterEach(lib.removeDataDir)
 
         it("remembers the encoding", () => {
             encodingLib.change(filename, encoding)

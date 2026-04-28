@@ -12,7 +12,7 @@ exports.DEFAULT_DOCUMENT_DIR = DEFAULT_DOCUMENT_DIR
 
 exports.DEFAULT_DOCUMENT_PATH = path.join(DEFAULT_DOCUMENT_DIR, DEFAULT_DOCUMENT_FILE)
 
-exports.removeDataDir = async () => await fs.rm(mocking.dataDir, { force: true, recursive: true })
+exports.removeDataDir = () => fs.rm(mocking.dataDir, { force: true, recursive: true })
 
 exports.prepareMdContent = content =>
     content

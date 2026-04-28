@@ -103,11 +103,11 @@ async function elementHasState(elementPath, state, locatorCallback) {
 }
 
 async function elementIsHidden(elementPath) {
-    return await elementHasState(elementPath, "hidden", async locator => await locator.isHidden())
+    return await elementHasState(elementPath, "hidden", locator => locator.isHidden())
 }
 
 async function elementIsVisible(elementPath) {
-    return await elementHasState(elementPath, "visible", async locator => await locator.isVisible())
+    return await elementHasState(elementPath, "visible", locator => locator.isVisible())
 }
 
 async function elementHeight(elementPath) {
@@ -124,7 +124,7 @@ describe("Integration tests with single app instance", () => {
         await startApp(lib.DEFAULT_DOCUMENT_PATH)
     })
 
-    after(async () => await _app.close())
+    after(() => _app.close())
 
     it("opens a window", () => {
         assert(Boolean(_page))
@@ -284,7 +284,7 @@ describe("Integration tests with their own app instance each", () => {
         await startApp(lib.DEFAULT_DOCUMENT_PATH)
     })
 
-    afterEach(async () => await _app.close())
+    afterEach(() => _app.close())
 
     describe("Content blocking", () => {
         const contentBlocking = require("../app/lib/contentBlockingMain")
