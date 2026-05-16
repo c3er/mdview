@@ -36,9 +36,5 @@ jobs:
           node-version: latest
       - name: Install dependencies
         run: npm install
-      - name: Install Electron
-        run: npx install-electron
-      - name: Run Electron to force download
-        run: npx electron --version
       - name: Build
         run: npm run dist-ci

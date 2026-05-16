@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     if: github.actor == github.repository_owner
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       contents: read
 
@@ -19,9 +19,5 @@ jobs:
           node-version: latest
       - name: Install dependencies
         run: npm install
-      - name: Install Electron
-        run: npx install-electron
-      - name: Run Electron to force download
-        run: npx electron --version
       - name: Test
         run: npm run test-all
