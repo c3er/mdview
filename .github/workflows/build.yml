@@ -36,7 +36,7 @@ jobs:
           node-version: latest
       - name: Install dependencies
         run: npm install
-      - name: Download Electron binary
-        run: npm exec -- electron --version
+      - name: Install Electron
+        run: npx install-electron
       - name: Build
         run: npm run dist-ci
