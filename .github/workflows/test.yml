@@ -19,5 +19,7 @@ jobs:
           node-version: latest
       - name: Install dependencies
         run: npm install
+      - name: Rebuild Electron
+        run: npm rebuild electron
       - name: Test
         run: npm run test-all
