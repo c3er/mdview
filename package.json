@@ -52,18 +52,18 @@
     "markdown-it-sub": "2.0.0",
     "markdown-it-sup": "2.0.0",
     "markdown-it-task-checkbox": "1.0.6",
-    "mermaid": "11.14.0"
+    "mermaid": "11.15.0"
   },
   "devDependencies": {
     "clipboardy": "5.3.1",
-    "electron": "41.1.1",
+    "electron": "42.0.1",
     "electron-builder": "26.8.1",
-    "eslint": "10.2.0",
+    "eslint": "10.3.0",
     "eslint-config-prettier": "10.1.8",
     "lodash.clonedeep": "4.5.0",
     "mocha": "11.7.5",
     "playwright": "1.59.1",
-    "prettier": "3.8.1",
+    "prettier": "3.8.3",
     "tslib": "2.8.1"
   }
 }
