@@ -20,6 +20,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Download Electron binary
-        run: npx electron --version
+        run: npm exec -- electron --version
       - name: Test
         run: npm run test-all
