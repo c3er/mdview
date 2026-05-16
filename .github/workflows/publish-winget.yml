@@ -10,7 +10,12 @@ on:
 
 jobs:
   publish:
+    if: github.actor == github.repository_owner
     runs-on: windows-latest
+    permissions:
+      contents: read
+      # Note: The WinGet action uses secrets.WINGET_TOKEN (PAT) for repository access,
+      # not the default github_token, so additional permissions would be on that token
     steps:
       - uses: vedantmgoyal2009/winget-releaser@v2
         with:
