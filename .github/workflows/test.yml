@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     if: github.actor == github.repository_owner
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       contents: read
 
