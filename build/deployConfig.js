@@ -2,6 +2,10 @@ const APPLICATION_NAME = "Markdown Viewer"
 const APPLICATION_SHORTNAME = "mdview"
 const WIN_ICON = "app/assets/icon/md.ico"
 const MAC_ICON = "app/assets/icon/md.icns"
+
+// File Association Icon
+const FILE_ICON = "app/assets/icon/md_file" // Electron-builder appends .icns .ico automatically
+
 const RESPOURCE_FILES = ["README.md", "CONTRIBUTING.md", "CHANGELOG.md", "LICENSE", "doc/**"]
 
 module.exports = {
@@ -66,13 +70,13 @@ module.exports = {
     fileAssociations: [
         {
             name: "Markdown file",
-            ext: ".md",
-            icon: WIN_ICON,
+            ext: "md",
+            icon: FILE_ICON,
         },
         {
             name: "Markdown file",
-            ext: ".markdown",
-            icon: WIN_ICON,
+            ext: "markdown",
+            icon: FILE_ICON,
         },
     ],
 }
