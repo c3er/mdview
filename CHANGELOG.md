@@ -2,7 +2,15 @@
 
 ## Current
 
-...
+### Document icon (issue [#83](https://github.com/c3er/mdview/issues/83))
+
+There is now a dedicated icon for Markdown documents.
+
+On Windows, if installed via the setup EXE file, the document icon is associated instead of the application icon. With MSI, the application icon is still associated.
+
+### Improved dialog styling (issue [#81](https://github.com/c3er/mdview/issues/81))
+
+The borders of the dialogs are now unobtrusive.
 
 ## [4.0.1 Regression fixes and minor improvements](https://github.com/c3er/mdview/releases/tag/v4.0.1)
 
