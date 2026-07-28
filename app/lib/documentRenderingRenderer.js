@@ -16,7 +16,7 @@ exports.reset = options => {
     _markdown = require("markdown-it")({
         highlight(text, language) {
             if (language.toLowerCase() === "mermaid") {
-                return `<pre class="mermaid">${text}</pre>`
+                return `<pre class="mermaid">${_markdown.utils.escapeHtml(text)}</pre>`
             }
 
             // Originated from VS Code

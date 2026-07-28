@@ -15,6 +15,7 @@ The borders of the dialogs are now unobtrusive.
 ### Bugfixes
 
 - Double-clicking a file in macOS Finder now actually opens that file, instead of the README (issue [#76](https://github.com/c3er/mdview/issues/76))
+- Mermaid syntax was not escaped for HTML, causing problems with statements containing `<` and `>` (issue [#78](https://github.com/c3er/mdview/issues/78))
 
 ## [4.0.1 Regression fixes and minor improvements](https://github.com/c3er/mdview/releases/tag/v4.0.1)
 

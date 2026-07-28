@@ -22,6 +22,15 @@ describe("Document rendering", () => {
         )
     })
 
+    it("escapes mermaid code block text before rendering", () => {
+        const mermaidDiagram =
+            "\n```mermaid\nclassDiagram\n  class FileState {\n    <<enumeration>>\n  }\n```\n"
+        const rendered = documentRendering.renderContent(mermaidDiagram)
+
+        assert(rendered.includes("&lt;&lt;enumeration&gt;&gt;"))
+        assert(rendered.includes('<pre class="mermaid">'))
+    })
+
     describe("Render as Markdown", () => {
         it("is active after enabling the option", () => {
             assert(documentRendering.shallRenderAsMarkdown())
