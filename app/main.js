@@ -61,7 +61,7 @@ function loadDocumentSettings() {
 function determineCurrentFilePath() {
     return navigation.hasCurrentLocation()
         ? navigation.currentFilePath()
-        : (_cliArgs.filePath ?? _finderFilePath)
+        : (_finderFilePath ?? _cliArgs.filePath)
 }
 
 function loadWindowPosition() {

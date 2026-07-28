@@ -12,6 +12,10 @@ On Windows, if installed via the setup EXE file, the document icon is associated
 
 The borders of the dialogs are now unobtrusive.
 
+### Bugfixes
+
+- Double-clicking a file in macOS Finder now actually opens that file, instead of the README (issue [#76](https://github.com/c3er/mdview/issues/76))
+
 ## [4.0.1 Regression fixes and minor improvements](https://github.com/c3er/mdview/releases/tag/v4.0.1)
 
 ### Documentation in installation folder
