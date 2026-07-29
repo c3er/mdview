@@ -51,4 +51,41 @@ describe('Library "file"', () => {
             }
         })
     })
+
+    describe("file.transformRelativePath", () => {
+        it("decodes URL-encoded relative paths", () => {
+            assert.strictEqual(
+                file.transformRelativePath("C:\\docs\\计划", "../%E8%AF%81%E6%8D%AE/note.md"),
+                path.join("C:\\docs\\计划", "../证据/note.md"),
+            )
+        })
+
+        it("decodes Unicode filenames", () => {
+            assert.strictEqual(
+                file.transformRelativePath("C:\\docs", "./%E8%AE%A1%E5%88%92.md"),
+                path.join("C:\\docs", "./计划.md"),
+            )
+        })
+
+        it("decodes spaces in relative paths", () => {
+            assert.strictEqual(
+                file.transformRelativePath("C:\\docs", "../My%20Docs/file.md"),
+                path.join("C:\\docs", "../My Docs/file.md"),
+            )
+        })
+
+        it("keeps malformed relative paths unchanged", () => {
+            assert.strictEqual(
+                file.transformRelativePath("C:\\docs", "../%GG/file.md"),
+                path.join("C:\\docs", "../%GG/file.md"),
+            )
+        })
+
+        it("keeps ASCII relative paths unchanged", () => {
+            assert.strictEqual(
+                file.transformRelativePath("C:\\docs", "../other.md"),
+                path.join("C:\\docs", "../other.md"),
+            )
+        })
+    })
 })

@@ -1,4 +1,5 @@
 const fs = require("fs")
+const path = require("path")
 
 const common = require("./common")
 const log = require("./log")
@@ -53,7 +54,13 @@ exports.extractFileEnding = filePath => {
     return parts.length > 1 ? parts.at(-1).toLowerCase() : ""
 }
 
-exports.transformRelativePath = (documentDirectory, filePath) =>
-    path.join(documentDirectory, filePath).replace("#", "%23")
+exports.transformRelativePath = (documentDirectory, filePath) => {
+    // DecodeURIComponent throws URIError on malformed escapes (e.g %GG or %), hence the try/catch
+    try {
+        return path.join(documentDirectory, decodeURIComponent(filePath)).replace("#", "%23")
+    } catch {
+        return path.join(documentDirectory, filePath).replace("#", "%23")
+    }
+}
 
 exports.isAbsolutePath = filePath => Boolean(filePath.match(/^(\S\:)?(\\|\/)/))

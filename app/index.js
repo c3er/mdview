@@ -329,12 +329,16 @@ ipc.listen(ipc.messages.fileOpen, async file => {
         populateToc(content, "toc")
     }
 
-    // Alter local references to be relativ to the document
+    // Alter local references to be relative to the document
     alterTags("a", link => {
         const target = link.getAttribute("href")
         if (target) {
             navigation.registerLink(link, target, documentDirectory)
-            statusOnMouseOver(link, target)
+            try {
+                statusOnMouseOver(link, decodeURI(target))
+            } catch {
+                statusOnMouseOver(link, target)
+            }
         }
     })
     alterTags("img", image => {
