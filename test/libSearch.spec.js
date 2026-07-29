@@ -89,6 +89,18 @@ describe("Search", () => {
             assert(!search.isActive())
         })
 
+        it("deactivates active search without dialog open", () => {
+            mocking.register.ipc.mainOn(ipc.messages.searchIsActive)
+
+            let reloaded = false
+            search.init(mocking.document, () => {
+                reloaded = true
+            })
+            search.deactivate()
+            assert(!search.isActive())
+            assert(reloaded)
+        })
+
         describe("Function highlightTerm", () => {
             it("highlights the search term", () => {
                 const searchTerm = "expected search term"

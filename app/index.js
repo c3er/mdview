@@ -251,6 +251,8 @@ onkeydown = event => {
             event.preventDefault()
             if (dialog.isOpen()) {
                 dialog.close()
+            } else if (search.isActive()) {
+                search.deactivate()
             } else {
                 ipc.send(ipc.messages.closeApplication)
             }

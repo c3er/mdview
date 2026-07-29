@@ -61,6 +61,12 @@ function reset() {
     _searchResultCount = 0
 }
 
+function closeDialog() {
+    if (_searchDialog.open) {
+        _searchDialog.close()
+    }
+}
+
 function deactivate() {
     reset()
     ipc.send(ipc.messages.searchIsActive, false)
@@ -82,8 +88,14 @@ exports.init = (document, reloader) => {
         if (result?.trim() && result !== CANCEL_VALUE) {
             _term = result
             _reloader()
-        } else if (dialog.isOpen()) {
-            dialog.close()
+            if (dialog.isOpen()) {
+                dialog.close()
+            }
+        } else {
+            if (dialog.isOpen()) {
+                dialog.close()
+            }
+            deactivate()
         }
     })
 
@@ -102,7 +114,7 @@ exports.init = (document, reloader) => {
 
                 ipc.send(ipc.messages.searchIsActive, true)
             },
-            deactivate,
+            closeDialog,
         ),
     )
 
@@ -119,6 +131,8 @@ exports.init = (document, reloader) => {
 
 exports.reset = reset
 
+exports.deactivate = deactivate
+
 exports.isActive = () => _isActive
 
 exports.dialogIsOpen = () => _dialogIsOpen
@@ -131,7 +145,7 @@ exports.highlightTerm = () => {
     const termRegex = new RegExp(_term, "ig")
     const contentElement = renderer.contentElement()
     if (!contentElement.innerText.match(termRegex)) {
-        dialog.close()
+        deactivate()
         return
     }
 
