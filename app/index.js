@@ -336,7 +336,8 @@ ipc.listen(ipc.messages.fileOpen, async file => {
             navigation.registerLink(link, target, documentDirectory)
             try {
                 statusOnMouseOver(link, decodeURI(target))
-            } catch {
+            } catch (err) {
+                log.error(err.message)
                 statusOnMouseOver(link, target)
             }
         }

@@ -58,7 +58,8 @@ exports.transformRelativePath = (documentDirectory, filePath) => {
     // DecodeURIComponent throws URIError on malformed escapes (e.g %GG or %), hence the try/catch
     try {
         return path.join(documentDirectory, decodeURIComponent(filePath)).replace("#", "%23")
-    } catch {
+    } catch (err) {
+        log.error(err.message)
         return path.join(documentDirectory, filePath).replace("#", "%23")
     }
 }
