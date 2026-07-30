@@ -59,7 +59,7 @@ exports.transformRelativePath = (documentDirectory, filePath) => {
     try {
         return path.join(documentDirectory, decodeURIComponent(filePath)).replace("#", "%23")
     } catch (err) {
-        log.error(err.message)
+        log.error(err)
         return path.join(documentDirectory, filePath).replace("#", "%23")
     }
 }
