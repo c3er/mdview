@@ -2,6 +2,12 @@
 
 ## Current
 
+...
+
+## [4.0.2 UI improvements, bugfixes](https://github.com/c3er/mdview/releases/tag/v4.0.2)
+
+**Note:** The file `mdview-4.0.2-arm64.dmg` was marked as malicious on VirusTotal by "Microsoft" as "Trojan:Script/Wacatac.C!ml".
+
 ### Document icon (issue [#83](https://github.com/c3er/mdview/issues/83))
 
 There is now a dedicated icon for Markdown documents.
