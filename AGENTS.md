@@ -29,6 +29,19 @@ Agents in this repo should follow these rules:
 
 This repo should still permit opportunistic refactors if the motivation is maintainability, not cosmetics. The goal is not to over-engineer, but to avoid low-quality, “cheapest possible” code that becomes impossible to extend safely.
 
+## Testing and validation
+
+A good agent in this repo should include a small validation plan with each change, especially when the behavior is visual or interactive. This app is not only about passing unit tests; many realistic regressions are only visible in the UI.
+
+Expected behavior:
+
+1. Run the relevant automated tests first.
+2. If the change touches file handling, rendering, navigation, search, or settings, provide a short manual smoke-test sequence.
+3. Keep the manual steps concrete and easy to follow for a human operator.
+4. If the change is behaviorally subtle, state what the reviewer should look for instead of only reporting that the code “should work.”
+
+In short: do not assume that the AI is done after a passing test run. In this project, a brief test plan is often part of the fix.
+
 ## Architecture overview
 
 This repo is not as cleanly layered as the refactor, but the main responsibilities are still recognizable:
