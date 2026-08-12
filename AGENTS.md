@@ -14,6 +14,21 @@ This file exists as guidance for AI-assisted maintenance and small feature work.
 - If you change behavior, update the relevant tests or add a focused regression test.
 - Preserve the original UX and the minimal-scope character of the project.
 
+## AI operating rules
+
+This repository is the behavioral reference and the maintenance base for Markdown Viewer. The history before `v2.0.0` and the later maintenance commits show a consistent pattern: keep the app understandable, fix the actual problem, and avoid broad churn unless the refactor clearly reduces long-term risk.
+
+Agents in this repo should follow these rules:
+
+1. Prefer root-cause fixes over surface-level patches.
+2. Keep scope tight and user-visible behavior stable.
+3. Preserve compatibility with file path handling, URL decoding, rendering behavior, keyboard interactions, and OS-specific edge cases.
+4. Do not reject justified refactors. A larger cleanup is acceptable when it eliminates duplication, makes a bug fix trustworthy, or reduces the chance of regression.
+5. When refactoring, do it in a way that keeps the architecture legible and testable, not in a way that merely makes the code look modern.
+6. History matters: the app’s fragile areas are navigation, rendering, search, settings, and anything involving relative file paths or external resources.
+
+This repo should still permit opportunistic refactors if the motivation is maintainability, not cosmetics. The goal is not to over-engineer, but to avoid low-quality, “cheapest possible” code that becomes impossible to extend safely.
+
 ## Architecture overview
 
 This repo is not as cleanly layered as the refactor, but the main responsibilities are still recognizable:
@@ -62,7 +77,9 @@ This app uses explicit message names, and many features rely on keeping those co
 
 ## Implementation philosophy visible in the Git history
 
-The Git history here is strongly issue-driven and bugfix-oriented. The project’s pattern is not “large architecture moves”; it is “understand the bug, patch the exact point of failure, preserve behavior, and ship.”
+The Git history here is strongly issue-driven and bugfix-oriented, with a long history of refinements beginning before `v2.0.0`. The project’s pattern is not just “small patches”; it is: understand the bug, patch the exact point of failure, preserve behavior, and keep the code understandable enough to survive the next fix.
+
+This is especially visible in the wider history before `v2.0.0`, where work around navigation, search, raw text rendering, and settings matured through repeated fixes and refactors rather than a single rewrite. The app evolved by iterating on the actual pain points.
 
 Examples from the recent history:
 
