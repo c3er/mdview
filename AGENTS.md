@@ -13,6 +13,8 @@ This file exists as guidance for AI-assisted maintenance and small feature work.
 - Keep compatibility with Windows, macOS, and Linux behaviors.
 - If you change behavior, update the relevant tests or add a focused regression test.
 - Preserve the original UX and the minimal-scope character of the project.
+- When the requirements or next steps are unclear, ask the user for clarification before making a consequential choice.
+- When multiple approaches are plausible and none is clearly best according to the existing behavior, architecture, or history, ask the user to choose between them.
 
 ## AI operating rules
 
@@ -29,6 +31,10 @@ Agents in this repo should follow these rules:
 
 This repo should still permit opportunistic refactors if the motivation is maintainability, not cosmetics. The goal is not to over-engineer, but to avoid low-quality, “cheapest possible” code that becomes impossible to extend safely.
 
+## Documentation maintenance
+
+Documentation is part of the implementation and must always describe the current state. Keep `README.md`, `CONTRIBUTING.md`, everything under `doc/`, `AGENTS.md`, and any skills or other AI guidance up to date. Any code change that makes a documented statement inaccurate must update that documentation in the same change. AI guidance is especially important: do not leave obsolete instructions, architecture descriptions, workflows, or feature claims behind.
+
 ## Testing and validation
 
 A good agent in this repo should include a small validation plan with each change, especially when the behavior is visual or interactive. This app is not only about passing unit tests; many realistic regressions are only visible in the UI.
@@ -42,6 +48,16 @@ Expected behavior:
 
 In short: do not assume that the AI is done after a passing test run. In this project, a brief test plan is often part of the fix.
 
+## Version control
+
+This project uses Git. Use read-only Git operations freely whenever the current code, its motivation, or the history of a decision is unclear. In particular, use commands such as `git log`, `git show`, `git blame`, and diffs to understand behavior, ownership, and the reason for existing code.
+
+Git write operations require explicit user approval before they are performed. This includes `git commit`, `git merge`, `git rebase`, and comparable history- or worktree-changing operations. Before asking for approval, explain what will be changed and why; include the exact proposed commit message when a commit is involved. After approval, use the agreed commit message verbatim. If the user proposes a commit-message change, verify the intended wording and resolve any discrepancy before writing it.
+
+Commit messages must provide enough context, together with their diffs, to understand the motivation for the change. Use a concise header line, normally no longer than 52 characters, followed by a blank line and an explanation. Body lines should normally not exceed 72 characters. Unbreakable strings such as URLs are exceptions; put each such long string on its own line, not necessarily in its own paragraph. The header does not need a `feat:`, `fix:`, or similar prefix. The explanation should focus on the motivation and, where it is not obvious, the relevant technical or architectural background; it should not merely repeat the diff. Keep the message as short as is sensible: a small change may need only a short title, while a more involved change needs an informative explanation.
+
+Never run `git push`. Tell the user to perform pushes themselves.
+
 ## Architecture overview
 
 This repo is not as cleanly layered as the refactor, but the main responsibilities are still recognizable:
@@ -54,7 +70,7 @@ This repo is not as cleanly layered as the refactor, but the main responsibiliti
 - `app/lib/navigationMain.js`: current file path, history/back-forward navigation, and cross-location callbacks.
 - `app/lib/windowManagementMain.js`: BrowserWindow lifecycle and instance tracking.
 
-The main process is responsible for app-level state and OS integration.
+The main process is responsible for app-level state, browser-window lifecycle, IPC, and OS integration. The legacy application is more coupled than the refactor, so do not assume every current responsibility is in its ideal process or module. When making a justified refactor, preserve behavior first and move ownership incrementally.
 
 ### 2. Renderer startup
 
