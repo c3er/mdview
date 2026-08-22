@@ -35,6 +35,8 @@ This repo should still permit opportunistic refactors if the motivation is maint
 
 Documentation is part of the implementation and must always describe the current state. Keep `README.md`, `CONTRIBUTING.md`, everything under `doc/`, `AGENTS.md`, and any skills or other AI guidance up to date. Any code change that makes a documented statement inaccurate must update that documentation in the same change. AI guidance is especially important: do not leave obsolete instructions, architecture descriptions, workflows, or feature claims behind.
 
+The `CHANGELOG.md` has an additional maintenance rule: every user-facing change must be documented in its `## Current` section. Each new feature gets its own subsection; bug fixes go under a subsection named `Bugfixes`. If the session has a ticket reference, such as a GitHub issue, include that reference in the changelog entry. Keep everything outside `## Current` unchanged and treat released entries as historical record. Modify older release sections only when the user explicitly requests a specific change.
+
 ## Testing and validation
 
 A good agent in this repo should include a small validation plan with each change, especially when the behavior is visual or interactive. This app is not only about passing unit tests; many realistic regressions are only visible in the UI.
